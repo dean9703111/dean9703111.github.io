@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-tw"><head>
+  <meta charset="utf-8">
+  <meta property="og:url" content="https://deanlin.net/blog/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/">
+  <meta property="og:site_name" content="林鼎淵">
+  <meta property="og:title" content="[Hugo自架站-4]將網站部署到 GitHub Pages">
+  <meta property="og:description" content="設定好網站的基礎資訊，以及準備好第一篇部落格文章後。只要跟著教學操作，就可以將 Hugo 網站部署到 GitHub Pages 了！">
+  <meta property="og:locale" content="zh_tw">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-01-19T22:07:47+08:00">
+    <meta property="article:modified_time" content="2025-01-19T22:07:47+08:00">
+    <meta property="article:tag" content="Hugo">
+    <meta property="article:tag" content="Web">
+    <meta property="article:tag" content="自架站">
+    <meta property="article:tag" content="教學">
+    <meta property="og:image" content="https://deanlin.net/images/post/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/cover.png">
+  <meta property="og:image:type" content="image/png" />
+  <title>林鼎淵</title>
+  
+  <link rel="canonical" href="https://deanlin.net/blog/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/">
+  
+
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="設定好網站的基礎資訊，以及準備好第一篇部落格文章後。只要跟著教學操作，就可以將 Hugo 網站部署到 GitHub Pages 了！">
+  <meta name="author" content="林鼎淵">
+  
+  <meta name="theme-name" content="liva-hugo" />
+  
+  <meta name="generator" content="Hugo 0.142.0">
+
+  <!-- plugins -->
+  
+  <link rel="stylesheet" href="https://deanlin.net/plugins/bootstrap/bootstrap.min.css ">
+  
+  <link rel="stylesheet" href="https://deanlin.net/plugins/slick/slick.css ">
+  
+  <link rel="stylesheet" href="https://deanlin.net/plugins/themify-icons/themify-icons.css ">
+  
+  <link rel="stylesheet" href="https://deanlin.net/plugins/venobox/venobox.css ">
+  
+
+  <!-- Main Stylesheet -->
+  
+  <link rel="stylesheet" href="https://deanlin.net/scss/style.min.css" media="screen">
+
+  <!--Favicon-->
+  <link rel="shortcut icon" href="https://deanlin.net/images/favicon.png " type="image/x-icon">
+  <link rel="icon" href="https://deanlin.net/images/favicon.png " type="image/x-icon">
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+<body>
+<!-- preloader start -->
+<div class="preloader">
+  
+</div>
+<!-- preloader end -->
+<!-- navigation -->
+<header class="navigation">
+  <div class="container fix-top-nav">
+    
+    <nav class="navbar navbar-expand-lg navbar-white bg-transparent border-bottom pl-0">
+      <a class="navbar-brand mobile-view" href="https://deanlin.net/">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  
+    
+      
+    
+
+
+    
+    
+
+
+    
+    
+      
+      
+    
+    
+    
+
+
+    
+    
+      
+      
+        
+        
+        
+        
+        
+        
+
+
+        
+        
+
+
+        <img
+          
+            src="/images/logo_hu_aec78117ac7aaa78.webp" loading="lazy"
+            decoding="async" alt="林鼎淵"
+          
+
+          class=" img-fluid img"
+          width="50"
+          height="45"
+          onerror="this.onerror='null';this.src='\/images\/logo.png';" />
+      
+      
+    
+    
+  
+
+
+  
+
+
+        <span class="nav-brand-text">林鼎淵 Dean Lin</span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navigation">
+        <i class="ti-menu"></i>
+      </button>
+
+      <div class="collapse navbar-collapse text-center" id="navigation">
+        
+
+        <a class="navbar-brand desktop-view " href="https://deanlin.net/">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  
+    
+      
+    
+
+
+    
+    
+
+
+    
+    
+      
+      
+    
+    
+    
+
+
+    
+    
+      
+      
+        
+        
+        
+        
+        
+        
+
+
+        
+        
+
+
+        <img
+          
+            src="/images/logo_hu_aec78117ac7aaa78.webp" loading="lazy"
+            decoding="async" alt="林鼎淵"
+          
+
+          class=" img-fluid img"
+          width="50"
+          height="45"
+          onerror="this.onerror='null';this.src='\/images\/logo.png';" />
+      
+      
+    
+    
+  
+
+
+  
+
+
+          <span class="nav-brand-text">林鼎淵 Dean Lin</span>
+        </a>
+
+        <ul class="navbar-nav ml-auto">
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="https://deanlin.net/blog/">所有文章</a>
+          </li>
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="https://deanlin.net/about/">關於我</a>
+          </li>
+          
+          
+        </ul>
+
+        
+        <!-- search -->
+        <div class="search pl-lg-4">
+          <button id="searchOpen" class="search-btn"><i class="ti-search"></i></button>
+          <div class="search-wrapper">
+            <form action="https://deanlin.net//search" class="h-100">
+              <input class="search-box px-4" id="search-query" name="s" type="search" placeholder="輸入搜尋的關鍵字">
+            </form>
+            <button id="searchClose" class="search-close"><i class="ti-close text-dark"></i></button>
+          </div>
+        </div>
+        
+
+        
+      </div>
+    </nav>
+  </div>
+</header>
+<!-- /navigation -->
+
+<section class="section-sm">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        
+        <a href="/categories/hugo-%e6%9e%b6%e7%ab%99%e6%95%99%e5%ad%b8"
+          class="text-primary">Hugo 架站教學</a>
+        
+        <h2>[Hugo自架站-4]將網站部署到 GitHub Pages</h2>
+        
+        <div class="author-details">
+          <div>
+            
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  
+    
+      
+    
+
+
+    
+    
+
+
+    
+    
+      
+      
+    
+    
+    
+
+
+    
+    
+      
+      
+        
+        
+        
+        
+        
+        
+
+
+        
+        
+
+
+        <img
+          
+            src="/images/author_hu_830cde39ec2e7e17.webp" loading="lazy"
+            decoding="async" alt="Image"
+          
+
+          class=" author-thumb-blog rounded-circle img"
+          width="412"
+          height="412"
+          onerror="this.onerror='null';this.src='\/images\/author.jpg';" />
+      
+      
+    
+    
+  
+
+
+  
+
+
+          </div>
+          <div>
+            <p>林鼎淵</p>
+            <p>2025-01-19</p>
+          </div>
+        </div>
+        
+        <div class="content mb-5">
+          <p><img src="/images/post/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/cover.png" alt="img"></p>
+<p>設定好網站的基礎資訊，以及準備好第一篇部落格文章後，跟著教學的步驟操作，就可以將網站部署到 GitHub Pages 了！</p>
+<h3 id="在-github-新增一個自己名字的-repository">▋在 GitHub 新增一個自己名字的 Repository</h3>
+<hr>
+<p>登入 <a href="https://github.com/">GitHub</a> 後，用 <code>自己的帳號名稱.github.io</code> 來新增一個 Repository。</p>
+<p>以筆者來說，就是用 <code>dean9703111.github.io</code>，這將會是你日後個人品牌的部落格網址；另外記得要選擇「Public」才能讓大家看得到。</p>
+<p><img src="/images/post/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/new_repository.png" alt="img"></p>
+<blockquote>
+<p>小提醒：如果你帳號建立時跟筆者一樣沒想太多，導致字數超長，這在日後也是可以更新成自己的網域喔！</p>
+</blockquote>
+<h3 id="把-hugo-public-下的資料夾搬到剛剛建立的-repository-下">▋把 Hugo Public 下的資料夾搬到剛剛建立的 Repository 下</h3>
+<hr>
+<p>先前我們都是用 <code>hugo server</code> 來啟動網站，現在只需要執行 <code>hugo</code> 即可。</p>
+<p><img src="/images/post/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/command_hugo.png" alt="img"></p>
+<p>然後直接將生成的「public」資料夾下的內容搬到剛剛建立的 Repository 下即可。</p>
+<p><img src="/images/post/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/public.png" alt="img"></p>
+<h3 id="將變更-push-到-github-上面">▋將變更 Push 到 GitHub 上面</h3>
+<hr>
+<p>接下來可以使用任何你習慣的版控工具來將變更推到 GitHub 上面，下面筆者是用 VSCode 來輸入 commit（描述調整），以及做 <code>git push</code>。</p>
+<p><img src="/images/post/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/vscode.png" alt="img"></p>
+<p><img src="/images/post/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/git_push.png" alt="img"></p>
+<h3 id="到-github-確認確認部署狀況">▋到 GitHub 確認確認部署狀況</h3>
+<hr>
+<p>回到 GitHub 網頁，如果右下角的「Depoyments」是綠色勾勾，基本上就沒問題了！</p>
+<p><img src="/images/post/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/github_page.png" alt="img"></p>
+<p>接者瀏覽網址（這是筆者的）: <a href="https://dean9703111.github.io">https://dean9703111.github.io</a></p>
+<p>就可以順利看到自己的網站與發表的文章嚕！給自己拍拍手！現在可以將個人網站分享給其他人嚕～</p>
+<p><img src="/images/post/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/web_page.png" alt="img"></p>
+<h3 id="結語">▋結語</h3>
+<hr>
+<p>儘管看起來很美好，但其實還有如下細節需要設定:</p>
+<ol>
+<li><a href="/blog/202501/hugo5-install-google-analytics-to-track-website-traffic/"><strong>Google Analytics</strong>: 用來追蹤網站流量成效</a></li>
+<li><a href="/blog/202501/hugo6-set-up-google-search-console/"><strong>Google Search Console</strong>: 讓自己的網站在 Google 可以被搜尋到</a></li>
+<li><strong>個人網域</strong>: 購買個人網域可以讓品牌看起來更專業，且轉換平台時 SEO 不會被綁架</li>
+</ol>
+<p>這些細節，筆者也會在<a href="/blog/202501/hugo5-install-google-analytics-to-track-website-traffic/">後續的文章</a>與大家分享。</p>
+<hr>
+<blockquote>
+<p>我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 <a href="https://www.facebook.com/deanlinbao">Facebook</a>，我會持續分享實用的新知識 💡</p>
+</blockquote>
+
+        </div>
+
+        
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "deanlin" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="text-capitalize">
+  <div class="container">
+    <div class="row justify-content-center">
+      
+      
+      
+      <div class="col-12 border-top py-4 text-center">
+        © 2021-2025 林鼎淵 Dean Lin  |  All Rights Reserved.
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  var indexURL = "https://deanlin.net/index.json"
+</script>
+
+<!-- JS Plugins -->
+
+<script src="https://deanlin.net/plugins/jQuery/jquery.min.js"></script>
+
+<script src="https://deanlin.net/plugins/bootstrap/bootstrap.min.js"></script>
+
+<script src="https://deanlin.net/plugins/slick/slick.min.js"></script>
+
+<script src="https://deanlin.net/plugins/venobox/venobox.min.js"></script>
+
+<script src="https://deanlin.net/plugins/search/fuse.min.js"></script>
+
+<script src="https://deanlin.net/plugins/search/mark.js"></script>
+
+<script src="https://deanlin.net/plugins/search/search.js"></script>
+
+<!-- Main Script -->
+
+<script src="https://deanlin.net/js/script.min.js"></script>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+<div id="js-cookie-box" class="cookie-box cookie-box-hide">
+	This site uses cookies. By continuing to use this website, you agree to their use. <span id="js-cookie-button" class="btn btn-sm btn-primary ml-2">I Accept</span>
+</div>
+<script>
+	(function ($) {
+		const cookieBox = document.getElementById('js-cookie-box');
+		const cookieButton = document.getElementById('js-cookie-button');
+		if (!Cookies.get('cookie-box')) {
+			cookieBox.classList.remove('cookie-box-hide');
+			cookieButton.onclick = function () {
+				Cookies.set('cookie-box', true, {
+					expires:  2 
+				});
+				cookieBox.classList.add('cookie-box-hide');
+			};
+		}
+	})(jQuery);
+</script>
+
+
+<style>
+.cookie-box {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  z-index: 9999;
+  padding: 1rem 2rem;
+  background: rgb(71, 71, 71);
+  transition: all .75s cubic-bezier(.19, 1, .22, 1);
+  color: #fdfdfd;
+}
+
+.cookie-box-hide {
+  display: none;
+}
+</style>
+</body>
+</html>
