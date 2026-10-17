@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="因為剛好朋友在專案的搜尋上遇到效能瓶頸，在看過程式碼後，發現他在 Table 做 Join 時都是挑選文字欄位，因此研判這應該就是導致效率低下的主要原因；為了實驗文字欄位（VARCHAR）與數值欄位（INTEGER）在 Join…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異">
+  <meta property="og:description" content="因為剛好朋友在專案的搜尋上遇到效能瓶頸，在看過程式碼後，發現他在 Table 做 Join 時都是挑選文字欄位，因此研判這應該就是導致效率低下的主要原因；為了實驗文字欄位（VARCHAR）與數值欄位（INTEGER）在 Join…">
+  <meta property="og:url" content="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2022-05-13T15:22:40&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:40:58&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Table Join">
+  <meta property="article:tag" content="Varchar">
+  <meta property="article:tag" content="Integer">
+  <meta property="article:tag" content="Node.js">
+  <meta property="article:tag" content="Sequelize">
+  <meta property="og:image" content="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="635">
+  <meta property="og:image:alt" content="Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-og.jpg">
+  <meta name="twitter:title" content="Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異">
+  <meta name="twitter:description" content="因為剛好朋友在專案的搜尋上遇到效能瓶頸，在看過程式碼後，發現他在 Table 做 Join 時都是挑選文字欄位，因此研判這應該就是導致效率低下的主要原因；為了實驗文字欄位（VARCHAR）與數值欄位（INTEGER）在 Join…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:40:58+08:00","datePublished":"2022-05-13T15:22:40+08:00","description":"因為剛好朋友在專案的搜尋上遇到效能瓶頸，在看過程式碼後，發現他在 Table 做 Join 時都是挑選文字欄位，因此研判這應該就是導致效率低下的主要原因；為了實驗文字欄位（VARCHAR）與數值欄位（INTEGER）在 Join…","headline":"Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異","image":{"@type":"ImageObject","height":635,"url":"https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Table Join, Varchar, Integer, Node.js, Sequelize","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E5%AF%A6%E9%A9%97-table-join-%E6%99%82-%E9%81%B8%E6%93%87%E6%96%87%E5%AD%97%E6%AC%84%E4%BD%8D-varchar-%E8%88%87%E6%95%B8%E5%80%BC%E6%AC%84%E4%BD%8D-integer-%E5%9C%A8%E6%95%88%E8%83%BD-performance-%E4%B8%8A%E7%9A%84%E5%B7%AE%E7%95%B0-9666cfc01e9"],"timeRequired":"PT5M","url":"https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/","wordCount":2496},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/","name":"Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2022-05-13">2022.05.13</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 5 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e6%a8%a1%e6%93%ac%e6%83%85%e5%a2%83%e8%aa%aa%e6%98%8e">一、模擬情境說明</a></li><li><a href="#%e4%ba%8c%e5%9c%a8-db-%e5%bb%ba%e7%ab%8b%e6%b8%ac%e8%a9%a6%e6%b8%ac%e8%a9%a6%e5%b0%8d%e7%85%a7%e7%b5%84-table">二、在 DB 建立測試測試對照組 Table</a></li><li class="is-sub"><a href="#-users%e9%a1%a7%e5%ae%a2">➤ users（顧客）</a></li><li class="is-sub"><a href="#-orders%e8%a8%82%e5%96%ae">➤ orders（訂單）</a></li><li class="is-sub"><a href="#-items%e8%b3%bc%e8%b2%b7%e7%9a%84%e5%95%86%e5%93%81">➤ items（購買的商品）</a></li><li><a href="#%e4%b8%89%e8%a8%ad%e8%a8%88%e5%bb%ba%e7%ab%8b%e6%a8%a1%e6%93%ac%e8%b3%87%e6%96%99">三、設計＆建立模擬資料</a></li><li><a href="#%e5%9b%9b%e8%a8%ad%e8%a8%88%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f">四、設計測試程式</a></li><li><a href="#%e4%ba%94%e6%a8%a1%e6%93%ac%e6%af%8f%e5%80%8b%e6%83%85%e5%a2%83%e5%8f%96%e5%be%97%e6%b8%ac%e8%a9%a6%e7%b5%90%e6%9e%9c">五、模擬每個情境，取得測試結果</a></li><li class="is-sub"><a href="#-%e6%83%85%e5%a2%83-a-%e5%b0%87-join-%e7%9a%84%e6%ac%84%e4%bd%8d%e8%a8%ad%e8%a8%88-foreign-key%e6%90%9c%e5%b0%8b%e7%94%a8%e5%88%b0%e7%9a%84%e6%ac%84%e4%bd%8d%e4%b9%9f%e8%a8%ad%e8%a8%88-index">➤ 情境 A： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index</a></li><li class="is-sub"><a href="#-%e6%83%85%e5%a2%83-b-%e5%b0%87-foreign-key-%e7%9a%84%e8%a8%ad%e8%a8%88%e6%8b%bf%e6%8e%89%e6%94%b9%e7%82%ba%e4%bd%bf%e7%94%a8-index">➤ 情境 B： 將 Foreign Key 的設計拿掉，改為使用 Index</a></li><li class="is-sub"><a href="#-%e6%83%85%e5%a2%83-c-%e6%8a%8a-index-%e5%85%a8%e9%83%a8%e6%8b%bf%e6%8e%89%e4%be%86%e7%9c%8b%e7%9c%8b%e5%88%b0%e5%ba%95%e6%9c%89%e5%a4%9a%e6%85%98">➤ 情境 C： 把 Index 全部拿掉，來看看到底有多慘</a></li><li><a href="#%e5%85%ad%e4%bb%a4%e4%ba%ba%e6%84%8f%e5%a4%96%e7%9a%84%e7%b8%bd%e7%b5%90">六、令人意外的總結</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>因為剛好朋友在專案的搜尋上遇到效能瓶頸，在看過程式碼後，發現他在 Table 做 Join 時都是挑選文字欄位，因此研判這應該就是導致效率低下的主要原因；為了實驗文字欄位（VARCHAR）與數值欄位（INTEGER）在 Join 時的效能差異，特別撰寫了這篇文章，但實驗有點結果打破了我過往的認知…</p>
+<p><img src="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-01.webp" srcset="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-01_hu_c38d9d4009e7171f.webp 720w, /blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-01.webp 1233w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1233" height="652" alt="Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+一、模擬情境說明
+二、在 DB 建立測試測試對照組 Table
+三、設計＆建立模擬資料
+四、設計測試程式
+五、模擬每個情境，取得測試結果
+六、令人意外的總結
+</code></pre><blockquote>
+<p>大家也可以<a href="https://github.com/dean9703111/table-join-varchar-int-performance">直接 Clone 筆者 GitHub 上的專案</a>來了解喔。（如果順便按個 Star更好😀）</p>
+</blockquote>
+<h2 id="一模擬情境說明">一、模擬情境說明<a class="h-anchor" href="#%e4%b8%80%e6%a8%a1%e6%93%ac%e6%83%85%e5%a2%83%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
+<p>假設一個商城系統：</p>
+<ul>
+<li>有 1W 個顧客</li>
+<li>每位顧客有 10 筆訂單（10W 筆訂單）</li>
+<li>每筆訂單有 10 筆購買的商品（100W 筆購買的商品）</li>
+</ul>
+<p>如果今天想要搜尋某個價格區間的「商品」，有哪些「使用者」購買；使用文字欄位（ex：VARCHAR）與數值欄位（ex：INT），在效能上實際會有多少差異。</p>
+<hr>
+<h2 id="二在-db-建立測試測試對照組-table">二、在 DB 建立測試測試對照組 Table<a class="h-anchor" href="#%e4%ba%8c%e5%9c%a8-db-%e5%bb%ba%e7%ab%8b%e6%b8%ac%e8%a9%a6%e6%b8%ac%e8%a9%a6%e5%b0%8d%e7%85%a7%e7%b5%84-table" aria-label="這個段落的連結"></a></h2>
+<p>如果想知道詳細的程式，或是打算在 Local 端模擬一樣的環境，大家可以參考我在<a href="https://github.com/dean9703111/table-join-varchar-int-performance">GitHub 上面的專案</a></p>
+<p>這裡我們分成 3 種情境來做測試：</p>
+<p><strong>情境 A</strong>： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index<br><strong>情境 B</strong>： 將 Foreign Key 的設計拿掉，改為使用 Index<br><strong>情境 C</strong>： 把 Index 全部拿掉，來看看到底有多慘</p>
+<p>DB 我選擇的是 MySQL，而 Table 的設計如下：</p>
+<h3 id="-users顧客">➤ users（顧客）<a class="h-anchor" href="#-users%e9%a1%a7%e5%ae%a2" aria-label="這個段落的連結"></a></h3>
+<a class="linkcard" href="https://sheetsu.com/tables/b96042fd7f" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Table</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>sheetsu.com</span>
+  </span>
+</a>
+
+<h3 id="-orders訂單">➤ orders（訂單）<a class="h-anchor" href="#-orders%e8%a8%82%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<a class="linkcard" href="https://sheetsu.com/tables/74b89104e6" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Table</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>sheetsu.com</span>
+  </span>
+</a>
+
+<p>設計「user_id、user_name」是為了對比文字欄位（ex：VARCHAR）與數值欄位（ex：INTEGER）的差異，<strong>皆有建立 Foreign Key</strong>。</p>
+<h3 id="-items購買的商品">➤ items（購買的商品）<a class="h-anchor" href="#-items%e8%b3%bc%e8%b2%b7%e7%9a%84%e5%95%86%e5%93%81" aria-label="這個段落的連結"></a></h3>
+<a class="linkcard" href="https://sheetsu.com/tables/5417e3d700" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Table</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>sheetsu.com</span>
+  </span>
+</a>
+
+<p>設計「order_id、order_sn」是為了對比文字欄位（ex：VARCHAR）與數值欄位（ex：INTEGER）的差異，<strong>皆有建立 Foreign Key</strong>。</p>
+<p>可用如下指令建立資料：</p>
+<ul>
+<li>Clone 專案：<code>git clone <a href="mailto:git@github.com">git@github.com</a>:dean9703111/table-join-varchar-int-performance.git</code></li>
+<li>安裝套件：<code>npm install</code></li>
+<li>安裝 sequelize cli：<code>npm install -g sequelize-cli</code></li>
+<li>將 config 資料夾底下的 config.exmaple.json 複製為 config.json，並填入自己的 DB 資訊</li>
+<li>建立 DB：<code>sequelize db:create</code></li>
+<li>執行 migration 建立 Tables：<code>sequelize db:migrate</code></li>
+</ul>
+<blockquote>
+<p>資料都是使用 Node.js 搭配 sequelize 這款套件來建立的，如果想了解詳細使用方式，可以參考我先前的的<a href="/blog/202205/sequelize-migration-seeder/">文章</a>。</p>
+</blockquote>
+<figure class="figure"><img src="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-02.webp" srcset="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-02_hu_44fd69fa424a8af6.webp 720w, /blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-02.webp 1204w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1204" height="240" alt="建立測試 DB" loading="lazy" decoding="async">
+  <figcaption>建立測試 DB</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-03.webp" srcset="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-03_hu_e3a585d4461f0f7e.webp 720w, /blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-03.webp 1204w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1204" height="1354" alt="建立測試各種情境的 Table" loading="lazy" decoding="async">
+  <figcaption>建立測試各種情境的 Table</figcaption>
+</figure>
+
+<blockquote>
+<p>在沒設計 Index 的 Table（users/orders） 對照組中，會新增 user_id/order_id 的欄位，此欄位內容與 id 欄位相同，單純用來測試效能用的。</p>
+</blockquote>
+<hr>
+<h2 id="三設計建立模擬資料">三、設計＆建立模擬資料<a class="h-anchor" href="#%e4%b8%89%e8%a8%ad%e8%a8%88%e5%bb%ba%e7%ab%8b%e6%a8%a1%e6%93%ac%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h2>
+<p>我們需要設計 3 個 Seeder，將期望的資料塞入：</p>
+<p><strong>STEP 1</strong>：建立 1W 個顧客<br><strong>STEP 2</strong>：為每位顧客建立 10 筆訂單（user_id、user_name 需與 user Table 關聯）<br><strong>STEP 3</strong>：為每筆訂單建立 10 筆購買的商品（order_id、order_sn 需與 order Table 關聯）</p>
+<p>執行全部 Seeder：</p>
+<pre tabindex="0"><code>sequelize db:seed:all
+</code></pre><p><img src="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-04.webp" srcset="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-04_hu_e938ddb471d47cab.webp 720w, /blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-04.webp 1204w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1204" height="558" alt="三、設計＆建立模擬資料（圖 4）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>因為沒建立 Index 的 Table 搜尋效能比想像的更加悲劇，所以在這個情境下將 User 的數量減為 1/10，也就是說購買商品(item)的數量只有 10W 筆。</p>
+</blockquote>
+<hr>
+<h2 id="四設計測試程式">四、設計測試程式<a class="h-anchor" href="#%e5%9b%9b%e8%a8%ad%e8%a8%88%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>我們需要設計一個可以根據上面 3 種情境測試的程式，同時用 3 種常見的查詢來比較各自的效能：</p>
+<ol>
+<li>單筆查詢：<code>findOne</code></li>
+<li>多筆查詢：<code>findMutiple</code></li>
+<li>設定條件的批量查詢 ：<code>searchRange</code> (大約會找出 1/5 的資料，用來測試匯出大量報表功能)</li>
+</ol>
+<p>程式放在下面，有興趣再看就好，這不是本文的重點，我知道還有很多細節可以優化 😇</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { sequelize } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./models&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { QueryTypes } <span style="color:#ff7b72;font-weight:bold">=</span> sequelize;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> getJoinCol (colType, setting) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> orderJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> itemJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (setting <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;&#34;</span> <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> colType <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;Int&#34;</span>) {
+</span></span><span style="display:flex;"><span>        orderJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`orders.user_id = users.user_id`</span>
+</span></span><span style="display:flex;"><span>        itemJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`items.order_id = orders.order_id`</span>
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">else</span> <span style="color:#ff7b72">if</span> (colType <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;Int&#34;</span>) {
+</span></span><span style="display:flex;"><span>        orderJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders.user_id = </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users.id`</span>
+</span></span><span style="display:flex;"><span>        itemJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.order_id = </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders.id`</span>
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">else</span> <span style="color:#ff7b72">if</span> (colType <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;VarChar&#34;</span>) {
+</span></span><span style="display:flex;"><span>        orderJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders.user_name = </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users.name`</span>
+</span></span><span style="display:flex;"><span>        itemJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.order_sn = </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders.sn`</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> { <span style="color:#a5d6ff">&#34;orderJoinCol&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> orderJoinCol, <span style="color:#a5d6ff">&#34;itemJoinCol&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> itemJoinCol }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> findOne (colType, setting) {
+</span></span><span style="display:flex;"><span>    console.time(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">FindOne`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> {orderJoinCol,itemJoinCol} <span style="color:#ff7b72;font-weight:bold">=</span> getJoinCol (colType, setting)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> sequelize.query(<span style="color:#a5d6ff">`SELECT 
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users.name, </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.price FROM </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders ON </span><span style="color:#a5d6ff">${</span>orderJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items ON </span><span style="color:#a5d6ff">${</span>itemJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           WHERE </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.name = &#39;Dumpitem5000-10-10&#39;`</span>, { type<span style="color:#ff7b72;font-weight:bold">:</span> QueryTypes.SELECT });
+</span></span><span style="display:flex;"><span>    console.timeEnd(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">FindOne`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> findMutiple (colType, setting) {
+</span></span><span style="display:flex;"><span>    console.time(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">FindMutiple`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> {orderJoinCol,itemJoinCol} <span style="color:#ff7b72;font-weight:bold">=</span> getJoinCol (colType, setting)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> sequelize.query(<span style="color:#a5d6ff">`SELECT 
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users.name, </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.price FROM </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders ON </span><span style="color:#a5d6ff">${</span>orderJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items ON </span><span style="color:#a5d6ff">${</span>itemJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           WHERE </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.name in 
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">            (&#39;Dumpitem3000-10-10&#39;,&#39;Dumpitem5000-10-10&#39;,&#39;Dumpitem7500-10-10&#39;)`</span>
+</span></span><span style="display:flex;"><span>        , { type<span style="color:#ff7b72;font-weight:bold">:</span> QueryTypes.SELECT });
+</span></span><span style="display:flex;"><span>    console.timeEnd(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">FindMutiple`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> searchRange (colType, setting) {
+</span></span><span style="display:flex;"><span>    console.time(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">SearchRange`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> {orderJoinCol,itemJoinCol} <span style="color:#ff7b72;font-weight:bold">=</span> getJoinCol (colType, setting)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> sequelize.query(<span style="color:#a5d6ff">`SELECT 
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users.name, </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.price FROM </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders ON </span><span style="color:#a5d6ff">${</span>orderJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items ON </span><span style="color:#a5d6ff">${</span>itemJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           WHERE </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.price &lt; 80`</span>, { type<span style="color:#ff7b72;font-weight:bold">:</span> QueryTypes.SELECT });
+</span></span><span style="display:flex;"><span>    console.timeEnd(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">SearchRange`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> test (type) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">switch</span> (type) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">case</span> <span style="color:#a5d6ff">&#39;foreign&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">break</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">case</span> <span style="color:#a5d6ff">&#39;index&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">break</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">default</span><span style="color:#ff7b72;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// test(&#34;foreign&#34;)//有建立 foreign Key 的
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// test(&#34;index&#34;)//有建立 index 的
+</span></span></span><span style="display:flex;"><span>test()<span style="color:#8b949e;font-style:italic">//什麼都沒有設定的
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/30fa6b0419a8ffd10886ab7aba9921f5" rel="noopener">table-join-index.js</a>（GitHub Gist）</p>
+<hr>
+<h2 id="五模擬每個情境取得測試結果">五、模擬每個情境，取得測試結果<a class="h-anchor" href="#%e4%ba%94%e6%a8%a1%e6%93%ac%e6%af%8f%e5%80%8b%e6%83%85%e5%a2%83%e5%8f%96%e5%be%97%e6%b8%ac%e8%a9%a6%e7%b5%90%e6%9e%9c" aria-label="這個段落的連結"></a></h2>
+<h3 id="-情境-a-將-join-的欄位設計-foreign-key搜尋用到的欄位也設計-index">➤ 情境 A： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-a-%e5%b0%87-join-%e7%9a%84%e6%ac%84%e4%bd%8d%e8%a8%ad%e8%a8%88-foreign-key%e6%90%9c%e5%b0%8b%e7%94%a8%e5%88%b0%e7%9a%84%e6%ac%84%e4%bd%8d%e4%b9%9f%e8%a8%ad%e8%a8%88-index" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>ER Diagram</li>
+</ul>
+<figure class="figure"><img src="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-05.webp" srcset="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-05_hu_5cf16f102705358d.webp 720w, /blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-05.webp 954w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="954" height="555" alt="以 foreign 為開頭的 Table" loading="lazy" decoding="async">
+  <figcaption>以 foreign 為開頭的 Table</figcaption>
+</figure>
+
+<blockquote>
+<p>小知識 : 如果 Foreign Key關聯的欄位為 Primary Key，它會自動建立 Index。</p>
+</blockquote>
+<ul>
+<li>執行程式</li>
+</ul>
+<p><img src="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-06.webp" srcset="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-06_hu_be11c90878fde2ac.webp 720w, /blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-06.webp 860w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="860" height="910" alt="情境 A： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>測試數據：</strong></p>
+<ul>
+<li>INTEGER 單筆查詢：787.003ms</li>
+<li>INTEGER 多筆查詢：773.931ms</li>
+<li>INTEGER 設定條件的批量查詢：3.555s</li>
+<li>VARCHAR 單筆查詢：767.987ms</li>
+<li>VARCHAR 多筆查詢：773.861ms</li>
+<li>VARCHAR 設定條件的批量查詢：6.049s</li>
+</ul>
+<h3 id="-情境-b-將-foreign-key-的設計拿掉改為使用-index">➤ 情境 B： 將 Foreign Key 的設計拿掉，改為使用 Index<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-b-%e5%b0%87-foreign-key-%e7%9a%84%e8%a8%ad%e8%a8%88%e6%8b%bf%e6%8e%89%e6%94%b9%e7%82%ba%e4%bd%bf%e7%94%a8-index" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>ER Diagram</li>
+</ul>
+<figure class="figure"><img src="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-07.webp" srcset="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-07_hu_47ba2bbff6075338.webp 720w, /blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-07.webp 860w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="860" height="457" alt="以 Index 為開頭的 Table" loading="lazy" decoding="async">
+  <figcaption>以 Index 為開頭的 Table</figcaption>
+</figure>
+
+<ul>
+<li>執行程式</li>
+</ul>
+<p><img src="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-08.webp" srcset="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-08_hu_b5ce441c6511882c.webp 720w, /blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-08.webp 860w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="860" height="913" alt="情境 B： 將 Foreign Key 的設計拿掉，改為使用 Index（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>測試數據：</strong></p>
+<ul>
+<li>INTEGER 單筆查詢：464.168ms</li>
+<li>INTEGER 多筆查詢：540.567ms</li>
+<li>INTEGER 設定條件的批量查詢：2.624s</li>
+<li>VARCHAR 單筆查詢：447.98ms</li>
+<li>VARCHAR 多筆查詢：549.225ms</li>
+<li>VARCHAR 設定條件的批量查詢：4.824s</li>
+</ul>
+<h3 id="-情境-c-把-index-全部拿掉來看看到底有多慘">➤ 情境 C： 把 Index 全部拿掉，來看看到底有多慘<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-c-%e6%8a%8a-index-%e5%85%a8%e9%83%a8%e6%8b%bf%e6%8e%89%e4%be%86%e7%9c%8b%e7%9c%8b%e5%88%b0%e5%ba%95%e6%9c%89%e5%a4%9a%e6%85%98" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>ER Diagram</li>
+</ul>
+<figure class="figure"><img src="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-09.webp" srcset="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-09_hu_d8cbd1165429d12b.webp 720w, /blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-09.webp 852w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="852" height="398" alt="什麼都沒設計，僅有自動生成的 Primary Key" loading="lazy" decoding="async">
+  <figcaption>什麼都沒設計，僅有自動生成的 Primary Key</figcaption>
+</figure>
+
+<ul>
+<li>執行程式</li>
+</ul>
+<p><img src="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-10.webp" srcset="/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-10_hu_94b6db2cb78749e.webp 720w, /blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-10.webp 852w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="852" height="909" alt="情境 C： 把 Index 全部拿掉，來看看到底有多慘（圖 10）" loading="lazy" decoding="async"></p>
+<p><strong>測試數據</strong>：</p>
+<ul>
+<li>INTEGER 單筆查詢：1.217s</li>
+<li>INTEGER 多筆查詢：1.205s</li>
+<li>INTEGER 設定條件的批量查詢：3:08.252 (m:ss.mmm)</li>
+<li>VARCHAR 單筆查詢：1.755s</li>
+<li>VARCHAR 多筆查詢：1.964s</li>
+<li>VARCHAR 設定條件的批量查詢：44.285s</li>
+</ul>
+<hr>
+<h2 id="六令人意外的總結">六、令人意外的總結<a class="h-anchor" href="#%e5%85%ad%e4%bb%a4%e4%ba%ba%e6%84%8f%e5%a4%96%e7%9a%84%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<p>這邊先列出比較表，方便大家理解：</p>
+<a class="linkcard" href="https://sheetsu.com/tables/64262891c4" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Table</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>sheetsu.com</span>
+  </span>
+</a>
+
+<p>在這張表裡面有我預料的結果，也有我沒想到的結果，我歸類如下：</p>
+<ul>
+<li>批量查詢時，如果有設定 Foreign Key、Index，INTEGER 的搜尋效率優於 VARCHAR。</li>
+<li>在有設定 Foreign Key、Index，那單筆、多筆查詢的效率是差不多的，跟使用 INTEGER 還是 VARCHAR 關聯性不大。</li>
+<li>Foreign Key 的搜尋效率略低於 Index（可能是我在資料表上設計的不足）。</li>
+<li>如果沒建立 Index，那搜尋效率慘不忍睹（即使資料只有 1/10，效能還是超悲劇）。</li>
+<li>如果沒建立 Index，在批量查詢時，INTEGER 查詢效率低於 VARCHAR（這部分我真的搞不懂為什麼）。</li>
+</ul>
+<p>老實說，這個實驗結果反而把我弄得有點迷糊，也許還要從更多面向做測試，追尋知識的道路真的任重道遠🤕</p>
+<blockquote>
+<p>本篇是從「搜尋花費時間」的角度來實驗，歡迎高手從硬體消耗資源的角度來實驗。</p>
+</blockquote>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2022.05.13）</span><a href="https://medium.com/dean-lin/%E5%AF%A6%E9%A9%97-table-join-%E6%99%82-%E9%81%B8%E6%93%87%E6%96%87%E5%AD%97%E6%AC%84%E4%BD%8D-varchar-%E8%88%87%E6%95%B8%E5%80%BC%E6%AC%84%E4%BD%8D-integer-%E5%9C%A8%E6%95%88%E8%83%BD-performance-%E4%B8%8A%E7%9A%84%E5%B7%AE%E7%95%B0-9666cfc01e9" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/table-join/">Table Join</a>
+            <a class="chip chip-hash" href="/tags/varchar/">Varchar</a>
+            <a class="chip chip-hash" href="/tags/integer/">Integer</a>
+            <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
+            <a class="chip chip-hash" href="/tags/sequelize/">Sequelize</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202205%2Fjoin-performance-varchar-vs-integer%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202205%2Fjoin-performance-varchar-vs-integer%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/" data-title="Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202205/sequelize-migration-seeder/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">初探 sequelize，在 Node.js 快速建立 Migration、Seeder（ MySQL）</span></a>
+          <a class="next" href="/blog/202205/read-the-official-docs-first/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">用新技術前請先閱讀官方文檔</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e6%a8%a1%e6%93%ac%e6%83%85%e5%a2%83%e8%aa%aa%e6%98%8e">一、模擬情境說明</a></li><li><a href="#%e4%ba%8c%e5%9c%a8-db-%e5%bb%ba%e7%ab%8b%e6%b8%ac%e8%a9%a6%e6%b8%ac%e8%a9%a6%e5%b0%8d%e7%85%a7%e7%b5%84-table">二、在 DB 建立測試測試對照組 Table</a></li><li class="is-sub"><a href="#-users%e9%a1%a7%e5%ae%a2">➤ users（顧客）</a></li><li class="is-sub"><a href="#-orders%e8%a8%82%e5%96%ae">➤ orders（訂單）</a></li><li class="is-sub"><a href="#-items%e8%b3%bc%e8%b2%b7%e7%9a%84%e5%95%86%e5%93%81">➤ items（購買的商品）</a></li><li><a href="#%e4%b8%89%e8%a8%ad%e8%a8%88%e5%bb%ba%e7%ab%8b%e6%a8%a1%e6%93%ac%e8%b3%87%e6%96%99">三、設計＆建立模擬資料</a></li><li><a href="#%e5%9b%9b%e8%a8%ad%e8%a8%88%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f">四、設計測試程式</a></li><li><a href="#%e4%ba%94%e6%a8%a1%e6%93%ac%e6%af%8f%e5%80%8b%e6%83%85%e5%a2%83%e5%8f%96%e5%be%97%e6%b8%ac%e8%a9%a6%e7%b5%90%e6%9e%9c">五、模擬每個情境，取得測試結果</a></li><li class="is-sub"><a href="#-%e6%83%85%e5%a2%83-a-%e5%b0%87-join-%e7%9a%84%e6%ac%84%e4%bd%8d%e8%a8%ad%e8%a8%88-foreign-key%e6%90%9c%e5%b0%8b%e7%94%a8%e5%88%b0%e7%9a%84%e6%ac%84%e4%bd%8d%e4%b9%9f%e8%a8%ad%e8%a8%88-index">➤ 情境 A： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index</a></li><li class="is-sub"><a href="#-%e6%83%85%e5%a2%83-b-%e5%b0%87-foreign-key-%e7%9a%84%e8%a8%ad%e8%a8%88%e6%8b%bf%e6%8e%89%e6%94%b9%e7%82%ba%e4%bd%bf%e7%94%a8-index">➤ 情境 B： 將 Foreign Key 的設計拿掉，改為使用 Index</a></li><li class="is-sub"><a href="#-%e6%83%85%e5%a2%83-c-%e6%8a%8a-index-%e5%85%a8%e9%83%a8%e6%8b%bf%e6%8e%89%e4%be%86%e7%9c%8b%e7%9c%8b%e5%88%b0%e5%ba%95%e6%9c%89%e5%a4%9a%e6%85%98">➤ 情境 C： 把 Index 全部拿掉，來看看到底有多慘</a></li><li><a href="#%e5%85%ad%e4%bb%a4%e4%ba%ba%e6%84%8f%e5%a4%96%e7%9a%84%e7%b8%bd%e7%b5%90">六、令人意外的總結</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202205%2Fjoin-performance-varchar-vs-integer%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202205%2Fjoin-performance-varchar-vs-integer%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/" data-title="Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAADwBACdASoYAA0APw1mpkemIqGYBABjEMT2AE6ZQjwfQAIOL6aaMYuLf8Zv1vi&#43;MwAA/IpeRREjZxrWMfIJXaWE/VvxAf1I&#43;suXs3Tj26vxnArJRMeQP9/WUDd7qfFeGyMgL6JuYETsHHJhPxrT2G5&#43;sAsAweSgbOoVJV//N96LnqaVxmYAAA==" alt="" width="24" height="13"><img src="/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-01_hu_221430f48bab3ac2.webp" srcset="/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-01_hu_307a5dc32b88a24.webp 240w, /blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-01_hu_93d4d3ea67d711c4.webp 480w, /blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-01_hu_67e3f0b9bbbd349a.webp 800w, /blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-01_hu_221430f48bab3ac2.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="638" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202205/sequelize-migration-seeder/">初探 sequelize，在 Node.js 快速建立 Migration、Seeder（ MySQL）</a></h3>
+    <p class="card-desc">最近在尋找 Node.js 裡面方便操作 Migration、Seeder 的套件，逛著逛著發現 sequelize 在 GitHub 上擁有超高人氣；抱著踩雷的心態來嘗試，於是便寫了這篇 sequelize 的筆記，希望可以幫助到第一次使用 sequelize 的朋友們。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-05-13">2022.05.13</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADwAwCdASoYAAwAPw1mpkemIqGYBABjEMT0gAAzJ3QaDPiVh64J7QYAAP7F4mmfhtDVop53atR2b&#43;OtttnZZfu0zMb3kmaagKj/t/Yw9Nk/xi4dz6L0UtHUBHF1f5OAL57I3CIa1tDdQ/G0slCvtNoa7DixgEEAAAA=" alt="" width="24" height="12"><img src="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_bff1ffae4bf58b52.webp" srcset="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_2e344cb8100c56a2.webp 240w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_2ddd8bf6f3e4ef34.webp 480w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_7e397ca4dc4f3d5.webp 800w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_bff1ffae4bf58b52.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="622" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/kafka-tracing/">Kafka 與分散式追蹤</a></div>
+
+    <h3 class="card-title"><a href="/blog/202211/trace-kafka-with-jaeger/">透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況</a></h3>
+    <p class="card-desc">我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-11-23">2022.11.23</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>5 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAQBACdASoYAA0APw1mp0emIqGYBABjEMT0gAA1r7sK5EF/gb3kKwLggAD&#43;7BGPDBEPQ21CGzPwH9yZJtrLugBOxmcJ4ZSHLcVX2JSR&#43;ARZDZKnog9LSGNPKejSTQ/WZeqdB6tpTc/kAKHy49rasGsi05YGh2&#43;RjoAiv/5A/rPigv/Ewk1RA66Q1YtQKfqZVQ9DB6AAAAA=" alt="" width="24" height="13"><img src="/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_3f93f554e365f2c2.webp" srcset="/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_1e5d67c140e4a4f.webp 240w, /blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_c8b2ac800b256674.webp 480w, /blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_9ed347305feab0fe.webp 800w, /blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_3f93f554e365f2c2.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="633" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/kafka-tracing/">Kafka 與分散式追蹤</a></div>
+
+    <h3 class="card-title"><a href="/blog/202211/nodejs-kafka-hands-on/">手把手帶你建立 Node.js 專案 ＆ Kafka 環境，透過實作了解 Kafka 的運行邏輯</a></h3>
+    <p class="card-desc">本篇文章將會帶大家一步步建立 Node.js 專案 ＆ Kafka 環境，透過具體實踐來了解 Kafka 的運行邏輯。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-11-20">2022.11.20</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

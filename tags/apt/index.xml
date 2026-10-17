@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>APT｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/apt/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Tue, 21 Jun 2022 21:33:28 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/apt/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>放完假後 MySQL Server 就掛了，不是每個錯誤都能靠 Google 找到解答</title>
+      <link>https://deanlin.net/blog/202206/mysql-server-down-after-holiday/</link>
+      <pubDate>Tue, 21 Jun 2022 21:33:28 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202206/mysql-server-down-after-holiday/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>如果你用上圖的錯誤訊息去 Google 搜尋，相信會得到很多解答；但這篇文章遇到的問題，如果用關鍵字搜尋是找不到真正解答的；也因為這次的經驗讓我對 Ubuntu Server、MySQL、apt-mark 有更深一層的認識。</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-01.webp" width="1060" height="561" alt="放完假後 MySQL Server 就掛了，不是每個錯誤都能靠 Google 找到解答（圖 1）" loading="lazy" decoding="async"></p>
+<p>如果你用上圖的錯誤訊息去 Google 搜尋，相信會得到很多解答；但這篇文章遇到的問題，如果用關鍵字搜尋是找不到真正解答的；也因為這次的經驗讓我對 Ubuntu Server、MySQL、apt-mark 有更深一層的認識。</p>
+<pre tabindex="0"><code>大綱
+ㄧ、問題描述
+二、關鍵字搜尋到的方案
+三、從 Error Log 猜想問題
+四、問題的真實原因
+五、解決方案
+六、後記
+</code></pre><hr>
+<h2 id="ㄧ問題描述">ㄧ、問題描述<a class="h-anchor" href="#%e3%84%a7%e5%95%8f%e9%a1%8c%e6%8f%8f%e8%bf%b0" aria-label="這個段落的連結"></a></h2>
+<p>上週建立的中介資料庫在經歷一個假日後，在禮拜一被同事回報登入失敗。</p>
+<p>一開始我以為是帳號密碼錯誤，又或是公司網路問題；但在成功登入 Server 後，我發現連 root 的權限都無法登入 MySQL DB，並出現如下錯誤：</p>
+<pre tabindex="0"><code>ERROR 2002 (HY000): Can’t connect to local MySQL server through socket &#39;/var/run/mysqld/mysqld.sock&#39; (2)
+</code></pre><hr>
+<h2 id="二關鍵字搜尋到的方案">二、關鍵字搜尋到的方案<a class="h-anchor" href="#%e4%ba%8c%e9%97%9c%e9%8d%b5%e5%ad%97%e6%90%9c%e5%b0%8b%e5%88%b0%e7%9a%84%e6%96%b9%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>遇事不知求 Google，我馬上搜尋過去前輩們是怎麼解決這個問題的。</p>
+<p><img src="https://deanlin.net/blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-02.webp" width="1400" height="968" alt="二、關鍵字搜尋到的方案（圖 2）" loading="lazy" decoding="async"></p>
+<p>解決的方法五花八門，我這邊統整一下大致的方向：</p>
+<ol>
+<li>重啟 MySQL 服務</li>
+<li>調整 MySQL 資料夾權限，補齊遺漏的檔案</li>
+<li>重啟整台 Server</li>
+<li>把 MySQL 砍掉重裝</li>
+</ol>
+<p>但很遺憾的，1~3 我都嘗試過了，MySQL 依舊頑強的吐一樣的錯誤，看來不能依靠網路的的解法了。</p>
+<hr>
+<h2 id="三從-error-log-猜想問題">三、從 Error Log 猜想問題<a class="h-anchor" href="#%e4%b8%89%e5%be%9e-error-log-%e7%8c%9c%e6%83%b3%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>因為網路上的方案都失效，所以決定換一個問題處理的方向，去找 MySQL 的 Error Log（其實一開始應該就要這樣做）。</p>
+<p><strong>STEP 1</strong>：前往 MySQL 的設定檔。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
+</span></span></code></pre></div><p><strong>STEP 2</strong>：查看 Error Log 存放路徑。</p>
+<p><img src="https://deanlin.net/blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-03.webp" width="1400" height="497" alt="三、從 Error Log 猜想問題（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：查看 Error Log 內容。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vim /var/log/mysql/error.log
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-04.webp" width="1400" height="599" alt="三、從 Error Log 猜想問題（圖 4）" loading="lazy" decoding="async"></p>
+<p>從時間軸發現服務被完整的關閉後就無法重啟，但假日有誰會把服務給關閉呢？</p>
+<p>於是我便詢問公司的 MIS 部門，在假日是否有對 Server 進行維護作業。</p>
+<p>果然如我所料，對方表示在假日有對各 Server 系統做例行性維護升級，而這台 Ubuntu Server 的 MySQL 正是在這次升級後出問題。</p>
+<hr>
+<h2 id="四問題的真實原因">四、問題的真實原因<a class="h-anchor" href="#%e5%9b%9b%e5%95%8f%e9%a1%8c%e7%9a%84%e7%9c%9f%e5%af%a6%e5%8e%9f%e5%9b%a0" aria-label="這個段落的連結"></a></h2>
+<p>既然問題是由系統升級引起的，那就比較有解決的方向了；在與 MIS 同仁討論後，我們猜想問題應該是 Ubuntu Server 升級後內建的 MySQL 版本為 8.0，但原本安裝的版本為 5.7，因此在升級後發生版本對應不到的問題。</p>
+<p>於是我們便執行下面的指令來查看目前 apt 安裝的套件有哪些，以及對應的版本：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apt list --installed
+</span></span></code></pre></div><p>結果如我們所想，系統更新後，新版本的 MySQL 真的把舊版本給覆蓋住了。</p>
+<hr>
+<h2 id="五解決方案">五、解決方案<a class="h-anchor" href="#%e4%ba%94%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>但因為這台是給其他合作單位使用的資料庫，而對方因為總總歷史包袱只能選用 MySQL 5.7，所以我們是不能對它做升級的。</p>
+<p>但幸好 MIS 在維護前有先將 Server 備份，因此我們如下步驟進行處理：</p>
+<p><strong>STEP 1</strong>：用備份將原本的 Ubuntu Server 還原。</p>
+<p><strong>STEP 2：</strong>下指令將 MySQL Server 版本鎖定。</p>
+<pre tabindex="0"><code>apt-mark hold mysql-server
+</code></pre><p><strong>STEP 3</strong>：查看是否有鎖定成功。</p>
+<pre tabindex="0"><code>apt-mark showhold
+</code></pre><p><strong>STEP 4：</strong>鎖定後再將 Ubuntu Server 做升級維護。</p>
+<p><strong>STEP 5：</strong>升級完成後確認 MySQL 版本有鎖定住。</p>
+<pre tabindex="0"><code>mysql --version
+</code></pre><p>透過上面的步驟後，MySQL 就成功復活了～</p>
+<hr>
+<h2 id="六後記">六、後記<a class="h-anchor" href="#%e5%85%ad%e5%be%8c%e8%a8%98" aria-label="這個段落的連結"></a></h2>
+<p>這個問題花了不少時間才解決，主要是因為我在一開始判斷問題時就走偏了；過去我都是從錯誤訊息找答案，而這次的錯誤訊息卻把我引導到另一個錯誤的方向。</p>
+<p>這次的經驗也讓我明白，除了發生問題的本體外，還要多觀察其他有「相依性」的資訊，否則會陷入死胡同，還期待用錯誤的方法得到正確的結果。</p>
+<p>但同時也提醒大家，千萬不要看完這篇文章後，回去就把所有安裝的套件版本都鎖死；除非有不得已的理由，不然系統、套件都是需要定期更新的，這樣穩定性、安全性才足夠。</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

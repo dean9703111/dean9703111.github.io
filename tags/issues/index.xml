@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Issues｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/issues/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Fri, 17 May 2024 18:26:30 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/issues/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>面試資深職位時，主管最在意的是這點！ ── 下班有約系列文</title>
+      <link>https://deanlin.net/blog/202405/senior-interview-what-managers-want/</link>
+      <pubDate>Fri, 17 May 2024 18:26:30 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202405/senior-interview-what-managers-want/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>職涯成長</category>
+      <description>最近跟一位擔任技術主管的朋友聊天，我問他：「面試過程中，你最看重求職者哪些經驗與特質？」 他說：「如果面試 Senior 以上的職位，我更看重他過去是否有處理正式環境 Critical issue 的經驗；因為技術可以靠後天學習，但有能力處理正式環境 issue 的人並不多。」</description>
+      <content:encoded><![CDATA[<p>最近跟一位擔任技術主管的朋友聊天，我問他：「面試過程中，你最看重求職者哪些經驗與特質？」</p>
+<p>他說：「如果面試 Senior 以上的職位，我更看重他過去是否有處理正式環境 Critical issue 的經驗；因為技術可以靠後天學習，但有能力處理正式環境 issue 的人並不多。」</p>
+<p>停頓了一下，又補充一句：「技術能力只能用來衡量平時的工作效率，但遇到緊急狀況時，在壓力下是否有足夠的膽量與決策能力就很看人格特質了。」</p>
+<p>接著向我分享一個系統升級遇到意外的案例。</p>
+<p><img src="https://deanlin.net/blog/202405/senior-interview-what-managers-want/images/senior-interview-what-managers-want-01.webp" width="1120" height="626" alt="面試資深職位時，主管最在意的是這點！ ── 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="為什麼正式環境發生意外時很難處理">為什麼正式環境發生意外時很難處理？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e6%ad%a3%e5%bc%8f%e7%92%b0%e5%a2%83%e7%99%bc%e7%94%9f%e6%84%8f%e5%a4%96%e6%99%82%e5%be%88%e9%9b%a3%e8%99%95%e7%90%86" aria-label="這個段落的連結"></a></h2>
+<p>如果公司有一定的制度與規模，系統在升級前往往有完善的單元測試，並通過 QA 團隊在不同情境的模擬測試。</p>
+<p>因為事前已經考慮得相當周全，所以當問題發生時，就代表大家根本沒想過這個情境。</p>
+<p>加上系統升級會對外公告維護時間，如果沒在期限內解決問題就出包了。</p>
+<p>這邊我簡單描述一下問題是怎麼發生的：</p>
+<p><strong>A 系統升級時，會需要跑一個一次性的腳本向 B 系統取得資料；但 B 系統的資料不完整，所以 B 系統還要向 C 系統取得部分細節資料。</strong></p>
+<p>在測試環境跑腳本時，一切順利，但上到正式環境後，跳出了「timeout（超時）」的錯誤訊息。</p>
+<hr>
+<h2 id="如何定位問題">如何定位問題？<a class="h-anchor" href="#%e5%a6%82%e4%bd%95%e5%ae%9a%e4%bd%8d%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>出現「timeout（超時）」的問題後，大家並沒有很緊張，覺得只要放寬 A 系統呼叫 API 的時間就好。</p>
+<p>但時間放寬後，timeout 的問題依舊存在，所以接著把目光轉移到 B 系統與 C 系統上，並將程式與 Nginx 的 timeout 時間拉長。</p>
+<p>原本想說這樣問題總能解決了吧？</p>
+<p>但結果不如人意，timeout 的錯誤依舊頑強地顯示。</p>
+<p><strong>為了更精準定位問題，大家把 A 系統、B 系統、C 系統的 API 分開測試，最終發現根本的問題在 C 系統。</strong></p>
+<hr>
+<h2 id="不要讓自己陷入只有一個解決方案的思維">不要讓自己陷入只有一個解決方案的思維<a class="h-anchor" href="#%e4%b8%8d%e8%a6%81%e8%ae%93%e8%87%aa%e5%b7%b1%e9%99%b7%e5%85%a5%e5%8f%aa%e6%9c%89%e4%b8%80%e5%80%8b%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88%e7%9a%84%e6%80%9d%e7%b6%ad" aria-label="這個段落的連結"></a></h2>
+<p>儘管成功定位了問題，但不知道為什麼 C 系統怎麼放寬 timeout 的設定都沒有生效。</p>
+<p>而此時系統維護的時間剩不到半小時，想透過優化演算法來加快效率已經來不及了。</p>
+<p>經過討論後，大家決定不解決 timeout 的問題，而是想辦法不要讓 API timeout。</p>
+<p><strong>最終的方案也非常簡單，只是將 B 系統取得的資料多拆成多份，以 C 系統絕對不會 timeout 的資料量傳送就解決了問題。</strong></p>
+<hr>
+<h2 id="這個案例有什麼值得學習與警惕的地方">這個案例有什麼值得學習與警惕的地方<a class="h-anchor" href="#%e9%80%99%e5%80%8b%e6%a1%88%e4%be%8b%e6%9c%89%e4%bb%80%e9%ba%bc%e5%80%bc%e5%be%97%e5%ad%b8%e7%bf%92%e8%88%87%e8%ad%a6%e6%83%95%e7%9a%84%e5%9c%b0%e6%96%b9" aria-label="這個段落的連結"></a></h2>
+<p>從結論來看，加 3 行程式碼就解決了問題。</p>
+<p>但要做出這個決策並不容易，因為 A、B、C 系統是由不同的團隊進行開發，如果沒有良好的溝通能力，可能連一開始的問題定位都做不到。</p>
+<p>找到問題點後，如果沒有人同時對 A、B、C 系統有一定的掌握度，我想大部分的人會把目標放在解決 timeout 問題，而非調整程式邏輯。</p>
+<p><strong>以這個案例來說，解決問題的人不一定要程式能力很強，但要具備良好的溝通能力，並對多個系統有一定的掌握度，且擁有靈活的思維，不會只想用一種方法解決問題。</strong></p>
+<p>我想，擁有如上特質的人，是市場上真正的稀缺人才。</p>
+<p><strong>最後提醒一下大家，雖然解決問題很帥，但以這個案例來說，只要在測試時考量到正式環境與測試環境的資料量差異，並加上對應的限制與分頁設計，就有機會避免問題發生。</strong></p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/b9f7a7403936" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">下班有約系列文</span>
+    <span class="lc-desc">來自不同領域、職位、產業的故事</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202405/senior-interview-what-managers-want/images/senior-interview-what-managers-want-card-01_hu_15e5953a20a685f9.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202405/senior-interview-what-managers-want/images/senior-interview-what-managers-want-02.webp" width="1400" height="319" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>必讀！了解 ChatGPT 有哪些問題與限制</title>
+      <link>https://deanlin.net/blog/202301/chatgpt-limitations/</link>
+      <pubDate>Thu, 26 Jan 2023 14:25:38 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/chatgpt-limitations/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>筆者最近高頻率的使用 ChatGPT，在享受便利的同時也碰到了不少坑（bugs & issues & limits）；因此將這些問題彙整起來與大家分享。</description>
+      <content:encoded><![CDATA[<p>筆者最近高頻率的使用 ChatGPT，在享受便利的同時也碰到了不少坑（bugs &amp; issues &amp; limits）；因此將這些問題彙整起來與大家分享。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-limitations/images/chatgpt-limitations-01.webp" width="1262" height="686" alt="必讀！了解 ChatGPT 有哪些問題與限制（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+▋ 回答未必是正確的
+▋ 回答的資料有限
+▋ 拒絕回答敏感問題（ex：股票、虛擬貨幣漲跌、暴力、犯罪...）
+▋ 回答到一半斷掉
+▋ 提問次數限制
+▋ 穩定性問題
+▋ 流量大時狀況多
+</code></pre><h2 id="回答未必是正確的">回答未必是正確的<a class="h-anchor" href="#%e5%9b%9e%e7%ad%94%e6%9c%aa%e5%bf%85%e6%98%af%e6%ad%a3%e7%a2%ba%e7%9a%84" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>May occasionally generate incorrect information（可能偶爾會產生不正確的信息）</p>
+</blockquote>
+<p>ChatGPT 知道很多知識，但有時會給出一些看似正確，但實際上是錯誤的回應。</p>
+<p>以下是筆者碰過的錯誤回答：</p>
+<ul>
+<li>詢問他某個地方的旅遊景點 ➝ 景點不存在，或是根本不在哪個地方。</li>
+<li>詢問他當地知名餐廳 ➝ 名字跟簡介煞有其事，結果一查根本不存在。</li>
+<li>請他幫忙寫程式 Side Project ➝ 選用過時套件，使用套件方法錯誤。</li>
+<li>請他協助重構程式 ➝ 重構後的程式可以運作，但部分解釋不完全正確。</li>
+</ul>
+<p>有興趣的讀者可以去以下文章回顧：</p>
+<ul>
+<li><a href="https://deanlin.net/blog/202301/effective-chatgpt-prompts/">如何寫出有效的 Prompt，獲得更好的 ChatGPT 回覆</a></li>
+<li><a href="https://deanlin.net/blog/202301/chatgpt-line-bot-side-project-part-2/">靠問 ChatGPT 寫程式，能完成 OpenAI &amp; Linebot 的 Side Project 嗎？</a></li>
+<li><a href="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/">ChatGPT Code Review、Refactoring、Comments 的能力如何？</a></li>
+</ul>
+<p>雖然前幾篇文章已經提過了，但我還是再次提醒讀者：「無論未來人工智慧發展的多完善，我們都要保持獨立思考的能力，以及對答案的懷疑態度，請勿將 AI 的回答作為唯一的決策依據。」</p>
+<hr>
+<h2 id="回答的資料有限">回答的資料有限<a class="h-anchor" href="#%e5%9b%9e%e7%ad%94%e7%9a%84%e8%b3%87%e6%96%99%e6%9c%89%e9%99%90" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>Limited knowledge of world and events after 2021.（對 2021 年後的世界和事件了解有限）</p>
+</blockquote>
+<p>因為他的資料截止於 2021 年，所以較新的資訊都無法提供，這也進階導致了部分回答的準確率；不過未來如果與搜尋引擎結合，那能力肯定大幅提升。</p>
+<hr>
+<h2 id="拒絕回答敏感問題ex股票虛擬貨幣漲跌暴力犯罪">拒絕回答敏感問題（ex：股票、虛擬貨幣漲跌、暴力、犯罪&hellip;）<a class="h-anchor" href="#%e6%8b%92%e7%b5%95%e5%9b%9e%e7%ad%94%e6%95%8f%e6%84%9f%e5%95%8f%e9%a1%8cex%e8%82%a1%e7%a5%a8%e8%99%9b%e6%93%ac%e8%b2%a8%e5%b9%a3%e6%bc%b2%e8%b7%8c%e6%9a%b4%e5%8a%9b%e7%8a%af%e7%bd%aa" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>Trained to decline inappropriate requests.（受過拒絕不當請求的訓練）</p>
+</blockquote>
+<p>如果詢問他股票漲跌、虛擬貨幣未來走勢，或是些暴力犯罪的問題，他會拒絕回答。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-limitations/images/chatgpt-limitations-02.webp" width="1400" height="419" alt="拒絕回答敏感問題（ex：股票、虛擬貨幣漲跌、暴力、犯罪…）（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>筆者在網路上看過有人用「寫劇本」的方式來繞過這個限制，但個人並不推薦這種操作。</p>
+</blockquote>
+<hr>
+<h2 id="回答到一半斷掉">回答到一半斷掉<a class="h-anchor" href="#%e5%9b%9e%e7%ad%94%e5%88%b0%e4%b8%80%e5%8d%8a%e6%96%b7%e6%8e%89" aria-label="這個段落的連結"></a></h2>
+<p>相信讀者使用 ChatGPT 時，一定都遇過回答到一半就斷掉的問題（如下圖）。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-limitations/images/chatgpt-limitations-03.webp" width="1098" height="649" alt="回答到一半斷掉（圖 3）" loading="lazy" decoding="async"></p>
+<p>此時用「繼續」這類關鍵字就能讓他繼續完成回答。</p>
+<hr>
+<h2 id="提問次數限制">提問次數限制<a class="h-anchor" href="#%e6%8f%90%e5%95%8f%e6%ac%a1%e6%95%b8%e9%99%90%e5%88%b6" aria-label="這個段落的連結"></a></h2>
+<p>如果在短時間詢問太多問題，你可能會看到如下圖示：</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-limitations/images/chatgpt-limitations-04.webp" width="677" height="194" alt="提問次數限制（圖 4）" loading="lazy" decoding="async"></p>
+<p>目前暫時無解，需要等半小時或是更多時間才能使用；未來 ChatGPT 會推出付費版本，相信到時會提高使用者的詢問次數、增加回覆速度。</p>
+<hr>
+<h2 id="穩定性問題">穩定性問題<a class="h-anchor" href="#%e7%a9%a9%e5%ae%9a%e6%80%a7%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>有時回答到一半就無法回答了：</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-limitations/images/chatgpt-limitations-05.webp" width="652" height="211" alt="穩定性問題（圖 5）" loading="lazy" decoding="async"></p>
+<p>又或是把一些很正常的內容判定成違反內容政策：</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-limitations/images/chatgpt-limitations-06.webp" width="1084" height="827" alt="穩定性問題（圖 6）" loading="lazy" decoding="async"></p>
+<p>通常這類狀況只要刷新頁面（Reload）或開新的對話（New chat）就可以解決（也可以透過連結表單回覆你的建議，讓 AI 未來變得更完善）。</p>
+<hr>
+<h2 id="流量大時狀況多">流量大時狀況多<a class="h-anchor" href="#%e6%b5%81%e9%87%8f%e5%a4%a7%e6%99%82%e7%8b%80%e6%b3%81%e5%a4%9a" aria-label="這個段落的連結"></a></h2>
+<p>如果你還沒登入，會被直接卡在外面：</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-limitations/images/chatgpt-limitations-07.webp" width="1239" height="474" alt="流量大時狀況多（圖 7）" loading="lazy" decoding="async"></p>
+<p>如果你已經登入了，那網頁會三不五時就卡住，刷新頁面後會有如下彈窗：</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-limitations/images/chatgpt-limitations-08.webp" width="822" height="93" alt="流量大時狀況多（圖 8）" loading="lazy" decoding="async"></p>
+<hr>
+<p>以上是筆者目前遇過的狀況，不知道讀者還有碰到其他錯誤的情境嗎？歡迎留言分享。</p>
+<p>目前 ChatGPT 還在測試階段，相信日後推出的版本（ex：付費版）會提供更穩定的品質＆準確的答案，就讓我們拭目以待吧！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/chatgpt-limitations/images/chatgpt-limitations-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/chatgpt-limitations/images/chatgpt-limitations-09.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>[前端＆後端]工程師常犯的錯誤 — 下班有約系列文</title>
+      <link>https://deanlin.net/blog/202202/common-frontend-backend-mistakes/</link>
+      <pubDate>Wed, 23 Feb 2022 17:53:45 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202202/common-frontend-backend-mistakes/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>筆者跟擔任 Tech Lead 的朋友聊天時，發現在幫新人 Code Review、Code Refactoring、Bug Fix 時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，今天這篇文章我挑選了幾個工程師常犯的錯誤來分享。</description>
+      <content:encoded><![CDATA[<p>筆者跟擔任 Tech Lead 的朋友聊天時，發現在幫新人 Code Review、Code Refactoring、Bug Fixing 時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，今天這篇文章我挑選了幾個工程師常犯的錯誤來分享。</p>
+<p><img src="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-01.webp" width="1400" height="745" alt="\[前端＆後端\]工程師常犯的錯誤 — 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>大綱
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 保留太多無用的 console.log
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 沒有註明輸出的 console.log 要做什麼事
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 忽視 Console 吐出的警告<span style="color:#f85149">、</span>錯誤
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 不同函式共用<span style="color:#f85149">「</span>命名相同的全域變數<span style="color:#f85149">」</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 大量存取不必要的 API
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 將很多用不到程式碼註解而非刪除
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 沒寫註解<span style="color:#f85149">，</span>或是寫沒有意義的註解
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> Copy <span style="color:#ff7b72;font-weight:bold">&amp;</span> Paste 後<span style="color:#f85149">，</span>Function<span style="color:#f85149">、</span>Variable 命名沒有改
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 沒有寫 <span style="color:#ff7b72">try</span> <span style="color:#ff7b72">catch</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 在他人協助下完成功能後<span style="color:#f85149">，</span>沒有真正了解原理
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 沒有做 Refactoring
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 詢問別人前沒有自己嘗試
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 詢問的問題不夠精確
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 管理者權限與使用者權限混在一起
+</span></span></code></pre></div><h2 id="-保留太多無用的-consolelog">➤ 保留太多無用的 console.log<a class="h-anchor" href="#-%e4%bf%9d%e7%95%99%e5%a4%aa%e5%a4%9a%e7%84%a1%e7%94%a8%e7%9a%84-consolelog" aria-label="這個段落的連結"></a></h2>
+<p>為了追蹤資料流向，我們會用 console.log 來確認程式是否依照我們的想法在執行；但有不少人只會一直增加新的 console.log，而不把已經不需要的 console.log 給移除。</p>
+<h2 id="-沒有註明輸出的-consolelog-要做什麼事">➤ 沒有註明輸出的 console.log 要做什麼事<a class="h-anchor" href="#-%e6%b2%92%e6%9c%89%e8%a8%bb%e6%98%8e%e8%bc%b8%e5%87%ba%e7%9a%84-consolelog-%e8%a6%81%e5%81%9a%e4%bb%80%e9%ba%bc%e4%ba%8b" aria-label="這個段落的連結"></a></h2>
+<p>筆者曾在按下 F12 開啟開發人員工具幫人 debug 時，看到 Console 這個分頁下印出一堆 API 回傳的 response data，但命名完全一樣都叫「result」，這樣我完全無法知道這些 result 是由哪個 API 回傳的ＱＱ</p>
+<p><img src="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-02.webp" width="862" height="433" alt="沒有註明輸出的 console.log 要做什麼事（圖 2）" loading="lazy" decoding="async"></p>
+<p>不然就是很多意義不明只有自己才知道是什麼意思的 console.log（這類型的往往一個月後連本人都不知道在做什麼…）</p>
+<p><img src="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-03.webp" width="862" height="509" alt="沒有註明輸出的 console.log 要做什麼事（圖 3）" loading="lazy" decoding="async"></p>
+<h2 id="-忽視-console-吐出的警告錯誤">➤ 忽視 Console 吐出的警告、錯誤<a class="h-anchor" href="#-%e5%bf%bd%e8%a6%96-console-%e5%90%90%e5%87%ba%e7%9a%84%e8%ad%a6%e5%91%8a%e9%8c%af%e8%aa%a4" aria-label="這個段落的連結"></a></h2>
+<p>有些網頁看似運行的很正常，但在按下 F12 開啟開發人員工具後，你會看到一排讓人血壓上升的紅色 Error Message，如果沒有及時處理遲早有一天會業力引爆的。</p>
+<p><img src="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-04.webp" width="862" height="712" alt="忽視 Console 吐出的警告、錯誤（圖 4）" loading="lazy" decoding="async"></p>
+<h2 id="-不同函式共用命名相同的全域變數">➤ 不同函式共用「命名相同的全域變數」<a class="h-anchor" href="#-%e4%b8%8d%e5%90%8c%e5%87%bd%e5%bc%8f%e5%85%b1%e7%94%a8%e5%91%bd%e5%90%8d%e7%9b%b8%e5%90%8c%e7%9a%84%e5%85%a8%e5%9f%9f%e8%ae%8a%e6%95%b8" aria-label="這個段落的連結"></a></h2>
+<p>像是 Vue 框架下用來儲存變數資訊的 「Vuex」，裡面 State 的資訊是可以在多個頁面共同使用，下面舉例幾個不夠謹慎會造成的問題：</p>
+<ul>
+<li>如果在 loading 資料前沒有清空先前的 state 資訊，會導致進入頁面時會閃現上一次進入的資料。</li>
+<li>如果把第幾頁(page)、分頁筆數(per-page)這些參數在多個頁面共用，那你就會看到有些頁面明明是第一次進入，卻跳轉到其他頁數。</li>
+</ul>
+<h2 id="-大量存取不必要的-api">➤ 大量存取不必要的 API<a class="h-anchor" href="#-%e5%a4%a7%e9%87%8f%e5%ad%98%e5%8f%96%e4%b8%8d%e5%bf%85%e8%a6%81%e7%9a%84-api" aria-label="這個段落的連結"></a></h2>
+<p>這裡舉出兩個常見的例子：</p>
+<ul>
+<li>登入後就「一次呼叫所有的 API」，但許多 API 回傳的資料可能使用者根本還用不到。</li>
+</ul>
+<blockquote>
+<p>這邊提醒一下，適當的「預載」可以增加使用者體驗，但如果在系統首頁就全部載入，除了會消耗使用者的資源外，一旦大量使用者同時上線，對伺服器端會造成很大的壓力。</p>
+</blockquote>
+<ul>
+<li>有些搜尋功能會隨著使用者填入的文字去呼叫 API 來即時顯示搜尋結果或是建議關鍵字（ex：Google），但如果沒有把呼叫 API 的時間間隔設定好（debounceTime），使用者又不停更改搜尋列文字，那就會呼叫非常多不必要的 API。</li>
+</ul>
+<h2 id="-將用不到程式碼註解而非刪除">➤ 將用不到程式碼註解而非刪除<a class="h-anchor" href="#-%e5%b0%87%e7%94%a8%e4%b8%8d%e5%88%b0%e7%a8%8b%e5%bc%8f%e7%a2%bc%e8%a8%bb%e8%a7%a3%e8%80%8c%e9%9d%9e%e5%88%aa%e9%99%a4" aria-label="這個段落的連結"></a></h2>
+<p>在開發階段有時會想到很多的解決方案，因為不確定哪個效能較高，所以就把每個演算法實現出來。</p>
+<p>但有些人在決定使用某個解決方案後，依舊沒把其他的方案刪除，這樣的做法容易造成未來維護的困難度。</p>
+<h2 id="-沒寫註解或是寫沒有意義的註解">➤ 沒寫註解，或是寫沒有意義的註解<a class="h-anchor" href="#-%e6%b2%92%e5%af%ab%e8%a8%bb%e8%a7%a3%e6%88%96%e6%98%af%e5%af%ab%e6%b2%92%e6%9c%89%e6%84%8f%e7%be%a9%e7%9a%84%e8%a8%bb%e8%a7%a3" aria-label="這個段落的連結"></a></h2>
+<p>雖然有神人說過：最好的註解就是程式碼本身</p>
+<p>但我想：「<strong>絕大多數的人都難以到達這個境界，所以要乖乖地寫註解ＸＤ」</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> mode <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// do somethings ...
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (mode <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">0</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// excute logic 1
+</span></span></span><span style="display:flex;"><span>} <span style="color:#ff7b72">else</span> <span style="color:#ff7b72">if</span> (mode <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">1</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// excute logic 2
+</span></span></span><span style="display:flex;"><span>} <span style="color:#ff7b72">else</span> <span style="color:#ff7b72">if</span> (mode <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">2</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// excute logic 3
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/463d3dc91bc4e9789a29bcc4323560d9" rel="noopener">bad_remark_example.js</a>（GitHub Gist）</p>
+<p>像是上面這段 Code，我們可以知道 mode 這個變數應該是應用在某個狀態的判斷上；但具體在哪個地方使用、總共有哪些狀態、各自代表什麼意義，在沒有註解的狀態下只能一行一行的閱讀，沒辦法第一時間理解程式。</p>
+<h3 id="-註解的好處">👍 註解的好處<a class="h-anchor" href="#-%e8%a8%bb%e8%a7%a3%e7%9a%84%e5%a5%bd%e8%99%95" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>交代前因後果：為什麼這樣寫?遇到了什麼困難?解決了什麼問題?</li>
+<li>作為文件說明：有些技術是需要被學習後才能夠看得懂的(ex:引入的模組、套件)，你的註解能讓他快速理解這些工具怎麼使用</li>
+</ol>
+<h3 id="-請不要有註解如下">🙅 請不要有註解如下<a class="h-anchor" href="#-%e8%ab%8b%e4%b8%8d%e8%a6%81%e6%9c%89%e8%a8%bb%e8%a7%a3%e5%a6%82%e4%b8%8b" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>毫無意義的牢騷(ex:我好崩潰啊，這段程式我寫了一個禮拜…)</li>
+<li>把註解當成版本控制(ex:2020/08/23 完成此函式)</li>
+<li>說明這段程式是誰寫的(簽名檔)</li>
+<li>把舊的程式碼註解起來怕以後會用到(但通常再也不會用到，而且這個問題用版控就能解決)</li>
+</ol>
+<h2 id="-copy--paste-後functionvariable-命名沒有改">➤ Copy &amp; Paste 後，Function、Variable 命名沒有改<a class="h-anchor" href="#-copy--paste-%e5%be%8cfunctionvariable-%e5%91%bd%e5%90%8d%e6%b2%92%e6%9c%89%e6%94%b9" aria-label="這個段落的連結"></a></h2>
+<p>如果寫專案時發現之前做過類似的功能，我們會複製過來再做微調，以此加快開發的速度。</p>
+<p>但<strong>請修改 Function、Variable 命名！</strong>這不會花你太多時間，但在未來當你需要維護專案時，你會感謝現在的自己。</p>
+<blockquote>
+<p>筆者之前曾在幫忙 Debug 時，於Ａ系統裡面看到一堆Ｂ系統的命名，當下還以為自己開錯專案了…</p>
+</blockquote>
+<h2 id="-沒有寫-try-catch">➤ 沒有寫 try catch<a class="h-anchor" href="#-%e6%b2%92%e6%9c%89%e5%af%ab-try-catch" aria-label="這個段落的連結"></a></h2>
+<p>程式在缺乏 try-catch 的機制下是非常脆弱的，只要發生例外事件就容易崩潰。</p>
+<p>如果你直接假定 API 只會回傳正確的資訊，而沒有撰寫 try-catch 去捕捉可能的 400、500 系列錯誤，就很可能導致系統許多行為錯誤如：</p>
+<ol>
+<li>跳轉到無權限的頁面</li>
+<li>程式進入無限迴圈</li>
+<li>瘋狂 Call 某隻 API 直到變成 429 錯誤（Too Many Requests）</li>
+</ol>
+<h2 id="-在他人協助下完成功能後沒有真正了解原理">➤ 在他人協助下完成功能後，沒有真正了解原理<a class="h-anchor" href="#-%e5%9c%a8%e4%bb%96%e4%ba%ba%e5%8d%94%e5%8a%a9%e4%b8%8b%e5%ae%8c%e6%88%90%e5%8a%9f%e8%83%bd%e5%be%8c%e6%b2%92%e6%9c%89%e7%9c%9f%e6%ad%a3%e4%ba%86%e8%a7%a3%e5%8e%9f%e7%90%86" aria-label="這個段落的連結"></a></h2>
+<p>我相信大部分的人都是樂於幫助別人解決問題的，但同時也相信，沒有人希望再次被「相同的問題」打擾。</p>
+<p>我這邊強烈建議請他人協助問題前，先 commit 一版，這樣無論對方成功還是失敗，你都有一個記錄在。</p>
+<p>如果對方成功解決這個問題，一定找時間回到當時 commit 的那版，用自己的邏輯把功能完成；<strong>請記住，別人完成的任務不會自動成為你的知識。</strong></p>
+<h2 id="-沒有做-refactoring">➤ 沒有做 Refactoring<a class="h-anchor" href="#-%e6%b2%92%e6%9c%89%e5%81%9a-refactoring" aria-label="這個段落的連結"></a></h2>
+<p>演算法相關的 Refactor 有一定的難度，但有一些很基礎的 Refactor 我認為是有必要的，像是變數命名這一塊。</p>
+<p>我們先來看一個不好的範例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> result <span style="color:#ff7b72;font-weight:bold">=</span> responseData;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>]) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (<span style="color:#a5d6ff">&#34;check_in&#34;</span> <span style="color:#ff7b72">in</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>] <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>].check_in <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>    state.check_in <span style="color:#ff7b72;font-weight:bold">=</span> result[<span style="color:#a5d6ff">0</span>].check_in.toString();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>]) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (<span style="color:#a5d6ff">&#34;check_out&#34;</span> <span style="color:#ff7b72">in</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>] <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>].check_out <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>    state.check_out <span style="color:#ff7b72;font-weight:bold">=</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>].check_out.toString();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/3c6c9d59d698b8738771eee07056b8fd" rel="noopener">need_refactor.js</a>（GitHub Gist）</p>
+<p>上面這個是要取得回傳的「最後一筆」資料做邏輯處理，但是全部都使用「<strong>result[result.length -1]</strong>」來表示，相信大家都會看得有點眼花。</p>
+<p>下面我們做個簡單的 Refactor，看起來就會舒服很多：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> result <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> last_record <span style="color:#ff7b72;font-weight:bold">=</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>];
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (last_record) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (<span style="color:#a5d6ff">&#34;check_in&#34;</span> <span style="color:#ff7b72">in</span> last_record <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> last_record.check_in <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>    state.check_in <span style="color:#ff7b72;font-weight:bold">=</span> last_record.check_in.toString();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (last_record) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (<span style="color:#a5d6ff">&#34;check_out&#34;</span> <span style="color:#ff7b72">in</span> last_record <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> last_record.check_out <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>    state.check_out <span style="color:#ff7b72;font-weight:bold">=</span> last_record.check_out.toString();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/f9afe9487cbf14ddec3b92a61335f2f5" rel="noopener">after_refactor.js</a>（GitHub Gist）</p>
+<h2 id="-詢問別人前沒有自己嘗試">➤ 詢問別人前沒有自己嘗試<a class="h-anchor" href="#-%e8%a9%a2%e5%95%8f%e5%88%a5%e4%ba%ba%e5%89%8d%e6%b2%92%e6%9c%89%e8%87%aa%e5%b7%b1%e5%98%97%e8%a9%a6" aria-label="這個段落的連結"></a></h2>
+<p>有些人在遇到問題時沒有先從網路找資料，而是遇到問題先問同事、前輩。</p>
+<p>儘管這樣可以最快速得到解答，但卻少了很多自我思考的部分，長期來講對工程師職涯是非常不健康的。</p>
+<h2 id="-詢問的問題不夠精確">➤ 詢問的問題不夠精確<a class="h-anchor" href="#-%e8%a9%a2%e5%95%8f%e7%9a%84%e5%95%8f%e9%a1%8c%e4%b8%8d%e5%a4%a0%e7%b2%be%e7%a2%ba" aria-label="這個段落的連結"></a></h2>
+<p>有時會收到主旨模糊的問題，像是：「這個搜尋功能常常會 fail，可以幫我看看嗎？」</p>
+<p>如果可以，收到問題的人會希望問題敘述微調一下：「在人資系統中，我如果在職員列表頁面的搜尋條件中加入部門篩選，會發現搜尋出的結果不合預期，有時會找出其他部門的人員，可以幫我看一下是不是資料庫語法錯誤呢？」</p>
+<blockquote>
+<p><strong>結構為</strong>：哪個系統-&gt;哪個頁面-&gt;你調整了哪些參數-&gt;錯誤結果為何-&gt;初步判定錯誤來源</p>
+</blockquote>
+<h2 id="-管理者權限與使用者權限混在一起">➤ 管理者權限與使用者權限混在一起<a class="h-anchor" href="#-%e7%ae%a1%e7%90%86%e8%80%85%e6%ac%8a%e9%99%90%e8%88%87%e4%bd%bf%e7%94%a8%e8%80%85%e6%ac%8a%e9%99%90%e6%b7%b7%e5%9c%a8%e4%b8%80%e8%b5%b7" aria-label="這個段落的連結"></a></h2>
+<p>很多系統都會分成前台（一般使用者）以及後台（管理者），有時後端為了增加程式共用率，而讓他們使用同一隻 API 存取資料，如果權限有設計好那沒問題，但如果沒設計好可能就出大包了。</p>
+<p>以人資系統來說，假設有一隻 API 是用來存取個人資訊的，API 格式為：「users/{user}」</p>
+<p>假使把這隻 API 共用，一般使用者透過修改中間的「user id」就有可能看到其他人的隱私資訊，這在資訊安全上是非常危險的。</p>
+<p>因此建議將一般使用者與管理者的 API 切割清楚，避免讓使用者看到權限外的資料。</p>
+<hr>
+<blockquote class="pullquote"><p>筆者曾經犯過文章中許多錯誤，沒有人一開始就是強者，但至少要走在變強的道路上。</p>
+</blockquote>
+<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-05.webp" width="1400" height="319" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<pre tabindex="0"><code>下班有約系列文
+▋ [前端]新手工程師容易卡住的問題
+▋ [前端＆後端]工程師常犯的錯誤(本篇)
+▋ 讓開發團隊更好協作的方式
+▋ 談談 Pair Programing
+▋ 談談工程師的話語權
+▋ 出社會後，新鮮人要及早知道的 5 件事
+▋ 面試的性向測驗竟然準到讓人心裡發寒？
+▋ 反其道而行的任務分配
+▋ 現在的 Daily Scrum 真的適合團隊嗎？
+▋ 用低成本也能請到好員工？資深 HR 不想告訴你的秘密！
+</code></pre>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

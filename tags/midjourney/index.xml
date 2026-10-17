@@ -1,0 +1,1362 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Midjourney｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/midjourney/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 15 Apr 2024 13:43:30 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/midjourney/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>用 Midjourney Character Reference（cref） 解決「角色一致性」問題，讓同個角色可以放入不同場景！</title>
+      <link>https://deanlin.net/blog/202404/midjourney-character-reference/</link>
+      <pubDate>Mon, 15 Apr 2024 13:43:30 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202404/midjourney-character-reference/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>過去 Midjourney 有個痛點，就是用 AI 生成角色 IP 後，我們無法將他放到不同場景，因為每次生成的角色都長得不一樣。 但 推出「角色一致性」的功能後，你就可以在保留角色特徵的前提下，調整人物的動作、服裝、背景等元素。 也就是說，你可以自由的創造某個角色的故事。</description>
+      <content:encoded><![CDATA[<p>過去 Midjourney 有個痛點，就是用 AI 生成角色 IP 後，我們無法將他放到不同場景，因為每次生成的角色都長得不一樣。</p>
+<p>但 Midjourney 推出「角色一致性」的功能後，你就可以在保留角色特徵的前提下，調整人物的動作、服裝、背景等元素。</p>
+<p>也就是說，你可以自由的創造某個角色的故事。</p>
+<p><img src="https://deanlin.net/blog/202404/midjourney-character-reference/images/midjourney-character-reference-01.webp" width="1144" height="639" alt="用 Midjourney Character Reference（cref） 解決「角色一致性」問題，讓同個角色可以放入不同場景！（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="使用cref來保持角色一致性">使用「<code>&ndash;cref</code>」來保持角色一致性<a class="h-anchor" href="#%e4%bd%bf%e7%94%a8cref%e4%be%86%e4%bf%9d%e6%8c%81%e8%a7%92%e8%89%b2%e4%b8%80%e8%87%b4%e6%80%a7" aria-label="這個段落的連結"></a></h2>
+<p><strong>Prompt 結構</strong>：「<code>描述句 &ndash;cref 參考圖片的url</code>」</p>
+<p>下圖為參考的圖片：</p>
+<p><img src="https://deanlin.net/blog/202404/midjourney-character-reference/images/midjourney-character-reference-02.webp" width="1024" height="1024" alt="使用「–cref」來保持角色一致性（圖 2）" loading="lazy" decoding="async"></p>
+<p>比如我希望將圖片調整成「主角拿著弓箭準備射擊」，Prompt：「<code>The protagonist is holding a bow and arrow and preparing to shoot , botw &ndash;cref 參考圖片的url </code>」這邊我指定了「botw（曠野之息）」的畫風，讓生成的結果更加一致。</p>
+<p><img src="https://deanlin.net/blog/202404/midjourney-character-reference/images/midjourney-character-reference-03.webp" width="818" height="638" alt="使用「–cref」來保持角色一致性（圖 3）" loading="lazy" decoding="async"></p>
+<p>從生成的結果來看，主角的五官、髮型、服裝、畫風都有維持一制性。</p>
+<p><img src="https://deanlin.net/blog/202404/midjourney-character-reference/images/midjourney-character-reference-04.webp" width="1024" height="1024" alt="使用「–cref」來保持角色一致性（圖 4）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>備註</strong>：如果你想要讓結果混合多個角色的特徵，可以使用這種 Prompt 結構：「<code>描述句 — cref 參考圖片的url1 參考圖片的url2</code>」</p>
+</blockquote>
+<hr>
+<h2 id="透過cw調整參照角色的強度">透過「<code>&ndash;cw</code>」調整參照角色的強度<a class="h-anchor" href="#%e9%80%8f%e9%81%8ecw%e8%aa%bf%e6%95%b4%e5%8f%83%e7%85%a7%e8%a7%92%e8%89%b2%e7%9a%84%e5%bc%b7%e5%ba%a6" aria-label="這個段落的連結"></a></h2>
+<p><strong>Prompt 結構</strong>：「<code>描述句 &ndash;cref 參考圖片的 url &ndash;cw 10</code>」</p>
+<p><code>&ndash;cw</code> 的範圍在「0 ~ 100」，默認為 100。100 表示完全模仿角色特徵；而 0 則可僅保留角色的五官，通常用於更換角色的服裝、髮型。</p>
+<p>下面用「主角坐在王座之上（The protagonist sits on the throne）」示範給大家看：</p>
+<ul>
+<li>cw 為 100 時，細節幾乎相同。</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202404/midjourney-character-reference/images/midjourney-character-reference-05.webp" width="694" height="632" alt="透過「–cw」調整參照角色的強度（圖 5）" loading="lazy" decoding="async"></p>
+<ul>
+<li>cw 為 0 時，部分服裝依情節自動改變了。</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202404/midjourney-character-reference/images/midjourney-character-reference-06.webp" width="679" height="632" alt="透過「–cw」調整參照角色的強度（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="建立四格漫畫">建立四格漫畫<a class="h-anchor" href="#%e5%bb%ba%e7%ab%8b%e5%9b%9b%e6%a0%bc%e6%bc%ab%e7%95%ab" aria-label="這個段落的連結"></a></h2>
+<p>最後分享一個建立四格漫畫的 Prompt：「<code>imagine 4 panels with continuous</code>」</p>
+<p><img src="https://deanlin.net/blog/202404/midjourney-character-reference/images/midjourney-character-reference-07.webp" width="694" height="632" alt="建立四格漫畫（圖 7）" loading="lazy" decoding="async"></p>
+<p>你可以透過這個 Prompt 創造屬於主角的故事，接下來就是讓自己想像力遨翔的時刻了。</p>
+<p><img src="https://deanlin.net/blog/202404/midjourney-character-reference/images/midjourney-character-reference-08.webp" width="1024" height="1024" alt="建立四格漫畫（圖 8）" loading="lazy" decoding="async"></p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202404/midjourney-character-reference/images/midjourney-character-reference-card-01_hu_db60c4fae6893048.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202404/midjourney-character-reference/images/midjourney-character-reference-09.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>超實用！AI 繪圖的 5 個應用場景（DALL·E 3、Midjourney）</title>
+      <link>https://deanlin.net/blog/202312/ai-image-use-cases/</link>
+      <pubDate>Tue, 26 Dec 2023 13:07:15 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202312/ai-image-use-cases/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>今年過節時，筆者收到的賀圖有 60% 都是 AI 繪製的 🤖 所以開始統整 AI 繪圖常見的應用面向「產品概念圖、創意梗圖、諧音梗圖、文件配圖、節日賀圖」與 Prompt 技巧。 這篇文章會用 DALL·E 3 及 Midjourney 產出，讓大家感受兩者的差差異。</description>
+      <content:encoded><![CDATA[<p>今年過節時，筆者收到的賀圖有 60% 都是 AI 繪製的 🤖</p>
+<p>因為感受到 AI 繪圖逐漸普及，所以我開始統整 AI 繪圖常見的應用面向「產品概念圖、創意梗圖、諧音梗圖、文件配圖、節日賀圖」，以及下指令 (Prompt) 的技巧。</p>
+<p>這篇文章中，每個面向都會用 DALL·E 3（左）及 Midjourney（右）產出，讓大家感受兩者的差異，並在文末分享自己的感受。</p>
+<p><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-01.webp" width="1093" height="615" alt="超實用！AI 繪圖的 5 個應用場景（DALL·E 3、Midjourney）（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="產品概念圖-">產品概念圖 🎨<a class="h-anchor" href="#%e7%94%a2%e5%93%81%e6%a6%82%e5%bf%b5%e5%9c%96-" aria-label="這個段落的連結"></a></h2>
+<p>如果要自己從 0 開始繪製草圖很花時間，但如果透過 AI 先產生概念圖，然後讓客戶選擇自己喜歡的風格，就能大幅降低溝通上的成本，並減少重工次數。</p>
+<p>我覺得這是大多數產業可以應用的面向，下面分享幾個案例。</p>
+<h3 id="網頁概念圖-">網頁概念圖 💻<a class="h-anchor" href="#%e7%b6%b2%e9%a0%81%e6%a6%82%e5%bf%b5%e5%9c%96-" aria-label="這個段落的連結"></a></h3>
+<p>說明網站的主題（fitness）、風格（energetic）、配色（green color）。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-02.webp" width="1024" height="1024" alt="網頁概念圖 💻（圖 2）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-03.webp" width="1024" height="1024" alt="網頁概念圖 💻（圖 3）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<h3 id="香水創意攝影-">香水創意攝影 📸<a class="h-anchor" href="#%e9%a6%99%e6%b0%b4%e5%89%b5%e6%84%8f%e6%94%9d%e5%bd%b1-" aria-label="這個段落的連結"></a></h3>
+<p>加上奢華（luxury）、廣告（ads）這類關鍵字能讓畫面更好的呈現。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-04.webp" width="1024" height="1024" alt="香水創意攝影 📸（圖 4）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-05.webp" width="1024" height="1024" alt="香水創意攝影 📸（圖 5）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<h3 id="室內裝潢-">室內裝潢 🏠<a class="h-anchor" href="#%e5%ae%a4%e5%85%a7%e8%a3%9d%e6%bd%a2-" aria-label="這個段落的連結"></a></h3>
+<p>陳述要呈現的場景（Hotel），並搭配設計風格與設計師（Kelly Hoppen）</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-06.webp" width="1024" height="1024" alt="室內裝潢 🏠（圖 6）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-07.webp" width="1024" height="1024" alt="室內裝潢 🏠（圖 7）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<h3 id="美食商業攝影-">美食商業攝影 🍲<a class="h-anchor" href="#%e7%be%8e%e9%a3%9f%e5%95%86%e6%a5%ad%e6%94%9d%e5%bd%b1-" aria-label="這個段落的連結"></a></h3>
+<p>搭配美味（deliciously）、細節（detailed）、拍攝技法（50mm lens with cinematic lighting）等關鍵字，可以讓食物呈現得更真實與好吃。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-08.webp" width="1024" height="1024" alt="美食商業攝影 🍲（圖 8）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-09.webp" width="1024" height="1024" alt="美食商業攝影 🍲（圖 9）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<hr>
+<h2 id="創意梗圖-">創意梗圖 😂<a class="h-anchor" href="#%e5%89%b5%e6%84%8f%e6%a2%97%e5%9c%96-" aria-label="這個段落的連結"></a></h2>
+<p>在過去，如果沒有美術的基礎，就算腦中有想法也無法輸出。</p>
+<p>但得益於 AI，只要我們有能力描繪出腦海中的畫面，就能產生一個又一個創意梗圖 😆</p>
+<h3 id="尼安德特人自拍-">尼安德特人自拍 🤳<a class="h-anchor" href="#%e5%b0%bc%e5%ae%89%e5%be%b7%e7%89%b9%e4%ba%ba%e8%87%aa%e6%8b%8d-" aria-label="這個段落的連結"></a></h3>
+<p>這是一種科技錯位的表現，我搭配自拍（selfie）這個關鍵字。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-10.webp" width="1024" height="1024" alt="尼安德特人自拍 🤳（圖 10）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-11.webp" width="1024" height="1024" alt="尼安德特人自拍 🤳（圖 11）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<h3 id="趙子龍單騎救主-">趙子龍單騎救主 🐱<a class="h-anchor" href="#%e8%b6%99%e5%ad%90%e9%be%8d%e5%96%ae%e9%a8%8e%e6%95%91%e4%b8%bb-" aria-label="這個段落的連結"></a></h3>
+<p>你也可以重新抒寫歷史，讓長板坡上救回來的是貓主子。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-12.webp" width="1024" height="1024" alt="趙子龍單騎救主 🐱（圖 12）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-13.webp" width="1024" height="1024" alt="趙子龍單騎救主 🐱（圖 13）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<hr>
+<h2 id="諧音梗圖-">諧音梗圖 🎵<a class="h-anchor" href="#%e8%ab%a7%e9%9f%b3%e6%a2%97%e5%9c%96-" aria-label="這個段落的連結"></a></h2>
+<p>這跟創意梗圖類似，不過更重視文字與圖片的連結性，並且與地區文化相關聯 🌐</p>
+<h3 id="戰鬥雞-">戰鬥雞 🐔<a class="h-anchor" href="#%e6%88%b0%e9%ac%a5%e9%9b%9e-" aria-label="這個段落的連結"></a></h3>
+<p>讓動物擬人化也是一種創意的面向，這邊我主要是描述雞身上會配戴的裝備（盔甲、武器），以及情境（戰場）。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-14.webp" width="1024" height="1024" alt="戰鬥雞 🐔（圖 14）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-15.webp" width="1024" height="1024" alt="戰鬥雞 🐔（圖 15）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<h3 id="烤骨隊-">烤骨隊 🍖<a class="h-anchor" href="#%e7%83%a4%e9%aa%a8%e9%9a%8a-" aria-label="這個段落的連結"></a></h3>
+<p>要特別注意血腥恐怖的詞彙容易審查不過關，所以我這邊是改用玩具（toys）的方式來繞過去。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-16.webp" width="1024" height="1024" alt="烤骨隊 🍖（圖 16）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-17.webp" width="1024" height="1024" alt="烤骨隊 🍖（圖 17）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<hr>
+<h2 id="文件配圖-">文件配圖 📄<a class="h-anchor" href="#%e6%96%87%e4%bb%b6%e9%85%8d%e5%9c%96-" aria-label="這個段落的連結"></a></h2>
+<p>如果文件、簡報只有滿滿的文字，我相信沒有幾個人可以堅持看下去。</p>
+<p>過去我們需要去網路上找素材搭配，但現在直接請 AI 生成對應的素材就好了。</p>
+<h3 id="堆積如山的資料-">堆積如山的資料 🗂️<a class="h-anchor" href="#%e5%a0%86%e7%a9%8d%e5%a6%82%e5%b1%b1%e7%9a%84%e8%b3%87%e6%96%99-" aria-label="這個段落的連結"></a></h3>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-18.webp" width="1024" height="1024" alt="堆積如山的資料 🗂️（圖 18）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-19.webp" width="1024" height="1024" alt="堆積如山的資料 🗂️（圖 19）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<h3 id="上班族被工作淹沒-">上班族被工作淹沒 💼<a class="h-anchor" href="#%e4%b8%8a%e7%8f%ad%e6%97%8f%e8%a2%ab%e5%b7%a5%e4%bd%9c%e6%b7%b9%e6%b2%92-" aria-label="這個段落的連結"></a></h3>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-20.webp" width="1024" height="1024" alt="上班族被工作淹沒 💼（圖 20）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-21.webp" width="1024" height="1024" alt="上班族被工作淹沒 💼（圖 21）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<hr>
+<h2 id="節日賀圖">節日賀圖<a class="h-anchor" href="#%e7%af%80%e6%97%a5%e8%b3%80%e5%9c%96" aria-label="這個段落的連結"></a></h2>
+<p>我想這應該是最常見的應用，你可以為每個節日生成專屬的 AI 賀卡 💌</p>
+<h3 id="農曆春節-">農曆春節 🐉<a class="h-anchor" href="#%e8%be%b2%e6%9b%86%e6%98%a5%e7%af%80-" aria-label="這個段落的連結"></a></h3>
+<p>這邊透過指定顏色（red）的光（luminescent）搭配黑色背景（black background）來勾勒出圖像主題（dragon）。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-22.webp" width="1024" height="1024" alt="農曆春節 🐉（圖 22）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-23.webp" width="1024" height="1024" alt="農曆春節 🐉（圖 23）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<h3 id="中秋節-">中秋節 🌕<a class="h-anchor" href="#%e4%b8%ad%e7%a7%8b%e7%af%80-" aria-label="這個段落的連結"></a></h3>
+<p>在人物上，你可以指定性別年齡（26 歲台灣女性）、服裝（和服）、姿勢（拿月餅）。這邊我有再搭配背景（中式建築欄杆、左上一輪明月）來呈現中秋節的感覺。</p>
+<p>另外用 photoreality、真實光線，4K 畫面這類關鍵詞，可以增加擬真度。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-24.webp" width="1024" height="1024" alt="中秋節 🌕（圖 24）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-25.webp" width="1024" height="1024" alt="中秋節 🌕（圖 25）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<hr>
+<h2 id="結語">結語<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>從圖片的細緻度、真實感來評斷，我個人覺得 Midjourney 的平均表現比較好；但論操作的容易度，DALL·E 3 大勝 ✨</p>
+<p>不過 AI 繪圖有很高的隨機性 🎲，大家看到別人很棒的繪圖成果，很多都是從幾十甚至上百次結果中精挑細選出來的。</p>
+<p>好的 Prompt 與大量嘗試能產出更好的結果，這篇文章僅是拋磚引玉，舉出幾個常見的應用分享給大家，也歡迎留言分享自己的應用場景，我相信透過彼此的交流能激發更多的想法 🔄</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202312/ai-image-use-cases/images/ai-image-use-cases-26.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>Midjourney &#43; Gen-2 聯手將圖片轉成唯美動畫</title>
+      <link>https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/</link>
+      <pubDate>Sat, 29 Jul 2023 21:43:18 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>Midjourney 是一款輸入關鍵字就能產出唯美圖片的工具，而 Gen-2 可以讓靜態的圖片動起來；那如果將這兩款工具結合，是否能產生令人歎為觀止的唯美動畫？</description>
+      <content:encoded><![CDATA[<p>Midjourney 是一款輸入關鍵字就能產出唯美圖片的工具，而 Gen-2 可以讓靜態的圖片動起來；那如果將這兩款工具結合，是否能產生令人歎為觀止的唯美動畫？</p>
+<p><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-01.webp" width="1145" height="617" alt="Midjourney &#43; Gen-2 聯手將圖片轉成唯美動畫（圖 1）" loading="lazy" decoding="async"></p>
+<p>結果是否跟我們想的一樣呢？就讓筆者來實際操作看看！</p>
+<h2 id="step-1用-midjourney-產生圖片">STEP 1：用 Midjourney 產生圖片<a class="h-anchor" href="#step-1%e7%94%a8-midjourney-%e7%94%a2%e7%94%9f%e5%9c%96%e7%89%87" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>目前 <a href="https://www.midjourney.com/">Midjourney</a> 需要付費才能使用，如果這是你第一次認識 Midjourney，可以參考筆者先前分享的<a href="https://deanlin.net/blog/202301/midjourney-getting-started/">文章</a>；如果你沒有 Midjourney 帳戶，透過 DALLE 或是使用筆者在後面提供的圖片也可以體驗。</p>
+</blockquote>
+<p>筆者的 Prompt 為「<code><strong>musical imitation &ndash;ar 16:9</strong></code>」</p>
+<p><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-02.webp" width="1400" height="749" alt="STEP 1：用 Midjourney 產生圖片（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-2註冊-runway-帳號">STEP 2：註冊 Runway 帳號<a class="h-anchor" href="#step-2%e8%a8%bb%e5%86%8a-runway-%e5%b8%b3%e8%99%9f" aria-label="這個段落的連結"></a></h2>
+<p><strong>Runway 官網</strong>：<a href="https://runwayml.com/">https://runwayml.com/</a></p>
+<p><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-03.webp" width="1400" height="748" alt="STEP 2：註冊 Runway 帳號（圖 3）" loading="lazy" decoding="async"></p>
+<p>可以使用 Google 帳號 or 其他方案來註冊，成功後會詢問你是否要訂閱他們的最新資訊。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-04.webp" width="1400" height="741" alt="STEP 2：註冊 Runway 帳號（圖 4）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-05.webp" width="1400" height="741" alt="STEP 2：註冊 Runway 帳號（圖 5）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<p>然後會有彈窗顯示目前的付費方案，我們先選擇「Free」來嘗試看看。</p>
+<p><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-06.webp" width="1233" height="790" alt="STEP 2：註冊 Runway 帳號（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-3使用-gen-2-模型將圖片轉成動畫">STEP 3：使用 Gen-2 模型，將圖片轉成動畫<a class="h-anchor" href="#step-3%e4%bd%bf%e7%94%a8-gen-2-%e6%a8%a1%e5%9e%8b%e5%b0%87%e5%9c%96%e7%89%87%e8%bd%89%e6%88%90%e5%8b%95%e7%95%ab" aria-label="這個段落的連結"></a></h2>
+<p>這篇文章的目的是讓靜態圖片動起來，所以我們選擇右上角的「Image to Video」。</p>
+<p><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-07.webp" width="1400" height="737" alt="STEP 3：使用 Gen-2 模型，將圖片轉成動畫（圖 7）" loading="lazy" decoding="async"></p>
+<p>進入後你會看到右上角顯示「105s left」，這是指你可以產生的影片秒數。</p>
+<p><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-08.webp" width="1400" height="737" alt="STEP 3：使用 Gen-2 模型，將圖片轉成動畫（圖 8）" loading="lazy" decoding="async"></p>
+<p>在 Gen-2 的模式下，可以使用「上傳圖片」或搭配「輸入文字」來產生影片，這邊我們採用<strong>上傳圖片</strong>的方案，點擊「Generate」後便會開始生成。</p>
+<blockquote>
+<p><a href="https://deanlin.net/blog/202307/runway-gen2-text-to-video/">用文字產生影片的教學文章在這裡</a>。</p>
+</blockquote>
+<figure class="figure"><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-09.webp" width="1400" height="740" alt="你會發現右上角的 105s 變成 101s 惹" loading="lazy" decoding="async">
+  <figcaption>你會發現右上角的 105s 變成 101s 惹</figcaption>
+</figure>
+
+<p>下面就是圖片轉為影片的結果喔！目前 Gen2 只能產出 4 sec 的影片；如果你想要讓影片更長，可以用最後一張圖當基底讓他產生。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-10.webp" width="1400" height="785" alt="STEP 3：使用 Gen-2 模型，將圖片轉成動畫（圖 10）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-11.webp" width="896" height="512" aria-label="musical imitation — ar 16:9" data-gifv>
+    <source src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-11.mp4" type="video/mp4">
+  </video>
+  <figcaption><strong>musical imitation — ar 16:9</strong></figcaption>
+</figure>
+
+
+</div>
+
+<hr>
+<h2 id="更多案例展示">更多案例展示<a class="h-anchor" href="#%e6%9b%b4%e5%a4%9a%e6%a1%88%e4%be%8b%e5%b1%95%e7%a4%ba" aria-label="這個段落的連結"></a></h2>
+<p>下面是筆者將圖片轉為動畫的各種實驗，大家可以先瀏覽看看，最後我再分享自己的心得。</p>
+<h3 id="-場景">➤ 場景<a class="h-anchor" href="#-%e5%a0%b4%e6%99%af" aria-label="這個段落的連結"></a></h3>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-12.webp" width="1033" height="579" alt="場景（圖 12）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-13.webp" width="896" height="512" aria-label="A beautiful place wallpaper — ar 16:9" data-gifv>
+    <source src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-13.mp4" type="video/mp4">
+  </video>
+  <figcaption>A beautiful place wallpaper — ar 16:9</figcaption>
+</figure>
+
+
+</div>
+
+<h3 id="-可愛動物有點魔性">➤ 可愛動物（有點魔性）<a class="h-anchor" href="#-%e5%8f%af%e6%84%9b%e5%8b%95%e7%89%a9%e6%9c%89%e9%bb%9e%e9%ad%94%e6%80%a7" aria-label="這個段落的連結"></a></h3>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-14.webp" width="1011" height="567" alt="可愛動物（有點魔性）（圖 14）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-15.webp" width="896" height="512" aria-label="The rabbit and his two friends are crazing Sprinkle banknotes towards the sky, the picture is full of banknotes and celebrate New Year , 3d , shiny , cute , painting by ghibli studio — ar 16:9" data-gifv>
+    <source src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-15.mp4" type="video/mp4">
+  </video>
+  <figcaption><strong>The rabbit and his two friends are crazing Sprinkle banknotes towards the sky, the picture is full of banknotes and celebrate New Year , 3d , shiny , cute , painting by ghibli studio — ar 16:9</strong></figcaption>
+</figure>
+
+
+</div>
+
+<h3 id="-人像">➤ 人像<a class="h-anchor" href="#-%e4%ba%ba%e5%83%8f" aria-label="這個段落的連結"></a></h3>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-16.webp" width="1090" height="603" alt="人像（圖 16）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-17.webp" width="896" height="512" aria-label="a young male person with silver hair standing on the beach, in the style of sandara tang, piratepunk, karol bak, video, white and amber, hiroshi nagai, enchanting — ar 128:71" data-gifv>
+    <source src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-17.mp4" type="video/mp4">
+  </video>
+  <figcaption>a young male person with silver hair standing on the beach, in the style of sandara tang, piratepunk, karol bak, video, white and amber, hiroshi nagai, enchanting — ar 128:71</figcaption>
+</figure>
+
+
+</div>
+
+<h2 id="結語">結語<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>嘗試各種素材後，我發現了以下規則：</p>
+<ul>
+<li>圖片不要有太多元素，當細節太多時，哪塊會成為動畫完全憑運氣。</li>
+<li>人物盡量只挑上半身，不然產出的影片會很獵奇。</li>
+<li>多種素材測試下來，場景的表現是最好的。</li>
+</ul>
+<p>下面分享一些悲劇的案例：</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-18.webp" width="1400" height="785" alt="結語（圖 18）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-19.webp" width="896" height="512" aria-label="在雲端拉小提琴結果摔下去" data-gifv>
+    <source src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-19.mp4" type="video/mp4">
+  </video>
+  <figcaption>在雲端拉小提琴結果摔下去</figcaption>
+</figure>
+
+
+</div>
+
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-20.webp" width="1400" height="785" alt="結語（圖 20）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-21.webp" width="896" height="512" aria-label="原本希望在沙漠前行，結果變成了鬼步" data-gifv>
+    <source src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-21.mp4" type="video/mp4">
+  </video>
+  <figcaption>原本希望在沙漠前行，結果變成了鬼步</figcaption>
+</figure>
+
+
+</div>
+
+<p>雖然部分結果不如預期，但這些成果也足夠驚人了；從筆者的角度來看，AI 將對影視產業產生巨大的衝擊，就像綠幕剛誕生的時候一樣。</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/images/midjourney-runway-gen2-animation-22.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>面對 ChatGPT 帶來的 AI 紅利，你是行動者還是旁觀者？</title>
+      <link>https://deanlin.net/blog/202305/ai-dividend-act-or-watch/</link>
+      <pubDate>Fri, 19 May 2023 18:28:47 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202305/ai-dividend-act-or-watch/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>ChatGPT 推出近半年，我寫了 35 篇 AI 工具的文章、出版 3 本 ChatGPT 的書籍，並透過線上講座、實體課程與數千人分享自己使用…</description>
+      <content:encoded><![CDATA[<p>ChatGPT 推出近半年，我寫了 35 篇 AI 工具的文章、出版 3 本 ChatGPT 的書籍，並透過線上講座、實體課程與數千人分享自己使用 AI 工具的經驗，甚至收到經理人月刊的專訪、人間衛視節目的邀約。</p>
+<p>在這篇文章我會分享自己做過的決策，經驗不可複製，但一定有值得參考的地方。</p>
+<p><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-01.webp" width="1400" height="777" alt="面對 ChatGPT 帶來的 AI 紅利，你是行動者還是旁觀者？（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="想收穫時代紅利就要在大多數人持觀望態度時-all-in">想收穫時代紅利，就要在大多數人持觀望態度時 All In<a class="h-anchor" href="#%e6%83%b3%e6%94%b6%e7%a9%ab%e6%99%82%e4%bb%a3%e7%b4%85%e5%88%a9%e5%b0%b1%e8%a6%81%e5%9c%a8%e5%a4%a7%e5%a4%9a%e6%95%b8%e4%ba%ba%e6%8c%81%e8%a7%80%e6%9c%9b%e6%85%8b%e5%ba%a6%e6%99%82-all-in" aria-label="這個段落的連結"></a></h2>
+<p>選擇比努力更重要，在 AI 領域我絕對稱不上專家，充其量只能算是樂於分享自身經驗的 AI 工具早期使用者。</p>
+<p>我所有決策中做的最正確的，就是<strong>在今年 1 月答應答應出版社撰寫 ChatGPT 的書籍</strong>，然後在接下來的一個月 All In 所有時間，我捨棄了春節、下班娛樂、週末休息，全神貫注的把時間投入在寫書上，最終<a href="https://deanlin.net/blog/202302/wrote-a-book-with-chatgpt/"><strong>花了</strong> <strong>11 天完成草稿，22 天後交稿</strong></a><strong>。</strong></p>
+<p>書籍在 2023 / 2 / 24 開放預購，剛好關注 ChatGPT 與 Midjourney 話題的人在這個時間點爆發式成長，而我就靠著「<a href="https://tw.news.yahoo.com/news/ai%E4%B9%9F%E8%83%BD%E5%B9%AB%E5%AF%AB%E6%9B%B8-%E5%85%A8%E5%8F%B0%E7%AC%AC-%E6%9C%AC-chatgpt-%E6%87%89%E7%94%A8%E8%A7%A3%E6%9E%90%E5%B0%88%E6%9B%B822%E5%A4%A9%E5%AE%8C%E7%A8%BF-091456717.html?guccounter=1&amp;guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&amp;guce_referrer_sig=AQAAAJr_rG6jvCw-7h5fXbNHI5x87g96cBM2fKTqv8TsVQyf3HSHPpcS_CQMazuqY6HnN8FmF4iKqk3V8j4cSalBWJWQV3JC1aGsesDerBFHr6MS_EEsUraOx6lT6FSdEa4AlER7t4CYRJUXJUL9P5_ykarHlm-CdW3TGq1H9srHdQtY">全台第一本 ChatGPT 應用專書</a>」的 Title 取得第一波 AI 紅利。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-02.webp" width="1400" height="974" alt="博客來銷售成績" loading="lazy" decoding="async">
+  <figcaption>博客來銷售成績</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-03.webp" width="1070" height="704" alt="天瓏書局銷售成績" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786263334137">天瓏書局銷售成績</a></figcaption>
+</figure>
+
+<blockquote>
+<p>過去筆者出版過<a href="https://www.tenlong.com.tw/products/9789864348008">網路爬蟲</a>、<a href="https://www.tenlong.com.tw/products/9786263334571">工程師職涯</a>的書籍，但技術類型的書籍真的不好賣，就算是入選天瓏年度暢銷榜的作品，也是過了近一年才再版；而<strong>這本書剛出 3 個月就已經 7 刷</strong>，這是我過去完全無法想像的。</p>
+</blockquote>
+<hr>
+<h2 id="我在這幾個月做了什麼">我在這幾個月做了什麼<a class="h-anchor" href="#%e6%88%91%e5%9c%a8%e9%80%99%e5%b9%be%e5%80%8b%e6%9c%88%e5%81%9a%e4%ba%86%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<p>運氣只是入場的門票，你能發現這個機遇，其他對市場敏感的人同樣也能加入這個賽道；單靠「幸運」是無法連續 3 個月都待在榜單上的，下面分享一下這幾個月我做了什麼。</p>
+<p>在 2023 / 2 / 24 開放預購當天，出版社的編輯就來電希望我抓緊 ChatGPT 的紅利趕緊寫下一本書，內容以先前<a href="https://www.tenlong.com.tw/products/9786263334571">工程師職涯的書籍</a>為基礎，再加上 ChatGPT 的章節，這本書於 5 月順利出版（歡迎路過點讚）。</p>
+<a class="linkcard" href="https://www.tenlong.com.tw/products/9786263334571" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">天瓏網路書店 | 給全端工程師的職涯生存筆記：從履歷×面試×職場打造無可取代的軟實力 (ChatGPT加強版) (iThome鐵人賽系列書)</span>
+    <span class="lc-desc">出版商: 博碩文化 出版日期: 2023-05-04 定價: $650 售價: 7.8 折 $507 語言: 繁體中文 頁數: 416 裝訂: 平裝 ISBN: 6263334576 ISBN-13: 9786263334571…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>www.tenlong.com.tw</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-card-01_hu_a93435c81910d787.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p>GPT-4 推出沒多久後，出版社的編輯再次來電，希望我可以跟上潮流準備改版事宜；所以這篇文章發表時，<a href="https://www.tenlong.com.tw/products/9786263334885">ChatGPT 改版的書籍也開放預購</a>。</p>
+<a class="linkcard" href="https://www.tenlong.com.tw/products/9786263334885" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">天瓏網路書店 | ChatGPT 與 AI 繪圖效率大師（第二版）：添加 GPT-4、Bing Chat、ChatGPT plugins 等全新章節，從日常到職場全方位應用，打造AI極簡新生活</span>
+    <span class="lc-desc">出版商: 博碩文化 出版日期: 2023-05-31 定價: $690 售價: 7.8 折 $538 語言: 繁體中文 頁數: 432 ISBN: 6263334886 ISBN-13: 9786263334885 相關分類…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>www.tenlong.com.tw</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-card-02_hu_4f131690c5486113.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-04.webp" width="1400" height="715" alt="我在這幾個月做了什麼（圖 4）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-05.webp" width="1372" height="965" alt="感謝所有人的支持，讓本書在預購期間便取得週排 Top 1、月排 Top 2 的亮眼成績" loading="lazy" decoding="async">
+  <figcaption>感謝所有人的支持，讓本書在預購期間便取得週排 Top 1、月排 Top 2 的亮眼成績</figcaption>
+</figure>
+
+
+</div>
+
+<p>在第一版推出後，筆者收到許多讀者的回饋，並透過講課與交流更深入理解大眾的需求與不安。</p>
+<p>因此，在本次改版中加入了更多的實用技巧和案例，同時分享 GPT-4、Bing Chat、ChatGPT plugins 等新工具的使用場景，讓你走在潮流最前線，歡迎感興趣的讀者支持選購。</p>
+<p><strong>但即便有 ChatGPT 輔助，一個月出一本書還是很累</strong>；而且除了寫書外，我還收到許多企業內訓與線上課程邀約。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-06.webp" width="1400" height="639" alt="【資料科學家的工作日常】Youtube 直播課程" loading="lazy" decoding="async">
+  <figcaption>【資料科學家的工作日常】<a href="https://www.accupass.com/event/2303121622578724733490?fbclid=IwAR0ov5l-L5AsCWABt7hQhv1otgl-6XmeU0vJMLGyoCYWEn-3ueVcYRu_8Mk">Youtube 直播課程</a></figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-07.webp" width="1400" height="736" alt="【中華電信學院】企業內訓" loading="lazy" decoding="async">
+  <figcaption>【中華電信學院】企業內訓</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-08.webp" width="1400" height="1050" alt="【中華郵政】企業內訓" loading="lazy" decoding="async">
+  <figcaption>【中華郵政】企業內訓</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-09.webp" width="792" height="555" alt="【遠見雜誌】線上講座（此為 QA 時間，圖片來源於遠見雜誌）" loading="lazy" decoding="async">
+  <figcaption>【遠見雜誌】<a href="https://www.gvm.com.tw/article/102511">線上講座</a>（此為 QA 時間，圖片來源於遠見雜誌）</figcaption>
+</figure>
+
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-10.webp" width="1400" height="513" alt="我在這幾個月做了什麼（圖 10）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-11.webp" width="1400" height="513" alt="【Mastertalks】線上講座" loading="lazy" decoding="async">
+  <figcaption>【Mastertalks】<a href="https://mastertalks.tw/products/chatgpt-ai?ref=dean2&amp;fbclid=IwAR1RSucTzryqGrBd87QX-pKpXSShEwjGCJEZHeCCWzKn3ilQE85ia2eZT8A">線上講座</a></figcaption>
+</figure>
+
+
+</div>
+
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-12.webp" width="728" height="382" alt="我在這幾個月做了什麼（圖 12）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-13.webp" width="728" height="382" alt="【T 客邦】線上講座" loading="lazy" decoding="async">
+  <figcaption>【T 客邦】<a href="https://www.techbang.com/posts/105873-chatgpt-coding-nlp-project">線上講座</a></figcaption>
+</figure>
+
+
+</div>
+
+<p>甚至還收到經理人月刊的專訪，以及人間衛視的節目邀約。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-14.webp" width="734" height="1000" alt="我在這幾個月做了什麼（圖 14）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-15.webp" width="1400" height="1050" alt="【經理人月刊】專訪，【人間衛視】與主持人郁方及嘉賓合影" loading="lazy" decoding="async">
+  <figcaption>【經理人月刊】專訪，【人間衛視】與主持人郁方及嘉賓合影</figcaption>
+</figure>
+
+
+</div>
+
+<p>在撰寫 AI 工具的主題前，我 Medium 的月均瀏覽量大約 1 萬初；開始撰寫後，現在已經躍升到 9 萬多；因為時常在 FB 社團分享文章，觸及人數也有 17 萬多。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-16.webp" width="858" height="886" alt="我在這幾個月做了什麼（圖 16）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-17.webp" width="858" height="1016" alt="自媒體成長" loading="lazy" decoding="async">
+  <figcaption>自媒體成長</figcaption>
+</figure>
+
+
+</div>
+
+<blockquote class="pullquote"><p>希望讀者不要把筆者貼出來的經歷當成炫耀，而是去思考：「他憑什麼獲得這些機會？他過去做了什麼、現在在做什麼？有什麼是我能做的？」</p>
+</blockquote>
+<hr>
+<h2 id="機會來自過去的積累">機會來自過去的積累<a class="h-anchor" href="#%e6%a9%9f%e6%9c%83%e4%be%86%e8%87%aa%e9%81%8e%e5%8e%bb%e7%9a%84%e7%a9%8d%e7%b4%af" aria-label="這個段落的連結"></a></h2>
+<p>在出版 ChatGPT 這本書前，我已經出過 2 本專業書籍、發表超過 200 篇部落格文章、連續 2 年在 iThome 鐵人賽獲獎、擔任科技島社群駐站專家、有 10 多年程式開發經驗。</p>
+<blockquote class="pullquote"><p>因為有這些積累，所以當機會來臨時，我才有能力把握住他。</p>
+</blockquote>
+<p>即使 AI 縮短了普通人與專家的差距，但仔細觀察你會發現，目前市場靠 AI 工具賺錢的人，絕大多數都已經是某個領域的「專家」。</p>
+<p>對事物本質認知越深的人，越有辦法放大 AI 的能力，AI 也許無所不能，但使用者的認知會影響到他發揮的效能。</p>
+<hr>
+<h2 id="ai-可以加速但無法一步登天">AI 可以加速，但無法一步登天<a class="h-anchor" href="#ai-%e5%8f%af%e4%bb%a5%e5%8a%a0%e9%80%9f%e4%bd%86%e7%84%a1%e6%b3%95%e4%b8%80%e6%ad%a5%e7%99%bb%e5%a4%a9" aria-label="這個段落的連結"></a></h2>
+<p>如果想增加書籍的購買率、文章與影片觸及率，最輕鬆簡單的方法就是用「0 基礎！無需經驗！ㄧ本搞定！萬用手冊！」這類的關鍵字，或用 「請 ChatGPT 幫我 xxx，2 天狂賺 50 萬！」這類的標題。</p>
+<p><strong>下次看到這類標題時，大家不妨想想，如果這麼輕鬆、好賺，為什麼要把方法公諸於眾？</strong></p>
+<blockquote class="pullquote"><p>沒有門檻的事情，是賺不到錢的！</p>
+</blockquote>
+<p>筆者相信未來使用 AI 的門檻會越來越低，不過就算每個人都會使用 AI，這所帶來的結果可能是更加極端的「M 型化」社會；就像現在大部分的人都會使用電腦，但依舊只有極少數的人能用它改變世界。</p>
+<p>在 AI 普及後，有能力的人真的可以一個人當好幾個人用，過去他們被「時間」限制住產能，但有了 AI 後，他們可以把許多基礎的工作指派給 AI，把精力放在最後的檢核與優化就好，而檢核與優化是需要實務經驗與知識積累的。</p>
+<hr>
+<h2 id="-面對-ai-浪潮我們可以做些什麼">面對 AI 浪潮，我們可以做些什麼？<a class="h-anchor" href="#-%e9%9d%a2%e5%b0%8d-ai-%e6%b5%aa%e6%bd%ae%e6%88%91%e5%80%91%e5%8f%af%e4%bb%a5%e5%81%9a%e4%ba%9b%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<p>我不鼓勵大家複製筆者的經驗，因為寫書、寫文、講課的紅利期已經慢慢過去；除非你有一定的知名度，否則現在入場的難度不低。</p>
+<p>從實務上，筆者有以下建議：</p>
+<ol>
+<li>了解各式 AI 工具的「能力範圍」，並嘗試將它們應用在自己的工作、職場上，筆者其他篇部落格有很多實戰範例可以參考。</li>
+<li>多觀察 AI 社團中其他人分享的經驗，但請保有自己獨立思考的能力，因為有些資訊是錯誤的。</li>
+<li>現在 AI 工具越出越多，可以說多到你想學都很難學完，因此建議挑選聲量最高的來學習（ex：ChatGPT、Midjourney）。</li>
+<li>要更深入研究自己的專業，對技術不要只停留在表層的認知。</li>
+<li>保持開放的心態，與 AI 協作達成雙贏。</li>
+</ol>
+<p><strong>筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。</strong></p>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-card-03_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202305/ai-dividend-act-or-watch/images/ai-dividend-act-or-watch-18.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>只要 5 步驟！用 Midjourney 幫 Model 換衣服</title>
+      <link>https://deanlin.net/blog/202304/midjourney-change-outfits/</link>
+      <pubDate>Fri, 21 Apr 2023 18:20:06 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202304/midjourney-change-outfits/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>難道外拍 Model 也受到 AI 衝擊要失業了嗎？今天這篇文章將會跟讀者分享如何用 Midjourney 幫 Model 換上指定服飾，並說明不同款式衣服會面臨的問題。</description>
+      <content:encoded><![CDATA[<p>難道外拍 Model 也受到 AI 衝擊要失業了嗎？今天這篇文章將會跟讀者分享如何用 Midjourney 幫 Model 換上指定服飾，並說明不同款式衣服會面臨的問題。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-01.webp" width="1144" height="619" alt="只要 5 步驟！用 Midjourney 幫 Model 換衣服（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+STEP 1：產生 Model 照片
+STEP 2：產生衣服素材
+STEP 3：透過任何工具將兩張圖片疊在一起（不用很精準）
+STEP 4：將圖貼到 Ｍidjourney，並複製連結
+STEP 5：幫 Model 換衣服
+</code></pre><h2 id="step-1產生-model-照片">STEP 1：產生 Model 照片<a class="h-anchor" href="#step-1%e7%94%a2%e7%94%9f-model-%e7%85%a7%e7%89%87" aria-label="這個段落的連結"></a></h2>
+<p>Prompt：「 <code>Full Body photograph of a Chinese female model standing in front of bright wall. High detail, 8k, bright &ndash;ar 9:16 &ndash;v 5</code>」</p>
+<blockquote>
+<p>中國 Model 的全身照片，站在亮麗的牆前面，高度細節、8k 畫質、圖片比例 9:16、Version 5</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-02.webp" width="536" height="956" alt="STEP 1：產生 Model 照片（圖 2）" loading="lazy" decoding="async"></p>
+<p>這邊我選擇「右上」的圖。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-03.webp" width="536" height="956" alt="STEP 1：產生 Model 照片（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-2產生衣服素材">STEP 2：產生衣服素材<a class="h-anchor" href="#step-2%e7%94%a2%e7%94%9f%e8%a1%a3%e6%9c%8d%e7%b4%a0%e6%9d%90" aria-label="這個段落的連結"></a></h2>
+<p>Prompt：「<code>plain shirt in white background &ndash;v 5</code>」</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-04.webp" width="956" height="956" alt="STEP 2：產生衣服素材（圖 4）" loading="lazy" decoding="async"></p>
+<p>Prompt：「<code>plaid shirt in white background &ndash;v 5</code>」</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-05.webp" width="956" height="956" alt="STEP 2：產生衣服素材（圖 5）" loading="lazy" decoding="async"></p>
+<p>Prompt：「<code>cartoon logo shirt in white background &ndash;v 5</code>」</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-06.webp" width="956" height="956" alt="STEP 2：產生衣服素材（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-3透過任何工具將兩張圖片疊在一起不用很精準">STEP 3：透過任何工具將兩張圖片疊在一起（不用很精準）<a class="h-anchor" href="#step-3%e9%80%8f%e9%81%8e%e4%bb%bb%e4%bd%95%e5%b7%a5%e5%85%b7%e5%b0%87%e5%85%a9%e5%bc%b5%e5%9c%96%e7%89%87%e7%96%8a%e5%9c%a8%e4%b8%80%e8%b5%b7%e4%b8%8d%e7%94%a8%e5%be%88%e7%b2%be%e6%ba%96" aria-label="這個段落的連結"></a></h2>
+<p>你可以使用任何去背工具，這邊筆者是用：<a href="https://www.remove.bg/">https://www.remove.bg/</a></p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-07.webp" width="1400" height="579" alt="STEP 3：透過任何工具將兩張圖片疊在一起（不用很精準）（圖 7）" loading="lazy" decoding="async"></p>
+<p>然後將兩張圖疊在一起，筆者用 PPT 無腦操作。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-08.webp" width="1300" height="1154" alt="STEP 3：透過任何工具將兩張圖片疊在一起（不用很精準）（圖 8）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-4將圖貼到-midjourney並複製連結">STEP 4：將圖貼到 Midjourney，並複製連結<a class="h-anchor" href="#step-4%e5%b0%87%e5%9c%96%e8%b2%bc%e5%88%b0-midjourney%e4%b8%a6%e8%a4%87%e8%a3%bd%e9%80%a3%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-09.webp" width="993" height="655" alt="STEP 4：將圖貼到 Midjourney，並複製連結（圖 9）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-5幫-model-換衣服">STEP 5：幫 Model 換衣服<a class="h-anchor" href="#step-5%e5%b9%ab-model-%e6%8f%9b%e8%a1%a3%e6%9c%8d" aria-label="這個段落的連結"></a></h2>
+<p>先貼上連結，並將一開始的 Prompt 原封不動的貼到後面，最後記得要加上「 <code>&ndash;iw 2</code>」，將權重調到最高。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-10.webp" width="1099" height="645" alt="STEP 5：幫 Model 換衣服（圖 10）" loading="lazy" decoding="async"></p>
+<p>然後就換成功嚕！</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-11.webp" width="1400" height="2498" alt="STEP 5：幫 Model 換衣服（圖 11）" loading="lazy" decoding="async"></p>
+<p>筆者目前實驗下來，素色的衣服最容易被吃進去；像是下面有格子狀的襯衫顏色不太穩定，且版型跟原圖有一定的差異。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-12.webp" width="1400" height="2498" alt="STEP 5：幫 Model 換衣服（圖 12）" loading="lazy" decoding="async"></p>
+<p>如果是有圖案的衣服，那效果就更糟糕了，他有很大的機率變成其他圖案。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-13.webp" width="1400" height="2498" alt="STEP 5：幫 Model 換衣服（圖 13）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="總結">總結<a class="h-anchor" href="#%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>操作非常簡單，會用電腦的人都能操作。</li>
+<li>如果衣服款式比較簡單，對人物姿勢沒有太大要求，那成功率上升很多。</li>
+<li>如果衣服上有圖案、複雜細節，那產出來的結果幾乎不可控制。</li>
+</ol>
+<p>如果把 AI 產出來的圖拿來當商用素材（ex：電商平台），那可能會遇到一些細節不一致的問題，是有可能造成買賣糾紛的。</p>
+<p>不過如果你把他當成「發想」的工具，那筆者覺得幫助就很大；像是服飾穿搭、顏色搭配、Model 姿勢…等等。</p>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/midjourney-change-outfits/images/midjourney-change-outfits-14.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>【Midjourney 新手常見問題】圖片合成、排除物件、透明背景、以圖生圖</title>
+      <link>https://deanlin.net/blog/202304/midjourney-faq/</link>
+      <pubDate>Wed, 12 Apr 2023 22:45:37 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202304/midjourney-faq/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>在這篇文章中，筆者收錄了幾個最常被問的 Midjourney 操作問題（圖片合成、排除物件、透明背景、以圖生圖），希望能給剛入門的新手一些幫助與使用指引。</description>
+      <content:encoded><![CDATA[<p>在這篇文章中，筆者收錄了幾個最常被問的 Midjourney 操作問題（圖片合成、排除物件、透明背景、以圖生圖），希望能給剛入門的新手一些幫助與使用指引。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-01.webp" width="1178" height="646" alt="【Midjourney 新手常見問題】圖片合成、排除物件、透明背景、以圖生圖（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="圖片合成">圖片合成<a class="h-anchor" href="#%e5%9c%96%e7%89%87%e5%90%88%e6%88%90" aria-label="這個段落的連結"></a></h2>
+<p><strong>方法 1</strong>：用「/imagine」將兩個網址用「 , 」區隔即可合成。</p>
+<p>這邊我用維基百科上找到的「拿破崙」與「莫扎特」做合成。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-02.webp" width="800" height="938" alt="圖片合成（圖 2）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-03.webp" width="800" height="1025" alt="圖片來源：維基百科" loading="lazy" decoding="async">
+  <figcaption>圖片來源：維基百科</figcaption>
+</figure>
+
+
+</div>
+
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-04.webp" width="1400" height="278" alt="圖片合成（圖 4）" loading="lazy" decoding="async"></p>
+<p>合成後，網址會變轉換成短網址；同時我們可以獲得「莫扎特」與「拿破崙」的合體照（聽起來怪怪的XD）。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-05.webp" width="991" height="747" alt="圖片合成（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>方法 2</strong>：用「/blend」方法，將圖片貼上合成（最多 5 張）。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-06.webp" width="1400" height="509" alt="圖片合成（圖 6）" loading="lazy" decoding="async"></p>
+<p>這邊我選用燈泡跟兔子做為材料。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-07.webp" width="1400" height="553" alt="圖片合成（圖 7）" loading="lazy" decoding="async"></p>
+<p>最終合成出一個兔子燈的成果。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-08.webp" width="1000" height="749" alt="圖片合成（圖 8）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="排除物件">排除物件<a class="h-anchor" href="#%e6%8e%92%e9%99%a4%e7%89%a9%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>可以透過「 — no xxx」來排除物件。</p>
+<ul>
+<li><code>&ndash;no people</code>：不要人。</li>
+<li><code>&ndash;no chair</code>：不要椅子。</li>
+</ul>
+<p>這邊我用「Interior of modern coffee cafe（現代咖啡館的內部）」作為 Prompt，會得到擺設含有椅子的咖啡館。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-09.webp" width="680" height="706" alt="排除物件（圖 9）" loading="lazy" decoding="async"></p>
+<p>如果我希望擺設不含椅子，我就加上 <code>&ndash;no chair</code> 的參數，Prompt 改成「Interior of modern coffee cafe &ndash;no chair」。</p>
+<p>從下圖我們可以看到咖啡廳就沒有椅子了。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-10.webp" width="765" height="747" alt="排除物件（圖 10）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="白色背景去背">白色背景、去背<a class="h-anchor" href="#%e7%99%bd%e8%89%b2%e8%83%8c%e6%99%af%e5%8e%bb%e8%83%8c" aria-label="這個段落的連結"></a></h2>
+<p>我們可以用「in white background」來取得乾淨的背景。</p>
+<p>這邊我先用「battle of two warriors（兩個戰士的戰鬥）」作為 Prompt，你會獲得不好去背的背景。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-11.webp" width="765" height="747" alt="白色背景、去背（圖 11）" loading="lazy" decoding="async"></p>
+<p>調整成「battle of two warriors <code>in white background</code>」作為 Prompt，你會獲得乾淨的背景。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-12.webp" width="781" height="699" alt="白色背景、去背（圖 12）" loading="lazy" decoding="async"></p>
+<p>這個時候透過去背服務的工具如：<a href="https://www.remove.bg/">https://www.remove.bg/</a></p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-13.webp" width="1388" height="895" alt="白色背景、去背（圖 13）" loading="lazy" decoding="async"></p>
+<p>便可輕鬆去背。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-14.webp" width="1388" height="730" alt="白色背景、去背（圖 14）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="以圖生圖">以圖生圖<a class="h-anchor" href="#%e4%bb%a5%e5%9c%96%e7%94%9f%e5%9c%96" aria-label="這個段落的連結"></a></h2>
+<p>我們可以自己提供圖片，然後加上文字敘述改變圖片風格，Prompt 結構：「<code>jpg 或 png 結尾的 url</code> <code>描述</code>」，中間要記得空一格！</p>
+<p>下面我就用筆者的照片作為範例，請他幫我用 Miyazaki Hayao（宮崎駿）的風格呈現。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-15.webp" width="939" height="615" alt="以圖生圖（圖 15）" loading="lazy" decoding="async"></p>
+<p>從產出的結果來看，感覺瞬間 +40 歲 XD</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-16.webp" width="939" height="709" alt="以圖生圖（圖 16）" loading="lazy" decoding="async"></p>
+<p>下面改成用 botw（曠野之息）的風格，又瞬間 -10 歲惹 XD</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-17.webp" width="929" height="736" alt="以圖生圖（圖 17）" loading="lazy" decoding="async"></p>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/midjourney-faq/images/midjourney-faq-18.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！</title>
+      <link>https://deanlin.net/blog/202304/midjourney-describe/</link>
+      <pubDate>Sun, 09 Apr 2023 21:09:10 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202304/midjourney-describe/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>我們經常看到前輩分享非常美麗的圖片，但很多時候只能停留在欣賞的階段，因為我們根本不知道指令（Prompt）該怎麼下；而現在 Midjourney 推出「/describe」功能，讓我們能反推用哪些指令能產出類似的圖，這是一個對新手、老手都很有幫助的功能，你一定要學起來！</description>
+      <content:encoded><![CDATA[<p>在 AI 社團中，我們經常看到前輩分享非常美麗的圖片，但很多時候只能停留在欣賞的階段，因為我們根本不知道指令（Prompt）該怎麼下；而現在 Midjourney 推出「/describe」功能，讓我們能反推用哪些指令能產出類似的圖，這是一個對新手、老手都很有幫助的功能，你一定要學起來！</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-01.webp" width="1289" height="721" alt="Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="手把手教你使用describe功能">手把手教你使用「/describe」功能<a class="h-anchor" href="#%e6%89%8b%e6%8a%8a%e6%89%8b%e6%95%99%e4%bd%a0%e4%bd%bf%e7%94%a8describe%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>儘管透過簡單的文字就能讓 Midjourney 產出絕美圖片，但如果想要「控制」產出的結果，就需要擁有一定的知識背景。</p>
+<p>可是像筆者這種缺乏藝術知識的門外漢，光看圖片是根本無法反推背後到底使用了哪些指令。</p>
+<p>下面就拿一張鋼彈的設計圖來做示範（這張圖也是 Midjourney 產出來的）：</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-02.webp" width="1400" height="808" alt="手把手教你使用「/describe」功能（圖 2）" loading="lazy" decoding="async"></p>
+<p>你只要在下方輸入「/describe」，然後貼上圖片就能使用了！</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-03.webp" width="1400" height="772" alt="讀者可以直接複製圖片來嘗試看看" loading="lazy" decoding="async">
+  <figcaption>讀者可以直接複製圖片來嘗試看看</figcaption>
+</figure>
+
+<p>從下圖中，可以看到 Midjourney 幫我們反推出了 4 個 Prompt，上面所描述的藝術風格「關鍵字」，我想沒有藝術背景的人是很難靠自己猜想出來的。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-04.webp" width="557" height="758" alt="手把手教你使用「/describe」功能（圖 4）" loading="lazy" decoding="async"></p>
+<p>點擊下方的「1、2、3、4」就會依序產生對應的圖片：</p>
+<p>1.gundam armoured armor concept, in the style of light teal and white, historical documentation, panoramic scale, human anatomy, grainy, nikon d850, scientific diagrams — ar 26:15（鋼彈裝甲概念，以淺藍綠和白色風格，歷史文件，全景尺度，人體解剖學，顆粒狀，尼康 D850，科學圖表，圖片比例 26:15）</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-05.webp" width="1098" height="634" alt="手把手教你使用「/describe」功能（圖 5）" loading="lazy" decoding="async"></p>
+<p>2.gundam fb006 figure drawing by ottosen wilson, in the style of dark teal and light beige, historical documentation, panoramic scale, technological design, <a href="https://goo.gl/search?artist%20thechamba">thechamba</a>, 32k uhd — ar 26:15（鋼彈 FB006 人物繪圖，由 Ottosen Wilson 創作，以深藍綠和淺米色風格，歷史文件，全景尺度，技術設計，TheChamba，32k 超高清，圖片比例 26:15）</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-06.webp" width="1098" height="634" alt="手把手教你使用「/describe」功能（圖 6）" loading="lazy" decoding="async"></p>
+<p>3.gundam design template free vector art, in the style of <a href="https://goo.gl/search?artist%20hajime%20sorayama">hajime sorayama</a>, dark white and light aquamarine, historical documentation, photorealistic detail, <a href="https://goo.gl/search?artist%20frank%20quitely">frank quitely</a>, celestialpunk, <a href="https://goo.gl/search?artist%20johfra%20bosschart">johfra bosschart</a> — ar 26:15（鋼彈設計模板免費矢量藝術，以 Hajime Sorayama 風格，淺白和淺綠松石色，歷史文件，照片級真實細節，Frank Quitely，Celestialpunk，Johfra Bosschart，圖片比例 26:15）</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-07.webp" width="1098" height="634" alt="手把手教你使用「/describe」功能（圖 7）" loading="lazy" decoding="async"></p>
+<p>4.the comic book is showing what the different parts of the robot must be, in the style of anime-inspired character designs, historical documentation, light white and dark green, 32k uhd, heavy outlines, olympus xa2, photorealist details — ar 26:15（漫畫書展示了機器人的不同部分，以動漫風格角色設計，歷史文件，淺白和深綠色，32k 超高清，粗輪廓，奧林巴斯 XA2，照片級真實細節，圖片比例 26:15）</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-08.webp" width="1098" height="634" alt="手把手教你使用「/describe」功能（圖 8）" loading="lazy" decoding="async"></p>
+<p>以結果來看，第 3、4 個 Prompt 是最符合需求的；不過我們也能從其他 Prompt 中提取我們感興趣的關鍵字，這能讓我們未來創作時有更多的選擇與靈感。</p>
+<blockquote>
+<p><strong>備註</strong>：上面的中文是請 ChatGPT 翻譯出來的。</p>
+</blockquote>
+<hr>
+<h2 id="想靠-prompt-賺錢越來越不容易了">想靠 Prompt 賺錢越來越不容易了<a class="h-anchor" href="#%e6%83%b3%e9%9d%a0-prompt-%e8%b3%ba%e9%8c%a2%e8%b6%8a%e4%be%86%e8%b6%8a%e4%b8%8d%e5%ae%b9%e6%98%93%e4%ba%86" aria-label="這個段落的連結"></a></h2>
+<p>這邊提醒一下讀者，「/describe」只是反推出類似風格的 Prompt；以上面的範例來說，Midjourney 給的 4 個 Prompt，都與原先的 Prompt 有很大的差異。</p>
+<p>不過對許多使用者來說，他們並不在意這點，只要能達到差不多的效果即可，「/describe」最重要的就是提供「方向」。</p>
+<p>不久前，新聞曾報出有公司開出「AI 詠唱師」的職位，價值年薪千萬。</p>
+<p>針對這則報導，筆者不予置評，我相信擅長撰寫 Prompt 的人能增加公司的生產力，實際上有些高手也真的是靠販賣「Prompts」在賺錢，<a href="https://promptbase.com/prompt/secret-recipe-comic-book-layouts">連結</a>。</p>
+<p><img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-09.webp" width="1400" height="671" alt="想靠 Prompt 賺錢越來越不容易了（圖 9）" loading="lazy" decoding="async"></p>
+<p>不過這個賺錢方式在 Midjourney 推出「/describe」功能後，勢必會受到嚴重的衝擊。</p>
+<p>因為使用者多了一個免費的選擇，儘管不是最佳解，但對很多人來說已經夠用了，錢…是真的越來越難賺了。</p>
+<hr>
+<h2 id="結語素材與靈感很重要">結語：素材與靈感很重要<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e7%b4%a0%e6%9d%90%e8%88%87%e9%9d%88%e6%84%9f%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
+<p>從過去到現在，筆者如果看到喜歡的文章＆圖片，都會有意識的把他們依照類別收集起來，方便日後參考與研究。</p>
+<p>而這次 Midjourney 推出的「/describe」功能，就幫我大幅減少研究與猜測的時間；能透過相對具體的「關鍵字」，模仿出自己期待的結果。</p>
+<p>因為 AI 的到來，許多技術的門檻逐漸降低，好處是我們不需要再做繁瑣、基礎的操作；而壞處則是對「靈感」更加苛求，沒有個性的普通作品會更沒有生存空間。</p>
+<blockquote class="pullquote"><p>簡單來說就是需要花更多的時間「動腦」，而強大的知識儲備，有更高機率產出好的「靈感」。</p>
+</blockquote>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-10.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>靠 ChatGPT，我一個月寫完一本書! ── 全台第一本 ChatGPT 應用解析專書</title>
+      <link>https://deanlin.net/blog/202302/wrote-a-book-with-chatgpt/</link>
+      <pubDate>Thu, 23 Feb 2023 16:25:48 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202302/wrote-a-book-with-chatgpt/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>筆者從零開始，11 天完成草稿，22 天後交稿。 如果你問我 ChatGPT 好不好用，我覺得這本書就是最佳證明！</description>
+      <content:encoded><![CDATA[<figure class="figure"><img src="https://deanlin.net/blog/202302/wrote-a-book-with-chatgpt/images/wrote-a-book-with-chatgpt-01.webp" width="761" height="1029" alt="https://www.tenlong.com.tw/products/9786263334137" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786263334137">https://www.tenlong.com.tw/products/9786263334137</a></figcaption>
+</figure>
+
+<p><strong>筆者從零開始，11 天完成草稿，22 天後交稿。</strong></p>
+<p><strong>如果你問我 ChatGPT 好不好用，我覺得這本書就是最佳證明！</strong></p>
+<ul>
+<li>如果你是學生，ChatGPT 為你打開知識的大門。</li>
+<li>如果你是職場菜鳥，ChatGPT 縮短你與專家的距離。</li>
+<li>如果你是職場老鳥，ChatGPT 讓你的工作更加輕鬆愜意。</li>
+<li>如果你是老闆，ChatGPT 將成為你效率最高的員工！</li>
+</ul>
+<hr>
+<h2 id="這本書是怎麼誕生的">這本書是怎麼誕生的？<a class="h-anchor" href="#%e9%80%99%e6%9c%ac%e6%9b%b8%e6%98%af%e6%80%8e%e9%ba%bc%e8%aa%95%e7%94%9f%e7%9a%84" aria-label="這個段落的連結"></a></h2>
+<p>筆者前兩年春節都在趕稿中度過，原本想說今年可以好好放鬆一下；結果在年假前 2 天編輯一通電話打進來，我們聊了很多，但縮短成主旨就是：「最近 ChatGPT 超火熱，但現在中文圖書市場還是一片空白，你要不要跟著趨勢一起飛？」</p>
+<p>起初我是直接婉拒的，但編輯憑著三寸不爛之舌，最終還是說服了我寫這本書，於是我問：「這本書預期的頁數、交稿日期？」</p>
+<p>編輯：「300 頁，期望在 2/20 前交稿。」</p>
+<p>我：「所以你要我面對一個不熟悉的工具，從 0 開始在一個月內，完成一本 300 頁的書？」</p>
+<p>編輯：「對！」</p>
+<p>當時我心裡的 OS 是：「你要不要聽聽看你現在到底在講什麼。」</p>
+<blockquote>
+<p>先讓大家有個概念，我前兩本書都花了「半年」以上的時間才完成。</p>
+</blockquote>
+<hr>
+<h2 id="我能從書裡面學到什麼">我能從書裡面學到什麼？<a class="h-anchor" href="#%e6%88%91%e8%83%bd%e5%be%9e%e6%9b%b8%e8%a3%a1%e9%9d%a2%e5%ad%b8%e5%88%b0%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>如果有人可以免費幫你工作還不拿錢，你會不會覺得遇到詐騙集團，心想怎麼可能會有這麼好的事？</p>
+<p>筆者現在告訴你，ChatGPT 就是在幹這樣的一件事。</p>
+</blockquote>
+<p>如果問我 ChatGPT 對普通人來說最大的幫助是什麼，我覺得應該是獲得「主管、老闆」安排任務的權利吧。</p>
+<p>如果所有任務都要「事必躬親」，那再多的時間也不夠用；反過來，如果能把一些瑣事交代出去，我們的時間就變多了。</p>
+<p>書中提供大量實戰範例，從不同面向帶讀者了解 ChatGPT 的應用：</p>
+<ul>
+<li><strong>日常瑣事</strong>：公文撰寫、Email 撰寫、讓文字更為通順＆改錯字…</li>
+<li><strong>協助工作</strong>：文案發想、程式開發、需求規格撰寫…</li>
+<li><strong>翻轉職涯</strong>：履歷撰寫、模擬面試…</li>
+</ul>
+<p>並分享讓 ChatGPT 更聰明的方法：</p>
+<ul>
+<li>了解如何撰寫出<strong>有效的提示（Prompt）</strong>。</li>
+<li>學習<strong>讓 ChatGPT 扮演專家</strong>發揮所長。</li>
+<li>搭配 <strong>Chrome 外掛</strong>讓大神幫你一把！</li>
+</ul>
+<p>為了帶給讀者更多震撼，在書中最後一個 PART 會介紹一款只要輸入關鍵字，就能產出絕美圖片的<strong>強大 AI 繪圖工具：「Midjourney」</strong>，讓圖像、文字相得益彰，帶來創意的無限可能。</p>
+<blockquote>
+<p>在閱讀的過程中，你會感受到 AI 的強大；但永遠別忘記，自己才是最棒的創造者！</p>
+<p>購書連結：<a href="https://www.tenlong.com.tw/products/9786263334137">https://www.tenlong.com.tw/products/9786263334137</a></p>
+</blockquote>
+<hr>
+<h2 id="筆者想透過這本書說的話">筆者想透過這本書說的話<a class="h-anchor" href="#%e7%ad%86%e8%80%85%e6%83%b3%e9%80%8f%e9%81%8e%e9%80%99%e6%9c%ac%e6%9b%b8%e8%aa%aa%e7%9a%84%e8%a9%b1" aria-label="這個段落的連結"></a></h2>
+<p>在近期與 ChatGPT 頻繁的互動後，<strong>筆者的心情是既興奮又恐慌！</strong></p>
+<p>過去我們都覺得隨著 AI 人工智慧的發展，重複、高危險性，以及簡單的工作將會先被機器人取代。</p>
+<p>但 ChatGPT 的出現，卻讓許多專業人士感到不安，擔心自己的工作是否也有被取代的風險。</p>
+<p>AI 技術的發展，能讓沒有相關知識背景的人，只要透過幾個關鍵字就能創造出高水準的作品；在不久的將來，我不敢說「專家」會被取代，但兩者的差距正在縮小。</p>
+<p>就拿程式語言來舉例好了，一開始筆者學的是「組合語言」，班上只有少數的同學能夠理解，這門課對大多數的人來說是天書般的存在。</p>
+<p>而幾年後學「C、JavaScript、Python」這類「高階語言」時，身旁有超過一半的人能夠掌握；而近幾年隨著各式各樣的「框架」崛起，工程師的入行門檻越來越低；到了現在，只要你給 AI 的指令夠清楚，他甚至能幫你寫程式完成專案。</p>
+<p>既然 AI 的發展勢不可擋，那我們要做的應該是去思考「<strong>如何利用他為自己帶來優勢</strong>」。</p>
+<p>筆者相信，<strong>人不會被 AI 取代，只會被懶惰和守舊的想法取代</strong>，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。</p>
+<blockquote class="pullquote"><p>我認為接下來是人與 AI 協作的時代，各式 AI 工具會在這幾年蓬勃發展，希望看到這篇文章的每一位讀者，都能把握住這股潮流，一起迎接更好的未來。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202302/wrote-a-book-with-chatgpt/images/wrote-a-book-with-chatgpt-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202302/wrote-a-book-with-chatgpt/images/wrote-a-book-with-chatgpt-02.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>掌握 5 個技巧，讓你使用 Midjourney 像個專家！</title>
+      <link>https://deanlin.net/blog/202301/midjourney-pro-tips/</link>
+      <pubDate>Sun, 22 Jan 2023 17:26:23 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/midjourney-pro-tips/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>雖然只要簡單的關鍵字、句子就能讓 Midjourney 產生絕美的圖片，但有時圖片的風格、角度、層次…跟我們要的並不相同。 就像是建築物有文藝復興、巴洛克式、中國傳統建築…等風格，但如果沒有相關背景知識，你可能就只能用「房子」一詞帶過，可以說是「知識盲區」阻礙了我們的想像力。</description>
+      <content:encoded><![CDATA[<p>雖然只要簡單的關鍵字、句子就能讓 Midjourney 產生絕美的圖片，但有時圖片的風格、角度、層次&hellip;跟我們要的並不相同。</p>
+<p>就像是建築物有文藝復興、巴洛克式、中國傳統建築&hellip;等風格，但如果沒有相關背景知識，你可能就只能用「房子」一詞帶過，可以說是「知識盲區」阻礙了我們的想像力。</p>
+<p>因此這篇文章筆者整理了幾個可以讓讀者現學現賣的技巧，讓你使用 Midjourney 時像個專家！</p>
+<blockquote>
+<p><em>尚未接觸過 </em>Midjourney 的朋友<em>，可以先閱讀上一篇文章：「</em><a href="https://deanlin.net/blog/202301/midjourney-getting-started/">如何使用 Midjourney，讓 AI 產生絕美圖片</a><em>」</em></p>
+</blockquote>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-01.webp" width="1138" height="610" alt="Legendary hero &#43; lightning powers &#43; rain &#43; inspiring, third-person perspective — ar 3:2（傳奇英雄 &#43; 雷霆之力 &#43; 下雨 &#43; 鼓舞人心，第三人稱視角，圖片 3:2 比例）" loading="lazy" decoding="async">
+  <figcaption>Legendary hero + lightning powers + rain + inspiring, third-person perspective — ar 3:2（傳奇英雄 + 雷霆之力 + 下雨 + 鼓舞人心，第三人稱視角，圖片 3:2 比例）</figcaption>
+</figure>
+
+<pre tabindex="0"><code>大綱
+
+▋ TIP 1：讓創作融入大師的畫風、定義自己想要的場景
+▋ TIP 2：調整圖片的「視角、燈光」
+▋ TIP 3：讓產出的圖片有「鏡頭感」
+▋ TIP 4：「關鍵字」跟「描述句」的差異
+▋ TIP 5：為圖片增加情感類型的語句
+▋ Bonus：如果沒有靈感、失去方向怎麼辦？
+▋ Bonus：不會英文，不懂藝術，是不是就無法操作了？
+▋ 結論：擁有專業知識的人，才能夠如臂指使
+</code></pre><h2 id="tip-1讓創作融入大師的畫風定義自己想要的場景">TIP 1：讓創作融入大師的畫風、定義自己想要的場景<a class="h-anchor" href="#tip-1%e8%ae%93%e5%89%b5%e4%bd%9c%e8%9e%8d%e5%85%a5%e5%a4%a7%e5%b8%ab%e7%9a%84%e7%95%ab%e9%a2%a8%e5%ae%9a%e7%be%a9%e8%87%aa%e5%b7%b1%e6%83%b3%e8%a6%81%e7%9a%84%e5%a0%b4%e6%99%af" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>看完這篇文章後，也許你會出現：「喔！原來還可以這樣做！」的想法。</p>
+</blockquote>
+<p>這邊筆者先起個頭，讓大家知道有哪些玩法，有興趣的朋友可以到參考資料看更詳細的參數。</p>
+<ul>
+<li><strong>繪圖的「風格」</strong>：A stylized Cyberpunk（賽博龐克）、A stylized Cthulhu Mythos（克蘇魯神話）</li>
+<li><strong>場景的「風格」</strong>：realism（現實主義）、surrealism（超現實主義）、anti-utopia（反烏托邦）</li>
+<li><strong>場景的「物件」</strong>：ruins（廢墟）、city（城市）、street（街道）、universe（宇宙）</li>
+<li><strong>使用某個藝術家的「畫風」</strong>：Miyazaki Hayao（宮崎駿）、Shinkai Makoto（新海誠）、Pablo Picasso（畢卡索）、Vincent Van Gogh（梵谷）</li>
+<li><strong>使用某個遊戲的「畫風」</strong>：botw（曠野之息）、Pokémon（寶可夢）、The Elder Scrolls（上古卷軸）</li>
+</ul>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-02.webp" width="1024" height="1024" alt="hero, universe , A stylized Cthulhu Mythos, anti-utopia（英雄，宇宙，克蘇魯神話，反烏托邦）" loading="lazy" decoding="async">
+  <figcaption>hero, universe , A stylized Cthulhu Mythos, anti-utopia（英雄，宇宙，克蘇魯神話，反烏托邦）</figcaption>
+</figure>
+
+<hr>
+<h2 id="tip-2調整圖片的視角燈光">TIP 2：調整圖片的「視角、燈光」<a class="h-anchor" href="#tip-2%e8%aa%bf%e6%95%b4%e5%9c%96%e7%89%87%e7%9a%84%e8%a6%96%e8%a7%92%e7%87%88%e5%85%89" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li><strong>Composition（視角）</strong>：closeup view（特寫鏡頭）、Wide-angle view（廣角鏡頭）、A bird&rsquo;s-eye view（鳥瞰）</li>
+<li><strong>Lighting（燈光）</strong>：Soft light（柔光）、Cold light（冷光）</li>
+</ul>
+<h3 id="-針對小物件我們可以採用特寫鏡頭並搭配柔光讓他看起來更舒服">➤ 針對小物件，我們可以採用特寫鏡頭，並搭配柔光讓他看起來更舒服<a class="h-anchor" href="#-%e9%87%9d%e5%b0%8d%e5%b0%8f%e7%89%a9%e4%bb%b6%e6%88%91%e5%80%91%e5%8f%af%e4%bb%a5%e6%8e%a1%e7%94%a8%e7%89%b9%e5%af%ab%e9%8f%a1%e9%a0%ad%e4%b8%a6%e6%90%ad%e9%85%8d%e6%9f%94%e5%85%89%e8%ae%93%e4%bb%96%e7%9c%8b%e8%b5%b7%e4%be%86%e6%9b%b4%e8%88%92%e6%9c%8d" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-03.webp" width="1024" height="1024" alt="Strawberry Cake, closeup view, Soft light（草莓蛋糕、特寫鏡頭、柔光）" loading="lazy" decoding="async">
+  <figcaption>Strawberry Cake, closeup view, Soft light（草莓蛋糕、特寫鏡頭、柔光）</figcaption>
+</figure>
+
+<h3 id="-如果想呈現一個場景廣角鏡頭就很好用">➤ 如果想呈現一個場景，廣角鏡頭就很好用<a class="h-anchor" href="#-%e5%a6%82%e6%9e%9c%e6%83%b3%e5%91%88%e7%8f%be%e4%b8%80%e5%80%8b%e5%a0%b4%e6%99%af%e5%bb%a3%e8%a7%92%e9%8f%a1%e9%a0%ad%e5%b0%b1%e5%be%88%e5%a5%bd%e7%94%a8" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-04.webp" width="1024" height="1024" alt="ruins, Wide-angle view, Cold light（廢墟，廣角鏡頭，冷光）" loading="lazy" decoding="async">
+  <figcaption>ruins, Wide-angle view, Cold light（廢墟，廣角鏡頭，冷光）</figcaption>
+</figure>
+
+<hr>
+<h2 id="tip-3讓產出的圖片有鏡頭感">TIP 3：讓產出的圖片有「鏡頭感」<a class="h-anchor" href="#tip-3%e8%ae%93%e7%94%a2%e5%87%ba%e7%9a%84%e5%9c%96%e7%89%87%e6%9c%89%e9%8f%a1%e9%a0%ad%e6%84%9f" aria-label="這個段落的連結"></a></h2>
+<p>這邊介紹幾個大家比較接觸過的攝影名詞：</p>
+<ul>
+<li>photography（攝影）、cinematic（電影）</li>
+<li>in focus（對焦）、depth of field（景深）</li>
+</ul>
+<h3 id="-攝影--對焦讓圖片有商業攝影的感覺">➤ 「攝影 + 對焦」讓圖片有商業攝影的感覺<a class="h-anchor" href="#-%e6%94%9d%e5%bd%b1--%e5%b0%8d%e7%84%a6%e8%ae%93%e5%9c%96%e7%89%87%e6%9c%89%e5%95%86%e6%a5%ad%e6%94%9d%e5%bd%b1%e7%9a%84%e6%84%9f%e8%a6%ba" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-05.webp" width="1024" height="1024" alt="Strawberry Cake, photography, closeup view, in focus, Soft light（草莓蛋糕、攝影、特寫鏡頭、對焦、柔光）" loading="lazy" decoding="async">
+  <figcaption>Strawberry Cake, photography, closeup view, in focus, Soft light（草莓蛋糕、攝影、特寫鏡頭、對焦、柔光）</figcaption>
+</figure>
+
+<h3 id="-同樣是廢墟電影--景深讓我們有多層次的感受">➤ 同樣是廢墟，「電影 + 景深」讓我們有多層次的感受<a class="h-anchor" href="#-%e5%90%8c%e6%a8%a3%e6%98%af%e5%bb%a2%e5%a2%9f%e9%9b%bb%e5%bd%b1--%e6%99%af%e6%b7%b1%e8%ae%93%e6%88%91%e5%80%91%e6%9c%89%e5%a4%9a%e5%b1%a4%e6%ac%a1%e7%9a%84%e6%84%9f%e5%8f%97" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-06.webp" width="1024" height="1024" alt="ruins, cinematic, Wide-angle view, depth of field, Cold light（廢墟，電影，廣角鏡頭，景深，冷光）" loading="lazy" decoding="async">
+  <figcaption>ruins, cinematic, Wide-angle view, depth of field, Cold light（廢墟，電影，廣角鏡頭，景深，冷光）</figcaption>
+</figure>
+
+<hr>
+<h2 id="tip-4關鍵字跟描述句的差異">TIP 4：「關鍵字」跟「描述句」的差異<a class="h-anchor" href="#tip-4%e9%97%9c%e9%8d%b5%e5%ad%97%e8%b7%9f%e6%8f%8f%e8%bf%b0%e5%8f%a5%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h2>
+<h3 id="用關鍵字就像是放任創作會得到充滿創意的結果">➤用「關鍵字」就像是放任創作，會得到充滿創意的結果<a class="h-anchor" href="#%e7%94%a8%e9%97%9c%e9%8d%b5%e5%ad%97%e5%b0%b1%e5%83%8f%e6%98%af%e6%94%be%e4%bb%bb%e5%89%b5%e4%bd%9c%e6%9c%83%e5%be%97%e5%88%b0%e5%85%85%e6%bb%bf%e5%89%b5%e6%84%8f%e7%9a%84%e7%b5%90%e6%9e%9c" aria-label="這個段落的連結"></a></h3>
+<p>使用「wizard, book, campus, Miyazaki Hayao, winter」為 prompt 時，你會發現有幾張圖「book」的元素直接不見了。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-07.webp" width="1024" height="1024" alt="wizard, book, campus, Miyazaki Hayao, winter（巫師，書本，校園，宮崎駿，冬天）" loading="lazy" decoding="async">
+  <figcaption>wizard, book, campus, Miyazaki Hayao, winter（巫師，書本，校園，宮崎駿，冬天）</figcaption>
+</figure>
+
+<h3 id="用描述句則是限制創作範圍直接得到你想要的成果">➤用「描述句」則是限制創作範圍，直接得到你想要的成果<a class="h-anchor" href="#%e7%94%a8%e6%8f%8f%e8%bf%b0%e5%8f%a5%e5%89%87%e6%98%af%e9%99%90%e5%88%b6%e5%89%b5%e4%bd%9c%e7%af%84%e5%9c%8d%e7%9b%b4%e6%8e%a5%e5%be%97%e5%88%b0%e4%bd%a0%e6%83%b3%e8%a6%81%e7%9a%84%e6%88%90%e6%9e%9c" aria-label="這個段落的連結"></a></h3>
+<p>我們改成描述句的 prompt：「A wizard walks on the winter campus holding a book, with the artistic style of Miyazaki Hayao.」直接指定巫師要拿者書本</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-08.webp" width="1024" height="1024" alt="A wizard walks on the winter campus holding a book, with the artistic style of Miyazaki Hayao.（巫師拿著書本走在冬天的校園，用宮崎駿的畫風）" loading="lazy" decoding="async">
+  <figcaption>A wizard walks on the winter campus holding a book, with the artistic style of Miyazaki Hayao.（巫師拿著書本走在冬天的校園，用宮崎駿的畫風）</figcaption>
+</figure>
+
+<hr>
+<h2 id="tip-5為圖片增加情感類型的語句">TIP 5：為圖片增加情感類型的語句<a class="h-anchor" href="#tip-5%e7%82%ba%e5%9c%96%e7%89%87%e5%a2%9e%e5%8a%a0%e6%83%85%e6%84%9f%e9%a1%9e%e5%9e%8b%e7%9a%84%e8%aa%9e%e5%8f%a5" aria-label="這個段落的連結"></a></h2>
+<p>除了場景的描述外，加上不同的語氣，圖片的風格也會完全不同：</p>
+<ul>
+<li><strong>積極正向</strong>：Loving（愛）、hopeful（希望）、inspiring（鼓舞人心）、beautiful（美麗）。</li>
+<li><strong>消極負面</strong>：horror（恐懼）、sadness（悲傷）、darkness（黑暗）。</li>
+</ul>
+<p>下面我們就用這段 prompt：「The hero rises from the ruins, Long Shot, in focus, hopeful, Dramatic lighting」看看產出的圖片是否符合預期。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-09.webp" width="1024" height="1024" alt="The hero rises from the ruins, Long Shot, in focus, hopeful, Dramatic lighting（英雄從廢墟站起，遠景，對焦，希望，戲劇燈光）" loading="lazy" decoding="async">
+  <figcaption>The hero rises from the ruins, Long Shot, in focus, hopeful, Dramatic lighting（英雄從廢墟站起，遠景，對焦，希望，戲劇燈光）</figcaption>
+</figure>
+
+<hr>
+<h2 id="bonus如果沒有靈感失去方向怎麼辦">Bonus：如果沒有靈感、失去方向怎麼辦？<a class="h-anchor" href="#bonus%e5%a6%82%e6%9e%9c%e6%b2%92%e6%9c%89%e9%9d%88%e6%84%9f%e5%a4%b1%e5%8e%bb%e6%96%b9%e5%90%91%e6%80%8e%e9%ba%bc%e8%be%a6" aria-label="這個段落的連結"></a></h2>
+<p>有時會遇到怎麼輸入 prompt 都得不到自己想要圖片的窘境，此時你可以在聊天室裡面看看其他人的作品，或是到 Midjourney 的 Community Showcase 看看別人的作品：<a href="https://midjourney.com/showcase/recent/">https://midjourney.com/showcase/recent/</a></p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-10.webp" width="1400" height="680" alt="Bonus：如果沒有靈感、失去方向怎麼辦？（圖 10）" loading="lazy" decoding="async"></p>
+<p>欣賞他人作品的同時，別忘記觀察對方提供了哪些 prompt 給 Midjourney。</p>
+<hr>
+<h2 id="bonus不會英文不懂藝術是不是就無法操作了">Bonus：不會英文，不懂藝術，是不是就無法操作了？<a class="h-anchor" href="#bonus%e4%b8%8d%e6%9c%83%e8%8b%b1%e6%96%87%e4%b8%8d%e6%87%82%e8%97%9d%e8%a1%93%e6%98%af%e4%b8%8d%e6%98%af%e5%b0%b1%e7%84%a1%e6%b3%95%e6%93%8d%e4%bd%9c%e4%ba%86" aria-label="這個段落的連結"></a></h2>
+<p>筆者認為自己的英文也很菜，對藝術的認知也非常淺薄。</p>
+<p>但我還是不要臉的寫了好幾篇教學文，跟大神相比，我的作品還有很大的進步空間；但我相信自己的文章，能給跟我一樣還在摸索的朋友一點幫助，在這邊也鼓勵讀者不要給自己太多限制。</p>
+<p>如果你不會英文，那你可以把中文的語句交給 Google 翻譯；如果找不到好的形容詞， ChatGPT 能給你靈感；如果對藝術一無所知，那 ChatGPT 也能給你關鍵字。</p>
+<blockquote>
+<p>中文也能夠執行，但精確度較低。</p>
+</blockquote>
+<p>比如我就向 ChatGPT 詢問建築風格的知識：「我想請你充當一個精通建築藝術的專家。向我介紹知名的建築風格，並給我各個風格的中英文比對。」</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-11.webp" width="1400" height="648" alt="Bonus：不會英文，不懂藝術，是不是就無法操作了？（圖 11）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="結論擁有專業知識的人才能夠如臂指使">結論：擁有專業知識的人，才能夠如臂指使<a class="h-anchor" href="#%e7%b5%90%e8%ab%96%e6%93%81%e6%9c%89%e5%b0%88%e6%a5%ad%e7%9f%a5%e8%ad%98%e7%9a%84%e4%ba%ba%e6%89%8d%e8%83%bd%e5%a4%a0%e5%a6%82%e8%87%82%e6%8c%87%e4%bd%bf" aria-label="這個段落的連結"></a></h2>
+<p>這篇文章，對筆者來說也是全新的學習；因為過去我對鏡頭、視角、燈光等知識毫無概念。</p>
+<p>AI 技術的發展，能讓沒有相關知識背景的人，只要透過幾個關鍵字就能創造出高水準的作品；在不久的將來，我不敢說「專家」會被取代，但兩者的距離的確在縮小中。</p>
+<p>就拿程式語言來舉例好了，一開始筆者學的是「組合語言」，這個東西的學習成本極高，<strong>只有班上少數同學能夠理解</strong>，對大多數的人來說是天書般的存在。</p>
+<p>而幾年後在學「C、JavaScript、Python」這類「高階語言」時，<strong>身旁有超過一半的人能夠掌握</strong>；而近幾年隨著各式各樣的「框架」崛起，工程師的入行門檻也大幅降低，甚至不久前推出的 ChatGPT 都能寫程式了。</p>
+<p><strong>如果你問我有沒有感到威脅，我很坦白地跟你說：「有！」</strong></p>
+<p>但無論是哪個行業，過去累積的經驗並不會被 AI 取代，就像是普通人跟攝影師、繪師在同個時間點使用 Midjourney，我相信後面兩者在經過模索後，能創造出更好的作品。</p>
+<p>因為「構圖、美感」的知識與經驗，並不是靠說明書就能跨越的鴻溝。</p>
+<blockquote class="pullquote"><p>筆者的感悟：「我們要對事物的本質有所理解，而不僅僅只是多學了一門技術。」</p>
+</blockquote>
+<p>未來筆者會出一系列使用 ChatGPT、openAI 的文章，大家敬請期待！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-12.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+<p>參考資料：</p>
+<ol>
+<li><a href="https://docs.google.com/spreadsheets/d/1GuAeSFtICsjQEwsRP2f--IayDxW9Dl0SCLOVov56FMc/edit?fbclid=IwAR31xelZ9YrMSJT5AYra-rRz5YYQiKa3dx0mhs6EMuU-o1INIw3uVGCGuGw#gid=1629975637">Midjourney 技巧收集</a></li>
+<li><a href="https://www.facebook.com/groups/midjourneytw/">Midjourney AI 台灣社群</a></li>
+<li><a href="https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference">MidJourney-Styles-and-Keywords-Reference</a> 這裡有超級豐富的素材可以參考。</li>
+</ol>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>原來 Midjourney 的 Settings 對產圖有這麼大的影響！？</title>
+      <link>https://deanlin.net/blog/202301/midjourney-settings/</link>
+      <pubDate>Sat, 21 Jan 2023 22:06:40 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/midjourney-settings/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>這篇文章筆者將會舉出實際案例，讓你知道 Midjourney 的 Settings 裡面有哪些參數，以及他們會對產出的圖造成什麼影響。</description>
+      <content:encoded><![CDATA[<p>這篇文章筆者將會舉出實際案例，讓你知道 Midjourney 的 Settings 裡面有哪些參數，以及他們會對產出的圖造成什麼影響。</p>
+<blockquote>
+<p><em>尚未接觸過 </em>Midjourney 的朋友<em>，可以先閱讀上一篇文章：「</em><a href="https://deanlin.net/blog/202301/midjourney-getting-started/">如何使用 Midjourney，讓 AI 產生絕美圖片</a><em>」</em></p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-01.webp" width="1264" height="677" alt="原來 Midjourney 的 Settings 對產圖有這麼大的影響！？（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+▋ 呼叫出 Midjourney 的 Settings
+▋ MJ version 1、2、3、4、Niji Mode … 版本間的差異
+▋ Half quality、Base quality、High quality 的差異
+▋ Style low、med、high 的選擇
+▋ Public mode、Private mode 的差異
+▋ Fast mode、Relax mode 的差異
+▋ 了解目前帳號剩下的產圖額度
+▋ 調整圖片產出的比例
+</code></pre><h2 id="-呼叫出-midjourney-的-settings">呼叫出 Midjourney 的 Settings<a class="h-anchor" href="#-%e5%91%bc%e5%8f%ab%e5%87%ba-midjourney-%e7%9a%84-settings" aria-label="這個段落的連結"></a></h2>
+<p>在下方的訊息輸入「/settings」，就會顯示我們可以調整的參數，以及現在的設定；在設定完成後，接下來產生的圖片都會比照先前的設定。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-02.webp" width="1011" height="400" alt="呼叫出 Midjourney 的 Settings（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>如果你看上去覺得眼花撩亂實屬正常，後續將說明幾個會影響產圖的設定。</p>
+</blockquote>
+<hr>
+<h2 id="-mj-version-1234niji-mode--版本間的差異">MJ version 1、2、3、4、Niji Mode … 版本間的差異<a class="h-anchor" href="#-mj-version-1234niji-mode--%e7%89%88%e6%9c%ac%e9%96%93%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h2>
+<p>Midjourney 發展至今有推出多個版本，每個版本都有各自的風格；筆者實驗下來，前面的版本相對抽象（激發你藝術創作的靈感？），而後面的版本更寫實逼真。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-03.webp" width="512" height="512" alt="MJ version 1 產出的男孩，人直接被扭曲抽象了" loading="lazy" decoding="async">
+  <figcaption>MJ version 1 產出的男孩，人直接被扭曲抽象了</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-04.webp" width="590" height="590" alt="反觀 MJ version 4 產出的男孩，明明是一樣的 prompt 卻變得如此帥氣" loading="lazy" decoding="async">
+  <figcaption>反觀 MJ version 4 產出的男孩，明明是一樣的 prompt 卻變得如此帥氣</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-05.webp" width="571" height="571" alt="使用 Niji Mode 會創作出二次元的風格" loading="lazy" decoding="async">
+  <figcaption>使用 Niji Mode 會創作出二次元的風格</figcaption>
+</figure>
+
+<hr>
+<h2 id="half-qualitybase-qualityhigh-quality-的差異">Half quality、Base quality、High quality 的差異<a class="h-anchor" href="#half-qualitybase-qualityhigh-quality-%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h2>
+<p>這會影響你獲得圖片的品質、渲染的時間、GPU 的成本，筆者實驗下來，覺得選擇默認的 Base quality 就好（High quality 會更快消耗你產圖的額度）。</p>
+<hr>
+<h2 id="-style-lowmedhigh-的選擇">Style low、med、high 的選擇<a class="h-anchor" href="#-style-lowmedhigh-%e7%9a%84%e9%81%b8%e6%93%87" aria-label="這個段落的連結"></a></h2>
+<p>Style low 所產出的圖片風格相對一致，而 Style high 的變化度更高；你可以根據自己的創作需求來調整。</p>
+<p>下面筆者以「elegant lady」這個 prompt 為範例，你應該可以明顯感受到 Style high 的風格更加多元。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-06.webp" width="590" height="590" alt="Style low 中的 elegant lady 風格相似" loading="lazy" decoding="async">
+  <figcaption>Style low 中的 elegant lady 風格相似</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-07.webp" width="590" height="590" alt="在 Style high 中，同樣是 elegant lady 卻是完全不同的風格" loading="lazy" decoding="async">
+  <figcaption>在 Style high 中，同樣是 elegant lady 卻是完全不同的風格</figcaption>
+</figure>
+
+<hr>
+<h2 id="public-modeprivate-mode-的差異">Public mode、Private mode 的差異<a class="h-anchor" href="#public-modeprivate-mode-%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h2>
+<p>在 Public mode 所產生的圖都是公開的，而 Private mode 的圖則是只有你自己才看得到的。</p>
+<blockquote>
+<p>不過選擇 Private mode 會需要額外付費，如果你真的在創造一些超秘密的圖片，就可以考慮一下。</p>
+</blockquote>
+<hr>
+<h2 id="fast-moderelax-mode-的差異">Fast mode、Relax mode 的差異<a class="h-anchor" href="#fast-moderelax-mode-%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h2>
+<p>Fast 就是不用排隊，下完 prompt 後就會開始產圖；而 Relax 則需要排隊，具體速度竟看當前伺服器的排隊狀況。</p>
+<hr>
+<h2 id="-了解目前帳號剩下的產圖額度">了解目前帳號剩下的產圖額度<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3%e7%9b%ae%e5%89%8d%e5%b8%b3%e8%99%9f%e5%89%a9%e4%b8%8b%e7%9a%84%e7%94%a2%e5%9c%96%e9%a1%8d%e5%ba%a6" aria-label="這個段落的連結"></a></h2>
+<p>在下方的訊息輸入「/info」會顯示帳號資訊：</p>
+<ul>
+<li><strong>Fast Time Remaining</strong>：快速模式剩餘的流量。</li>
+<li><strong>Lifetime、Relaxed Usage</strong>：不同模式下各自算了幾張圖。</li>
+</ul>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-08.webp" width="504" height="429" alt="了解目前帳號剩下的產圖額度（圖 8）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-09.webp" width="568" height="341" alt="左邊是「體驗版」右邊是「付費版」" loading="lazy" decoding="async">
+  <figcaption>左邊是「體驗版」右邊是「付費版」</figcaption>
+</figure>
+
+
+</div>
+
+<hr>
+<h2 id="-調整圖片產出的比例">調整圖片產出的比例<a class="h-anchor" href="#-%e8%aa%bf%e6%95%b4%e5%9c%96%e7%89%87%e7%94%a2%e5%87%ba%e7%9a%84%e6%af%94%e4%be%8b" aria-label="這個段落的連結"></a></h2>
+<p>預設產出正方形的圖片，如果想改成長方形，你可以在結尾增加「 — ar 3:2」或「 — ar 2:3」。</p>
+<blockquote>
+<p>目前 MJ version 4支援 2:1 以內的長寬比例，常用的比例有： 「16:9、9:16、 2:1、1:2、3:2、2:3」</p>
+</blockquote>
+<p>這邊就舉一個有多個 suffix（後綴詞）的範例吧：「In the dark wine cellar, a ring imbued with magic is placed on top of an ancient and thick book, with a beam of moonlight shining upon it. — ar 3:2 — s 750 — q 0.5」</p>
+<ul>
+<li><strong>ar</strong>：圖片的比例為 3:2</li>
+<li><strong>s</strong>：style very high</li>
+<li><strong>q</strong>：Half quality</li>
+</ul>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-10.webp" width="1400" height="933" alt="在陰暗的酒窖裡，一枚蘊含魔力的戒指被放在古老又厚重的書本上，一抹月光剛好照在上面。" loading="lazy" decoding="async">
+  <figcaption>在陰暗的酒窖裡，一枚蘊含魔力的戒指被放在古老又厚重的書本上，一抹月光剛好照在上面。</figcaption>
+</figure>
+
+<p>筆者對右下的圖片最為滿意，就讓他來擔任這篇文章的封面圖吧（雖然跟標題關聯性不大XD）</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-11.webp" width="1400" height="933" alt="調整圖片產出的比例（圖 11）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p><em>對於 Midjourney 的各項設定，筆者也還在持續實驗與學習中，如果有任何錯誤，還請讀者不吝指教，讓彼此共同成長。</em></p>
+</blockquote>
+<p>未來筆者會出一系列使用 ChatGPT、openAI 的文章，大家敬請期待！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-settings/images/midjourney-settings-12.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>Midjourney 入門，用關鍵字讓 AI 產生絕美圖片</title>
+      <link>https://deanlin.net/blog/202301/midjourney-getting-started/</link>
+      <pubDate>Sat, 21 Jan 2023 17:13:39 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/midjourney-getting-started/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>這篇文章的目標，是帶領讀者透過「關鍵字」讓 Midjourney 產生絕美圖片；相信最後的完成的作品，會讓你驚嘆於 AI 的繪圖能力。</description>
+      <content:encoded><![CDATA[<p>這篇文章的目標，是帶領讀者透過「關鍵字」讓 Midjourney 產生絕美圖片；相信最後的完成的作品，會讓你驚嘆於 AI 的繪圖能力。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-01.webp" width="1140" height="611" alt="Midjourney 入門，用關鍵字讓 AI 產生絕美圖片（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>Midjourney 官方於 2023.03.30 停止免費試用，據說是因為太多人用免洗帳號濫用服務所導致（這次停止的挺突然的）。</p>
+</blockquote>
+<blockquote class="pullquote"><p>筆者猜測，等大多數人都上手 AI 產品後，這些服務都會轉為付費制度，因為運算其實很花錢；等那個時刻到來時，我們就要更認真比對各家服務的差異，選擇最值得的服務來買。</p>
+</blockquote>
+<pre tabindex="0"><code>大綱
+
+ㄧ、註冊 Midjourney
+二、進入 Discord，用簡單的關鍵字讓 Midjourney 產生絕美圖片
+三、不想被洗版？在 Discord 建立伺服器，並邀請 Midjourney bot 加入
+四、總結：我部落格的封面有著落了！
+</code></pre><h2 id="ㄧ註冊-midjourney">ㄧ、註冊 Midjourney<a class="h-anchor" href="#%e3%84%a7%e8%a8%bb%e5%86%8a-midjourney" aria-label="這個段落的連結"></a></h2>
+<p><strong>SETP 1</strong>：前往 Midjourney 官網： <a href="https://midjourney.com/">https://midjourney.com/</a></p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-02.webp" width="1400" height="718" alt="ㄧ、註冊 Midjourney（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>進入後你會看到這個非常炫砲的網站，密集恐懼症的人可能會有點頭暈。</p>
+</blockquote>
+<p><strong>SETP 2</strong>：點擊「Join the Beta」後，會跳轉到一個 Discord 的連結。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-03.webp" width="1400" height="876" alt="ㄧ、註冊 Midjourney（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 3</strong>：輸入自己的「使用者名稱」後，就會建立新帳號。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-04.webp" width="943" height="532" alt="ㄧ、註冊 Midjourney（圖 4）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 4</strong>：完成帳號的建立後，會請你輸入生日，以及「電子郵件」與「密碼」。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-05.webp" width="623" height="489" alt="ㄧ、註冊 Midjourney（圖 5）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><em>生</em>日亂填沒事，但電子郵件要真的能收信，還有密碼不要忘記啊！</p>
+</blockquote>
+<p><strong>SETP 5</strong>：到註冊的信箱驗證電子郵件。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-06.webp" width="1400" height="1020" alt="ㄧ、註冊 Midjourney（圖 6）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>雖然沒有完成驗證也能繼續使用，但有些功能會卡住（ex：邀請機器人加入自己的伺服器）。</p>
+</blockquote>
+<hr>
+<h2 id="二進入-discord用簡單的關鍵字讓-midjourney-產生絕美圖片">二、進入 Discord，用簡單的關鍵字讓 Midjourney 產生絕美圖片<a class="h-anchor" href="#%e4%ba%8c%e9%80%b2%e5%85%a5-discord%e7%94%a8%e7%b0%a1%e5%96%ae%e7%9a%84%e9%97%9c%e9%8d%b5%e5%ad%97%e8%ae%93-midjourney-%e7%94%a2%e7%94%9f%e7%b5%95%e7%be%8e%e5%9c%96%e7%89%87" aria-label="這個段落的連結"></a></h2>
+<p>點擊左側「Midjourney」的 icon 後，你會在「announcements」頻道看到官方發布的資訊。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-07.webp" width="1400" height="719" alt="二、進入 Discord，用簡單的關鍵字讓 Midjourney 產生絕美圖片（圖 7）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>有些資訊其實挺有用，但我相信 87% 的人都不會看（ex：裡面有介紹一個讓使用者能用其他語言，比如透過「中文、日文、韓文」產生圖片的社群，之後有機會再跟大家分享）。</p>
+</blockquote>
+<p>想產生 AI 圖片，你可以選擇隨便一個「newbies-xxx」的頻道，進入後會看到很多人都在嘗試讓 AI 產生作品，你可以參考他們輸入的「prompt」有哪些關鍵字。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-08.webp" width="1400" height="713" alt="二、進入 Discord，用簡單的關鍵字讓 Midjourney 產生絕美圖片（圖 8）" loading="lazy" decoding="async"></p>
+<p>看到別人的作品開始手癢了嗎？在下方的訊息輸入「/imagine」</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-09.webp" width="1154" height="651" alt="二、進入 Discord，用簡單的關鍵字讓 Midjourney 產生絕美圖片（圖 9）" loading="lazy" decoding="async"></p>
+<p>然後在「prompt」框框內輸入「英文」的關鍵字，單字、句子、一連串的敘述都可以。</p>
+<p>這邊提醒讀者第一次輸入指令時，Midjourney bot 會要求你先同意使用條約，點擊「Accept ToS」後即可使用。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-10.webp" width="827" height="402" alt="二、進入 Discord，用簡單的關鍵字讓 Midjourney 產生絕美圖片（圖 10）" loading="lazy" decoding="async"></p>
+<p>下面筆者以「Very cute rabbit in small house eat orange」為例，輸入後等待幾十秒就會完成，過程中你會看到圖片從朦朧到充滿細節（這個感覺跟刮刮樂一樣讓人著迷）。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-11.webp" width="671" height="524" alt="二、進入 Discord，用簡單的關鍵字讓 Midjourney 產生絕美圖片（圖 11）" loading="lazy" decoding="async"></p>
+<p>Midjourney 每次都會產生 4 張圖片：</p>
+<ul>
+<li>U1、U2、U3、U4 與 V1、V2、V3、V4 中，「數字」代表的是「左上、右上、左下、右下」。</li>
+<li><strong>U 是 Upscale 的縮寫</strong>，如果你對產出的結果滿意，可以點擊對應的 Ux，他會給你<strong>畫質更清晰的大圖</strong>。</li>
+<li><strong>V 是 Variation 的縮寫</strong>，如果你想要以這張圖<strong>作延伸變化時</strong>，可以點擊對應的 Vx。</li>
+<li>如果全都不滿意，點擊最右側的 refresh icon 則可全部刷新。</li>
+</ul>
+<p>這邊我選擇 V2，用右上的圖來延伸變化。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-12.webp" width="832" height="593" alt="二、進入 Discord，用簡單的關鍵字讓 Midjourney 產生絕美圖片（圖 12）" loading="lazy" decoding="async"></p>
+<p>最後我覺得右下的圖最滿意，點擊 U4 來取得大圖。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-13.webp" width="934" height="588" alt="二、進入 Discord，用簡單的關鍵字讓 Midjourney 產生絕美圖片（圖 13）" loading="lazy" decoding="async"></p>
+<p>用瀏覽器打開就能獲得高畫質圖片嚕！有沒有覺得這隻兔子很可愛呢（圖片的細節處理的真的很棒！）</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-14.webp" width="1024" height="1024" alt="二、進入 Discord，用簡單的關鍵字讓 Midjourney 產生絕美圖片（圖 14）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="三不想被洗版在-discord-建立伺服器並邀請-midjourney-bot-加入">三、不想被洗版？在 Discord 建立伺服器，並邀請 Midjourney bot 加入<a class="h-anchor" href="#%e4%b8%89%e4%b8%8d%e6%83%b3%e8%a2%ab%e6%b4%97%e7%89%88%e5%9c%a8-discord-%e5%bb%ba%e7%ab%8b%e4%bc%ba%e6%9c%8d%e5%99%a8%e4%b8%a6%e9%82%80%e8%ab%8b-midjourney-bot-%e5%8a%a0%e5%85%a5" aria-label="這個段落的連結"></a></h2>
+<p>如果覺得在頻道裡面被洗版到眼花，想建立一個專屬於你跟 Midjourney 的頻道，你可以自己建立一個「伺服器」，步驟如下：</p>
+<p><strong>SETP 1</strong>：點擊左側「＋」的符號。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-15.webp" width="1400" height="712" alt="三、不想被洗版？在 Discord 建立伺服器，並邀請 Midjourney bot 加入（圖 15）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>：這邊選擇「建立自己的」即可，然後輸入「伺服器名稱」。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-16.webp" width="819" height="759" alt="三、不想被洗版？在 Discord 建立伺服器，並邀請 Midjourney bot 加入（圖 16）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-17.webp" width="630" height="556" alt="三、不想被洗版？在 Discord 建立伺服器，並邀請 Midjourney bot 加入（圖 17）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<p><strong>STEP 3</strong>：回到 Midjourney 頻道後，點擊帳號頭像，將 Midjourney Bot 新增到自己的伺服器。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-18.webp" width="1400" height="715" alt="三、不想被洗版？在 Discord 建立伺服器，並邀請 Midjourney bot 加入（圖 18）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-19.webp" width="594" height="655" alt="三、不想被洗版？在 Discord 建立伺服器，並邀請 Midjourney bot 加入（圖 19）" loading="lazy" decoding="async"></p>
+<p>這邊會有視窗詢問你要授與 Midjourney Bot 的權限，為了避免後續權限可能造成的問題，筆者採用默認的「全選」，讀者也可視自己需求調整。</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-20.webp" width="585" height="918" alt="三、不想被洗版？在 Discord 建立伺服器，並邀請 Midjourney bot 加入（圖 20）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 4</strong>：接著你就可以在不被洗版的狀態下，專心與 Midjourney bot 溝通嚕！</p>
+<p>我這邊就用「<code>chinese new year, cute rabbit, firecracker &ndash; ar 3:2</code> 」的 prompt，來產生應景的兔年賀圖啦！</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-21.webp" width="720" height="518" alt="三、不想被洗版？在 Discord 建立伺服器，並邀請 Midjourney bot 加入（圖 21）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="四總結我部落格的封面有著落了">四、總結：我部落格的封面有著落了！<a class="h-anchor" href="#%e5%9b%9b%e7%b8%bd%e7%b5%90%e6%88%91%e9%83%a8%e8%90%bd%e6%a0%bc%e7%9a%84%e5%b0%81%e9%9d%a2%e6%9c%89%e8%91%97%e8%90%bd%e4%ba%86" aria-label="這個段落的連結"></a></h2>
+<p>過去寫部落格時，我常常為了挑選合適的封面圖而煩惱；但在得知 Midjourney 這款超猛的 AI 繪圖工具後，日後產圖簡直輕鬆愉快。</p>
+<p>不過有兩點還是要提醒一下讀者：</p>
+<ol>
+<li>產出的圖是不可拿來商用的，商用需要額外付費，詳細價格請參考官網（或是在下方的訊息輸入「/subscribe」，機器人會發送一條個人連結，點擊進去後就會顯示目前的付費方案）。</li>
+<li>如果你輸入一些不適當的關鍵字（ex：kill、sex）會被機器人警告（和諧），請你重新輸入。</li>
+</ol>
+<p>在文章的最後，筆者選一張可愛的兔子跟大家拜個早年，祝大家在新的一年身體健康、萬事如意，一起迎接嶄新的未來！</p>
+<p><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-22.webp" width="1400" height="931" alt="四、總結：我部落格的封面有著落了！（圖 22）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>Midjourney 還有很多進階技巧，讀者可以參考以下文章：「<a href="https://deanlin.net/blog/202301/midjourney-settings/">原來 Midjourney 的 Settings 對產圖有這麼大的影響</a>、<a href="https://deanlin.net/blog/202301/midjourney-pro-tips/">掌握 5 個技巧，讓你使用 Midjourney 像個專家</a>」</p>
+</blockquote>
+<p>未來筆者會出一系列使用 ChatGPT、openAI 的文章，如果你對這個議題感興趣，可以持續關注我的文章！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/midjourney-getting-started/images/midjourney-getting-started-23.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

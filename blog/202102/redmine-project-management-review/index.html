@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>如何用 Redmine 做專案管理＆體驗心得｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="在 UI 上如果沒有嚴苛要求的話，Redmine 算是一套非常棒的專案管理系統了，即使跟 Jira 相比也沒有差得太多(因為很多高階功能根本用不太到😅)，這篇文章會分成三大主題說明：管理者在專案創建前的準備、專案管理的實際應用、個人使用心得。">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202102/redmine-project-management-review/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="如何用 Redmine 做專案管理＆體驗心得">
+  <meta property="og:description" content="在 UI 上如果沒有嚴苛要求的話，Redmine 算是一套非常棒的專案管理系統了，即使跟 Jira 相比也沒有差得太多(因為很多高階功能根本用不太到😅)，這篇文章會分成三大主題說明：管理者在專案創建前的準備、專案管理的實際應用、個人使用心得。">
+  <meta property="og:url" content="https://deanlin.net/blog/202102/redmine-project-management-review/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2021-02-23T11:31:14&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:13:13&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="團隊合作">
+  <meta property="article:tag" content="Redmine">
+  <meta property="article:tag" content="專案管理">
+  <meta property="article:tag" content="導入專案管理系統">
+  <meta property="article:tag" content="使用教學">
+  <meta property="article:tag" content="體驗心得">
+  <meta property="og:image" content="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="673">
+  <meta property="og:image:alt" content="如何用 Redmine 做專案管理＆體驗心得">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-og.jpg">
+  <meta name="twitter:title" content="如何用 Redmine 做專案管理＆體驗心得">
+  <meta name="twitter:description" content="在 UI 上如果沒有嚴苛要求的話，Redmine 算是一套非常棒的專案管理系統了，即使跟 Jira 相比也沒有差得太多(因為很多高階功能根本用不太到😅)，這篇文章會分成三大主題說明：管理者在專案創建前的準備、專案管理的實際應用、個人使用心得。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202102/redmine-project-management-review/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"團隊合作"},"articleSection":"團隊合作","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:13:13+08:00","datePublished":"2021-02-23T11:31:14+08:00","description":"在 UI 上如果沒有嚴苛要求的話，Redmine 算是一套非常棒的專案管理系統了，即使跟 Jira 相比也沒有差得太多(因為很多高階功能根本用不太到😅)，這篇文章會分成三大主題說明：管理者在專案創建前的準備、專案管理的實際應用、個人使用心得。","headline":"如何用 Redmine 做專案管理＆體驗心得","image":{"@type":"ImageObject","height":673,"url":"https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"Redmine 專案管理","url":"https://deanlin.net/series/redmine/"}],"keywords":"Redmine, 專案管理, 導入專案管理系統, 使用教學, 體驗心得","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202102/redmine-project-management-review/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E5%A6%82%E4%BD%95%E7%94%A8-redmine-%E5%81%9A%E5%B0%88%E6%A1%88%E7%AE%A1%E7%90%86-%E9%AB%94%E9%A9%97%E5%BF%83%E5%BE%97-ffcc5506f25d"],"timeRequired":"PT6M","url":"https://deanlin.net/blog/202102/redmine-project-management-review/","wordCount":2693},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/teamwork/","name":"團隊合作","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202102/redmine-project-management-review/","name":"如何用 Redmine 做專案管理＆體驗心得","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/">技術教學</a></li>
+        <li><a href="/categories/teamwork/" aria-current="page">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/" aria-current="page">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/teamwork/">團隊合作</a>
+      </nav>
+      <h1 class="article-title">如何用 Redmine 做專案管理＆體驗心得</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2021-02-23">2021.02.23</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 6 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・Redmine 專案管理 <b>2</b>/ 6</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e7%ae%a1%e7%90%86%e8%80%85%e5%9c%a8%e5%b0%88%e6%a1%88%e5%89%b5%e5%bb%ba%e5%89%8d%e7%9a%84%e6%ba%96%e5%82%99">一、管理者在專案創建前的準備</a></li><li class="is-sub"><a href="#-%e8%a7%92%e8%89%b2%e8%88%87%e6%ac%8a%e9%99%90">➤ 角色與權限</a></li><li class="is-sub"><a href="#-%e8%ad%b0%e9%a1%8c%e7%8b%80%e6%85%8b%e6%b8%85%e5%96%ae">➤ 議題狀態清單</a></li><li class="is-sub"><a href="#-%e8%bf%bd%e8%b9%a4%e6%a8%99%e7%b1%a4%e6%b8%85%e5%96%ae">➤ 追蹤標籤清單</a></li><li class="is-sub"><a href="#-%e8%a8%ad%e5%ae%9a">➤ 設定</a></li><li><a href="#%e4%ba%8c%e5%b0%88%e6%a1%88%e7%ae%a1%e7%90%86%e7%9a%84%e5%af%a6%e9%9a%9b%e6%87%89%e7%94%a8">二、專案管理的實際應用</a></li><li class="is-sub"><a href="#step-1-%e5%bb%ba%e7%ab%8b%e6%96%b0%e5%b0%88%e6%a1%88">STEP 1 ：建立新專案</a></li><li class="is-sub"><a href="#step-2%e5%88%86%e9%85%8d%e8%ad%b0%e9%a1%8cissue">STEP 2：分配議題(issue)</a></li><li class="is-sub"><a href="#step-3%e7%b5%84%e5%93%a1%e6%94%b6%e5%88%b0%e8%ad%b0%e9%a1%8c%e7%9a%84%e5%88%86%e9%85%8d%e9%80%9a%e7%9f%a5%e6%a0%b9%e6%93%9a%e9%9c%80%e6%b1%82%e7%b4%b0%e5%88%86%e5%ad%90%e8%ad%b0%e9%a1%8c">STEP 3：組員收到議題的分配通知，根據需求細分子議題</a></li><li class="is-sub"><a href="#step-4uiux-%e5%ae%8c%e6%88%90%e8%a8%ad%e8%a8%88pm-%e5%88%86%e9%85%8d%e5%be%8c%e7%ba%8c%e5%b7%a5%e4%bd%9c%e7%b5%a6%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab">STEP 4：UIUX 完成設計，PM 分配後續工作給前端工程師</a></li><li class="is-sub"><a href="#step-5%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e7%b4%b0%e5%88%86%e5%ad%90%e8%ad%b0%e9%a1%8c%e4%b8%a6%e9%96%8b-api-%e9%9c%80%e6%b1%82%e7%b5%a6%e5%be%8c%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab">STEP 5：前端工程師細分子議題，並開 api 需求給後端工程師</a></li><li class="is-sub"><a href="#step-6%e5%be%8c%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e5%9b%9e%e5%be%a9%e8%ad%b0%e9%a1%8c">STEP 6：後端工程師回復議題</a></li><li class="is-sub"><a href="#step-7pm-%e8%a6%8f%e5%8a%83%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b">STEP 7：PM 規劃測試流程</a></li><li class="is-sub"><a href="#step-8sit-%e6%b8%ac%e8%a9%a6%e6%96%b0%e7%b3%bb%e7%b5%b1%e5%8a%9f%e8%83%bd">STEP 8：SIT 測試新系統功能</a></li><li class="is-sub"><a href="#-%e6%b5%81%e7%a8%8b%e7%b8%bd%e7%b5%90">🤔 流程總結</a></li><li><a href="#%e4%b8%89%e5%80%8b%e4%ba%ba%e4%bd%bf%e7%94%a8%e5%bf%83%e5%be%97">三、個人使用心得</a></li><li class="is-sub"><a href="#-%e8%ae%80%e5%ae%8c%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0%e5%be%8c">🙂 讀完這篇文章後</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>在 UI 上如果沒有嚴苛要求的話，Redmine 算是一套非常棒的專案管理系統了，即使跟 Jira 相比也沒有差得太多(因為很多高階功能根本用不太到😅)，這篇文章會分成三大主題說明：管理者在專案創建前的準備、專案管理的實際應用、個人使用心得。</p>
+<pre tabindex="0"><code>一、管理者在專案創建前的準備
+  ➤ 角色與權限
+  ➤ 議題狀態清單
+  ➤ 追蹤標籤清單
+  ➤ 設定
+二、專案管理的實際應用
+  STEP 1：建立新專案
+  STEP 2：分配議題(issue)
+  STEP 3：組員收到議題的分配通知，根據需求細分子議題
+  STEP 4：UIUX 完成設計，PM 分配後續工作給前端工程師
+  STEP 5：前端工程師細分子議題，並開 api 需求給後端工程師
+  STEP 6：後端工程師回復議題
+  STEP 7：PM 規劃測試流程
+  STEP 8：SIT 測試新系統功能
+  🤔 流程總結
+三、個人使用心得
+</code></pre><p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-01.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-01_hu_e10bedcf53d38164.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="785" alt="如何用 Redmine 做專案管理＆體驗心得（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="一管理者在專案創建前的準備">一、管理者在專案創建前的準備<a class="h-anchor" href="#%e4%b8%80%e7%ae%a1%e7%90%86%e8%80%85%e5%9c%a8%e5%b0%88%e6%a1%88%e5%89%b5%e5%bb%ba%e5%89%8d%e7%9a%84%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>以下操作皆在『網站管理』分頁，僅列出重要功能，其他請自行摸索</p>
+</blockquote>
+<h3 id="-角色與權限">➤ 角色與權限<a class="h-anchor" href="#-%e8%a7%92%e8%89%b2%e8%88%87%e6%ac%8a%e9%99%90" aria-label="這個段落的連結"></a></h3>
+<p>系統僅會提供如下角色，但專案管理的流程中通常還會有『測試人員』、『UI/UX 人員』等角色，這裡就按造公司需求新增及分配權限即可</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-02.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-02_hu_b1ac23be6a237f11.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="497" alt="角色與權限（圖 2）" loading="lazy" decoding="async"></p>
+<p>新增角色後會要定義他的工作流程，畢竟每個角色要做的任務不同</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-03.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-03_hu_e8fc4cc1d7516fea.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-03.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="497" alt="角色與權限（圖 3）" loading="lazy" decoding="async"></p>
+<p>以<strong>測試人員</strong>來說，他們通常是要驗證已解決的議題是否處理完成，所以我會賦予的權限如下圖</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-04.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-04_hu_2faad0adb0b36150.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-04.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="687" alt="角色與權限（圖 4）" loading="lazy" decoding="async"></p>
+<h3 id="-議題狀態清單">➤ 議題狀態清單<a class="h-anchor" href="#-%e8%ad%b0%e9%a1%8c%e7%8b%80%e6%85%8b%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<p>如果你在剛剛操作角色權限設定時覺得狀態不敷使用可以在這裡增加</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-05.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-05_hu_49edda8b409816c3.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-05.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="543" alt="議題狀態清單（圖 5）" loading="lazy" decoding="async"></p>
+<p>像測試人員就可能有『測試不符合預期』之類的狀態，新增後記得套用到對應的角色身上</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-06.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-06_hu_f961d7abf99a214.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-06.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="768" alt="議題狀態清單（圖 6）" loading="lazy" decoding="async"></p>
+<h3 id="-追蹤標籤清單">➤ 追蹤標籤清單<a class="h-anchor" href="#-%e8%bf%bd%e8%b9%a4%e6%a8%99%e7%b1%a4%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<p>這些標籤可以幫助你在尋找、歸納議題時的速度</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-07.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-07_hu_fb37fceb45eb5d30.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-07.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="244" alt="追蹤標籤清單（圖 7）" loading="lazy" decoding="async"></p>
+<h3 id="-設定">➤ 設定<a class="h-anchor" href="#-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<p>在『顯示』的地方可以調整語言</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-08.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-08_hu_d07c007662e7b9f.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-08.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="840" alt="設定（圖 8）" loading="lazy" decoding="async"></p>
+<p>在『驗證』頁面參考調整以下選項：</p>
+<ul>
+<li><strong>需要驗證(是)</strong>：如果你沒改又忘記調整專案為不公開會讓一般民眾都可以瀏覽喔！</li>
+<li><strong>註冊選項(關閉)</strong>：如果開放註冊可能會被有心人士狂註冊，多了一堆垃圾帳號造成日後管理困難</li>
+</ul>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-09.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-09_hu_44f13b53db1725c8.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="622" alt="設定（圖 9）" loading="lazy" decoding="async"></p>
+<h2 id="二專案管理的實際應用">二、專案管理的實際應用<a class="h-anchor" href="#%e4%ba%8c%e5%b0%88%e6%a1%88%e7%ae%a1%e7%90%86%e7%9a%84%e5%af%a6%e9%9a%9b%e6%87%89%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>以下用實際專案流程模擬操作，模擬公司實際職位如下</p>
+</blockquote>
+<ul>
+<li>PM(管理人員) — 開 issue 並且分配 issue</li>
+<li>UI/UX(開發人員) — 網頁設計相關任務</li>
+<li>frontend(開發人員) — 依據 UI/UX 設計完成前端</li>
+<li>backend(開發人員) — 配合前端需求給予資料</li>
+<li>SIT(測試人員) — 測試開發人員完成的功能並給予回饋</li>
+</ul>
+<h3 id="step-1-建立新專案">STEP 1 ：建立新專案<a class="h-anchor" href="#step-1-%e5%bb%ba%e7%ab%8b%e6%96%b0%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>了解客戶需求後，由 PM 建立新專案</p>
+<p>職位/角色：PM/管理人員</p>
+</blockquote>
+<p>由 PM 建立一個新的專案並設定裡面的參數</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-10.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-10_hu_c14130df2bdc28da.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-10.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="240" alt="STEP 1 ：建立新專案（圖 10）" loading="lazy" decoding="async"></p>
+<p>建立專案時請注意：</p>
+<ul>
+<li>名稱請填寫大家都看得懂的，如果專案有英文縮寫請放在代碼</li>
+<li><strong>『代碼』這個欄位儲存後無法修改</strong>，請謹慎</li>
+<li>如果專案沒有要公開，請記得把<strong>公開的選項拿掉</strong>，避免無關人士看到</li>
+</ul>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-11.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-11_hu_3832624dc658ff0c.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-11.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="661" alt="STEP 1 ：建立新專案（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>分配角色權限：</strong>建立專案後要加入成員並給予對應的角色權限</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-12.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-12_hu_a81574672a0f18b7.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-12.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="784" alt="STEP 1 ：建立新專案（圖 12）" loading="lazy" decoding="async"></p>
+<p>完成權限分配後的畫面如下，<strong>一個用戶可以有多重角色</strong></p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-13.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-13_hu_308d63303c3d9d74.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-13.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="294" alt="STEP 1 ：建立新專案（圖 13）" loading="lazy" decoding="async"></p>
+<p><strong>建立專案版本</strong>：專案一定會有版本的更迭，每項議題如果都有對應的版本在<strong>管理及追蹤上可以容易釐清責任</strong></p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-14.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-14_hu_67e3a400001fca9a.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-14.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="296" alt="STEP 1 ：建立新專案（圖 14）" loading="lazy" decoding="async"></p>
+<p><strong>建立議題分類</strong>：新人剛加入團隊時可能對成員的職權並不是很了解，如果在這裡建立分類的防可以<strong>快速幫助不熟悉團隊的人了解每個人的職權分配</strong></p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-15.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-15_hu_a73d61ee62fdd9de.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-15.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="245" alt="STEP 1 ：建立新專案（圖 15）" loading="lazy" decoding="async"></p>
+<h3 id="step-2分配議題issue">STEP 2：分配議題(issue)<a class="h-anchor" href="#step-2%e5%88%86%e9%85%8d%e8%ad%b0%e9%a1%8cissue" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>專案基礎配置完成後開始分配每個成員的任務，這裡先從 UI/UX 的設計圖開始</p>
+<p>職位/角色：PM/管理人員</p>
+</blockquote>
+<p>在建立議題的時候有幾點提醒一下：</p>
+<ul>
+<li><strong>概述</strong>：圖片可以用複製貼上，但上面只會顯示『!xxx.png!』，需要去<strong>『預覽』</strong>才能看到實際的結果</li>
+<li><strong>分類</strong>：如果選擇分類就會自動帶出被分派者</li>
+<li><strong>狀態</strong>：他的選項會跟之前<strong>賦予的角色權限</strong>有關，如果發現需要新的流程可以後續再做調整</li>
+</ul>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-16.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-16_hu_e71c2047c3331415.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-16.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="741" alt="STEP 2：分配議題(issue)（圖 16）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-17.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-17_hu_60a96ef86fe01fda.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-17.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="741" alt="這個是預覽的畫面，建議儲存議題前先看看預覽畫面確保跟你希望的內容是一致的" loading="lazy" decoding="async">
+  <figcaption>這個是預覽的畫面，建議儲存議題前先看看預覽畫面確保跟你希望的內容是一致的</figcaption>
+</figure>
+
+<h3 id="step-3組員收到議題的分配通知根據需求細分子議題">STEP 3：組員收到議題的分配通知，根據需求細分子議題<a class="h-anchor" href="#step-3%e7%b5%84%e5%93%a1%e6%94%b6%e5%88%b0%e8%ad%b0%e9%a1%8c%e7%9a%84%e5%88%86%e9%85%8d%e9%80%9a%e7%9f%a5%e6%a0%b9%e6%93%9a%e9%9c%80%e6%b1%82%e7%b4%b0%e5%88%86%e5%ad%90%e8%ad%b0%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>PM 給予議題的大方向任務，組員再依據自己的專業將工作項目細分，這樣更方便追蹤議題的作業進度並評估個人績效</p>
+<p>職位/角色：UIUX/開發人員</p>
+</blockquote>
+<p>如果有設定郵件通知的話會收到跟下面類似的信件</p>
+<figure class="figure"><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-18.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-18_hu_c0919abed8ef841e.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-18.webp 1168w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1168" height="966" alt="這封信件只是舉例" loading="lazy" decoding="async">
+  <figcaption>這封信件只是舉例</figcaption>
+</figure>
+
+<p>閱讀完議題的需求後再依據自己實際的工作項目去細分子議題，操作方式非常直覺就不在多做介紹</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-19.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-19_hu_134ebc22ed6c3ac6.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-19.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="179" alt="STEP 3：組員收到議題的分配通知，根據需求細分子議題（圖 19）" loading="lazy" decoding="async"></p>
+<p><strong>議題清單</strong>：在這個頁面可以瀏覽所有議題，依據自己的工作完成進度去編輯『任務完成百分比』、『狀態』、『紀錄時間』，方便PM了解實際的工作狀況</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-20.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-20_hu_45c8646a6571f28d.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-20.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="471" alt="STEP 3：組員收到議題的分配通知，根據需求細分子議題（圖 20）" loading="lazy" decoding="async"></p>
+<h3 id="step-4uiux-完成設計pm-分配後續工作給前端工程師">STEP 4：UIUX 完成設計，PM 分配後續工作給前端工程師<a class="h-anchor" href="#step-4uiux-%e5%ae%8c%e6%88%90%e8%a8%ad%e8%a8%88pm-%e5%88%86%e9%85%8d%e5%be%8c%e7%ba%8c%e5%b7%a5%e4%bd%9c%e7%b5%a6%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>PM 在議題狀態轉換時也會收到 email 通知，這時他可以做後續的議題分配</p>
+<p>職位/角色：PM/管理人員</p>
+</blockquote>
+<p><strong>相關的議題清單</strong>：PM 新增議題的方式不再贅述，但這個議題因為需要參考 UI 設計的草圖，所以要在『<strong>相關的議題清單</strong>』與 UI 設計的議題作關聯</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-21.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-21_hu_e70dcd9c1f9ff6d2.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-21.webp 991w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="991" height="122" alt="STEP 4：UIUX 完成設計，PM 分配後續工作給前端工程師（圖 21）" loading="lazy" decoding="async"></p>
+<h3 id="step-5前端工程師細分子議題並開-api-需求給後端工程師">STEP 5：前端工程師細分子議題，並開 api 需求給後端工程師<a class="h-anchor" href="#step-5%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e7%b4%b0%e5%88%86%e5%ad%90%e8%ad%b0%e9%a1%8c%e4%b8%a6%e9%96%8b-api-%e9%9c%80%e6%b1%82%e7%b5%a6%e5%be%8c%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>前端工程師在設計前端頁面的同時也會開 api 的需求給後端工程師，兩者間配合才能完善網頁</p>
+<p>職位/角色：前端工程師/開發人員</p>
+</blockquote>
+<p>這塊比較不一樣的是前端工程師應該要更細節具體的描述每個 api 所需要的內容，所以除了『後端 api 需求』這個父議題外，也需要增加細部需求的子議題。</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-22.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-22_hu_6516b56a29f7a005.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-22.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="459" alt="STEP 5：前端工程師細分子議題，並開 api 需求給後端工程師（圖 22）" loading="lazy" decoding="async"></p>
+<h3 id="step-6後端工程師回復議題">STEP 6：後端工程師回復議題<a class="h-anchor" href="#step-6%e5%be%8c%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e5%9b%9e%e5%be%a9%e8%ad%b0%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>後端工程師在依據前端工程師的需求完善後用回應的方式說明 api 的格式讓前端工程師完成最後的串接</p>
+<p>職位/角色：後端工程師/開發人員</p>
+</blockquote>
+<p>後端 api 不是完成就好，要附上相關說明文件才能節省雙方溝通時間並留存紀錄。</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-23.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-23_hu_b65db22a150f5252.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-23.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="637" alt="STEP 6：後端工程師回復議題（圖 23）" loading="lazy" decoding="async"></p>
+<h3 id="step-7pm-規劃測試流程">STEP 7：PM 規劃測試流程<a class="h-anchor" href="#step-7pm-%e8%a6%8f%e5%8a%83%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>在前端工程師與後端工程師串接完成，也確定基礎的操作都穩定後就可以請 SIT 人員做測試了，相關的測試項目及流程一般會由 PM 做後續安排</p>
+<p>職位/角色：PM/管理人員</p>
+</blockquote>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-24.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-24_hu_a7361d0d40f84729.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-24.webp 1333w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1333" height="764" alt="STEP 7：PM 規劃測試流程（圖 24）" loading="lazy" decoding="async"></p>
+<h3 id="step-8sit-測試新系統功能">STEP 8：SIT 測試新系統功能<a class="h-anchor" href="#step-8sit-%e6%b8%ac%e8%a9%a6%e6%96%b0%e7%b3%bb%e7%b5%b1%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>SIT 依照 PM 分配的測試流程進行測試，如果正式成功就能把該議題狀態改為『已解決』</p>
+<p>職位/角色：SIT/測試人員</p>
+</blockquote>
+<p>SIT 測試過程中如果發現問題除了把議題狀態改為『測試不符合預期』以及回覆哪裡錯誤外；額外發現的問題也可以新增子任務詳細說明問題，並將子任務都先指派給 PM 讓 PM 再分配給相關人員做處理</p>
+<p><img src="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-25.webp" srcset="/blog/202102/redmine-project-management-review/images/redmine-project-management-review-25_hu_1e67101584836aa5.webp 720w, /blog/202102/redmine-project-management-review/images/redmine-project-management-review-25.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="755" alt="STEP 8：SIT 測試新系統功能（圖 25）" loading="lazy" decoding="async"></p>
+<h3 id="-流程總結">🤔 流程總結<a class="h-anchor" href="#-%e6%b5%81%e7%a8%8b%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h3>
+<p>基本上就是測試到這個專案版本沒有任何問題後會再開新的專案版本，依據新的功能需求去實作；上面所敘述的流程僅供參考，實際的步驟還是需要公司內部有足夠共識才能真正讓這個專案管理工具發揮作用。</p>
+<h2 id="三個人使用心得">三、個人使用心得<a class="h-anchor" href="#%e4%b8%89%e5%80%8b%e4%ba%ba%e4%bd%bf%e7%94%a8%e5%bf%83%e5%be%97" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>相比之前文章介紹的 <a href="/blog/202101/project-management-with-microsoft-lists/">Microsoft List、Planner</a> ，這套系統我個人認為是完勝的，各種功能都非常完善，如果想要更多的功能也能透過 plugin 去做擴充，而且還是免費的XD</li>
+<li>但如果跟 Jira 相比，他功能就少了一點，比如：缺少 Sprint 的概念、沒辦法於文章中用@來tag相關人員、一個議題只能有一種追蹤標籤。但基本上功能已經夠用了，也許上面的功能都能透過 plugin 處理，這些就要後續再做研究了。</li>
+<li>功能擴充自由度相當高，公司如果想要導入這個專案管理系統建議要有工程師與 PM 一起配合研究，因為一些資訊的顯示還有流程要自己手動修改才能符合真實的需求。</li>
+</ol>
+<hr>
+<pre tabindex="0"><code>想要導入 Redmine 可以參考我之前分享的文章：
+👍 Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04
+👍 Redmine Plugins &amp; Themes 介紹：那些我成功擴充的外掛
+👍 用 Redmine 做專案管理 — 管理者不可不知的設定
+👍 用 Redmine 做專案管理 — 一般用戶不可不知的基礎功能
+👍 Redmine 教育訓練 — 依角色權限說明
+</code></pre><hr>
+<h3 id="-讀完這篇文章後">🙂 讀完這篇文章後<a class="h-anchor" href="#-%e8%ae%80%e5%ae%8c%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0%e5%be%8c" aria-label="這個段落的連結"></a></h3>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2021.02.23）</span><a href="https://medium.com/dean-lin/%E5%A6%82%E4%BD%95%E7%94%A8-redmine-%E5%81%9A%E5%B0%88%E6%A1%88%E7%AE%A1%E7%90%86-%E9%AB%94%E9%A9%97%E5%BF%83%E5%BE%97-ffcc5506f25d" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/redmine/">Redmine</a>
+            <a class="chip chip-hash" href="/tags/%E5%B0%88%E6%A1%88%E7%AE%A1%E7%90%86/">專案管理</a>
+            <a class="chip chip-hash" href="/tags/%E5%B0%8E%E5%85%A5%E5%B0%88%E6%A1%88%E7%AE%A1%E7%90%86%E7%B3%BB%E7%B5%B1/">導入專案管理系統</a>
+            <a class="chip chip-hash" href="/tags/%E4%BD%BF%E7%94%A8%E6%95%99%E5%AD%B8/">使用教學</a>
+            <a class="chip chip-hash" href="/tags/%E9%AB%94%E9%A9%97%E5%BF%83%E5%BE%97/">體驗心得</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202102%2Fredmine-project-management-review%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202102%2Fredmine-project-management-review%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202102/redmine-project-management-review/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202102/redmine-project-management-review/" data-title="如何用 Redmine 做專案管理＆體驗心得" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/redmine/">Redmine 專案管理</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>2</b> 篇・共 6 篇</p>
+          </div>
+          <ol class="steps">
+            <li>
+              <a href="/blog/202102/redmine-installation-ubuntu/"><span class="n">01</span><span>Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">02</span><span>如何用 Redmine 做專案管理＆體驗心得<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202103/redmine-plugins-and-themes/"><span class="n">03</span><span>Redmine Plugins &amp; Themes 介紹：那些我成功安裝的外掛</span></a>
+            </li>
+            <li>
+              <a href="/blog/202103/redmine-admin-settings/"><span class="n">04</span><span>用 Redmine 做專案管理 — 管理者不可不知的設定</span></a>
+            </li>
+            <li>
+              <a href="/blog/202103/redmine-basics-for-users/"><span class="n">05</span><span>用 Redmine 做專案管理 — 一般用戶不可不知的基礎功能</span></a>
+            </li>
+            <li>
+              <a href="/blog/202103/redmine-training-by-role/"><span class="n">06</span><span>Redmine 教育訓練 — 依角色權限說明</span></a>
+            </li>
+          </ol>
+          <a class="sb-next" href="/blog/202103/redmine-plugins-and-themes/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">Redmine Plugins &amp; Themes 介紹：那些我成功安裝的外掛</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202102/redmine-installation-ubuntu/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04</span></a>
+          <a class="next" href="/blog/202102/postman-mock-server-environments/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">讓你的 Postman 更專業 — Mock Server &amp; Environments &amp; Publish API doc</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e7%ae%a1%e7%90%86%e8%80%85%e5%9c%a8%e5%b0%88%e6%a1%88%e5%89%b5%e5%bb%ba%e5%89%8d%e7%9a%84%e6%ba%96%e5%82%99">一、管理者在專案創建前的準備</a></li><li class="is-sub"><a href="#-%e8%a7%92%e8%89%b2%e8%88%87%e6%ac%8a%e9%99%90">➤ 角色與權限</a></li><li class="is-sub"><a href="#-%e8%ad%b0%e9%a1%8c%e7%8b%80%e6%85%8b%e6%b8%85%e5%96%ae">➤ 議題狀態清單</a></li><li class="is-sub"><a href="#-%e8%bf%bd%e8%b9%a4%e6%a8%99%e7%b1%a4%e6%b8%85%e5%96%ae">➤ 追蹤標籤清單</a></li><li class="is-sub"><a href="#-%e8%a8%ad%e5%ae%9a">➤ 設定</a></li><li><a href="#%e4%ba%8c%e5%b0%88%e6%a1%88%e7%ae%a1%e7%90%86%e7%9a%84%e5%af%a6%e9%9a%9b%e6%87%89%e7%94%a8">二、專案管理的實際應用</a></li><li class="is-sub"><a href="#step-1-%e5%bb%ba%e7%ab%8b%e6%96%b0%e5%b0%88%e6%a1%88">STEP 1 ：建立新專案</a></li><li class="is-sub"><a href="#step-2%e5%88%86%e9%85%8d%e8%ad%b0%e9%a1%8cissue">STEP 2：分配議題(issue)</a></li><li class="is-sub"><a href="#step-3%e7%b5%84%e5%93%a1%e6%94%b6%e5%88%b0%e8%ad%b0%e9%a1%8c%e7%9a%84%e5%88%86%e9%85%8d%e9%80%9a%e7%9f%a5%e6%a0%b9%e6%93%9a%e9%9c%80%e6%b1%82%e7%b4%b0%e5%88%86%e5%ad%90%e8%ad%b0%e9%a1%8c">STEP 3：組員收到議題的分配通知，根據需求細分子議題</a></li><li class="is-sub"><a href="#step-4uiux-%e5%ae%8c%e6%88%90%e8%a8%ad%e8%a8%88pm-%e5%88%86%e9%85%8d%e5%be%8c%e7%ba%8c%e5%b7%a5%e4%bd%9c%e7%b5%a6%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab">STEP 4：UIUX 完成設計，PM 分配後續工作給前端工程師</a></li><li class="is-sub"><a href="#step-5%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e7%b4%b0%e5%88%86%e5%ad%90%e8%ad%b0%e9%a1%8c%e4%b8%a6%e9%96%8b-api-%e9%9c%80%e6%b1%82%e7%b5%a6%e5%be%8c%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab">STEP 5：前端工程師細分子議題，並開 api 需求給後端工程師</a></li><li class="is-sub"><a href="#step-6%e5%be%8c%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e5%9b%9e%e5%be%a9%e8%ad%b0%e9%a1%8c">STEP 6：後端工程師回復議題</a></li><li class="is-sub"><a href="#step-7pm-%e8%a6%8f%e5%8a%83%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b">STEP 7：PM 規劃測試流程</a></li><li class="is-sub"><a href="#step-8sit-%e6%b8%ac%e8%a9%a6%e6%96%b0%e7%b3%bb%e7%b5%b1%e5%8a%9f%e8%83%bd">STEP 8：SIT 測試新系統功能</a></li><li class="is-sub"><a href="#-%e6%b5%81%e7%a8%8b%e7%b8%bd%e7%b5%90">🤔 流程總結</a></li><li><a href="#%e4%b8%89%e5%80%8b%e4%ba%ba%e4%bd%bf%e7%94%a8%e5%bf%83%e5%be%97">三、個人使用心得</a></li><li class="is-sub"><a href="#-%e8%ae%80%e5%ae%8c%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0%e5%be%8c">🙂 讀完這篇文章後</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202102%2Fredmine-project-management-review%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202102%2Fredmine-project-management-review%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202102/redmine-project-management-review/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202102/redmine-project-management-review/" data-title="如何用 Redmine 做專案管理＆體驗心得" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202103/redmine-training-by-role/images/redmine-training-by-role-01_hu_e0c6a2170ef7719b.webp" srcset="/blog/202103/redmine-training-by-role/images/redmine-training-by-role-01_hu_23606ba38b2d5cda.webp 240w, /blog/202103/redmine-training-by-role/images/redmine-training-by-role-01_hu_72916baa1ad18c15.webp 480w, /blog/202103/redmine-training-by-role/images/redmine-training-by-role-01_hu_3e340c3b7e2732f6.webp 800w, /blog/202103/redmine-training-by-role/images/redmine-training-by-role-01_hu_e0c6a2170ef7719b.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/redmine/">Redmine 專案管理</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/redmine-training-by-role/">Redmine 教育訓練 — 依角色權限說明</a></h3>
+    <p class="card-desc">這篇是 Redmine 系列的最後一篇，把每個角色及操作要注意的細節整合起來，如果想把 Redmine 用來專案管理看這篇就非常夠了，本篇目標是讓專案中的三種角色(管理人員、開發人員、測試人員)了解如何使用這個系統。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-08">2021.03.08</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202103/redmine-basics-for-users/images/redmine-basics-for-users-01_hu_d9ba27bf17ae9e10.webp" srcset="/blog/202103/redmine-basics-for-users/images/redmine-basics-for-users-01_hu_5bc764fdf2f86329.webp 240w, /blog/202103/redmine-basics-for-users/images/redmine-basics-for-users-01_hu_9bfeed24178cf35f.webp 480w, /blog/202103/redmine-basics-for-users/images/redmine-basics-for-users-01_hu_d126c9622c6d799d.webp 800w, /blog/202103/redmine-basics-for-users/images/redmine-basics-for-users-01_hu_d9ba27bf17ae9e10.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/redmine/">Redmine 專案管理</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/redmine-basics-for-users/">用 Redmine 做專案管理 — 一般用戶不可不知的基礎功能</a></h3>
+    <p class="card-desc">了解基礎操作，其他細節的功能自己慢慢熟悉就可以了，這篇文章會分享讓專案順利運行的基礎功能。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-05">2021.03.05</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>2 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202103/redmine-admin-settings/images/redmine-admin-settings-01_hu_7e4e7a803c7db37e.webp" srcset="/blog/202103/redmine-admin-settings/images/redmine-admin-settings-01_hu_e5fbe5682cba7e66.webp 240w, /blog/202103/redmine-admin-settings/images/redmine-admin-settings-01_hu_984d2e0f686d6601.webp 480w, /blog/202103/redmine-admin-settings/images/redmine-admin-settings-01_hu_391893a6ce862912.webp 800w, /blog/202103/redmine-admin-settings/images/redmine-admin-settings-01_hu_7e4e7a803c7db37e.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/redmine/">Redmine 專案管理</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/redmine-admin-settings/">用 Redmine 做專案管理 — 管理者不可不知的設定</a></h3>
+    <p class="card-desc">Redmine 的功能非常多，尤其是管理者在專案創建初期需要做非常多細節的設定；對於專案成員來說他們只需依造管理員制訂的規範操作即可。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-03">2021.03.03</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202102/redmine-project-management-review/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

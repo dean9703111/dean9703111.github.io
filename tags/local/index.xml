@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Local｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/local/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Fri, 06 Dec 2024 19:11:28 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/local/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>PrivateGPT &#43; llama 安裝教學 ── 用開源模型打造無需連網、有私人專屬知識庫的 AI</title>
+      <link>https://deanlin.net/blog/202412/privategpt-llama-offline-rag/</link>
+      <pubDate>Fri, 06 Dec 2024 19:11:28 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202412/privategpt-llama-offline-rag/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>儘管 ChatGPT、NotebookLM、Copilot 等 AI 工具非常強大，但許多公司在使用上仍有許多隱私疑慮。 所以今天想跟大家分享一款能離線或在內網使用的 AI 工具 ── PrivateGPT</description>
+      <content:encoded><![CDATA[<h2 id="用開源模型打造無需連網有私人專屬知識庫的-ai--privategpt--llama-安裝教學">用開源模型打造無需連網、有私人專屬知識庫的 AI ── PrivateGPT + llama 安裝教學<a class="h-anchor" href="#%e7%94%a8%e9%96%8b%e6%ba%90%e6%a8%a1%e5%9e%8b%e6%89%93%e9%80%a0%e7%84%a1%e9%9c%80%e9%80%a3%e7%b6%b2%e6%9c%89%e7%a7%81%e4%ba%ba%e5%b0%88%e5%b1%ac%e7%9f%a5%e8%ad%98%e5%ba%ab%e7%9a%84-ai--privategpt--llama-%e5%ae%89%e8%a3%9d%e6%95%99%e5%ad%b8" aria-label="這個段落的連結"></a></h2>
+<p>儘管 ChatGPT、NotebookLM、Copilot 等 AI 工具非常強大，但許多公司在使用上仍有許多隱私疑慮。</p>
+<p>所以今天想跟大家分享一款能離線或在內網使用的 AI 工具 ── PrivateGPT，在搭配 llama 這個開源模型後，儘管他不像 ChatGPT 那麼學識淵博，但在基礎對話與文件檢索的能力上已經足夠日常工作使用。</p>
+<p>開始閱讀前先提醒一下大家，這個工具的安裝有點複雜，建議具備相關程式背景知識，過程遇到非預期的錯誤實屬正常。</p>
+<p>儘管<a href="https://python-poetry.org/docs/#installing-with-the-official-installer">官網文件</a>很詳細，但總是有文件外的問題發生，做好心理準備後就可以開始了！</p>
+<pre tabindex="0"><code>文章大綱
+
+一、安裝前置環境（Python、Terminal、Git、VSCode）
+二、安裝 PrivateGPT
+三、安裝 Ollama
+四、啟動 PrivateGPT
+五、體驗離線與文件對話的功能
+六、安裝過程可能會遇到的問題
+七、總結：目前 RAG 會遇到的問題＆使用建議
+</code></pre><p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-01.webp" width="1147" height="644" alt="用開源模型打造無需連網、有私人專屬知識庫的 AI ── PrivateGPT &#43; llama 安裝教學（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="一安裝前置環境pythonterminalgitvscode">一、安裝前置環境（Python、Terminal、Git、VSCode）<a class="h-anchor" href="#%e4%b8%80%e5%ae%89%e8%a3%9d%e5%89%8d%e7%bd%ae%e7%92%b0%e5%a2%83pythonterminalgitvscode" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li><strong>Python</strong>：官方建議安裝 3.11 的版本，<a href="https://www.python.org/downloads/">官網</a></li>
+<li><strong>Terminal</strong>：使用哪個終端機都可以，筆者是使用 <a href="https://ohmyz.sh/">Oh My Zsh</a></li>
+<li><strong>Git</strong>：管理程式版本的工具，<a href="https://git-scm.com/downloads">官網</a></li>
+<li><strong>VSCode</strong>：方便編輯相關設定檔案，<a href="https://code.visualstudio.com/">官網</a></li>
+</ul>
+<blockquote>
+<p><strong>筆者的電腦環境為</strong>： <code>MacBook Pro，Apple M1 MAX 晶片，macOS 為 15.0.1</code></p>
+</blockquote>
+<hr>
+<h2 id="二安裝-privategpt">二、安裝 PrivateGPT<a class="h-anchor" href="#%e4%ba%8c%e5%ae%89%e8%a3%9d-privategpt" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：用 <code>Git</code> 下載專案</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/zylon-ai/private-gpt
+</span></span><span style="display:flex;"><span>cd private-gpt
+</span></span></code></pre></div><p><strong>STEP 2</strong>：安裝 <code>Poetry</code> 來下載相關資源</p>
+<blockquote>
+<p>本文以 Mac 安裝步驟為主，Windows 可以參考<a href="https://python-poetry.org/docs/#installing-with-the-official-installer">官網</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -sSL https://install.python-poetry.org | python3 -
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-02.webp" width="1400" height="1019" alt="二、安裝 PrivateGPT（圖 2）" loading="lazy" decoding="async"></p>
+<p>將 Poetry 加入你的指令，並確認他安裝成功。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export <span style="color:#79c0ff">PATH</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;/Users/lindingyuan/.local/bin:</span><span style="color:#79c0ff">$PATH</span><span style="color:#a5d6ff">&#34;</span>
+</span></span><span style="display:flex;"><span>poetry --version
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-03.webp" width="1400" height="190" alt="二、安裝 PrivateGPT（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：安裝 <code>make</code> 來跑 scripts</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install make
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-04.webp" width="1400" height="360" alt="二、安裝 PrivateGPT（圖 4）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="三安裝-ollama">三、安裝 Ollama<a class="h-anchor" href="#%e4%b8%89%e5%ae%89%e8%a3%9d-ollama" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：到<a href="https://ollama.com/">官網</a>下載，並安裝到電腦（根據網路環境不同，可能要安裝一段時間）。</p>
+<p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-05.webp" width="1169" height="656" alt="三、安裝 Ollama（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>：安裝完成後，請記得<code>關閉這個應用程式</code>，然後透過 Terminal 來執行 Ollama。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ollama serve
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-06.webp" width="1400" height="487" alt="三、安裝 Ollama（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：原本的 Terminal 不要關閉，再開一個 Terminal 來安裝 PrivateGPT 所需要的資源。</p>
+<pre tabindex="0"><code>poetry install --extras &#34;ui llms-ollama embeddings-ollama vector-stores-qdrant&#34;
+</code></pre><p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-07.webp" width="1400" height="488" alt="三、安裝 Ollama（圖 7）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="四啟動-privategpt">四、啟動 PrivateGPT<a class="h-anchor" href="#%e5%9b%9b%e5%95%9f%e5%8b%95-privategpt" aria-label="這個段落的連結"></a></h2>
+<p>如果安裝一切順利，接下來執行下面的指令就可以體驗 PrivateGPT &amp; ollama 的強大了！</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#79c0ff">PGPT_PROFILES</span><span style="color:#ff7b72;font-weight:bold">=</span>ollama make run
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-08.webp" width="1400" height="626" alt="四、啟動 PrivateGPT（圖 8）" loading="lazy" decoding="async"></p>
+<p>如果順利的話，透過連結: <a href="http://localhost:8001">http://localhost:8001</a> 就可以訪問嚕！</p>
+<p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-09.webp" width="1400" height="711" alt="四、啟動 PrivateGPT（圖 9）" loading="lazy" decoding="async"></p>
+<p>目前預設使用的 llama 模型是 3.1，你可以進去專案文件，編輯 <code>settings-ollama.yaml</code> 的內容，將它改成最新的版本（筆者撰寫文章時，最新版本為 3.2）。</p>
+<p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-10.webp" width="1400" height="825" alt="四、啟動 PrivateGPT（圖 10）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>調整完要關閉重啟才會生效喔！</p>
+</blockquote>
+<hr>
+<h2 id="五體驗離線與文件對話的功能">五、體驗離線與文件對話的功能<a class="h-anchor" href="#%e4%ba%94%e9%ab%94%e9%a9%97%e9%9b%a2%e7%b7%9a%e8%88%87%e6%96%87%e4%bb%b6%e5%b0%8d%e8%a9%b1%e7%9a%84%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>PrivateGPT 有幾種模式供大家使用：</p>
+<ul>
+<li>RAG: 從選擇的文件中取得答案。</li>
+<li>Search: 從選擇的文件中尋找資訊。</li>
+<li>Basic: 與使用的 LLM（ex: llama3.2）聊天，不會參考文件資訊。</li>
+<li>Summarize: 從選擇的文件提取摘要。</li>
+</ul>
+<p>過去將公司的需求規格書、會議記錄上傳到雲端的 AI 平台會有資安方面的疑慮。</p>
+<p>但現在 PrivateGPT 就解決了這個問題，這邊我上傳了 10 份會議記錄(用 AI 生成的模擬資料)，向大家展示他在 RAG 這個領域的表現。</p>
+<p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-11.webp" width="1400" height="709" alt="五、體驗離線與文件對話的功能（圖 11）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-12.webp" width="1400" height="709" alt="五、體驗離線與文件對話的功能（圖 12）" loading="lazy" decoding="async"></p>
+<p>筆者測試過多種情境後，體驗的結果是「尚可使用」，想擁有良好體驗需要再做很多人為的設計；目前跟 NotebookLM 相比，還有很大的差距。</p>
+<blockquote>
+<p>關於 NotebookLM 可以<a href="https://deanlin.net/blog/202411/notebooklm-workplace-uses/">參考這篇文章</a></p>
+</blockquote>
+<p>另外 llama3.2 的基礎對話能力其實已經表現得挺不錯了。</p>
+<p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-13.webp" width="1400" height="713" alt="五、體驗離線與文件對話的功能（圖 13）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="六安裝過程可能會遇到的問題">六、安裝過程可能會遇到的問題<a class="h-anchor" href="#%e5%85%ad%e5%ae%89%e8%a3%9d%e9%81%8e%e7%a8%8b%e5%8f%af%e8%83%bd%e6%9c%83%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>最後分享筆者在安裝過程中遇到的問題。</p>
+<p><strong>問題</strong>：執行 <code>make run</code> 時出現「xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools)&hellip;」錯誤</p>
+<p><strong>解決方案</strong>：執行 <code>xcode-select &ndash;install</code> 便可安裝。</p>
+<p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-14.webp" width="1400" height="192" alt="六、安裝過程可能會遇到的問題（圖 14）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-15.webp" width="1146" height="582" alt="六、安裝過程可能會遇到的問題（圖 15）" loading="lazy" decoding="async"></p>
+<p>安裝過程有點久，請耐心等候…</p>
+<p><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-16.webp" width="1220" height="548" alt="六、安裝過程可能會遇到的問題（圖 16）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="七總結目前-rag-會遇到的問題使用建議">七、總結：目前 RAG 會遇到的問題＆使用建議<a class="h-anchor" href="#%e4%b8%83%e7%b8%bd%e7%b5%90%e7%9b%ae%e5%89%8d-rag-%e6%9c%83%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c%e4%bd%bf%e7%94%a8%e5%bb%ba%e8%ad%b0" aria-label="這個段落的連結"></a></h2>
+<p>今年年初，筆者分享過 <a href="https://deanlin.net/blog/202401/gpt4all-offline-ai/">GPT4All</a> 這款 AI 工具；體驗上 GPT4All 較適合個人使用，而 PrivateGPT 則適合企業。</p>
+<p>而他們是否足夠聰明，很大程度是跟你選擇的 Model 有正相關，因為能接受的 max_new_tokens、context_window 極限值不同。</p>
+<p>下面分享幾個目前 RAG 工具會有的問題：</p>
+<ul>
+<li><strong>不懂裝懂</strong>：可能這份文件中明明缺少這些資訊，但他卻煞有其事的給出資訊，你可以透過：「如果不確定答案，直接告訴我你不知道」的 Prompt 減少這類錯誤。</li>
+<li><strong>沒有抓到正確的答案</strong>：可能明明有答案，但 AI 對內容的權重排序錯誤導致答案錯誤（比如他以為目錄就是解答，但實際上應該到章節內找答案），可以嘗試縮小檢索範圍來提升準確率。</li>
+<li><strong>回答不全面</strong>：你可能需要 A、B、C 文件的綜合資訊，但他給的內容遺漏許多細節，這邊會建議每個文檔分開詢問。</li>
+<li><strong>答案錯誤或相互矛盾</strong>：如果來源品質本身就不好，那就不要期待他能給出多好的答案；建議先做資料清洗，以維持來源品質。</li>
+</ul>
+<p>其實 NotebookLM 官方有表明<a href="https://support.google.com/notebooklm/answer/14275965?hl=zh-Hant">不會將個人資料用於訓練 NotebookLM</a>，因此企業除非有很強的 AI 人才了解如何優化模型提高輸出品質，否則 NotebookLM 也許是目前的最優解。</p>
+<hr>
+<p><strong>如果你想更全面的掌握生成式 AI 工具，歡迎購買筆者出版的新書，他將幫助您在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-17.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+<p>也歡迎 Follow 筆者的部落格，我會持續分享最新 AI 工具，目前已有超過 80 篇 AI 相關文章等你來看！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202412/privategpt-llama-offline-rag/images/privategpt-llama-offline-rag-card-01_hu_63d16c9d8a1cabe7.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>不用網路！在電腦安裝類 ChatGPT 的 AI，還可以上傳文件對話（GPT4All）</title>
+      <link>https://deanlin.net/blog/202401/gpt4all-offline-ai/</link>
+      <pubDate>Thu, 11 Jan 2024 13:25:42 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202401/gpt4all-offline-ai/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>使用 ChatGPT 等 AI 聊天機器人時，我們會被提醒不可上傳個人、公司的隱私資料。儘管 ChatGPT、Copilot 有推出企業方案，宣稱不會將客戶的資料拿去訓練，但很多公司對此還是持保留態度。因此在本地安裝 LLM 大語言模型的 GPT4All…</description>
+      <content:encoded><![CDATA[<h2 id="不用網路在電腦安裝類-chatgpt-的-ai還指定對話的文件gpt4all">不用網路！在電腦安裝類 ChatGPT 的 AI，還指定對話的文件（GPT4All）<a class="h-anchor" href="#%e4%b8%8d%e7%94%a8%e7%b6%b2%e8%b7%af%e5%9c%a8%e9%9b%bb%e8%85%a6%e5%ae%89%e8%a3%9d%e9%a1%9e-chatgpt-%e7%9a%84-ai%e9%82%84%e6%8c%87%e5%ae%9a%e5%b0%8d%e8%a9%b1%e7%9a%84%e6%96%87%e4%bb%b6gpt4all" aria-label="這個段落的連結"></a></h2>
+<p>使用 ChatGPT 等 AI 聊天機器人時，我們會被提醒不可上傳個人、公司的隱私資料。</p>
+<p>儘管 ChatGPT、Copilot 有推出企業方案，宣稱不會將客戶的資料拿去訓練，但很多公司對此還是持保留態度。</p>
+<p>因此在本地安裝 LLM 大語言模型，即使沒有網路也能使用的 GPT4All 也許是個不錯的替代方案，他在 Windows、Mac、Ubuntu 都能輕鬆使用。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-01.webp" width="1013" height="570" alt="在 ChatGPT 當機的時候就會覺得有他挺方便的" loading="lazy" decoding="async">
+  <figcaption>在 ChatGPT 當機的時候就會覺得有他挺方便的</figcaption>
+</figure>
+
+<pre tabindex="0"><code>文章大綱
+
+▋STEP 1：下載 GPT4All
+▋STEP 2：安裝 GPT4All
+▋STEP 3：安裝 LLM 大語言模型
+▋STEP 4：開始使用 GPT4All
+▋STEP 5：調整 GPT4All 設定
+▋Bonus：指定對話的文件（LocalDocs）
+</code></pre><h2 id="step-1下載-gpt4all">STEP 1：下載 GPT4All<a class="h-anchor" href="#step-1%e4%b8%8b%e8%bc%89-gpt4all" aria-label="這個段落的連結"></a></h2>
+<p>GPT4All 的操作介面跟 ChatGPT 很像，你也可以將聊天記錄保存在自己的電腦，進入官網後挑選自己的作業系統下載就好：</p>
+<a class="linkcard" href="https://gpt4all.io/index.html" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">GPT4All</span>
+    <span class="lc-desc">Free, local and privacy-aware chatbots</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>gpt4all.io</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-card-01_hu_69994bf4ff2dc747.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-02.webp" width="1400" height="626" alt="STEP 1：下載 GPT4All（圖 2）" loading="lazy" decoding="async"></p>
+<p>往下滑一些會看到不同模組（Model）的效能測試數據。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-03.webp" width="1400" height="1130" alt="包含是非題、日常理解能力、推理能力、學術問題等測試項目" loading="lazy" decoding="async">
+  <figcaption>包含是非題、日常理解能力、推理能力、學術問題等測試項目</figcaption>
+</figure>
+
+<hr>
+<h2 id="step-2安裝-gpt4all">STEP 2：安裝 GPT4All<a class="h-anchor" href="#step-2%e5%ae%89%e8%a3%9d-gpt4all" aria-label="這個段落的連結"></a></h2>
+<p>在安裝上，只要一直按「Next」下一步就好。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-04.webp" width="1224" height="1000" alt="STEP 2：安裝 GPT4All（圖 4）" loading="lazy" decoding="async"></p>
+<p>同意使用者條款要打勾才能下一步</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-05.webp" width="1224" height="1000" alt="STEP 2：安裝 GPT4All（圖 5）" loading="lazy" decoding="async"></p>
+<p>➤ <strong>小提醒</strong>：如果官網最新的版本有問題，可以去官方 Github 下載穩定版（筆者下載的是 2.5.4）</p>
+<a class="linkcard" href="https://github.com/nomic-ai/gpt4all/releases" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Releases · nomic-ai/gpt4all</span>
+    <span class="lc-desc">gpt4all: open-source LLM chatbots that you can run anywhere - Releases · nomic-ai/gpt4all</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>github.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-card-02_hu_5a8ac8bf10532f4b.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-06.webp" width="1400" height="694" alt="STEP 2：安裝 GPT4All（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-3安裝-llm-大語言模型">STEP 3：安裝 LLM 大語言模型<a class="h-anchor" href="#step-3%e5%ae%89%e8%a3%9d-llm-%e5%a4%a7%e8%aa%9e%e8%a8%80%e6%a8%a1%e5%9e%8b" aria-label="這個段落的連結"></a></h2>
+<p>打開 GPT4All 時，他會先詢問你是否要分享數據來改善 GPT4All，<strong>如不想就選擇 No（筆者建議）</strong>。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-07.webp" width="1400" height="785" alt="STEP 3：安裝 LLM 大語言模型（圖 7）" loading="lazy" decoding="async"></p>
+<p>然後就會出現下載 LLM 大語言模型的列表，上面會說明這個模型擅長的領域（聊天、寫程式）、由哪間公司訓練、是否能商用，並且提供檔案大小、RAM 需求、參數等資訊，通常檔案越大的效果越好。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-08.webp" width="1400" height="785" alt="目前看下來，Model 所需要的 RAM 從 1GB~16GB 不等" loading="lazy" decoding="async">
+  <figcaption>目前看下來，Model 所需要的 RAM 從 1GB~16GB 不等</figcaption>
+</figure>
+
+<p>列表中也有 ChatGPT-3.5、ChatGPT-4 可以選擇，不過需要使用 OpenAI API Key，如果使用這個選項就意味著需要連網與付費。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-09.webp" width="1400" height="785" alt="STEP 3：安裝 LLM 大語言模型（圖 9）" loading="lazy" decoding="async"></p>
+<p>這邊我挑選 Orca 2（Full）這個由微軟訓練的模型來實驗。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-10.webp" width="1400" height="785" alt="STEP 3：安裝 LLM 大語言模型（圖 10）" loading="lazy" decoding="async"></p>
+<p>➤ <strong>小提醒</strong>：如果你直接下載網路上模型，只要把檔案放到上圖 Download path 的目錄下就可以嚕。</p>
+<hr>
+<h2 id="step-4開始使用-gpt4all">STEP 4：開始使用 GPT4All<a class="h-anchor" href="#step-4%e9%96%8b%e5%a7%8b%e4%bd%bf%e7%94%a8-gpt4all" aria-label="這個段落的連結"></a></h2>
+<p>下載完後，就可以在聊天界面中看到模型嚕～</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-11.webp" width="1400" height="300" alt="STEP 4：開始使用 GPT4All（圖 11）" loading="lazy" decoding="async"></p>
+<p>這邊我就先用「請假信」初步測試給大家看看。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-12.webp" width="1265" height="840" alt="STEP 4：開始使用 GPT4All（圖 12）" loading="lazy" decoding="async"></p>
+<p>表現的並不是很好，我們再來測試一下「寫程式」的能力。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-13.webp" width="1265" height="908" alt="STEP 4：開始使用 GPT4All（圖 13）" loading="lazy" decoding="async"></p>
+<p>基礎程式的表現尚可，但…情境複雜一點的就不行了。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-14.webp" width="1257" height="834" alt="STEP 4：開始使用 GPT4All（圖 14）" loading="lazy" decoding="async"></p>
+<p>看起來寫得有模有樣，不過實際上是錯的，但這個題目 GPT-3.5 可以輕鬆答對。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-15.webp" width="859" height="700" alt="STEP 4：開始使用 GPT4All（圖 15）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-5調整-gpt4all-設定">STEP 5：調整 GPT4All 設定<a class="h-anchor" href="#step-5%e8%aa%bf%e6%95%b4-gpt4all-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<p>點擊上方的「齒輪」，可以進一步調整 GPT4All 的設定。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-16.webp" width="1400" height="296" alt="STEP 5：調整 GPT4All 設定（圖 16）" loading="lazy" decoding="async"></p>
+<h3 id="-model調整模型參數">➤ Model（調整模型參數）<a class="h-anchor" href="#-model%e8%aa%bf%e6%95%b4%e6%a8%a1%e5%9e%8b%e5%8f%83%e6%95%b8" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>System Prompt</strong>：這是對話開始前會執行的指令，你可以在這邊設定 AI 要扮演的角色（ex:翻譯員、工程師），這邊有很多優秀的 Prompt 可以參考: <a href="https://github.com/f/awesome-chatgpt-prompts%E3%80%82">https://github.com/f/awesome-chatgpt-prompts</a></li>
+<li><strong>Prompt Template</strong>： 設計 AI 要如何回應你，如果你希望 AI 都以中文回覆，就可以加上「用繁體中文回應。」</li>
+<li><strong>Generation Setting</strong>：如果沒有特別需求，筆者並不建議調整；另外 Max Length 儘管可以調整，但如果超過模型可以承受的長度，他是不會理你的。</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-17.webp" width="1257" height="1003" alt="Model（調整模型參數）（圖 17）" loading="lazy" decoding="async"></p>
+<p>下面我讓他扮演詩人（poet）的角色，並用「love」這個主題來作詩。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-18.webp" width="1257" height="376" alt="大家可以看到就算指定繁體中文，很多時候還是會以簡體呈現。" loading="lazy" decoding="async">
+  <figcaption>大家可以看到就算指定繁體中文，很多時候還是會以簡體呈現。</figcaption>
+</figure>
+
+<h3 id="-application基礎設定">➤ Application（基礎設定）<a class="h-anchor" href="#-application%e5%9f%ba%e7%a4%8e%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>Theme</strong>：調整主題為深色（Dark）、淺色（Light）。</li>
+<li><strong>Font Size</strong>：字體大小。</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-19.webp" width="1257" height="611" alt="Application（基礎設定）（圖 19）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="bonus指定對話的文件localdocs">Bonus：指定對話的文件（LocalDocs）<a class="h-anchor" href="#bonus%e6%8c%87%e5%ae%9a%e5%b0%8d%e8%a9%b1%e7%9a%84%e6%96%87%e4%bb%b6localdocs" aria-label="這個段落的連結"></a></h2>
+<p>如果想上傳自己的文件，就需要先去下載對應的 Model。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-20.webp" width="1304" height="770" alt="Bonus：指定對話的文件（LocalDocs）（圖 20）" loading="lazy" decoding="async"></p>
+<p>在 LLM 列表中選擇「SBert」這個模型來安裝。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-21.webp" width="1309" height="483" alt="Bonus：指定對話的文件（LocalDocs）（圖 21）" loading="lazy" decoding="async"></p>
+<p>點擊齒輪後，在 LocalDocs 分頁透過 Browse 選擇資料夾，點擊 Add 便可新增文件；他支援大多數的文件格式（doc/pdf/txt/html/xls/csv/json…）。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-22.webp" width="1400" height="296" alt="Bonus：指定對話的文件（LocalDocs）（圖 22）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-23.webp" width="1304" height="315" alt="Bonus：指定對話的文件（LocalDocs）（圖 23）" loading="lazy" decoding="async"></p>
+<p>新增後的的路徑會出現在下方。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-24.webp" width="1400" height="410" alt="Bonus：指定對話的文件（LocalDocs）（圖 24）" loading="lazy" decoding="async"></p>
+<p>然後我們開一個新的對話來實驗看看，這邊要把對應的 Local Documents 勾選才會生效喔！</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-25.webp" width="1400" height="300" alt="Bonus：指定對話的文件（LocalDocs）（圖 25）" loading="lazy" decoding="async"></p>
+<p>下面可以看到 AI 的回答會參考我給予的文件。</p>
+<p><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-26.webp" width="1400" height="410" alt="Bonus：指定對話的文件（LocalDocs）（圖 26）" loading="lazy" decoding="async"></p>
+<p>不過這部分測試下來，如果把它當成「關鍵字查詢」的工具還算堪用；若想做更進階的應用，像是整合、發想、摘要，AI 的表現都不太好。</p>
+<hr>
+<h2 id="總結">總結<a class="h-anchor" href="#%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<p>跟官方的 GPT-4 相比，他真的蠻弱（笨）的；這邊分享筆者在體驗後看到的優缺點：</p>
+<ul>
+<li><strong>優點</strong>：可以不連網使用、隱私性較高、免費。</li>
+<li><strong>缺點</strong>：回答速度較慢、無法回答太長的內容、回覆品質較差、理解問題能力較差。</li>
+</ul>
+<p>如果公司禁止使用 ChatGPT、Bard 等需要連網的 AI 工具，或是你有許多隱私資訊需要處理；也許 GPT4All 會是一個可行的替代方案。大家可以多測試幾個 Model，比較一下各自的差異。</p>
+<p>➤ <strong>小提醒：</strong>筆者並沒有仔細研究裡面的程式碼，若打算上傳機敏資料，請自行評估風險。</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-card-03_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202401/gpt4all-offline-ai/images/gpt4all-offline-ai-27.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

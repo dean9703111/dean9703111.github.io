@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>n8n 自動化｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/series/n8n/</link>
+    <description>用 Docker 在本機架設免費的 n8n，掌握常用節點，再實作 Google Sheet 自動產生 SEO 關鍵字矩陣。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Tue, 14 Jan 2025 22:45:48 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/series/n8n/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[n8n 教學]在 Google Sheet 自動建立 SEO 關鍵字矩陣</title>
+      <link>https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/</link>
+      <pubDate>Tue, 14 Jan 2025 22:45:48 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>「如何找到大量關鍵字」的其中一個方法，就是用 Google Search 取得「相關搜尋字詞」，然後將它整理成一個關鍵字矩陣。這篇文章用 n8n 把這個工作流整理成一個自動化流程。使用者只要填上自己的 Google Sheet URL，就能一鍵生成對應的 SEO 關鍵字矩陣！</description>
+      <content:encoded><![CDATA[<p>最近上邱韜誠的 SEO 課程時，「如何找到大量關鍵字」的其中一個方法，就是用 Google Search 取得「相關搜尋字詞」，然後將它整理成一個關鍵字矩陣。</p>
+<p>但如果要查大量的關鍵字，就會浪費很多時間在複製貼上的重複任務上。</p>
+<p>剛好最近在研究 n8n，就把這個工作流整理成一個自動化流程。使用者只要填上自己的 Google Sheet URL，就能一鍵生成對應的 SEO 關鍵字矩陣了！</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-01.webp" width="1400" height="789" alt="\[n8n 教學\]在 Google Sheet 自動建立 SEO 關鍵字矩陣（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>n8n 有<a href="https://n8n.io/">雲端</a>與本地（local）的開源版本，基於資訊安全與使用限制，筆者強烈建立在本地（local）建立環境，<a href="https://deanlin.net/blog/202501/n8n-docker-local-setup/">詳細的操作步驟可以參考這篇文章</a>。</p>
+</blockquote>
+<hr>
+<h2 id="-自動建立-seo-關鍵字矩陣工作流workflow簡介">自動建立 SEO 關鍵字矩陣工作流（Workflow）簡介<a class="h-anchor" href="#-%e8%87%aa%e5%8b%95%e5%bb%ba%e7%ab%8b-seo-%e9%97%9c%e9%8d%b5%e5%ad%97%e7%9f%a9%e9%99%a3%e5%b7%a5%e4%bd%9c%e6%b5%81workflow%e7%b0%a1%e4%bb%8b" aria-label="這個段落的連結"></a></h2>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-02.webp" width="1400" height="488" alt="自動建立 SEO 關鍵字矩陣工作流（Workflow）簡介（圖 2）" loading="lazy" decoding="async"></p>
+<p>上圖是完整的工作流（Workflow），下面說明一下執行步驟 &amp; 設計邏輯:</p>
+<p><strong>STEP 1</strong>: 填寫要讀取的 Google Sheet URL 與工作表名稱（set_google_sheet_info）。</p>
+<p><strong>STEP 2</strong>: 讀取 Google Sheet 裡面的要查詢的關鍵字（get_keywords）。</p>
+<p><strong>STEP 3</strong>: 第一層迴圈（loop_keywords_1st）會根據關鍵字來建立 Sheet（create_sheet）與查詢關鍵字（query_keywords_1st），並將資料格式化為可以使用的型態（format_query_result）給下一步驟。</p>
+<p><strong>STEP 4</strong>: 第二層迴圈（loop_keywords_2nd）會根據上一層給予的關聯關鍵字，再做第二次的搜尋（query_keywords_2nd），同樣也要將資料格式化爲可以使用的型態（format_query_result2）。</p>
+<p><strong>STEP 5</strong>: 得到 SEO 關鍵字後，要先把他們分成指定的群組（group_keys），並分割成適合寫入 Google Sheet 的格式（split_to_items）。</p>
+<p><strong>STEP 6</strong>: 最後透過迴圈（loop_append_row_data）過濾掉無法寫入的值（remove_undefined_key），先等待 2.5 秒（wait_2.5s），再逐行寫入 Google Sheet（append_row_data），避免太頻繁呼叫 API。</p>
+<p><strong>STEP 7</strong>: 完成這一切後，判斷是否為最後一次執行（skip_last_runtime），如果是最後一次就終止迴圈。</p>
+<p><strong>備註1</strong>: reset_with_runtimes、reset_with_even_runtimes 這兩個節點（Node），是為了在 Done 的情境下 Reset Loop Over Items 重複執行時累計的資料。</p>
+<p><strong>備註2</strong>: check_keyword_2nd_has_value、check_key_length 是為了處理空陣列的情境。</p>
+<hr>
+<h2 id="-如何使用這個-n8n-的工作流workflow">如何使用這個 n8n 的工作流（Workflow）<a class="h-anchor" href="#-%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8%e9%80%99%e5%80%8b-n8n-%e7%9a%84%e5%b7%a5%e4%bd%9c%e6%b5%81workflow" aria-label="這個段落的連結"></a></h2>
+<p>如果你只是想要使用這個 Workflow，可以直接複製筆者放在 <a href="https://github.com/dean9703111/n8n-google-sheet-exmaple/blob/master/workflow/google_sheet_keyword.json">GitHub 上的範本</a>，貼到 n8n 的 Workflow（不要懷疑，貼上就對了），並根據下面的步驟完成設定就可以執行了。</p>
+<p><strong>STEP 1</strong>: 建立一個 Google Sheet，在「工作表1」的第一欄填寫關鍵字（keyword），範例如下</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-03.webp" width="1123" height="585" alt="如何使用這個 n8n 的工作流（Workflow）（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>: 打開 n8n「set_google_sheet_info」的 Node，在「google_sheet_url」欄位上貼上自己的 Google Sheet URL</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-04.webp" width="1400" height="488" alt="如何使用這個 n8n 的工作流（Workflow）（圖 4）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-05.webp" width="1293" height="967" alt="如何使用這個 n8n 的工作流（Workflow）（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>: 打開「get_keywords、create_sheet、append_row_data」的 Node，選擇 Google Sheets account 的 Credential（如果過去沒有建立過，可以參考後面文章的教學）。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-06.webp" width="1400" height="488" alt="如何使用這個 n8n 的工作流（Workflow）（圖 6）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-07.webp" width="1293" height="967" alt="如何使用這個 n8n 的工作流（Workflow）（圖 7）" loading="lazy" decoding="async"></p>
+<p>完成上面的步驟後，點擊「Test workflow」就可以自動生成 Google SEO 關鍵字矩陣啦！從下圖可以看到</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-08.webp" width="1293" height="967" alt="如何使用這個 n8n 的工作流（Workflow）（圖 8）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-09.webp" width="1400" height="732" alt="如何使用這個 n8n 的工作流（Workflow）（圖 9）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-建立-google-sheets-api-的-credential">建立 Google Sheets API 的 Credential<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b-google-sheets-api-%e7%9a%84-credential" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>: 打開任一 Google Sheet Node，點擊「Create New Credential」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-10.webp" width="1292" height="960" alt="建立 Google Sheets API 的 Credential（圖 10）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>: 建立一個 <a href="https://cloud.google.com/">Google Cloud</a> 帳號，有 Gmail 就能直接使用，下面是登入後的畫面。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-11.webp" width="1400" height="705" alt="建立 Google Sheets API 的 Credential（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>: 進入「<a href="https://console.cloud.google.com/">控制台（Google Cloud Console）</a>」，選擇「New Project」並在 Project name 輸入「n8n test」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-12.webp" width="1400" height="626" alt="建立 Google Sheets API 的 Credential（圖 12）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 4</strong>: 建立完成後會出現下面的頁面，因為我們要開啟 Google Sheet 的權限，所以點擊「API &amp; Services」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-13.webp" width="1400" height="663" alt="建立 Google Sheets API 的 Credential（圖 13）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 5</strong>: 然後點擊「+ ENABLE APIS AND SERVICES」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-14.webp" width="1400" height="494" alt="建立 Google Sheets API 的 Credential（圖 14）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 6</strong>: 在搜尋框輸入「google sheet api」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-15.webp" width="1292" height="756" alt="建立 Google Sheets API 的 Credential（圖 15）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 7</strong>: 點擊「ENABLE」來開啟權限。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-16.webp" width="1292" height="601" alt="建立 Google Sheets API 的 Credential（圖 16）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 8</strong>: 開啟好權限後，點擊左側的「OAuth consent screen」建立 APP。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-17.webp" width="1293" height="960" alt="建立 Google Sheets API 的 Credential（圖 17）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 9</strong>: 資訊填寫完成後，要點擊「PUBLISH APP」才能使用（你也可以加入 User，用內測的方式使用）。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-18.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 18）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 10</strong>: 點擊上方的「+ CREATE CREDENTAILS」，選擇「OAuth Client ID」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-19.webp" width="1293" height="601" alt="建立 Google Sheets API 的 Credential（圖 19）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 11</strong>: Application type 選擇「Web application」，Name 自行決定。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-20.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 20）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 12</strong>: 在「Authorized redirect URIs」填入 n8n 的網址，如果你是在 local 操作就填寫 <code><a href="http://localhost:5678/rest/oauth2-credential/callback">http://localhost:5678/rest/oauth2-credential/callback</a></code></p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-21.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 21）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 13</strong>: 按下 Create 後就會取得最關鍵的「Client ID、Client secret」，把他們複製下來。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-22.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 22）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 14</strong>: 畫面切回到 n8n 的 Google Sheet Node，填上「Client ID、Client secret」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-23.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 23）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 15</strong>: 點擊「Sign in with Google」後，勇敢的點擊「繼續」與「前往」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-24.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 24）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 16</strong>: 選擇允許 n8n 可以使用的範圍（這邊看個人需求，勾全選比較不會遇到權限的問題；但提醒大家這組 Secret 權限很大，千萬別外洩了）。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-25.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 25）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 17</strong>: 看到畫面出現「Got Connected」就代表你大功告成啦！！！</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-26.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 26）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>如果看完這篇文章，代表你是一個充滿意志力的人，給自己拍拍手的同時，也可以幫筆者的文章拍拍手喔（這系列真的寫到快崩潰 QQ）。</p>
+</blockquote>
+<p><strong>延伸閱讀</strong>:</p>
+<ul>
+<li><a href="https://deanlin.net/blog/202501/n8n-docker-local-setup/">[n8n 教學]用 Docker 在 Local 建立免費 &amp; 無限次數使用的自動化工具</a></li>
+<li><a href="https://deanlin.net/blog/202501/n8n-core-nodes/">[n8n 教學]掌握重要節點 (Node) 使用情境：Set、Loop Over Items、If、Code、HTTP Request、Wait</a></li>
+</ul>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-card-01_hu_6ae694e05f7525f9.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-27.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>[n8n 教學]掌握重要節點 (Node) 使用情境：Set、Loop Over Items、If、Code、HTTP Request、Wait</title>
+      <link>https://deanlin.net/blog/202501/n8n-core-nodes/</link>
+      <pubDate>Tue, 14 Jan 2025 21:55:10 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202501/n8n-core-nodes/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>n8n 是一款功能強大的自動化工具，但如果你對 n8n 的基礎知識與節點功能不夠理解，可能會遇到各種常見的坑（ex: Loop Over Items 無法重置迴圈、讀不到過去節點的結果..）。為了讓大家少踩坑，這篇文章將詳細介紹 n8n 節點的基礎操作</description>
+      <content:encoded><![CDATA[<p>n8n 是一款功能強大的自動化工具，透過視覺化的操作介面，只需拖拉節點、設定參數，就能快速建立屬於你的工作流。</p>
+<p>但如果你對 n8n 的基礎知識與節點功能不夠理解，可能會遇到各種常見的坑（ex: Loop Over Items 無法重置迴圈、讀不到過去節點的結果..）。</p>
+<p>為了讓大家少踩坑，這篇文章將詳細介紹 n8n 節點的基礎操作，幫助你快速上手這款工具。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-01.webp" width="1400" height="789" alt="\[n8n 教學\]掌握重要節點 (Node) 使用情境：Set、Loop Over Items、If、Code、HTTP Request、Wait（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>文章大綱
+
+▋ Set Node: 設定 Workflow 共用的變數
+▋ Loop Over Items Node: 執行重複任務
+▋ HTTP Request: 呼叫 API
+▋ Wait Node: 等待指定時間
+▋ Code Node: 添加程式邏輯（ex: 格式化資料）
+▋ 取得指定節點（Specific Node）的 Result
+▋ 用 If Node 來 Reset Loop Over Items 資料
+▋ 用 $getWorkflowStaticData 儲存資訊
+</code></pre><blockquote>
+<p>n8n 有<a href="https://n8n.io/">雲端</a>與本地（local）的開源版本，基於資訊安全與使用限制，筆者強烈建立在本地（lo<em>cal）建立環境，<a href="https://deanlin.net/blog/202501/n8n-docker-local-setup/">詳細的操作步驟可以參考這篇文章</a>。</em></p>
+</blockquote>
+<hr>
+<h2 id="-set-node-設定-workflow-共用的變數">Set Node: 設定 Workflow 共用的變數<a class="h-anchor" href="#-set-node-%e8%a8%ad%e5%ae%9a-workflow-%e5%85%b1%e7%94%a8%e7%9a%84%e8%ae%8a%e6%95%b8" aria-label="這個段落的連結"></a></h2>
+<p>Set Node 的主要功能是定義工作流中共用的變數，這樣當參數要調整時，只需要調整一個地方，不需要去多個地方調整，避免設定上的遺漏。</p>
+<p>比如你想針對特定的 Google Sheet 做讀取、新增、修改的操作，就可以將 Google Sheet 的 URL 設定到 Set Node 的欄位中。</p>
+<p>這樣後續要使用 Google Sheet URL 時，只要讀取這個 Set Node 的資訊即可，不需要在每個 Google Sheet 的節點重新設定。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-02.webp" width="1398" height="954" alt="Set Node: 設定 Workflow 共用的變數（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>小提醒</strong>: 在這邊設定的變數是「固定值」，如果想要設定可以更改的變數，請參考後面的「$getWorkflowStaticData」方案。</p>
+</blockquote>
+<hr>
+<h2 id="-loop-over-items-node-執行重複任務">Loop Over Items Node: 執行重複任務<a class="h-anchor" href="#-loop-over-items-node-%e5%9f%b7%e8%a1%8c%e9%87%8d%e8%a4%87%e4%bb%bb%e5%8b%99" aria-label="這個段落的連結"></a></h2>
+<p>Loop Over Items Node 可以針對獲得的每一筆資料（item）執行相同的操作。</p>
+<p>像筆者在後續的範例中，因為要重複 Call Google 的 API 來取得關聯關鍵字，就會用到這個 Node:</p>
+<ul>
+<li><strong>loop</strong>: 放上你要執行的重複任務。</li>
+<li><strong>done</strong>: 重複任務執行完畢後，會得到的累計結果。</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-03.webp" width="772" height="405" alt="Loop Over Items Node: 執行重複任務（圖 3）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>小提醒</strong>: Loop 迴圈是不會自動重置的，需要搭配 If Node 進行條件判斷，才能避免資料重複處理。</p>
+</blockquote>
+<hr>
+<h2 id="-http-request-node-呼叫-api">HTTP Request Node: 呼叫 API<a class="h-anchor" href="#-http-request-node-%e5%91%bc%e5%8f%ab-api" aria-label="這個段落的連結"></a></h2>
+<p>許多自動化流程都是需要呼叫 API 來取得權限（ex: token）的:</p>
+<ul>
+<li><strong>Method</strong>: 有 GET/POST/DELETE 等方法可以選擇</li>
+<li><strong>URL</strong>: 貼上 API URL</li>
+<li><strong>Authentication</strong>: 執行 API 需要的憑證。</li>
+<li><strong>傳送參數</strong>: 可以選擇用 Query Parameters 或 Send Body 的方式來傳送參數。</li>
+</ul>
+<p>下面就用 Google 建議搜尋的 Get Method API 來向大家做個示範:</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-04.webp" width="1400" height="953" alt="HTTP Request Node: 呼叫 API（圖 4）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-code-node-添加程式邏輯ex-格式化資料">Code Node: 添加程式邏輯（ex: 格式化資料）<a class="h-anchor" href="#-code-node-%e6%b7%bb%e5%8a%a0%e7%a8%8b%e5%bc%8f%e9%82%8f%e8%bc%afex-%e6%a0%bc%e5%bc%8f%e5%8c%96%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h2>
+<p>當 n8n 預設的功能無法滿足需求時，就需要 Code Node 來處理了。</p>
+<p>比如上面 HTTP Request Node 的結果是一個比較複雜的格式，我們可以透過程式將它轉換為自己期待的格式，並且可以透過 console.log 來協助 debug。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-05.webp" width="1400" height="699" alt="Code Node: 添加程式邏輯（ex: 格式化資料）（圖 5）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-wait-node-等待指定時間">Wait Node: 等待指定時間<a class="h-anchor" href="#-wait-node-%e7%ad%89%e5%be%85%e6%8c%87%e5%ae%9a%e6%99%82%e9%96%93" aria-label="這個段落的連結"></a></h2>
+<p>Wait Node 可以在工作流間加入一段延遲。</p>
+<p>比如我們在批量 Call API 時，為了避免伺服器過載，或是減少自己被黑名單的機率，可以設定 5 秒的間隔。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-06.webp" width="1400" height="951" alt="Wait Node: 等待指定時間（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-取得指定節點specific-node的-result">取得指定節點（Specific Node）的 Result<a class="h-anchor" href="#-%e5%8f%96%e5%be%97%e6%8c%87%e5%ae%9a%e7%af%80%e9%bb%9especific-node%e7%9a%84-result" aria-label="這個段落的連結"></a></h2>
+<p>n8n 默認取得上一個節點（Previous Node）的 Result，但如果你想要取得更早之前 Node 的 Result，就要用到下面的方式：</p>
+<ul>
+<li><strong>Node</strong>: 使用 Expression <code>{{ $(&rsquo;node_name&rsquo;).item.json.feild_name }}</code></li>
+</ul>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-07.webp" width="1398" height="954" alt="取得指定節點（Specific Node）的 Result（圖 7）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>Code</strong>: <code>$node[&ldquo;node_name&rdquo;].json[&ldquo;feild_name&rdquo;];</code></li>
+</ul>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-08.webp" width="1398" height="954" alt="取得指定節點（Specific Node）的 Result（圖 8）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-用-if-node-來-reset-loop-over-items-資料">用 If Node 來 Reset Loop Over Items 資料<a class="h-anchor" href="#-%e7%94%a8-if-node-%e4%be%86-reset-loop-over-items-%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h2>
+<p>如果你有設計迴圈（Loop），可透過 If Node 設定條件來 Reset 資料，避免因未清空資料而導致流程錯誤。</p>
+<p>如果你希望每次進入 Loop Over Items 時資料都清空，Workflow 可以參考下圖的結構來設計:</p>
+<ul>
+<li>將 If Node 放在上一個 Node 的後面，Loop Over Items 前面。</li>
+<li>將 Loop Over Items 的 done 連結到 If Node，這樣才能協助 Reset 資料。</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-09.webp" width="736" height="216" alt="用 If Node 來 Reset Loop Over Items 資料（圖 9）" loading="lazy" decoding="async"></p>
+<p>If Node 我用 <code>{{ $runIndex }}</code> 跑第幾次來當作重置的判斷，如果次數小於上一步 items 的數量 <code>{{ $json.keys().length }}</code>，會走 True，進行重置。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-10.webp" width="1400" height="956" alt="用 If Node 來 Reset Loop Over Items 資料（圖 10）" loading="lazy" decoding="async"></p>
+<p>為了讓重置的事件觸發，在 Loop Over Items Node，我們要在 Options 的 Reset 設定重置的邏輯為 <code>{{ $prevNode.name === &lsquo;if&rsquo; }}</code></p>
+<p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-11.webp" width="1400" height="956" alt="用 If Node 來 Reset Loop Over Items 資料（圖 11）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-用-getworkflowstaticdata-儲存資訊">用 $getWorkflowStaticData 儲存資訊<a class="h-anchor" href="#-%e7%94%a8-getworkflowstaticdata-%e5%84%b2%e5%ad%98%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
+<p>當需要跨節點（Node）保存資料時，可透過 $getWorkflowStaticData 儲存並讀取與更新工作流的靜態數據。</p>
+<p>下面用 Code Node 展示初始化變數資訊的方式:</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> workflowStaticData <span style="color:#ff7b72;font-weight:bold">=</span> $getWorkflowStaticData(<span style="color:#a5d6ff">&#39;global&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (<span style="color:#ff7b72;font-weight:bold">!</span>workflowStaticData.hasOwnProperty(<span style="color:#a5d6ff">&#39;keyword_1st&#39;</span>)) {
+</span></span><span style="display:flex;"><span>  workflowStaticData.keyword_1st <span style="color:#ff7b72;font-weight:bold">=</span> []
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">return</span> [{}];
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-12.webp" width="1400" height="956" alt="用 $getWorkflowStaticData 儲存資訊（圖 12）" loading="lazy" decoding="async"></p>
+<p>如果你想要讀取、更新資料(範例是在 Array 裏面 push 資料)，可以這麼做:</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> workflowStaticData <span style="color:#ff7b72;font-weight:bold">=</span> $getWorkflowStaticData(<span style="color:#a5d6ff">&#39;global&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>workflowStaticData.keyword_1st.push(<span style="color:#a5d6ff">&#39;bbb&#39;</span>);
+</span></span><span style="display:flex;"><span>console.log(workflowStaticData.keyword_1st);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">return</span> [{}];
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-13.webp" width="1400" height="953" alt="用 $getWorkflowStaticData 儲存資訊（圖 13）" loading="lazy" decoding="async"></p>
+<p>以上就是今天的分享，如果你剛開始使用 n8n，不妨從這些節點開始入手。有任何問題歡迎留言討論！讓我們一起學習更有效率地使用 n8n。</p>
+<p><a href="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/">下一篇文章將會向大家分享呼叫 Google API 自動寫入 Google Sheet 來搜集關鍵字的 n8n 實戰範例！</a></p>
+<p><strong>延伸閱讀</strong>:</p>
+<ul>
+<li><a href="https://deanlin.net/blog/202501/n8n-docker-local-setup/">[n8n 教學]用 Docker 在 Local 建立免費 &amp; 無限次數使用的自動化工具</a></li>
+<li><a href="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/">[n8n 教學]在 Google Sheet 自動建立 SEO 關鍵字矩陣</a></li>
+</ul>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-card-01_hu_bfd14c5d23a8c550.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202501/n8n-core-nodes/images/n8n-core-nodes-14.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>[n8n 教學]用 Docker 在 Local 建立免費 &amp; 無限次數使用的自動化工具</title>
+      <link>https://deanlin.net/blog/202501/n8n-docker-local-setup/</link>
+      <pubDate>Tue, 14 Jan 2025 21:22:38 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202501/n8n-docker-local-setup/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>n8n 是款能把你從重複的例行性任務中，拯救出來的自動化工具。 使用者可以透過視覺化的介面，用拖拉節點、設定參數的方式來建立符合自己需求的工作流。這篇文章會分享本地部署的詳細步驟。</description>
+      <content:encoded><![CDATA[<p>n8n 是款能把你從重複的例行性任務中，拯救出來的自動化工具。</p>
+<p>使用者可以透過視覺化的介面，用拖拉節點、設定參數的方式來建立符合自己需求的工作流。</p>
+<p>他有<a href="https://n8n.io/">雲端</a>與本地（local）的版本，考量到許多工作流程需要放上私鑰（ex: Google API Key、OpenAI API Key），以及雲端版本至少要付費 20 歐元（限制工作流程執行 2500 次）；所以筆者選擇了本地部署的方案，這篇文章會分享詳細的操作步驟。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-01.webp" width="1400" height="785" alt="\[n8n 教學\]用 Docker 在 Local 建立免費 &amp; 無限次數使用的自動化工具（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="-step-1-安裝-docker">STEP 1: 安裝 Docker<a class="h-anchor" href="#-step-1-%e5%ae%89%e8%a3%9d-docker" aria-label="這個段落的連結"></a></h2>
+<p>前往 Docker 官網: <a href="https://www.docker.com/">https://www.docker.com/</a></p>
+<p>根據自己的作業系統選擇對應的版本下載。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-02.webp" width="1400" height="686" alt="STEP 1: 安裝 Docker（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-step-2-使用-docker-composeyml-安裝-n8n">STEP 2: 使用 docker-compose.yml 安裝 n8n<a class="h-anchor" href="#-step-2-%e4%bd%bf%e7%94%a8-docker-composeyml-%e5%ae%89%e8%a3%9d-n8n" aria-label="這個段落的連結"></a></h2>
+<p>你可以直接 git clone <a href="https://github.com/dean9703111/n8n-google-sheet-exmaple">筆者的 GitHub 專案</a>，或者建立一個 <code>n8n</code> 的資料夾，新增 <code>docker-compose.yml</code> 檔案。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">n8n_storage</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">services</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">n8n</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">n8nio/n8n:latest</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">restart</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;127.0.0.1:5678:5678&#34;</span><span style="color:#6e7681"> </span><span style="color:#8b949e;font-style:italic"># 根據實際需求設定</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">n8n_storage:/home/node/.n8n</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p>貼上內容後，在終端機（Terminal）輸入 <code>docker compose up -d</code> 即可啟動</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-03.webp" width="1400" height="193" alt="如果要關閉，輸入 `docker cpose down` 即可" loading="lazy" decoding="async">
+  <figcaption>如果要關閉，輸入 `docker cpose down` 即可</figcaption>
+</figure>
+
+<hr>
+<h2 id="-step-3-註冊-n8n-帳號">STEP 3: 註冊 n8n 帳號<a class="h-anchor" href="#-step-3-%e8%a8%bb%e5%86%8a-n8n-%e5%b8%b3%e8%99%9f" aria-label="這個段落的連結"></a></h2>
+<p>進入網址: <a href="http://127.0.0.1:5678/">http://127.0.0.1:5678</a></p>
+<p>如果看到下面的帳號設定畫面就代表你 n8n 安裝成功了！</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-04.webp" width="1281" height="886" alt="STEP 3: 註冊 n8n 帳號（圖 4）" loading="lazy" decoding="async"></p>
+<p>帳號設定完成後，你會看到下面的初始畫面。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-05.webp" width="1281" height="961" alt="STEP 3: 註冊 n8n 帳號（圖 5）" loading="lazy" decoding="async"></p>
+<p>這邊要特別提醒的是，<code>你一定要記得自己的 Email 跟 Password</code>，因為官方 Forgot Password 的功能只是擺飾用的。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-06.webp" width="1281" height="412" alt="STEP 3: 註冊 n8n 帳號（圖 6）" loading="lazy" decoding="async"></p>
+<p>到這一步，你就完成 n8n local 環境的初始化了！<a href="https://deanlin.net/blog/202501/n8n-core-nodes/">下一篇文章將會向讀者分享 n8n Node（節點）的使用方法。</a></p>
+<p><strong>延伸閱讀</strong>:</p>
+<ul>
+<li><a href="https://deanlin.net/blog/202501/n8n-core-nodes/">[n8n 教學]掌握重要節點 (Node) 使用情境：Set、Loop Over Items、If、Code、HTTP Request、Wait</a></li>
+<li><a href="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/">[n8n 教學]在 Google Sheet 自動建立 SEO 關鍵字矩陣</a></li>
+</ul>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-card-01_hu_5cc01196a8daf348.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-07.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

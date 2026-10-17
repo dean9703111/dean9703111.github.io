@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Apache Bench｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/apache-bench/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 27 Oct 2021 14:01:12 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/apache-bench/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Apache Bench — 壓力測試好夥伴</title>
+      <link>https://deanlin.net/blog/202110/apache-bench-load-testing/</link>
+      <pubDate>Wed, 27 Oct 2021 14:01:12 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202110/apache-bench-load-testing/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>最近在測試 K8s 在大流量時 pod 的 auto scaling 機制，使用的工具是 Mac 本身內建 Apache Bench，這篇文章就來介紹它的基礎使用方式。</description>
+      <content:encoded><![CDATA[<p>最近在測試 K8s 在大流量時 pod 的 auto scaling 機制，使用的工具是 Mac 本身內建 Apache Bench，這篇文章就來介紹它的基礎使用方式。</p>
+<p><img src="https://deanlin.net/blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-01.webp" width="1400" height="789" alt="Apache Bench — 壓力測試好夥伴（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>文章大綱
+一、基礎操作
+二、理解重要回傳資訊
+三、使用 POST request
+四、測試注意事項
+</code></pre><h2 id="一基礎操作">一、基礎操作<a class="h-anchor" href="#%e4%b8%80%e5%9f%ba%e7%a4%8e%e6%93%8d%e4%bd%9c" aria-label="這個段落的連結"></a></h2>
+<p>下面是以 2 個連線數（c）建立 10 個 requests（n）來存取 Google 網址的範例。</p>
+<pre tabindex="0"><code>ab -n 10 -c 2 https://www.google.com/
+</code></pre><p>需要特別注意的是 request 數量不得低於連線數，否則會直接噴如下的錯誤：</p>
+<p><img src="https://deanlin.net/blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-02.webp" width="1400" height="145" alt="一、基礎操作（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>通常來說，requests 數量會是連線數量的 100 倍。</p>
+</blockquote>
+<hr>
+<h2 id="二理解重要回傳資訊">二、理解重要回傳資訊<a class="h-anchor" href="#%e4%ba%8c%e7%90%86%e8%a7%a3%e9%87%8d%e8%a6%81%e5%9b%9e%e5%82%b3%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
+<p>順利執行後會印出如下資訊，下面挑幾個重要資訊來做說明：</p>
+<p><img src="https://deanlin.net/blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-03.webp" width="1400" height="683" alt="二、理解重要回傳資訊（圖 3）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>Concurrency Level</strong>：我們設定的連線量。</li>
+<li><strong>Failed requests/Complete requests</strong>：我們需要知道在壓力測試時失敗的百分比。</li>
+<li><strong>Requests per second</strong>：平均每秒可回應的 Request 數量。</li>
+<li><strong>Time per request</strong>：平均每個 Request 的時間。</li>
+<li><strong>Connection Times (ms)</strong>：可以從這裡觀察連線的狀況。</li>
+</ul>
+<hr>
+<h2 id="三使用-post-request">三、使用 POST request<a class="h-anchor" href="#%e4%b8%89%e4%bd%bf%e7%94%a8-post-request" aria-label="這個段落的連結"></a></h2>
+<p>有時會需要用 POST 傳送參數以及在 Header 帶入 Token 資訊，下面提供一個簡單範例：</p>
+<pre tabindex="0"><code>ab -n 10000 -c 100 -p post.txt -T application/json -H &#39;Authorization: Token your_token&#39; https://your_test_ip/
+</code></pre><ul>
+<li><strong>-p</strong>：這個是要傳送 data 的文檔路徑。</li>
+<li><strong>-T</strong>：傳送資料時的 Header 的 Content-type。</li>
+<li><strong>-H</strong>：放在 Header 的資訊。</li>
+</ul>
+<p>post.txt 裡面只需要以 json 格式呈現即可：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;username&#34;</span>:<span style="color:#a5d6ff">&#34;baobao&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;password&#34;</span>:<span style="color:#a5d6ff">&#34;baobaoverycute&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;action&#34;</span>:<span style="color:#a5d6ff">&#34;login&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h3 id="四測試注意事項">四、測試注意事項<a class="h-anchor" href="#%e5%9b%9b%e6%b8%ac%e8%a9%a6%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>連線量請不要一開始就 100 個，請由小而大遞增；否則最後的測試數據可能不準確。</li>
+<li>測試時請將 Server 與 Client 放在相同的網域；若不同網域來做測試就可能會受到頻寬影響。</li>
+<li>測試主要是為了確認 Server 可以承受的負載，盡可能避免其他干擾因素。</li>
+</ul>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Replication Lag｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/replication-lag/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 29 Mar 2021 15:27:42 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/replication-lag/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>解決 MySQL 主從複製的延遲問題 (Replication lag)</title>
+      <link>https://deanlin.net/blog/202103/mysql-replication-lag/</link>
+      <pubDate>Mon, 29 Mar 2021 15:27:42 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202103/mysql-replication-lag/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>Slave DB 上的資料從 Master DB 複製過來時會有延遲，所以會造成用戶看到舊的資訊；在過去想解決這個問題真的需要 18 般武藝，但到了 MySQL 5.7 版後官方說只要調整一個設定就能解決，具體做法讓我們看下去。</description>
+      <content:encoded><![CDATA[<p>在『MySQL Master Slave Replication 主從式架構設定教學』這篇文章的結尾有提到因為 Slave DB 上的資料從 Master DB 複製過來時會有延遲，所以會造成用戶看到舊的資訊；在過去想解決這個問題真的需要 18 般武藝，但到了 MySQL 5.7 版後官方說只要調整一個設定就能解決，具體做法讓我們看下去。</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-replication-lag/images/mysql-replication-lag-01.webp" width="1400" height="783" alt="解決 MySQL 主從複製的延遲問題 (Replication lag)（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>一、模擬主從複製延遲的情境
+二、了解發生問題的原因
+三、解決方案：開啟 MySQL 5.7 的多 process 的功能
+四、確認 Slave 已經沒有延遲
+</code></pre><h2 id="一模擬主從複製延遲的情境">一、模擬主從複製延遲的情境<a class="h-anchor" href="#%e4%b8%80%e6%a8%a1%e6%93%ac%e4%b8%bb%e5%be%9e%e8%a4%87%e8%a3%bd%e5%bb%b6%e9%81%b2%e7%9a%84%e6%83%85%e5%a2%83" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>這裡我們利用 sysbench 進行情境模擬，如果不清楚如何操作的朋友請參考這篇文章：『<a href="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/">用 sysbench 測試 MySQL 性能 — 在 mac &amp; ubuntu 上的安裝與使用</a>』</p>
+</blockquote>
+<p>下面是我在 ubuntu 的測試指令，如果你是 mac 需要自己更換 .lua 的路徑</p>
+<pre tabindex="0"><code>sysbench /usr/share/sysbench/oltp_write_only.lua \
+--mysql-host=127.0.0.1 \
+--mysql-port=3306 \
+--mysql-user=user_name \
+--mysql-password=user_password \
+--mysql-db=test \
+--db-driver=mysql \
+--tables=10 \
+--table_size=100000 \
+--report-interval=10 \
+--threads=128 \
+--time=120 \
+prepare
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/46688419066279598ee33553f5ae9c45" rel="noopener">sysbench_lag.cmd</a>（GitHub Gist）</p>
+<p>指令輸入後你就會發現資料庫好像頓住不會動了…</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-replication-lag/images/mysql-replication-lag-02.webp" width="916" height="912" alt="一、模擬主從複製延遲的情境（圖 2）" loading="lazy" decoding="async"></p>
+<p>一段時間後我們進入到 Slave 的 MySQL 中會發現他與 Master 的延遲很嚴重</p>
+<pre tabindex="0"><code>mysql&gt; show slave status\G
+</code></pre><ul>
+<li><strong>Seconds_Behind_Master</strong>：延遲的時間</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/mysql-replication-lag/images/mysql-replication-lag-03.webp" width="874" height="236" alt="一、模擬主從複製延遲的情境（圖 3）" loading="lazy" decoding="async"></p>
+<h2 id="二了解發生問題的原因">二、了解發生問題的原因<a class="h-anchor" href="#%e4%ba%8c%e4%ba%86%e8%a7%a3%e7%99%bc%e7%94%9f%e5%95%8f%e9%a1%8c%e7%9a%84%e5%8e%9f%e5%9b%a0" aria-label="這個段落的連結"></a></h2>
+<p>因為我們模擬的情境會製作出相當大量的 SQL command，執行內容包含：table 內容大量更新、index 建立；可是 Slave 去讀取 Master 的 process 卻只有一個，這樣使 Master 累積了太多尚未同步到 Slave 的 SQL command，因此造成了兩邊資料庫的內容不一致。</p>
+<h2 id="三解決方案開啟-mysql-57-的多-process-的功能">三、解決方案：開啟 MySQL 5.7 的多 process 的功能<a class="h-anchor" href="#%e4%b8%89%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88%e9%96%8b%e5%95%9f-mysql-57-%e7%9a%84%e5%a4%9a-process-%e7%9a%84%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：先暫停 Slave，不然無法修改變數</p>
+<pre tabindex="0"><code>mysql&gt; stop slave;
+</code></pre><p><strong>STEP 2</strong>：更改 slave_parallel_type</p>
+<p>先看看預設值</p>
+<pre tabindex="0"><code>mysql&gt; show variables like ‘slave_parallel%’;
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-replication-lag/images/mysql-replication-lag-04.webp" width="403" height="163" alt="三、解決方案：開啟 MySQL 5.7 的多 process 的功能（圖 4）" loading="lazy" decoding="async"></p>
+<p>修改變數</p>
+<pre tabindex="0"><code>mysql&gt; set global slave_parallel_type=&#39;logical_clock&#39;;
+mysql&gt; set global slave_parallel_workers=10; #根據實際需求設定
+</code></pre><p>啟動 Slave 功能</p>
+<pre tabindex="0"><code>mysql&gt; start slave;
+</code></pre><p>查看剛剛設定的多 process 是否生效</p>
+<pre tabindex="0"><code>mysql&gt; show processlist;
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-replication-lag/images/mysql-replication-lag-05.webp" width="1206" height="373" alt="三、解決方案：開啟 MySQL 5.7 的多 process 的功能（圖 5）" loading="lazy" decoding="async"></p>
+<h2 id="四確認-slave-已經沒有延遲">四、確認 Slave 已經沒有延遲<a class="h-anchor" href="#%e5%9b%9b%e7%a2%ba%e8%aa%8d-slave-%e5%b7%b2%e7%b6%93%e6%b2%92%e6%9c%89%e5%bb%b6%e9%81%b2" aria-label="這個段落的連結"></a></h2>
+<p>在上面的設定後稍等一段時間再去查看 Slave 的延遲狀態</p>
+<pre tabindex="0"><code>mysql&gt; show slave status\G
+</code></pre><p>就發現他已經變成 0 嚕～</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-replication-lag/images/mysql-replication-lag-06.webp" width="482" height="129" alt="四、確認 Slave 已經沒有延遲（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<pre tabindex="0"><code>如果你想了解資料庫主從式架構的設定歡迎參考我的文章：
+👍 MySQL Master Slave Replication 主從式架構設定教學
+👍 Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting
+</code></pre><p><strong>參考資訊</strong>：<a href="https://jerryw.blog/2021/01/07/mysql-master-slave-%E8%A4%87%E5%AF%AB%E5%BB%B6%E6%BB%AF%E5%90%8C%E6%AD%A5%E5%95%8F%E9%A1%8C/">mysql master-slave 複寫延滯同步問題</a></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

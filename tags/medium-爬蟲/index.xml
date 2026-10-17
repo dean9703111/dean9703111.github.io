@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Medium 爬蟲｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/medium-%E7%88%AC%E8%9F%B2/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 08 Feb 2021 14:33:11 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/medium-%E7%88%AC%E8%9F%B2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>透過爬蟲讓 Airtable 管理你的 Medium 文章(補充篇) — 文章字數統計</title>
+      <link>https://deanlin.net/blog/202102/medium-to-airtable-crawler-word-count/</link>
+      <pubDate>Mon, 08 Feb 2021 14:33:11 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202102/medium-to-airtable-crawler-word-count/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>目前 Medium 只有提供讀者一篇文章的大約閱讀時間資訊，但是對於作者而言他們更想知道自己這篇文章寫了多少字，這樣就能透過 airtable 知道自己每篇文章/系列的文字產量；今天我們就來分析如何透過爬蟲計算出一篇文章的字數吧。</description>
+      <content:encoded><![CDATA[<p>目前 Medium 只有提供讀者一篇文章的大約閱讀時間資訊，但是對於作者而言他們更想知道自己這篇文章寫了多少字，這樣就能透過 Airtable 知道自己每篇文章/系列的文字產量；今天我們就來分析如何透過爬蟲計算出一篇文章的字數吧。</p>
+<blockquote>
+<p>如果你對這個專案的起源感興趣，請參考：<a href="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-1/">透過爬蟲讓 Airtable 管理你的 Medium 文章(上) — 遇到需求時的分析以及執行步驟</a></p>
+</blockquote>
+<pre tabindex="0"><code>文章大綱：
+一、分析 Medium 網頁元素
+二、確認爬蟲能正確抓取目標文字
+三、設計字數統計的邏輯
+四、實測確認可完成文章字數統計
+五、未來展望
+</code></pre><p><img src="https://deanlin.net/blog/202102/medium-to-airtable-crawler-word-count/images/medium-to-airtable-crawler-word-count-01.webp" width="1400" height="698" alt="透過爬蟲讓 Airtable 管理你的 Medium 文章(補充篇) — 文章字數統計（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="一分析-medium-網頁元素">一、分析 Medium 網頁元素<a class="h-anchor" href="#%e4%b8%80%e5%88%86%e6%9e%90-medium-%e7%b6%b2%e9%a0%81%e5%85%83%e7%b4%a0" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>為了提供爬蟲一個抓取文章的邏輯，我們要先了解 Medium 的網頁元素</p>
+</blockquote>
+<p><strong>STEP 1：</strong>按下 F12，了解文章會放在哪一個元素裡面</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/medium-to-airtable-crawler-word-count/images/medium-to-airtable-crawler-word-count-02.webp" width="1325" height="912" alt="我們滑鼠移過去會發現一個 article 的 html tag，裡面就是整篇文章的資訊" loading="lazy" decoding="async">
+  <figcaption>我們滑鼠移過去會發現一個 article 的 html tag，裡面就是整篇文章的資訊</figcaption>
+</figure>
+
+<p><strong>STEP 2：</strong> 分析文章中哪些 html tag 需要抓取</p>
+<p>依據 Medium 文章的排版種類，以下是我們需要做字數統計的 tag：</p>
+<ul>
+<li>&lt;h1&gt;：大標題</li>
+<li>&lt;h2&gt;：小標題</li>
+<li>&lt;p&gt;：一般文字(包含粗體、斜體、連結)</li>
+<li>&lt;span&gt;：被包在 Block 裡面的文字(會被 html 的 pre tag 包住)</li>
+<li>&lt;li&gt;：列表的文字</li>
+<li>&lt;figcaption&gt;：照片的補充文字說明</li>
+</ul>
+<h2 id="二確認爬蟲能正確抓取目標文字">二、確認爬蟲能正確抓取目標文字<a class="h-anchor" href="#%e4%ba%8c%e7%a2%ba%e8%aa%8d%e7%88%ac%e8%9f%b2%e8%83%bd%e6%ad%a3%e7%a2%ba%e6%8a%93%e5%8f%96%e7%9b%ae%e6%a8%99%e6%96%87%e5%ad%97" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>如果你想培養完整爬蟲的程式能力，可以參考我在 <a href="https://ithelp.ithome.com.tw/users/20103256/ironman/2940">IT邦幫忙鐵人賽的文章</a>，本篇文章只單純提供演算法</p>
+</blockquote>
+<p><strong>STEP 1：</strong>在知道哪些網頁元素需要抓取後，我們就來嘗試看看能否抓到我們所希望的文字資訊</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> countStoryWords (driver) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> wordsCount <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> article_tag_p <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.findElements(By.xpath(<span style="color:#a5d6ff">`//article//p`</span>));
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> article_tag_h1 <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.findElements(By.xpath(<span style="color:#a5d6ff">`//article//h1`</span>));
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> article_tag_h2 <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.findElements(By.xpath(<span style="color:#a5d6ff">`//article//h2`</span>));
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> article_tag_span <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.findElements(By.xpath(<span style="color:#a5d6ff">`//article//span`</span>));
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> article_tag_figcaption <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.findElements(By.xpath(<span style="color:#a5d6ff">`//article//figcaption`</span>));
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> article_tag_li <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.findElements(By.xpath(<span style="color:#a5d6ff">`//article//li`</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">var</span> k <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>; k <span style="color:#ff7b72;font-weight:bold">&lt;</span> article_tag_p.length; k<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">let</span> article_text <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> article_tag_p[k].getText()
+</span></span><span style="display:flex;"><span>            console.log(article_text)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      ...
+</span></span><span style="display:flex;"><span>      } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>        console.error(<span style="color:#a5d6ff">&#39;計算 Story words 失敗&#39;</span>)
+</span></span><span style="display:flex;"><span>        console.error(e)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">0</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/fa0469eefe801758cd6a90fe0b40f1c5" rel="noopener">countStoryWords.js</a>（GitHub Gist）</p>
+<p><strong>STEP 2：</strong>透過 console.log 的回饋，我們可以發現有一些資訊是不需要抓取的</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/medium-to-airtable-crawler-word-count/images/medium-to-airtable-crawler-word-count-03.webp" width="1266" height="432" alt="html 的 span tag 抓到了作者的資訊，但這些資訊並不需要列入文章字數統計" loading="lazy" decoding="async">
+  <figcaption>html 的 span tag 抓到了作者的資訊，但這些資訊並不需要列入文章字數統計</figcaption>
+</figure>
+
+<p><strong>STEP 3：</strong>分析 html 的組成將多餘的資訊過濾</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/medium-to-airtable-crawler-word-count/images/medium-to-airtable-crawler-word-count-04.webp" width="1372" height="1162" alt="透過上圖我們可以發現這些不必要的資訊都是被 div、span 這兩種 tag 所包圍的" loading="lazy" decoding="async">
+  <figcaption>透過上圖我們可以發現這些不必要的資訊都是被 div、span 這兩種 tag 所包圍的</figcaption>
+</figure>
+
+<p>只要在 span tag 抓取文字的地方先判斷其 parent 的元素即可過濾</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">var</span> k <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>; k <span style="color:#ff7b72;font-weight:bold">&lt;</span> article_tag_span.length; k<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 要先過濾掉最上方作者資訊
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> parant_tag <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> article_tag_span[k].findElement(By.xpath(<span style="color:#a5d6ff">`./..`</span>)).getTagName();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (parant_tag <span style="color:#ff7b72;font-weight:bold">!=</span> <span style="color:#a5d6ff">&#34;div&#34;</span> <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> parant_tag <span style="color:#ff7b72;font-weight:bold">!=</span> <span style="color:#a5d6ff">&#34;span&#34;</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> article_text <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> article_tag_span[k].getText()
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// console.log(article_text)
+</span></span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// console.log(countWords(article_text))
+</span></span></span><span style="display:flex;"><span>        wordsCount <span style="color:#ff7b72;font-weight:bold">=</span> wordsCount <span style="color:#ff7b72;font-weight:bold">+</span> countWords(article_text)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/919455ae165a6f82cb1110bc971205c6" rel="noopener">filter_author.js</a>（GitHub Gist）</p>
+<h2 id="三設計字數統計的邏輯">三、設計字數統計的邏輯<a class="h-anchor" href="#%e4%b8%89%e8%a8%ad%e8%a8%88%e5%ad%97%e6%95%b8%e7%b5%b1%e8%a8%88%e7%9a%84%e9%82%8f%e8%bc%af" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：文章抓下來的文字需要列入字數統計的有：中文、英文；其餘特殊字元不列入計算。</p>
+<p><strong>STEP 2</strong>：撰寫文字計算邏輯的 function</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">function</span> countWords (str) {    
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 先將特殊字元用空白取代掉
+</span></span></span><span style="display:flex;"><span>    str <span style="color:#ff7b72;font-weight:bold">=</span> str.replace(<span style="color:#79c0ff">/[\u007F-\u00FE]/g</span>, <span style="color:#a5d6ff">&#39; &#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 複製兩個，一個用來算中文字數，一個計算英文字數
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> str1 <span style="color:#ff7b72;font-weight:bold">=</span> str;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> str2 <span style="color:#ff7b72;font-weight:bold">=</span> str;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 移除中文，單純計算英文
+</span></span></span><span style="display:flex;"><span>    str1 <span style="color:#ff7b72;font-weight:bold">=</span> str1.replace(<span style="color:#79c0ff">/[^!-~\d\s]+/gi</span>, <span style="color:#a5d6ff">&#39; &#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 移除英文單純計算中文
+</span></span></span><span style="display:flex;"><span>    str2 <span style="color:#ff7b72;font-weight:bold">=</span> str2.replace(<span style="color:#79c0ff">/[!-~\d\s]+/gi</span>, <span style="color:#a5d6ff">&#39;&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> matches1 <span style="color:#ff7b72;font-weight:bold">=</span> str1.match(<span style="color:#79c0ff">/[\u00ff-\uffff]|\S+/g</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> matches2 <span style="color:#ff7b72;font-weight:bold">=</span> str2.match(<span style="color:#79c0ff">/[\u00ff-\uffff]|\S+/g</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    count1 <span style="color:#ff7b72;font-weight:bold">=</span> matches1 <span style="color:#ff7b72;font-weight:bold">?</span> matches1.length <span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">0</span>;
+</span></span><span style="display:flex;"><span>    count2 <span style="color:#ff7b72;font-weight:bold">=</span> matches2 <span style="color:#ff7b72;font-weight:bold">?</span> matches2.length <span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">/// 回傳總和
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> total <span style="color:#ff7b72;font-weight:bold">=</span> (count1 <span style="color:#ff7b72;font-weight:bold">+</span> count2);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> total
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/c52033fd275416c61c9e1615526e63bf" rel="noopener">countWords.js</a>（GitHub Gist）</p>
+<h2 id="四實測確認可完成文章字數統計">四、實測確認可完成文章字數統計<a class="h-anchor" href="#%e5%9b%9b%e5%af%a6%e6%b8%ac%e7%a2%ba%e8%aa%8d%e5%8f%af%e5%ae%8c%e6%88%90%e6%96%87%e7%ab%a0%e5%ad%97%e6%95%b8%e7%b5%b1%e8%a8%88" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：透過 console.log 印出列入計算的文字、計算出來的文字長度，確認是否與我們期望的相同</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/medium-to-airtable-crawler-word-count/images/medium-to-airtable-crawler-word-count-05.webp" width="1400" height="439" alt="會因為斷句的關係字數有些許差異，但基本上符合需求" loading="lazy" decoding="async">
+  <figcaption>會因為斷句的關係字數有些許差異，但基本上符合需求</figcaption>
+</figure>
+
+<p><strong>STEP 2</strong>：在 airtable 上面增加<strong>字數統計</strong>的爛位，將欄位的類型設定為number，確認匯入的資訊是否符合期望</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/medium-to-airtable-crawler-word-count/images/medium-to-airtable-crawler-word-count-06.webp" width="1400" height="681" alt="https://airtable.com/shrB7C3AemsGj1mYN" loading="lazy" decoding="async">
+  <figcaption><a href="https://airtable.com/shrB7C3AemsGj1mYN">https://airtable.com/shrB7C3AemsGj1mYN</a></figcaption>
+</figure>
+
+<h2 id="五未來展望">五、未來展望<a class="h-anchor" href="#%e4%ba%94%e6%9c%aa%e4%be%86%e5%b1%95%e6%9c%9b" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>目前字數統計的功能只能給尚未爬蟲過的文章使用，故未來會考慮增加 update 舊文章資訊的 function</li>
+<li>字數統計也許配合長條圖視覺話有更炫砲的效果，這塊也可以在考慮看看</li>
+</ol>
+<blockquote class="pullquote"><p>完成的專案程式碼在<a href="https://github.com/dean9703111/medium_to_airtable.git">這裡</a>，歡迎有興趣的朋友自己動手玩玩看～</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>透過爬蟲讓 Airtable 管理你的 Medium 文章(下) — 如何使用這個工具</title>
+      <link>https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/</link>
+      <pubDate>Sat, 16 Jan 2021 10:28:43 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>如果你正在因為 Medium 文章太多不知道如何管理的話，這是一個很方便的工具，下面會完整說明使用這個工具的步驟</description>
+      <content:encoded><![CDATA[<blockquote>
+<p>如果你對這個專案的起源感興趣，請參考上一篇：<a href="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-1/">透過爬蟲讓 Airtable 管理你的 Medium 文章(上) — 遇到需求時的分析以及執行步驟</a></p>
+</blockquote>
+<pre tabindex="0"><code>文章大綱：
+一、完成 Airtable 的設定
+二、安裝工具將指定 Medium 的部落格匯入 Airtable
+三、驗收成果
+</code></pre><p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-01.webp" width="1400" height="723" alt="透過爬蟲讓 Airtable 管理你的 Medium 文章(下) — 如何使用這個工具（圖 1）" loading="lazy" decoding="async"></p>
+<p>如果你正在因為 Medium 文章太多不知道如何管理的話，這是一個很方便的工具，下面會完整說明使用這個工具的步驟</p>
+<h2 id="一完成-airtable-的設定">一、完成 Airtable 的設定<a class="h-anchor" href="#%e4%b8%80%e5%ae%8c%e6%88%90-airtable-%e7%9a%84%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>請<a href="https://airtable.com/login">註冊或是登入airtable</a></li>
+</ol>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-02.webp" width="853" height="514" alt="一、完成 Airtable 的設定（圖 2）" loading="lazy" decoding="async"></p>
+<p>2. 請<a href="https://airtable.com/shrqrLtvUxDyWFLjK/tblrYddyJH1cFQLm6/viwv6U7hnzgvKTZ14?blocks=hide">使用我已經創建好的template</a>，進去後按右上角的 Copy base</p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-03.webp" width="1390" height="604" alt="一、完成 Airtable 的設定（圖 3）" loading="lazy" decoding="async"></p>
+<p>3. 選擇你要放 base 的位置(使用默認的即可)</p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-04.webp" width="1242" height="716" alt="一、完成 Airtable 的設定（圖 4）" loading="lazy" decoding="async"></p>
+<p>4. 點擊剛剛創建的 base，確認欄位都有複製過來</p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-05.webp" width="1242" height="716" alt="一、完成 Airtable 的設定（圖 5）" loading="lazy" decoding="async"></p>
+<p>5. <a href="https://airtable.com/account">進入accout頁面</a>產生 API key，產生後請將 key 妥善保存，之後程式會用到這個參數(AIRTABLE_API_KEYKEY)</p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-06.webp" width="1360" height="842" alt="一、完成 Airtable 的設定（圖 6）" loading="lazy" decoding="async"></p>
+<p>6. <a href="https://airtable.com/api">進入api頁面</a>選擇剛剛新增的 base</p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-07.webp" width="1360" height="694" alt="一、完成 Airtable 的設定（圖 7）" loading="lazy" decoding="async"></p>
+<p>7. 依據下圖步驟找到 base 的代碼，並將他紀錄起來，之後程式會用到這個參數(AIRTABLE_BASE)</p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-08.webp" width="1344" height="494" alt="一、完成 Airtable 的設定（圖 8）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="二安裝工具將指定-medium-的部落格匯入-airtable">二、安裝工具將指定 Medium 的部落格匯入 Airtable<a class="h-anchor" href="#%e4%ba%8c%e5%ae%89%e8%a3%9d%e5%b7%a5%e5%85%b7%e5%b0%87%e6%8c%87%e5%ae%9a-medium-%e7%9a%84%e9%83%a8%e8%90%bd%e6%a0%bc%e5%8c%af%e5%85%a5-airtable" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>開發所需要的前置環境設定我寫在這篇文章：<a href="https://deanlin.net/blog/202101/developer-environment-setup/">工程師的開發環境大補帖：Node.js、NVM、git、yarn、VSCode</a></p>
+</blockquote>
+<ol>
+<li>從 github下載</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/dean9703111/medium_to_airtable.git
+</span></span></code></pre></div><p>2. 使用 VSCode 開啟資料夾，並點擊 TERMINAL 進入資料夾終端機</p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-09.webp" width="1390" height="682" alt="二、安裝工具將指定 Medium 的部落格匯入 Airtable（圖 9）" loading="lazy" decoding="async"></p>
+<p>3. 安裝套件</p>
+<pre tabindex="0"><code>yarn
+</code></pre><p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-10.webp" width="1390" height="682" alt="二、安裝工具將指定 Medium 的部落格匯入 Airtable（圖 10）" loading="lazy" decoding="async"></p>
+<p>4. 設定專案環境變數 將<code>.env.exmaple</code>複製一份到<code>.env</code>檔案(須自行新增)</p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-11.webp" width="1390" height="682" alt="二、安裝工具將指定 Medium 的部落格匯入 Airtable（圖 11）" loading="lazy" decoding="async"></p>
+<h3 id="變數說明">變數說明：<a class="h-anchor" href="#%e8%ae%8a%e6%95%b8%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>MEDIUM_PAGE：你要爬的 Medium 文章網址，你可以先用預設的值，確定程式能跑起來後再改成自己的網址</li>
+<li>SHOW_BROSWER：設定為 true 時會有瀏覽器跳出來，設定為 false 時則是讓爬蟲背景執行</li>
+<li>AIRTABLE_API_KEYKEY：在上面步驟申請到的 API key</li>
+<li>AIRTABLE_BASE：你目標要儲存 BASE 的代碼</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-12.webp" width="1390" height="682" alt="變數說明：（圖 12）" loading="lazy" decoding="async"></p>
+<p>5. 執行程式</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div><p>我們可以從 TERMINAL 看到程式執行的過程</p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-13.webp" width="1390" height="906" alt="變數說明：（圖 13）" loading="lazy" decoding="async"></p>
+<p>結束後會顯示總共花費時間</p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-14.webp" width="1390" height="540" alt="變數說明：（圖 14）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="三驗收成果">三、驗收成果<a class="h-anchor" href="#%e4%b8%89%e9%a9%97%e6%94%b6%e6%88%90%e6%9e%9c" aria-label="這個段落的連結"></a></h2>
+<p>去 Airtable 確認是否有正確匯入資料，<a href="https://airtable.com/shrR0v4IDFB2rwUDj">此為範例</a></p>
+<p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/images/medium-to-airtable-crawler-part-2-15.webp" width="1363" height="711" alt="三、驗收成果（圖 15）" loading="lazy" decoding="async"></p>
+<p>希望大家都成功將 Medium文章匯入 Airtable 惹~如果有任何問題歡迎在下方詢問，如果覺得這篇文章對你有幫助可以幫我按拍手給我鼓勵喔~</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

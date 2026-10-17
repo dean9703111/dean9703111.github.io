@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>嫌Google Form太醜？那就把他當後台吧XD｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="Google Form &amp;   Google sheet &amp; HTML &amp; github 結合應用 為什麼撰寫這篇文章 常常使用Google Form當問卷的你是否覺得Google Form有點太過制式化，或者說讓人覺得用Google For…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202006/google-form-as-backend/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="嫌Google Form太醜？那就把他當後台吧XD">
+  <meta property="og:description" content="Google Form &amp;   Google sheet &amp; HTML &amp; github 結合應用 為什麼撰寫這篇文章 常常使用Google Form當問卷的你是否覺得Google Form有點太過制式化，或者說讓人覺得用Google For…">
+  <meta property="og:url" content="https://deanlin.net/blog/202006/google-form-as-backend/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-06-05T16:03:36&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:02:06&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Google Forms Tutorial">
+  <meta property="article:tag" content="Google Sheets">
+  <meta property="article:tag" content="HTML5 Development">
+  <meta property="article:tag" content="GitHub">
+  <meta property="article:tag" content="JQuery">
+  <meta property="og:image" content="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="612">
+  <meta property="og:image:alt" content="嫌Google Form太醜？那就把他當後台吧XD">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-og.jpg">
+  <meta name="twitter:title" content="嫌Google Form太醜？那就把他當後台吧XD">
+  <meta name="twitter:description" content="Google Form &amp;   Google sheet &amp; HTML &amp; github 結合應用 為什麼撰寫這篇文章 常常使用Google Form當問卷的你是否覺得Google Form有點太過制式化，或者說讓人覺得用Google For…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202006/google-form-as-backend/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:02:06+08:00","datePublished":"2020-06-05T16:03:36+08:00","description":"Google Form \u0026   Google sheet \u0026 HTML \u0026 github 結合應用 為什麼撰寫這篇文章 常常使用Google Form當問卷的你是否覺得Google Form有點太過制式化，或者說讓人覺得用Google For…","headline":"嫌Google Form太醜？那就把他當後台吧XD","image":{"@type":"ImageObject","height":612,"url":"https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Google Forms Tutorial, Google Sheets, HTML5 Development, GitHub, jQuery","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202006/google-form-as-backend/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E5%AB%8Cgoogle-form%E5%A4%AA%E9%86%9C-%E9%82%A3%E5%B0%B1%E6%8A%8A%E4%BB%96%E7%95%B6%E5%BE%8C%E5%8F%B0%E5%90%A7xd-2b8a42d8b2ba"],"timeRequired":"PT5M","url":"https://deanlin.net/blog/202006/google-form-as-backend/","wordCount":2267},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202006/google-form-as-backend/","name":"嫌Google Form太醜？那就把他當後台吧XD","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">嫌Google Form太醜？那就把他當後台吧XD</h1>
+      <p class="article-lede">Google Form &amp;   Google sheet &amp; HTML &amp; github 結合應用</p>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-06-05">2020.06.05</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 5 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e6%96%bc%e6%98%af%e6%88%91%e5%b0%b1%e8%aa%95%e7%94%9f%e4%b8%80%e5%80%8b%e6%83%b3%e6%b3%95">於是我就誕生一個想法</a></li><li><a href="#step-1--7-%e5%bb%ba%e7%ab%8bgoogle-form%e8%a1%a8%e5%96%ae">STEP 1 / 7: 建立Google Form表單</a></li><li><a href="#step-2--7-%e6%8a%bd%e5%87%bagoogle-form%e8%a1%a8%e5%96%ae%e8%a3%a1%e9%9d%a2%e7%9a%84%e5%85%83%e7%b4%a0">STEP 2 / 7: 抽出Google Form表單裡面的元素</a></li><li><a href="#step-3--7-%e9%81%b8%e4%b8%80%e5%80%8b%e4%bd%a0%e5%96%9c%e6%ad%a1%e7%9a%84%e8%a1%a8%e5%96%ae%e6%a8%a1%e6%9d%bf">STEP 3 / 7: 選一個你喜歡的表單模板</a></li><li><a href="#step-4--7-%e5%b0%87google-form%e8%a1%a8%e5%96%ae%e8%a3%a1%e6%8a%bd%e5%87%ba%e7%9a%84%e5%85%83%e7%b4%a0%e6%94%be%e9%80%b2%e5%8e%bbhtml%e7%b6%b2%e9%a0%81">STEP 4 / 7: 將Google Form表單裡抽出的元素放進去HTML網頁</a></li><li><a href="#step-5--7%e6%b8%ac%e8%a9%a6%e6%98%af%e5%90%a6%e6%ad%a3%e5%b8%b8%e9%81%8b%e4%bd%9c">STEP 5 / 7:測試是否正常運作</a></li><li><a href="#step-6--7%e7%99%bb%e5%85%a5github%e5%b8%b3%e6%88%b6%e4%b8%a6%e4%b8%8a%e5%82%b3%e4%bd%a0%e7%9a%84%e5%b0%88%e6%a1%88">STEP 6 / 7:登入github帳戶，並上傳你的專案</a></li><li><a href="#step-7--7%e5%b0%87%e5%b0%88%e6%a1%88%e9%96%8b%e6%94%be%e7%b5%a6%e5%a4%a7%e5%ae%b6%e9%80%a3%e7%b7%9a">STEP 7 / 7:將專案開放給大家連線</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-01.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-01_hu_54ca652783f2060d.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="714" alt="嫌Google Form太醜？那就把他當後台吧XD（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>為什麼撰寫這篇文章</p>
+</blockquote>
+<p>常常使用Google Form當問卷的你是否覺得Google Form有點太過制式化，或者說讓人覺得用Google Form有點誠意不足</p>
+<p>但自己撰寫網頁問卷還要花錢買(租)一台Server放網頁跟建立資料庫，才能讓大家進來這個網頁填寫問卷，我覺得這樣一點都不划算，因為我只是想要讓這個問卷看起來有質感，不是Google Form而已XD</p>
+<h2 id="於是我就誕生一個想法">於是我就誕生一個想法<a class="h-anchor" href="#%e6%96%bc%e6%98%af%e6%88%91%e5%b0%b1%e8%aa%95%e7%94%9f%e4%b8%80%e5%80%8b%e6%83%b3%e6%b3%95" aria-label="這個段落的連結"></a></h2>
+<p>為什麼不要讓Google Form乖乖當後台就好，我放一個靜態網頁到Github上面就能省去過去在Server上面的花費</p>
+<blockquote>
+<p>文章目標</p>
+</blockquote>
+<ol>
+<li>如何把Google Form的功能抽出來在一般靜態網頁使用</li>
+<li>可全客製化自己心目中漂亮的表單(內文使用Bootstrap 4為範例)</li>
+<li>讓你了解撰寫網頁會遇到的問題(謹以本範例為說明)</li>
+</ol>
+<blockquote>
+<p><strong><em>本文章使用到的技術：</em></strong></p>
+</blockquote>
+<ol>
+<li>前端:static web(Bootstrap 4)</li>
+<li>後端:Google Form</li>
+<li>資料庫:Google Sheets</li>
+</ol>
+<blockquote>
+<p>Demo區讓你搶先體驗</p>
+</blockquote>
+<p><a href="https://dean9703111.github.io/customer_feedback_form/index.html">DEMO網頁</a> (看完文章後你可以自己客製化一個)</p>
+<p><a href="https://docs.google.com/forms/d/e/1FAIpQLSeijRuLDQE62gbapDYgd_3pbmg7GyWY1CWPVeaEK-TiLDKzPw/viewform">Google Form</a> (他其實才是執行動作的本體)</p>
+<p><a href="https://docs.google.com/spreadsheets/d/1aZyvHnajaVjdNBaUT1Md-Y9nYW8O_rdPnMmN5WFrdO4/edit?usp=sharing">Google Sheets</a> (資料最終儲存的地方)</p>
+<blockquote>
+<p>專案原始碼</p>
+</blockquote>
+<p><a href="https://github.com/dean9703111/customer_feedback_form">Github Source code</a> (如果實作上遇到問題可以參考)</p>
+<h2 id="step-1--7-建立google-form表單">STEP 1 / 7: 建立Google Form表單<a class="h-anchor" href="#step-1--7-%e5%bb%ba%e7%ab%8bgoogle-form%e8%a1%a8%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<p>先建立一個<a href="https://www.google.com.tw/intl/zh-TW/forms/about/">Google Form</a>，選取個人的即可：</p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-02.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-02_hu_16cf0c02def9a56f.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="741" alt="STEP 1 / 7: 建立Google Form表單（圖 2）" loading="lazy" decoding="async"></p>
+<p>您可以按造自己的需求建立一個簡單的表單：</p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-03.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-03_hu_5dfd1cef5de108de.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-03.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1132" alt="STEP 1 / 7: 建立Google Form表單（圖 3）" loading="lazy" decoding="async"></p>
+<h2 id="step-2--7-抽出google-form表單裡面的元素">STEP 2 / 7: 抽出Google Form表單裡面的元素<a class="h-anchor" href="#step-2--7-%e6%8a%bd%e5%87%bagoogle-form%e8%a1%a8%e5%96%ae%e8%a3%a1%e9%9d%a2%e7%9a%84%e5%85%83%e7%b4%a0" aria-label="這個段落的連結"></a></h2>
+<p>建立好表單後進入預覽模式</p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-04.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-04_hu_4628bf142fb0c748.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-04.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="151" alt="STEP 2 / 7: 抽出Google Form表單裡面的元素（圖 4）" loading="lazy" decoding="async"></p>
+<p>接下來進入網頁的開發者模式(按下F12)，選擇Elements檢視網頁元素，然後搜尋”entry”，這些name的標籤是之後會使用的參數欄位，請把他們複製起來</p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-05.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-05_hu_9294c8b08dca2c.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-05.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="734" alt="STEP 2 / 7: 抽出Google Form表單裡面的元素（圖 5）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>2021/2/26 更新，朋友提醒新版的 ”entry” 已經轉移到了 &lt;input type=”hidden” name=”entry.xxx&quot; value=””&gt; 的位置，大家操作時注意一下</p>
+</blockquote>
+<figure class="figure"><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-06.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-06_hu_52027e9db5b3e018.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-06.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="739" alt="位置轉移惹" loading="lazy" decoding="async">
+  <figcaption>位置轉移惹</figcaption>
+</figure>
+
+<p>輸入必填欄位資料按下送出(submit)按鈕後複製上面的網址，這個網址是之後網頁用來發送訊息的url</p>
+<figure class="figure"><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-07.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-07_hu_89ca8eb710af6f13.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-07.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="192" alt="網址會長的像:https://docs.google.com/forms/這些是你自己的網址/formResponse" loading="lazy" decoding="async">
+  <figcaption>網址會長的像:<a href="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeijRuLDQE62gbapDYgd_3pbmg7GyWY1CWPVeaEK-TiLDKzPw/formResponse">https://docs.google.com/forms/這些是你自己的網址/formResponse</a></figcaption>
+</figure>
+
+<h2 id="step-3--7-選一個你喜歡的表單模板">STEP 3 / 7: 選一個你喜歡的表單模板<a class="h-anchor" href="#step-3--7-%e9%81%b8%e4%b8%80%e5%80%8b%e4%bd%a0%e5%96%9c%e6%ad%a1%e7%9a%84%e8%a1%a8%e5%96%ae%e6%a8%a1%e6%9d%bf" aria-label="這個段落的連結"></a></h2>
+<p>在這裡我提供一些大家可以直接使用的<a href="https://www.mockplus.com/blog/post/bootstrap-form-template">表單模板</a>，大家可以去找自己喜歡的，接下來我直接說明細節，完整的程式碼可以在<a href="https://github.com/dean9703111/customer_feedback_form">這裡下載</a></p>
+<p>因為我設計的這份問卷裡面需要填寫：姓名、email、評分、您的建議，並且需要要以form表單傳送，所以會有html結構如下(您的結構可能跟我有些許不同)：</p>
+<pre tabindex="0"><code>&lt;form id=&#34;google-form&#34; class=&#34;contact100-form validate-form&#34;&gt;
+        &lt;span class=&#34;contact100-form-title&#34;&gt;
+          餐後回饋
+        &lt;/span&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;first-name&#34;&gt;姓名 *&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100 validate-input&#34; data-validate=&#34;姓名為必填&#34;&gt;
+          &lt;input id=&#34;name&#34; class=&#34;input100&#34; type=&#34;text&#34; placeholder=&#34;王大明&#34;&gt;
+          &lt;span class=&#34;focus-input100&#34;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;email&#34;&gt;email&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100&#34;&gt;
+          &lt;input id=&#34;email&#34; class=&#34;input100&#34; type=&#34;text&#34; placeholder=&#34;Eg. example@email.com&#34;&gt;
+          &lt;span class=&#34;focus-input100&#34;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;email&#34;&gt;評分(最高五分) *&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100 validate-input&#34; data-validate=&#34;煩請評分&#34;&gt;
+          &lt;select class=&#34;form-control&#34; id=&#34;score&#34; style=&#34;border: 0px;&#34;&gt;
+            &lt;option&gt;1&lt;/option&gt;
+            &lt;option&gt;2&lt;/option&gt;
+            &lt;option&gt;3&lt;/option&gt;
+            &lt;option&gt;4&lt;/option&gt;
+            &lt;option&gt;5&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;message&#34;&gt;您的建議&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100&#34; data-validate=&#34;Message is required&#34;&gt;
+          &lt;textarea id=&#34;message&#34; class=&#34;input100&#34; placeholder=&#34;Write us a message&#34;&gt;&lt;/textarea&gt;
+          &lt;span class=&#34;focus-input100&#34;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&#34;container-contact100-form-btn&#34;&gt;
+          &lt;button class=&#34;contact100-form-btn&#34;&gt;
+            送出
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/form&gt;
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/fe560b714307b9f4e52df4114ebd270c" rel="noopener">form_elements</a>（GitHub Gist）</p>
+<p>但請記得在&lt;form&gt;、&lt;input&gt;、&lt;select&gt;這些tag裡面設定id，這樣後續在jquery裡面才能抓到相應的元素</p>
+<h2 id="step-4--7-將google-form表單裡抽出的元素放進去html網頁">STEP 4 / 7: 將Google Form表單裡抽出的元素放進去HTML網頁<a class="h-anchor" href="#step-4--7-%e5%b0%87google-form%e8%a1%a8%e5%96%ae%e8%a3%a1%e6%8a%bd%e5%87%ba%e7%9a%84%e5%85%83%e7%b4%a0%e6%94%be%e9%80%b2%e5%8e%bbhtml%e7%b6%b2%e9%a0%81" aria-label="這個段落的連結"></a></h2>
+<p>Google Form建立好了，網頁元素也都建立完成後就是將兩者bind在一起，以下是用jquery抓取html元素，並使用ajax將這個訊息送出，程式細節情看註解</p>
+<blockquote>
+<p>記得在要 把 jquery 引入&lt;script&gt;裡面，我朋友卡在這個問題很久 XD</p>
+</blockquote>
+<pre tabindex="0"><code>&lt;script&gt;
+    $(&#39;#google-form&#39;).submit(function (e) {
+      //在這裡我們要先擋掉form默認事件
+      e.preventDefault();
+
+      if ($(&#39;#name&#39;).val() &amp;&amp; $(&#39;#score&#39;).val()) {//需要先確認必填欄位是否填寫
+        $.ajax({
+          // url為Google Form按下submit的aciotn
+          url: &#34;https://docs.google.com/forms/d/e/1FAIpQLSeijRuLDQE62gbapDYgd_3pbmg7GyWY1CWPVeaEK-TiLDKzPw/formResponse&#34;,
+          crossDomain: true,//解決跨網域CORS的問題
+          data: {// entry.xxxxx 這些需要填寫您表單裡面的值，與其相互對應
+            &#34;entry.2040133429&#34;: $(&#39;#name&#39;).val(),
+            &#34;entry.304089069&#34;: $(&#39;#email&#39;).val(),
+            &#34;entry.207113062&#34;: $(&#39;#score&#39;).val(),
+            &#34;entry.1310220291&#34;: $(&#39;#message&#39;).val()
+          },
+          type: &#34;POST&#34;, //因為是要進行insert的動作，故事用POST
+          dataType: &#34;JSONP&#34;,
+          complete: function () {
+            //完成後把這些欄位清空
+            $(&#39;#name&#39;).val(&#39;&#39;)
+            $(&#39;#email&#39;).val(&#39;&#39;)
+            $(&#39;#score&#39;).val(&#39;&#39;)
+            $(&#39;#message&#39;).val(&#39;&#39;)
+            //最後跳轉到感謝的頁面
+            window.location.replace(&#34;thank.html&#34;);
+          }
+        });
+      }
+    });
+  &lt;/script&gt;
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/726895bb8b6902f16b26e8254b954e03" rel="noopener">bind-html-googeForm</a>（GitHub Gist）</p>
+<h2 id="step-5--7測試是否正常運作">STEP 5 / 7:測試是否正常運作<a class="h-anchor" href="#step-5--7%e6%b8%ac%e8%a9%a6%e6%98%af%e5%90%a6%e6%ad%a3%e5%b8%b8%e9%81%8b%e4%bd%9c" aria-label="這個段落的連結"></a></h2>
+<p>你可以直接開啟html檔(點擊兩下就會跳出網頁了)，輸入數值後按下送出(如果你使用我的程式會看到如下成果)</p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-08.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-08_hu_6472d47a085ea4b8.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-08.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1280" alt="STEP 5 / 7:測試是否正常運作（圖 8）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-09.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-09_hu_601c636f6f436c69.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="734" alt="STEP 5 / 7:測試是否正常運作（圖 9）" loading="lazy" decoding="async"></p>
+<p>接下來去Google Form的Responses區域看看是否資訊正常進入</p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-10.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-10_hu_3dcfad18266bcb0b.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-10.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1131" alt="STEP 5 / 7:測試是否正常運作（圖 10）" loading="lazy" decoding="async"></p>
+<p>到這裡就能確認你的程式正常運作了(撒花～)</p>
+<h2 id="step-6--7登入github帳戶並上傳你的專案">STEP 6 / 7:登入github帳戶，並上傳你的專案<a class="h-anchor" href="#step-6--7%e7%99%bb%e5%85%a5github%e5%b8%b3%e6%88%b6%e4%b8%a6%e4%b8%8a%e5%82%b3%e4%bd%a0%e7%9a%84%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>github帳戶的創建應該很多地方都有教學，這裡我就簡化這個步驟，說明最簡單上傳的方式</p>
+<p>登入帳號後選擇Repositories，在按下New新增一個</p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-11.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-11_hu_2eaafbef8cce6848.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-11.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="227" alt="STEP 6 / 7:登入github帳戶，並上傳你的專案（圖 11）" loading="lazy" decoding="async"></p>
+<p>填寫一些基礎資訊，這裡需要特別注意的是你必須要選擇Public，不然你這個專案是無法讓大家在網路上觀看的</p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-12.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-12_hu_f3e588e5a8004d36.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-12.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1083" alt="STEP 6 / 7:登入github帳戶，並上傳你的專案（圖 12）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-13.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-13_hu_45b344f35b321529.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-13.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="401" alt="選擇上傳存在的檔案" loading="lazy" decoding="async">
+  <figcaption>選擇上傳存在的檔案</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-14.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-14_hu_4779f2e9ed1ebe1b.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-14.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="696" alt="直接把整個資料夾拖拉進去就好了" loading="lazy" decoding="async">
+  <figcaption>直接把整個資料夾拖拉進去就好了</figcaption>
+</figure>
+
+<h2 id="step-7--7將專案開放給大家連線">STEP 7 / 7:將專案開放給大家連線<a class="h-anchor" href="#step-7--7%e5%b0%87%e5%b0%88%e6%a1%88%e9%96%8b%e6%94%be%e7%b5%a6%e5%a4%a7%e5%ae%b6%e9%80%a3%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
+<p>接下來要對這個專案做一些設定，先點擊最右側的Settings</p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-15.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-15_hu_f541a99a9b4f1516.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-15.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="173" alt="STEP 7 / 7:將專案開放給大家連線（圖 15）" loading="lazy" decoding="async"></p>
+<p>找到Source的位置，選擇master branch後，上方就會出現連結了</p>
+<p>不過要注意這個連結是這個專案的根目錄，如果要導向到你的網頁需要設定路徑喔：</p>
+<p>EX:</p>
+<p>根目錄 <a href="https://dean9703111.github.io/test/">https://dean9703111.github.io/test/</a></p>
+<p>實體檔案位置 <a href="https://dean9703111.github.io/test/">https://dean9703111.github.io/test/</a><strong><em>index.html</em></strong></p>
+<p><img src="/blog/202006/google-form-as-backend/images/google-form-as-backend-16.webp" srcset="/blog/202006/google-form-as-backend/images/google-form-as-backend-16_hu_2eae186d2562f215.webp 720w, /blog/202006/google-form-as-backend/images/google-form-as-backend-16.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="739" alt="STEP 7 / 7:將專案開放給大家連線（圖 16）" loading="lazy" decoding="async"></p>
+<p>做到這裡順利的話就能分享連結給朋友炫耀自己的表單啦～</p>
+<p>如果在實作的過程中遇到任何問題歡迎在下方留言</p>
+<p><strong>參考資源</strong>：<a href="https://colorlib.com/wp/template/contact-form-v17/">Bootstrap form templete</a>、<a href="https://codepen.io/JacobLett/pen/vyegPV">Bootstrap thank you page</a>、</p>
+<p><a href="https://hackernoon.com/create-websites-using-google-forms-49a19cc8beb8">Create websites using Google Forms</a></p>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2020.06.05）</span><a href="https://medium.com/dean-lin/%E5%AB%8Cgoogle-form%E5%A4%AA%E9%86%9C-%E9%82%A3%E5%B0%B1%E6%8A%8A%E4%BB%96%E7%95%B6%E5%BE%8C%E5%8F%B0%E5%90%A7xd-2b8a42d8b2ba" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/google-forms-tutorial/">Google Forms Tutorial</a>
+            <a class="chip chip-hash" href="/tags/google-sheets/">Google Sheets</a>
+            <a class="chip chip-hash" href="/tags/html5-development/">HTML5 Development</a>
+            <a class="chip chip-hash" href="/tags/github/">GitHub</a>
+            <a class="chip chip-hash" href="/tags/jquery/">JQuery</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202006%2Fgoogle-form-as-backend%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202006%2Fgoogle-form-as-backend%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202006/google-form-as-backend/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202006/google-form-as-backend/" data-title="嫌Google Form太醜？那就把他當後台吧XD" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202006/free-custom-survey-app/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">免費打造專屬於您的問卷程式</span></a>
+          <a class="next" href="/blog/202006/gitlab-installation-pitfalls/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">Gitlab 安裝以及我曾經遇到的坑</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e6%96%bc%e6%98%af%e6%88%91%e5%b0%b1%e8%aa%95%e7%94%9f%e4%b8%80%e5%80%8b%e6%83%b3%e6%b3%95">於是我就誕生一個想法</a></li><li><a href="#step-1--7-%e5%bb%ba%e7%ab%8bgoogle-form%e8%a1%a8%e5%96%ae">STEP 1 / 7: 建立Google Form表單</a></li><li><a href="#step-2--7-%e6%8a%bd%e5%87%bagoogle-form%e8%a1%a8%e5%96%ae%e8%a3%a1%e9%9d%a2%e7%9a%84%e5%85%83%e7%b4%a0">STEP 2 / 7: 抽出Google Form表單裡面的元素</a></li><li><a href="#step-3--7-%e9%81%b8%e4%b8%80%e5%80%8b%e4%bd%a0%e5%96%9c%e6%ad%a1%e7%9a%84%e8%a1%a8%e5%96%ae%e6%a8%a1%e6%9d%bf">STEP 3 / 7: 選一個你喜歡的表單模板</a></li><li><a href="#step-4--7-%e5%b0%87google-form%e8%a1%a8%e5%96%ae%e8%a3%a1%e6%8a%bd%e5%87%ba%e7%9a%84%e5%85%83%e7%b4%a0%e6%94%be%e9%80%b2%e5%8e%bbhtml%e7%b6%b2%e9%a0%81">STEP 4 / 7: 將Google Form表單裡抽出的元素放進去HTML網頁</a></li><li><a href="#step-5--7%e6%b8%ac%e8%a9%a6%e6%98%af%e5%90%a6%e6%ad%a3%e5%b8%b8%e9%81%8b%e4%bd%9c">STEP 5 / 7:測試是否正常運作</a></li><li><a href="#step-6--7%e7%99%bb%e5%85%a5github%e5%b8%b3%e6%88%b6%e4%b8%a6%e4%b8%8a%e5%82%b3%e4%bd%a0%e7%9a%84%e5%b0%88%e6%a1%88">STEP 6 / 7:登入github帳戶，並上傳你的專案</a></li><li><a href="#step-7--7%e5%b0%87%e5%b0%88%e6%a1%88%e9%96%8b%e6%94%be%e7%b5%a6%e5%a4%a7%e5%ae%b6%e9%80%a3%e7%b7%9a">STEP 7 / 7:將專案開放給大家連線</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202006%2Fgoogle-form-as-backend%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202006%2Fgoogle-form-as-backend%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202006/google-form-as-backend/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202006/google-form-as-backend/" data-title="嫌Google Form太醜？那就把他當後台吧XD" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAABQBACdASoYAA0APw1oqEemIyIYBABjEMT0gAAzcRnDVQeQnZ6h4u84CSzAAPzf2WztrE63cL1nqo&#43;i8xW87I4YnVg0UHjKIK8NRf7OTyIwVeTcEoXf3j2AyIf7g88sutatwQjTb&#43;DNgTRuCR2vxIAA" alt="" width="24" height="13"><img src="/blog/202208/google-forms-auto-email/images/google-forms-auto-email-01_hu_429e9b2cc56e3075.webp" srcset="/blog/202208/google-forms-auto-email/images/google-forms-auto-email-01_hu_ee036cc378190903.webp 240w, /blog/202208/google-forms-auto-email/images/google-forms-auto-email-01_hu_28cbe06365de8835.webp 480w, /blog/202208/google-forms-auto-email/images/google-forms-auto-email-01_hu_93681a7f7b20aef6.webp 800w, /blog/202208/google-forms-auto-email/images/google-forms-auto-email-01_hu_429e9b2cc56e3075.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="627" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202208/google-forms-auto-email/">免費！提交 Google 表單後，系統自動寄送客製化 email，宣傳效果 Up！</a></h3>
+    <p class="card-desc">有時我們希望使用者提交 Google 表單後，可以提供給他更多資訊（ex：活動詳細內容、宣傳廣告、友站連結…）；但 Google 表單只有在「設定 → 簡報 → 確認訊息」給你用純文字的方式表達，除了傳送內容受限制外，許多使用者在提交表單後會下意識的關閉網頁…</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-08-10">2022.08.10</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADQAwCdASoYAAoAPw1opkemIyGYBABjEMT0gAAzReKhCjWnHqoW6AAA/urRSgFm8ZQS2OKo6fKcwDj/FhH8Ox4vJ2GgAAAA" alt="" width="24" height="10"><img src="/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-01_hu_4212795c4762885d.webp" srcset="/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-01_hu_c0e0c831c9cf8406.webp 240w, /blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-01_hu_67e83473c261821a.webp 480w, /blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-01_hu_26c3f0950cfb92d3.webp 800w, /blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-01_hu_4212795c4762885d.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="507" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202006/line-bot-personal-assistant/">讓Line機器人變成你的小秘書</a></h3>
+    <p class="card-desc">機器人的秘書還不夠誘惑嗎ＸＤ</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-06-10">2020.06.10</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAACQAwCdASoYAAwAPw1op0emIyGYBABjEMT0gAAzIgdNfWiPHtfAAP7qdqEBgzq1vko6o3vjlFgAAA==" alt="" width="24" height="12"><img src="/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-01_hu_278a63e98b9bc1c9.webp" srcset="/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-01_hu_13d0078056ebd794.webp 240w, /blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-01_hu_1ee84ccb7d0e0323.webp 480w, /blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-01_hu_bef3d2e60c562cc4.webp 800w, /blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-01_hu_278a63e98b9bc1c9.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="585" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202006/line-bot-with-google-apps-script/">用Google App Script打造打造自己的lINE機器人</a></h3>
+    <p class="card-desc">來打造一個回聲狗吧～</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-06-10">2020.06.10</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202006/google-form-as-backend/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

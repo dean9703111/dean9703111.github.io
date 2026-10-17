@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>使用 nvm &#43; .nvmrc 讓 Node.js 版本在不同的專案間自動切換｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="Node.js 版本更新速度極快，但未必所有套件都能相容於新的版本，這造成每個專案的 Node.js 版本不盡相同；所以今天要介紹如何透過 .nvmrc 搭配 zsh or bash script 讓你在專案間自動切換 Node.js 版本。">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="使用 nvm &#43; .nvmrc 讓 Node.js 版本在不同的專案間自動切換">
+  <meta property="og:description" content="Node.js 版本更新速度極快，但未必所有套件都能相容於新的版本，這造成每個專案的 Node.js 版本不盡相同；所以今天要介紹如何透過 .nvmrc 搭配 zsh or bash script 讓你在專案間自動切換 Node.js 版本。">
+  <meta property="og:url" content="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2022-10-26T23:01:53&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T21:56:32&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Node.js">
+  <meta property="article:tag" content="Nvm">
+  <meta property="article:tag" content="Version Control">
+  <meta property="article:tag" content="Zsh">
+  <meta property="article:tag" content="Nvmrc">
+  <meta property="og:image" content="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="627">
+  <meta property="og:image:alt" content="使用 nvm &#43; .nvmrc 讓 Node.js 版本在不同的專案間自動切換">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-og.jpg">
+  <meta name="twitter:title" content="使用 nvm &#43; .nvmrc 讓 Node.js 版本在不同的專案間自動切換">
+  <meta name="twitter:description" content="Node.js 版本更新速度極快，但未必所有套件都能相容於新的版本，這造成每個專案的 Node.js 版本不盡相同；所以今天要介紹如何透過 .nvmrc 搭配 zsh or bash script 讓你在專案間自動切換 Node.js 版本。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T21:56:32+08:00","datePublished":"2022-10-26T23:01:53+08:00","description":"Node.js 版本更新速度極快，但未必所有套件都能相容於新的版本，這造成每個專案的 Node.js 版本不盡相同；所以今天要介紹如何透過 .nvmrc 搭配 zsh or bash script 讓你在專案間自動切換 Node.js 版本。","headline":"使用 nvm + .nvmrc 讓 Node.js 版本在不同的專案間自動切換","image":{"@type":"ImageObject","height":627,"url":"https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Node.js, nvm, Version Control, Zsh, Nvmrc","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E4%BD%BF%E7%94%A8-nvm-zsh-script-%E8%AE%93-node-js-%E7%89%88%E6%9C%AC%E5%9C%A8%E4%B8%8D%E5%90%8C%E7%9A%84%E5%B0%88%E6%A1%88%E9%96%93%E8%87%AA%E5%8B%95%E5%88%87%E6%8F%9B-a8362a509440"],"timeRequired":"PT2M","url":"https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/","wordCount":825},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/","name":"使用 nvm + .nvmrc 讓 Node.js 版本在不同的專案間自動切換","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">使用 nvm &#43; .nvmrc 讓 Node.js 版本在不同的專案間自動切換</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2022-10-26">2022.10.26</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 2 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#step-1%e5%bb%ba%e7%ab%8b%e5%85%a9%e5%80%8b-nodejs-%e5%b0%88%e6%a1%88">STEP 1：建立兩個 Node.js 專案</a></li><li><a href="#step-2%e5%ae%89%e8%a3%9d%e7%89%b9%e5%ae%9a%e7%9a%84-nodejs-%e7%89%88%e6%9c%ac%e4%bb%a5%e4%be%9b%e6%b8%ac%e8%a9%a6">STEP 2：安裝特定的 Node.js 版本以供測試</a></li><li><a href="#step-3%e5%9c%a8%e5%85%a9%e5%80%8b-nodejs-%e5%b0%88%e6%a1%88%e4%b8%ad%e5%8a%a0%e5%85%a5nvmrc%e4%b8%a6%e6%8c%87%e5%ae%9a-nodejs-%e7%89%88%e6%9c%ac">STEP 3：在兩個 Node.js 專案中加入「.nvmrc」並指定 Node.js 版本</a></li><li><a href="#step-4%e8%aa%bf%e6%95%b4-zsh-script">STEP 4：調整 zsh script</a></li><li><a href="#step-5%e5%af%a6%e6%b8%ac%e6%98%af%e5%90%a6%e6%9c%89%e6%95%88">STEP 5：實測是否有效</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>Node.js 版本更新速度極快，但未必所有套件都能相容於新的版本，這造成每個專案的 Node.js 版本不盡相同；即使 nvm 可以幫我們快速切換 Node.js 版本還是不太方便，所以今天要介紹如何透過 .nvmrc 搭配 zsh or bash script 讓你在專案間自動切換 Node.js 版本。</p>
+<p><img src="/blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-01.webp" srcset="/blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-01_hu_e77e718d36937c4b.webp 720w, /blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="731" alt="使用 nvm &#43; .nvmrc 讓 Node.js 版本在不同的專案間自動切換（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>筆者原本選用「avn」這個套件，但它真的已經年久失修了無法使用<a href="https://github.com/wbyoung/avn/issues/109#issuecomment-945155272">連結</a></p>
+</blockquote>
+<h2 id="step-1建立兩個-nodejs-專案">STEP 1：建立兩個 Node.js 專案<a class="h-anchor" href="#step-1%e5%bb%ba%e7%ab%8b%e5%85%a9%e5%80%8b-nodejs-%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>在終端機複製貼上下方指令即可。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir project-a
+</span></span><span style="display:flex;"><span>cd project-a
+</span></span><span style="display:flex;"><span>npm init -y
+</span></span><span style="display:flex;"><span>cd ..
+</span></span><span style="display:flex;"><span>mkdir project-b
+</span></span><span style="display:flex;"><span>cd project-b
+</span></span><span style="display:flex;"><span>npm init -y
+</span></span><span style="display:flex;"><span>cd ..
+</span></span></code></pre></div><h2 id="step-2安裝特定的-nodejs-版本以供測試">STEP 2：安裝特定的 Node.js 版本以供測試<a class="h-anchor" href="#step-2%e5%ae%89%e8%a3%9d%e7%89%b9%e5%ae%9a%e7%9a%84-nodejs-%e7%89%88%e6%9c%ac%e4%bb%a5%e4%be%9b%e6%b8%ac%e8%a9%a6" aria-label="這個段落的連結"></a></h2>
+<p>尚未 nvm 安裝的讀者，可以先透過如下指令安裝，更新的版本請參考<a href="https://github.com/nvm-sh/nvm#installing-and-updating">連結</a>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
+</span></span></code></pre></div><p>安裝完後建議重開終端機讓它生效，接著透過它安裝 Node.js 特定版本：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nvm install <span style="color:#a5d6ff">12</span>
+</span></span><span style="display:flex;"><span>nvm install <span style="color:#a5d6ff">16</span>
+</span></span></code></pre></div><h2 id="step-3在兩個-nodejs-專案中加入nvmrc並指定-nodejs-版本">STEP 3：在兩個 Node.js 專案中加入「.nvmrc」並指定 Node.js 版本<a class="h-anchor" href="#step-3%e5%9c%a8%e5%85%a9%e5%80%8b-nodejs-%e5%b0%88%e6%a1%88%e4%b8%ad%e5%8a%a0%e5%85%a5nvmrc%e4%b8%a6%e6%8c%87%e5%ae%9a-nodejs-%e7%89%88%e6%9c%ac" aria-label="這個段落的連結"></a></h2>
+<p>接下來我們就分別在兩個專案中新增「.nvmrc」的檔案，並個別指定 12、16 版本方便測試（讀者在終端機複製貼上下方指令即可）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd project-a
+</span></span><span style="display:flex;"><span>touch .nvmrc
+</span></span><span style="display:flex;"><span>echo <span style="color:#a5d6ff">&#34;12&#34;</span> &gt;&gt; .nvmrc
+</span></span><span style="display:flex;"><span>cd ..
+</span></span><span style="display:flex;"><span>cd project-b
+</span></span><span style="display:flex;"><span>touch .nvmrc
+</span></span><span style="display:flex;"><span>echo <span style="color:#a5d6ff">&#34;16&#34;</span> &gt;&gt; .nvmrc
+</span></span><span style="display:flex;"><span>cd ..
+</span></span></code></pre></div><blockquote>
+<p>筆者為了方便 Demo 而指定大版本，「.nvmrc」檔案是能吃「x.y.z」版本號的。</p>
+</blockquote>
+<h2 id="step-4調整-zsh-script">STEP 4：調整 zsh script<a class="h-anchor" href="#step-4%e8%aa%bf%e6%95%b4-zsh-script" aria-label="這個段落的連結"></a></h2>
+<p>在終端機輸入 <code>vi ~/.zshrc</code>（每個人的路徑可能不同），到最後一行貼上下方 script：</p>
+<pre tabindex="0"><code># place this after nvm initialization!
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local node_version=&#34;$(nvm version)&#34;
+  local nvmrc_path=&#34;$(nvm_find_nvmrc)&#34;
+  if [ -n &#34;$nvmrc_path&#34; ]; then
+    local nvmrc_node_version=$(nvm version &#34;$(cat &#34;${nvmrc_path}&#34;)&#34;)
+    if [ &#34;$nvmrc_node_version&#34; = &#34;N/A&#34; ]; then
+      nvm install
+    elif [ &#34;$nvmrc_node_version&#34; != &#34;$node_version&#34; ]; then
+      nvm use
+    fi
+  elif [ &#34;$node_version&#34; != &#34;$(nvm version default)&#34; ]; then
+    echo &#34;Reverting to nvm default version&#34;
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+</code></pre><p>儲存後再輸入 <code>source ~/.zshrc</code> 即可讓 script 生效。</p>
+<p>這邊簡單說明 script 運行邏輯：</p>
+<ul>
+<li>資料夾下<strong>有</strong>「.nvmrc」的檔案：若指定的 Node.js 版本已安裝就透過「nvm use」切換，假使該版本尚未安裝就會執行「nvm install」。</li>
+<li>資料夾下<strong>沒有</strong>「.nvmrc」的檔案：切換回 Node.js 默認的版本。</li>
+</ul>
+<p>唯一要注意的是，<strong>記得把這段 script 放在 nvm 初始化後的位置</strong>（或是直接放在最後面也可以）。</p>
+<blockquote>
+<p>上面的 script 參考自 nvm 官網，如果讀者使用的是 bash script 請參考<a href="https://github.com/nvm-sh/nvm#bash">連結</a>。</p>
+</blockquote>
+<h2 id="step-5實測是否有效">STEP 5：實測是否有效<a class="h-anchor" href="#step-5%e5%af%a6%e6%b8%ac%e6%98%af%e5%90%a6%e6%9c%89%e6%95%88" aria-label="這個段落的連結"></a></h2>
+<p>筆者在開頭故意切換到 Node.js 18 的版本，然後再依序切換到「project-a」以及「project-b」的資料夾，從下圖大家可以看到 Node.js 的版本都順利切換嚕！</p>
+<p><img src="/blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-02.webp" srcset="/blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-02.webp 701w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="701" height="218" alt="STEP 5：實測是否有效（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>希望這篇文章，有幫大家解決不同專案的 Node.js 版本切換之苦～</p>
+</blockquote>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2022.10.26）</span><a href="https://medium.com/dean-lin/%E4%BD%BF%E7%94%A8-nvm-zsh-script-%E8%AE%93-node-js-%E7%89%88%E6%9C%AC%E5%9C%A8%E4%B8%8D%E5%90%8C%E7%9A%84%E5%B0%88%E6%A1%88%E9%96%93%E8%87%AA%E5%8B%95%E5%88%87%E6%8F%9B-a8362a509440" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
+            <a class="chip chip-hash" href="/tags/nvm/">Nvm</a>
+            <a class="chip chip-hash" href="/tags/version-control/">Version Control</a>
+            <a class="chip chip-hash" href="/tags/zsh/">Zsh</a>
+            <a class="chip chip-hash" href="/tags/nvmrc/">Nvmrc</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202210%2Fnvm-nvmrc-auto-switch%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202210%2Fnvm-nvmrc-auto-switch%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/" data-title="使用 nvm &#43; .nvmrc 讓 Node.js 版本在不同的專案間自動切換" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202210/nodejs-worker-threads/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">Node.js &#43; worker_threads 多執行緒實戰範例</span></a>
+          <a class="next" href="/blog/202211/distributed-tracing-jaeger-opentelemetry/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">善用分布式追蹤系統，幫你找出程式的效能瓶頸與問題影響範圍（Jaeger with OpenTelemetry Node.js）</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#step-1%e5%bb%ba%e7%ab%8b%e5%85%a9%e5%80%8b-nodejs-%e5%b0%88%e6%a1%88">STEP 1：建立兩個 Node.js 專案</a></li><li><a href="#step-2%e5%ae%89%e8%a3%9d%e7%89%b9%e5%ae%9a%e7%9a%84-nodejs-%e7%89%88%e6%9c%ac%e4%bb%a5%e4%be%9b%e6%b8%ac%e8%a9%a6">STEP 2：安裝特定的 Node.js 版本以供測試</a></li><li><a href="#step-3%e5%9c%a8%e5%85%a9%e5%80%8b-nodejs-%e5%b0%88%e6%a1%88%e4%b8%ad%e5%8a%a0%e5%85%a5nvmrc%e4%b8%a6%e6%8c%87%e5%ae%9a-nodejs-%e7%89%88%e6%9c%ac">STEP 3：在兩個 Node.js 專案中加入「.nvmrc」並指定 Node.js 版本</a></li><li><a href="#step-4%e8%aa%bf%e6%95%b4-zsh-script">STEP 4：調整 zsh script</a></li><li><a href="#step-5%e5%af%a6%e6%b8%ac%e6%98%af%e5%90%a6%e6%9c%89%e6%95%88">STEP 5：實測是否有效</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202210%2Fnvm-nvmrc-auto-switch%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202210%2Fnvm-nvmrc-auto-switch%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/" data-title="使用 nvm &#43; .nvmrc 讓 Node.js 版本在不同的專案間自動切換" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAAAQBACdASoYAAwAPw1mpkemIqGYBABjEMT0gF&#43;iCNAbfHpggPxc/L0OwAD&#43;7TdNyb8x7QAlOZMrBQXvpxvunRcjbuII5Z9syYaRntmP&#43;s/e0iwq63gOHAgAAAA=" alt="" width="24" height="12"><img src="/blog/202101/developer-environment-setup/images/developer-environment-setup-01_hu_dc573172b6ea8c3f.webp" srcset="/blog/202101/developer-environment-setup/images/developer-environment-setup-01_hu_ae7a3b157d6043f1.webp 240w, /blog/202101/developer-environment-setup/images/developer-environment-setup-01_hu_7f590d7ee32afd83.webp 480w, /blog/202101/developer-environment-setup/images/developer-environment-setup-01_hu_c7b4a815131856f.webp 800w, /blog/202101/developer-environment-setup/images/developer-environment-setup-01_hu_dc573172b6ea8c3f.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="595" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202101/developer-environment-setup/">工程師的開發環境大補帖：Node.js、NVM、git、yarn、VSCode</a></h3>
+    <p class="card-desc">工欲善其事，必先利其器</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-01-15">2021.01.15</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADwAwCdASoYAAwAPw1mpkemIqGYBABjEMT0gAAzJ3QaDPiVh64J7QYAAP7F4mmfhtDVop53atR2b&#43;OtttnZZfu0zMb3kmaagKj/t/Yw9Nk/xi4dz6L0UtHUBHF1f5OAL57I3CIa1tDdQ/G0slCvtNoa7DixgEEAAAA=" alt="" width="24" height="12"><img src="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_bff1ffae4bf58b52.webp" srcset="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_2e344cb8100c56a2.webp 240w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_2ddd8bf6f3e4ef34.webp 480w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_7e397ca4dc4f3d5.webp 800w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_bff1ffae4bf58b52.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="622" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/kafka-tracing/">Kafka 與分散式追蹤</a></div>
+
+    <h3 class="card-title"><a href="/blog/202211/trace-kafka-with-jaeger/">透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況</a></h3>
+    <p class="card-desc">我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-11-23">2022.11.23</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>5 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAQBACdASoYAA0APw1mp0emIqGYBABjEMT0gAA1r7sK5EF/gb3kKwLggAD&#43;7BGPDBEPQ21CGzPwH9yZJtrLugBOxmcJ4ZSHLcVX2JSR&#43;ARZDZKnog9LSGNPKejSTQ/WZeqdB6tpTc/kAKHy49rasGsi05YGh2&#43;RjoAiv/5A/rPigv/Ewk1RA66Q1YtQKfqZVQ9DB6AAAAA=" alt="" width="24" height="13"><img src="/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_3f93f554e365f2c2.webp" srcset="/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_1e5d67c140e4a4f.webp 240w, /blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_c8b2ac800b256674.webp 480w, /blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_9ed347305feab0fe.webp 800w, /blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_3f93f554e365f2c2.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="633" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/kafka-tracing/">Kafka 與分散式追蹤</a></div>
+
+    <h3 class="card-title"><a href="/blog/202211/nodejs-kafka-hands-on/">手把手帶你建立 Node.js 專案 ＆ Kafka 環境，透過實作了解 Kafka 的運行邏輯</a></h3>
+    <p class="card-desc">本篇文章將會帶大家一步步建立 Node.js 專案 ＆ Kafka 環境，透過具體實踐來了解 Kafka 的運行邏輯。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-11-20">2022.11.20</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="我們經常看到前輩分享非常美麗的圖片，但很多時候只能停留在欣賞的階段，因為我們根本不知道指令（Prompt）該怎麼下；而現在 Midjourney 推出「/describe」功能，讓我們能反推用哪些指令能產出類似的圖，這是一個對新手、老手都很有幫助的功能，你一定要學起來！">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202304/midjourney-describe/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！">
+  <meta property="og:description" content="我們經常看到前輩分享非常美麗的圖片，但很多時候只能停留在欣賞的階段，因為我們根本不知道指令（Prompt）該怎麼下；而現在 Midjourney 推出「/describe」功能，讓我們能反推用哪些指令能產出類似的圖，這是一個對新手、老手都很有幫助的功能，你一定要學起來！">
+  <meta property="og:url" content="https://deanlin.net/blog/202304/midjourney-describe/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2023-04-09T21:09:10&#43;08:00">
+  <meta property="article:modified_time" content="2024-10-24T14:55:42&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="AI 實戰">
+  <meta property="article:tag" content="Midjourney">
+  <meta property="article:tag" content="Prompt">
+  <meta property="article:tag" content="AI">
+  <meta property="article:tag" content="AI Painting">
+  <meta property="article:tag" content="AIGC">
+  <meta property="og:image" content="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="671">
+  <meta property="og:image:alt" content="Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-og.jpg">
+  <meta name="twitter:title" content="Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！">
+  <meta name="twitter:description" content="我們經常看到前輩分享非常美麗的圖片，但很多時候只能停留在欣賞的階段，因為我們根本不知道指令（Prompt）該怎麼下；而現在 Midjourney 推出「/describe」功能，讓我們能反推用哪些指令能產出類似的圖，這是一個對新手、老手都很有幫助的功能，你一定要學起來！">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202304/midjourney-describe/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"AI 實戰"},"articleSection":"AI 實戰","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2024-10-24T14:55:42+08:00","datePublished":"2023-04-09T21:09:10+08:00","description":"我們經常看到前輩分享非常美麗的圖片，但很多時候只能停留在欣賞的階段，因為我們根本不知道指令（Prompt）該怎麼下；而現在 Midjourney 推出「/describe」功能，讓我們能反推用哪些指令能產出類似的圖，這是一個對新手、老手都很有幫助的功能，你一定要學起來！","headline":"Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！","image":{"@type":"ImageObject","height":671,"url":"https://deanlin.net/blog/202304/midjourney-describe/images/midjourney-describe-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Midjourney, Prompt, AI, AI Painting, AIGC","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202304/midjourney-describe/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/midjourney-%E6%8C%87%E4%BB%A4%E4%B8%8D%E6%B1%82%E4%BA%BA-%E5%96%84%E7%94%A8-describe-%E4%BE%86%E5%81%9A%E5%9C%96%E7%89%87%E7%9A%84%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B-b7bba6a1f01f"],"timeRequired":"PT4M","url":"https://deanlin.net/blog/202304/midjourney-describe/","wordCount":1654},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/ai/","name":"AI 實戰","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202304/midjourney-describe/","name":"Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰</a></li>
+        <li><a href="/categories/tech/">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/ai/">AI 實戰</a>
+      </nav>
+      <h1 class="article-title">Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！</h1>
+      <p class="article-lede">我們經常看到前輩分享非常美麗的圖片，但很多時候只能停留在欣賞的階段，因為我們根本不知道指令（Prompt）該怎麼下；而現在 Midjourney 推出「/describe」功能，讓我們能反推用哪些指令能產出類似的圖，這是一個對新手、老手都很有幫助的功能，你一定要學起來！</p>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2023-04-09">2023.04.09</time>
+              <span>更新於 <time datetime="2024-10-24">2024.10.24</time></span>
+              <span>閱讀約 4 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e6%89%8b%e6%8a%8a%e6%89%8b%e6%95%99%e4%bd%a0%e4%bd%bf%e7%94%a8describe%e5%8a%9f%e8%83%bd">手把手教你使用「/describe」功能</a></li><li><a href="#%e6%83%b3%e9%9d%a0-prompt-%e8%b3%ba%e9%8c%a2%e8%b6%8a%e4%be%86%e8%b6%8a%e4%b8%8d%e5%ae%b9%e6%98%93%e4%ba%86">想靠 Prompt 賺錢越來越不容易了</a></li><li><a href="#%e7%b5%90%e8%aa%9e%e7%b4%a0%e6%9d%90%e8%88%87%e9%9d%88%e6%84%9f%e5%be%88%e9%87%8d%e8%a6%81">結語：素材與靈感很重要</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>在 AI 社團中，我們經常看到前輩分享非常美麗的圖片，但很多時候只能停留在欣賞的階段，因為我們根本不知道指令（Prompt）該怎麼下；而現在 Midjourney 推出「/describe」功能，讓我們能反推用哪些指令能產出類似的圖，這是一個對新手、老手都很有幫助的功能，你一定要學起來！</p>
+<p><img src="/blog/202304/midjourney-describe/images/midjourney-describe-01.webp" srcset="/blog/202304/midjourney-describe/images/midjourney-describe-01_hu_4dbb26f38272fe04.webp 720w, /blog/202304/midjourney-describe/images/midjourney-describe-01.webp 1289w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1289" height="721" alt="Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="手把手教你使用describe功能">手把手教你使用「/describe」功能<a class="h-anchor" href="#%e6%89%8b%e6%8a%8a%e6%89%8b%e6%95%99%e4%bd%a0%e4%bd%bf%e7%94%a8describe%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>儘管透過簡單的文字就能讓 Midjourney 產出絕美圖片，但如果想要「控制」產出的結果，就需要擁有一定的知識背景。</p>
+<p>可是像筆者這種缺乏藝術知識的門外漢，光看圖片是根本無法反推背後到底使用了哪些指令。</p>
+<p>下面就拿一張鋼彈的設計圖來做示範（這張圖也是 Midjourney 產出來的）：</p>
+<p><img src="/blog/202304/midjourney-describe/images/midjourney-describe-02.webp" srcset="/blog/202304/midjourney-describe/images/midjourney-describe-02_hu_240f320fd2783b2c.webp 720w, /blog/202304/midjourney-describe/images/midjourney-describe-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="808" alt="手把手教你使用「/describe」功能（圖 2）" loading="lazy" decoding="async"></p>
+<p>你只要在下方輸入「/describe」，然後貼上圖片就能使用了！</p>
+<figure class="figure"><img src="/blog/202304/midjourney-describe/images/midjourney-describe-03.webp" srcset="/blog/202304/midjourney-describe/images/midjourney-describe-03_hu_256a09f4399a4885.webp 720w, /blog/202304/midjourney-describe/images/midjourney-describe-03.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="772" alt="讀者可以直接複製圖片來嘗試看看" loading="lazy" decoding="async">
+  <figcaption>讀者可以直接複製圖片來嘗試看看</figcaption>
+</figure>
+
+<p>從下圖中，可以看到 Midjourney 幫我們反推出了 4 個 Prompt，上面所描述的藝術風格「關鍵字」，我想沒有藝術背景的人是很難靠自己猜想出來的。</p>
+<p><img src="/blog/202304/midjourney-describe/images/midjourney-describe-04.webp" srcset="/blog/202304/midjourney-describe/images/midjourney-describe-04.webp 557w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="557" height="758" alt="手把手教你使用「/describe」功能（圖 4）" loading="lazy" decoding="async"></p>
+<p>點擊下方的「1、2、3、4」就會依序產生對應的圖片：</p>
+<p>1.gundam armoured armor concept, in the style of light teal and white, historical documentation, panoramic scale, human anatomy, grainy, nikon d850, scientific diagrams — ar 26:15（鋼彈裝甲概念，以淺藍綠和白色風格，歷史文件，全景尺度，人體解剖學，顆粒狀，尼康 D850，科學圖表，圖片比例 26:15）</p>
+<p><img src="/blog/202304/midjourney-describe/images/midjourney-describe-05.webp" srcset="/blog/202304/midjourney-describe/images/midjourney-describe-05_hu_f0e3d8488faa0c7f.webp 720w, /blog/202304/midjourney-describe/images/midjourney-describe-05.webp 1098w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1098" height="634" alt="手把手教你使用「/describe」功能（圖 5）" loading="lazy" decoding="async"></p>
+<p>2.gundam fb006 figure drawing by ottosen wilson, in the style of dark teal and light beige, historical documentation, panoramic scale, technological design, <a href="https://goo.gl/search?artist%20thechamba">thechamba</a>, 32k uhd — ar 26:15（鋼彈 FB006 人物繪圖，由 Ottosen Wilson 創作，以深藍綠和淺米色風格，歷史文件，全景尺度，技術設計，TheChamba，32k 超高清，圖片比例 26:15）</p>
+<p><img src="/blog/202304/midjourney-describe/images/midjourney-describe-06.webp" srcset="/blog/202304/midjourney-describe/images/midjourney-describe-06_hu_dd6da252154eb091.webp 720w, /blog/202304/midjourney-describe/images/midjourney-describe-06.webp 1098w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1098" height="634" alt="手把手教你使用「/describe」功能（圖 6）" loading="lazy" decoding="async"></p>
+<p>3.gundam design template free vector art, in the style of <a href="https://goo.gl/search?artist%20hajime%20sorayama">hajime sorayama</a>, dark white and light aquamarine, historical documentation, photorealistic detail, <a href="https://goo.gl/search?artist%20frank%20quitely">frank quitely</a>, celestialpunk, <a href="https://goo.gl/search?artist%20johfra%20bosschart">johfra bosschart</a> — ar 26:15（鋼彈設計模板免費矢量藝術，以 Hajime Sorayama 風格，淺白和淺綠松石色，歷史文件，照片級真實細節，Frank Quitely，Celestialpunk，Johfra Bosschart，圖片比例 26:15）</p>
+<p><img src="/blog/202304/midjourney-describe/images/midjourney-describe-07.webp" srcset="/blog/202304/midjourney-describe/images/midjourney-describe-07_hu_f4e21298cd81a235.webp 720w, /blog/202304/midjourney-describe/images/midjourney-describe-07.webp 1098w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1098" height="634" alt="手把手教你使用「/describe」功能（圖 7）" loading="lazy" decoding="async"></p>
+<p>4.the comic book is showing what the different parts of the robot must be, in the style of anime-inspired character designs, historical documentation, light white and dark green, 32k uhd, heavy outlines, olympus xa2, photorealist details — ar 26:15（漫畫書展示了機器人的不同部分，以動漫風格角色設計，歷史文件，淺白和深綠色，32k 超高清，粗輪廓，奧林巴斯 XA2，照片級真實細節，圖片比例 26:15）</p>
+<p><img src="/blog/202304/midjourney-describe/images/midjourney-describe-08.webp" srcset="/blog/202304/midjourney-describe/images/midjourney-describe-08_hu_9437cd1c35df8358.webp 720w, /blog/202304/midjourney-describe/images/midjourney-describe-08.webp 1098w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1098" height="634" alt="手把手教你使用「/describe」功能（圖 8）" loading="lazy" decoding="async"></p>
+<p>以結果來看，第 3、4 個 Prompt 是最符合需求的；不過我們也能從其他 Prompt 中提取我們感興趣的關鍵字，這能讓我們未來創作時有更多的選擇與靈感。</p>
+<blockquote>
+<p><strong>備註</strong>：上面的中文是請 ChatGPT 翻譯出來的。</p>
+</blockquote>
+<hr>
+<h2 id="想靠-prompt-賺錢越來越不容易了">想靠 Prompt 賺錢越來越不容易了<a class="h-anchor" href="#%e6%83%b3%e9%9d%a0-prompt-%e8%b3%ba%e9%8c%a2%e8%b6%8a%e4%be%86%e8%b6%8a%e4%b8%8d%e5%ae%b9%e6%98%93%e4%ba%86" aria-label="這個段落的連結"></a></h2>
+<p>這邊提醒一下讀者，「/describe」只是反推出類似風格的 Prompt；以上面的範例來說，Midjourney 給的 4 個 Prompt，都與原先的 Prompt 有很大的差異。</p>
+<p>不過對許多使用者來說，他們並不在意這點，只要能達到差不多的效果即可，「/describe」最重要的就是提供「方向」。</p>
+<p>不久前，新聞曾報出有公司開出「AI 詠唱師」的職位，價值年薪千萬。</p>
+<p>針對這則報導，筆者不予置評，我相信擅長撰寫 Prompt 的人能增加公司的生產力，實際上有些高手也真的是靠販賣「Prompts」在賺錢，<a href="https://promptbase.com/prompt/secret-recipe-comic-book-layouts">連結</a>。</p>
+<p><img src="/blog/202304/midjourney-describe/images/midjourney-describe-09.webp" srcset="/blog/202304/midjourney-describe/images/midjourney-describe-09_hu_e766ad8c80ab3704.webp 720w, /blog/202304/midjourney-describe/images/midjourney-describe-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="671" alt="想靠 Prompt 賺錢越來越不容易了（圖 9）" loading="lazy" decoding="async"></p>
+<p>不過這個賺錢方式在 Midjourney 推出「/describe」功能後，勢必會受到嚴重的衝擊。</p>
+<p>因為使用者多了一個免費的選擇，儘管不是最佳解，但對很多人來說已經夠用了，錢…是真的越來越難賺了。</p>
+<hr>
+<h2 id="結語素材與靈感很重要">結語：素材與靈感很重要<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e7%b4%a0%e6%9d%90%e8%88%87%e9%9d%88%e6%84%9f%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
+<p>從過去到現在，筆者如果看到喜歡的文章＆圖片，都會有意識的把他們依照類別收集起來，方便日後參考與研究。</p>
+<p>而這次 Midjourney 推出的「/describe」功能，就幫我大幅減少研究與猜測的時間；能透過相對具體的「關鍵字」，模仿出自己期待的結果。</p>
+<p>因為 AI 的到來，許多技術的門檻逐漸降低，好處是我們不需要再做繁瑣、基礎的操作；而壞處則是對「靈感」更加苛求，沒有個性的普通作品會更沒有生存空間。</p>
+<blockquote class="pullquote"><p>簡單來說就是需要花更多的時間「動腦」，而強大的知識儲備，有更高機率產出好的「靈感」。</p>
+</blockquote>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="/blog/202304/midjourney-describe/images/midjourney-describe-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="/blog/202304/midjourney-describe/images/midjourney-describe-10.webp" srcset="/blog/202304/midjourney-describe/images/midjourney-describe-10_hu_99c9c7b227f1a73e.webp 720w, /blog/202304/midjourney-describe/images/midjourney-describe-10.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2023.04.09）</span><a href="https://medium.com/dean-lin/midjourney-%E6%8C%87%E4%BB%A4%E4%B8%8D%E6%B1%82%E4%BA%BA-%E5%96%84%E7%94%A8-describe-%E4%BE%86%E5%81%9A%E5%9C%96%E7%89%87%E7%9A%84%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B-b7bba6a1f01f" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/midjourney/">Midjourney</a>
+            <a class="chip chip-hash" href="/tags/prompt/">Prompt</a>
+            <a class="chip chip-hash" href="/tags/ai/">AI</a>
+            <a class="chip chip-hash" href="/tags/ai-painting/">AI Painting</a>
+            <a class="chip chip-hash" href="/tags/aigc/">AIGC</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202304%2Fmidjourney-describe%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202304%2Fmidjourney-describe%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202304/midjourney-describe/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202304/midjourney-describe/" data-title="Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202304/youtube-summary-gpt-whisper-api/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">用 Python 搭配 OpenAI 的 GPT、Whisper API 取得 Youtube 影片摘要</span></a>
+          <a class="next" href="/blog/202304/new-bing-web-summary/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">只要 2 步驟！用 New Bing 取得網頁摘要，別再用 ChatGPT 取得網址摘要了！</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e6%89%8b%e6%8a%8a%e6%89%8b%e6%95%99%e4%bd%a0%e4%bd%bf%e7%94%a8describe%e5%8a%9f%e8%83%bd">手把手教你使用「/describe」功能</a></li><li><a href="#%e6%83%b3%e9%9d%a0-prompt-%e8%b3%ba%e9%8c%a2%e8%b6%8a%e4%be%86%e8%b6%8a%e4%b8%8d%e5%ae%b9%e6%98%93%e4%ba%86">想靠 Prompt 賺錢越來越不容易了</a></li><li><a href="#%e7%b5%90%e8%aa%9e%e7%b4%a0%e6%9d%90%e8%88%87%e9%9d%88%e6%84%9f%e5%be%88%e9%87%8d%e8%a6%81">結語：素材與靈感很重要</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202304%2Fmidjourney-describe%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202304%2Fmidjourney-describe%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202304/midjourney-describe/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202304/midjourney-describe/" data-title="Midjourney 指令不求人，善用「/describe」來做圖片的逆向工程！" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAACQBACdASoYAA0APw1mp0emIqGYBABjEMTxgFOKE56wn1lD&#43;D0Cf3JoXOfd7MAA/uv6mSmJzBsN0OJNESBZM8RyvW7L4XSyeYNN6Zquxyk6XtuypCu1lBPiUMNVPZryZDC&#43;ll/xD0v6LY69SzIz4J38FUz/GkdAK/CM0J6dpO&#43;KAUB/vDBjQB4w908P5j/9NhfI&#43;bs0BniPkcxwwRcQ0zQaN&#43;JDGuuLwAA=" alt="" width="24" height="13"><img src="/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-01_hu_67aab921fd00c542.webp" srcset="/blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-01_hu_3ffb8a3dbac24dbd.webp 240w, /blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-01_hu_6a3ed432bd012e2.webp 480w, /blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-01_hu_e2ceeb527b6fecf8.webp 800w, /blog/202301/midjourney-pro-tips/images/midjourney-pro-tips-01_hu_67aab921fd00c542.webp 1138w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1138" height="610" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/midjourney-pro-tips/">掌握 5 個技巧，讓你使用 Midjourney 像個專家！</a></h3>
+    <p class="card-desc">雖然只要簡單的關鍵字、句子就能讓 Midjourney 產生絕美的圖片，但有時圖片的風格、角度、層次…跟我們要的並不相同。 就像是建築物有文藝復興、巴洛克式、中國傳統建築…等風格，但如果沒有相關背景知識，你可能就只能用「房子」一詞帶過，可以說是「知識盲區」阻礙了我們的想像力。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-22">2023.01.22</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAADQBACdASoYAA0APw1opkemIyGYBABjEMT2AF2XgAq&#43;GBc66icbi7DBZCbLTJm8qAD&#43;6/qRSx8TpWtopCK2kfYi5Nt5E8J1zhZg68qi91tI/TxuY2k7vjOZC8atliUVBMrvvM2f2Lkr/x/6o/d5jc4h/LkIf46P3CrZjLt2eVfw/U6ooy0rdPt2wn3/ZfcXltsWHU/&#43;DTLn43cgPxJ1pJsgEngWDBpSs/FA3tBVXH/yH0v&#43;2&#43;AAAA==" alt="" width="24" height="13"><img src="/blog/202301/midjourney-settings/images/midjourney-settings-01_hu_3369fd4726f6e099.webp" srcset="/blog/202301/midjourney-settings/images/midjourney-settings-01_hu_6cf6354929a85314.webp 240w, /blog/202301/midjourney-settings/images/midjourney-settings-01_hu_a1aa07e9a65da479.webp 480w, /blog/202301/midjourney-settings/images/midjourney-settings-01_hu_6ef22f96bf89478c.webp 800w, /blog/202301/midjourney-settings/images/midjourney-settings-01_hu_3369fd4726f6e099.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="643" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/midjourney-settings/">原來 Midjourney 的 Settings 對產圖有這麼大的影響！？</a></h3>
+    <p class="card-desc">這篇文章筆者將會舉出實際案例，讓你知道 Midjourney 的 Settings 裡面有哪些參數，以及他們會對產出的圖造成什麼影響。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-21">2023.01.21</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAACQBACdASoYAA0APw1mpkemIqGYBABjEMT2AE6ZQAHq32xknZSPphKHXPpalsAA/tCmM01KrvbR3SwHSFdAsn3hLoJYe2F7ZZaD52dKBXwp6cEpilqn6&#43;rF4M8BvlAHEZcJ69dCnr3jvWWm3CxQSr9&#43;sXR5Nb30TfocP8mE/3Xz93i8N1ObxhNvLffn/r2iBCcVoyPOFUn1XEbu18oSAA==" alt="" width="24" height="13"><img src="/blog/202301/midjourney-getting-started/images/midjourney-getting-started-01_hu_fa9bc57a7287f0bc.webp" srcset="/blog/202301/midjourney-getting-started/images/midjourney-getting-started-01_hu_4c1688b9efa4b840.webp 240w, /blog/202301/midjourney-getting-started/images/midjourney-getting-started-01_hu_41d56ab2a9e14ea5.webp 480w, /blog/202301/midjourney-getting-started/images/midjourney-getting-started-01_hu_89aca7d6cf04d46.webp 800w, /blog/202301/midjourney-getting-started/images/midjourney-getting-started-01_hu_fa9bc57a7287f0bc.webp 1140w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1140" height="611" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/midjourney-getting-started/">Midjourney 入門，用關鍵字讓 AI 產生絕美圖片</a></h3>
+    <p class="card-desc">這篇文章的目標，是帶領讀者透過「關鍵字」讓 Midjourney 產生絕美圖片；相信最後的完成的作品，會讓你驚嘆於 AI 的繪圖能力。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-21">2023.01.21</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202304/midjourney-describe/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

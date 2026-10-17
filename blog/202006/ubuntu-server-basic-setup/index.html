@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ubuntu Server基本環境｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="這篇文章是以部署網頁為導向的環境設定 1、ssh的安裝(為了ssh連線) sudo apt-get install ssh -y 如果遇到：package ‘ssh’ has no installation candidate的錯誤，要記得…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="Ubuntu Server基本環境">
+  <meta property="og:description" content="這篇文章是以部署網頁為導向的環境設定 1、ssh的安裝(為了ssh連線) sudo apt-get install ssh -y 如果遇到：package ‘ssh’ has no installation candidate的錯誤，要記得…">
+  <meta property="og:url" content="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-06-15T14:50:44&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:04:05&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Ubuntu">
+  <meta property="article:tag" content="Ubuntu Server">
+  <meta property="article:tag" content="Servers">
+  <meta property="article:tag" content="SSH">
+  <meta property="og:image" content="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/images/ubuntu-server-basic-setup-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ubuntu Server基本環境">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/images/ubuntu-server-basic-setup-og.jpg">
+  <meta name="twitter:title" content="Ubuntu Server基本環境">
+  <meta name="twitter:description" content="這篇文章是以部署網頁為導向的環境設定 1、ssh的安裝(為了ssh連線) sudo apt-get install ssh -y 如果遇到：package ‘ssh’ has no installation candidate的錯誤，要記得…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202006/ubuntu-server-basic-setup/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:04:05+08:00","datePublished":"2020-06-15T14:50:44+08:00","description":"這篇文章是以部署網頁為導向的環境設定 1、ssh的安裝(為了ssh連線) sudo apt-get install ssh -y 如果遇到：package ‘ssh’ has no installation candidate的錯誤，要記得…","headline":"Ubuntu Server基本環境","image":{"@type":"ImageObject","height":630,"url":"https://deanlin.net/blog/202006/ubuntu-server-basic-setup/images/ubuntu-server-basic-setup-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Ubuntu, Ubuntu Server, Servers, SSH","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202006/ubuntu-server-basic-setup/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/ubuntu-server%E5%9F%BA%E6%9C%AC%E7%92%B0%E5%A2%83-ffce3a8999d8"],"timeRequired":"PT3M","url":"https://deanlin.net/blog/202006/ubuntu-server-basic-setup/","wordCount":1205},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202006/ubuntu-server-basic-setup/","name":"Ubuntu Server基本環境","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">Ubuntu Server基本環境</h1>
+      <p class="article-lede">這篇文章是以部署網頁為導向的環境設定</p>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-06-15">2020.06.15</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 3 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#1ssh%e7%9a%84%e5%ae%89%e8%a3%9d%e7%82%ba%e4%ba%86ssh%e9%80%a3%e7%b7%9a">1、ssh的安裝(為了ssh連線)</a></li><li><a href="#2%e7%94%9f%e6%88%90%e9%87%91%e9%91%b0">2、生成金鑰</a></li><li><a href="#3%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6etcsshsshd_config">3、修改配置文件，/etc/ssh/sshd_config</a></li><li><a href="#4windows%e4%b8%8a%e5%95%9f%e5%8b%95putty%e9%80%b2%e8%a1%8c%e5%a6%82%e4%b8%8b%e9%85%8d%e7%bd%ae">4、windows上啟動putty，進行如下配置</a></li><li><a href="#5%e8%a8%ad%e5%ae%9a-authorized_keys-%e4%bf%a1%e4%bb%bb%e6%b8%85%e5%96%ae">5、設定 Authorized_keys 信任清單</a></li><li><a href="#6%e7%a2%ba%e5%ae%9a%e8%83%bd%e7%94%a8ssh-key%e7%99%bb%e5%85%a5%e5%be%8c%e5%86%8d%e5%8e%bb%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6">6、確定能用ssh key登入後再去修改配置文件</a></li><li><a href="#7-ubuntu-based-gnulinux-%e4%b8%8a%e7%9a%84%e9%98%b2%e7%81%ab%e7%89%86">7、 Ubuntu based GNU/Linux 上的防火牆</a></li><li><a href="#8%e6%af%8f%e5%8f%b0%e7%9a%84ubuntu-default-editor%e9%83%bd%e6%94%b9%e6%88%90vim">8、每台的ubuntu default editor都改成vim</a></li><li><a href="#9%e5%b0%87ip%e6%94%b9%e7%82%bastatic-ip">9、將ip改為static ip</a></li><li><a href="#10ubuntu%e6%96%b0%e5%a2%9e%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e8%a8%ad%e6%88%90-sudo-user">10、ubuntu新增使用者並設成 Sudo user</a></li><li><a href="#11linux%e8%88%87windows%e9%96%93%e5%82%b3%e9%80%81%e6%aa%94%e6%a1%88">11、Linux與Windows間傳送檔案</a></li><li><a href="#12lvm-storage%e7%9b%b8%e9%97%9c%e5%95%8f%e9%a1%8c">12、LVM storage相關問題</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p><img src="/blog/202006/ubuntu-server-basic-setup/images/ubuntu-server-basic-setup-01.webp" srcset="/blog/202006/ubuntu-server-basic-setup/images/ubuntu-server-basic-setup-01_hu_d327c5687b61147d.webp 720w, /blog/202006/ubuntu-server-basic-setup/images/ubuntu-server-basic-setup-01.webp 1200w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1200" height="630" alt="Ubuntu Server基本環境（圖 1）" loading="lazy" decoding="async"></p>
+<p>這篇文章是以部署網頁為導向的環境設定</p>
+<h2 id="1ssh的安裝為了ssh連線">1、ssh的安裝(為了ssh連線)<a class="h-anchor" href="#1ssh%e7%9a%84%e5%ae%89%e8%a3%9d%e7%82%ba%e4%ba%86ssh%e9%80%a3%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install ssh -y
+</span></span></code></pre></div><p><strong>如果遇到：package ‘ssh’ has no installation candidate的錯誤，要記得更新</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apt-get update
+</span></span></code></pre></div><h2 id="2生成金鑰">2、生成金鑰<a class="h-anchor" href="#2%e7%94%9f%e6%88%90%e9%87%91%e9%91%b0" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh-keygen
+</span></span><span style="display:flex;"><span>cd .ssh
+</span></span><span style="display:flex;"><span>mv id_rsa.pub authorized_keys
+</span></span></code></pre></div><h2 id="3修改配置文件etcsshsshd_config">3、修改配置文件，/etc/ssh/sshd_config<a class="h-anchor" href="#3%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6etcsshsshd_config" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/ssh/sshd_config
+</span></span></code></pre></div><p>將# AuthorizedKeysFile %h/.ssh/authorized_keys，把前面的#去掉即可，這個是允許ssh登入的檔案路徑</p>
+<p>註:如果server有安裝gitlab，可能會被拒絕連線，要再加上這個設定:StrictModes no</p>
+<p>修改完記得要將ssh重啟才會生效：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo service ssh restart
+</span></span></code></pre></div><h2 id="4windows上啟動putty進行如下配置">4、windows上啟動putty，進行如下配置<a class="h-anchor" href="#4windows%e4%b8%8a%e5%95%9f%e5%8b%95putty%e9%80%b2%e8%a1%8c%e5%a6%82%e4%b8%8b%e9%85%8d%e7%bd%ae" aria-label="這個段落的連結"></a></h2>
+<p>（1）Session-Logging-Hostname:填上你的linux的ip</p>
+<p>（2）Windows －Translation － 在下拉選單裡選上UTF－8，這裡不設定，登入後將會出現中文亂碼。</p>
+<p>（3）Connection- Data — Auto login username:填上你登入ubuntu時用的使用者名稱。</p>
+<p>（4）Connection- SSH-Auth-Private key file for authentication:選上id_rsa.ppk；</p>
+<h2 id="5設定-authorized_keys-信任清單">5、設定 Authorized_keys 信任清單<a class="h-anchor" href="#5%e8%a8%ad%e5%ae%9a-authorized_keys-%e4%bf%a1%e4%bb%bb%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<pre tabindex="0"><code>vi authorized_keys
+</code></pre><p>進去後貼上rsa key</p>
+<h2 id="6確定能用ssh-key登入後再去修改配置文件">6、確定能用ssh key登入後再去修改配置文件<a class="h-anchor" href="#6%e7%a2%ba%e5%ae%9a%e8%83%bd%e7%94%a8ssh-key%e7%99%bb%e5%85%a5%e5%be%8c%e5%86%8d%e5%8e%bb%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/ssh/sshd_config
+</span></span></code></pre></div><p>修改：PasswordAuthentication no 禁止使用者用密碼登入</p>
+<p>之後記得重啟</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo service ssh restart
+</span></span></code></pre></div><h2 id="7-ubuntu-based-gnulinux-上的防火牆">7、 Ubuntu based GNU/Linux 上的防火牆<a class="h-anchor" href="#7-ubuntu-based-gnulinux-%e4%b8%8a%e7%9a%84%e9%98%b2%e7%81%ab%e7%89%86" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install ufw
+</span></span><span style="display:flex;"><span>sudo ufw enable
+</span></span><span style="display:flex;"><span>sudo ufw allow from 192.168.0.0/12<span style="color:#ff7b72;font-weight:bold">(</span>你允許的網路環境<span style="color:#ff7b72;font-weight:bold">)</span>
+</span></span></code></pre></div><h2 id="8每台的ubuntu-default-editor都改成vim">8、每台的ubuntu default editor都改成vim<a class="h-anchor" href="#8%e6%af%8f%e5%8f%b0%e7%9a%84ubuntu-default-editor%e9%83%bd%e6%94%b9%e6%88%90vim" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo update-alternatives — set editor /usr/bin/vim.basic
+</span></span></code></pre></div><h2 id="9將ip改為static-ip">9、將ip改為static ip<a class="h-anchor" href="#9%e5%b0%87ip%e6%94%b9%e7%82%bastatic-ip" aria-label="這個段落的連結"></a></h2>
+<p>先看新增的網卡名稱</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd /proc/sys/net/ipv4/conf
+</span></span></code></pre></div><p><strong>Ubuntu 16作法：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/network/interfaces
+</span></span><span style="display:flex;"><span>auto ens160
+</span></span><span style="display:flex;"><span>iface ens160 inet static
+</span></span><span style="display:flex;"><span>address 192.168.3.60
+</span></span><span style="display:flex;"><span>netmask 255.255.0.0
+</span></span><span style="display:flex;"><span>gateway 192.168.1.254
+</span></span><span style="display:flex;"><span>dns-nameservers 168.95.1.1 168.95.192.1
+</span></span></code></pre></div><p>改完後</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /etc/init.d/networking restart
+</span></span></code></pre></div><p><strong>Ubuntu 18作法：</strong></p>
+<pre tabindex="0"><code>vi /etc/netplan/50-cloud-init.yaml
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">network</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ethernets</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span><span style="color:#7ee787">enp0s3</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">192.168.0.10</span><span style="color:#a5d6ff">/24]</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">gateway4</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">192.168.0.1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">nameservers</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">              </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">8.8.8.8</span>,<span style="color:#a5d6ff">8.8.4.4</span>]<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">dhcp4</span>:<span style="color:#6e7681"> </span><span style="color:#79c0ff">no</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">2</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d0fcc16dd59df0e5152449c27cd6d1f9" rel="noopener">50-cloud-init.yaml</a>（GitHub Gist）</p>
+<p>改完後</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo netplan try
+</span></span></code></pre></div><p><strong>Ubuntu 20作法：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/netplan/00-installer-config.yaml
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># This is the network config written by &#39;subiquity&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">network</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">ethernets</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ens160</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">your_ip_address/12]</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">gateway4</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">your_gateway</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">optional</span>:<span style="color:#6e7681"> </span><span style="color:#79c0ff">true</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">nameservers</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">168.95.1.1</span>,<span style="color:#a5d6ff">168.95.192.1</span>,<span style="color:#a5d6ff">8.8.8.8</span>,<span style="color:#a5d6ff">8.8.4.4</span>]<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">dhcp4</span>:<span style="color:#6e7681"> </span><span style="color:#79c0ff">no</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">2</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/33b1639b9d52bae158f0c0eb363f025b" rel="noopener">00-installer-config.yaml</a>（GitHub Gist）</p>
+<blockquote>
+<p>PS.如果發現改成靜態網址後無法ssh登入，請把 addresses 的遮罩改為 <code>/12</code></p>
+</blockquote>
+<h2 id="10ubuntu新增使用者並設成-sudo-user">10、ubuntu新增使用者並設成 Sudo user<a class="h-anchor" href="#10ubuntu%e6%96%b0%e5%a2%9e%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e8%a8%ad%e6%88%90-sudo-user" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo adduser newuser
+</span></span><span style="display:flex;"><span>$ usermod -aG sudo newuser
+</span></span></code></pre></div><p>如果要取消這位使用者的 sudoer 資格</p>
+<pre tabindex="0"><code>$sudo deluser newuser sudo
+</code></pre><p>如果要刪除這位使用者</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo deluser — remove-home userNameHere
+</span></span></code></pre></div><p>Add public key to allow remote SSH login for the new user</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>su — newuser
+</span></span><span style="display:flex;"><span>mkdir ~/.ssh
+</span></span><span style="display:flex;"><span>vim ~/.ssh/authorized_keys
+</span></span></code></pre></div><p>查詢帳號有 sudoer 的權限</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo cat /etc/group | grep sudo
+</span></span><span style="display:flex;"><span>$ sudo cat /etc/group | grep admin
+</span></span></code></pre></div><h2 id="11linux與windows間傳送檔案">11、Linux與Windows間傳送檔案<a class="h-anchor" href="#11linux%e8%88%87windows%e9%96%93%e5%82%b3%e9%80%81%e6%aa%94%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>複製本機檔案到linux</p>
+<pre tabindex="0"><code>pscp d:\path\file_name account@192.10.3.64:/path
+</code></pre><h2 id="12lvm-storage相關問題">12、LVM storage相關問題<a class="h-anchor" href="#12lvm-storage%e7%9b%b8%e9%97%9c%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>因為ubuntu 18.4使用的時候，不知道設定為何默認初始硬碟只有4GB，如果要釋放出剩餘的硬碟空間，用以下指令即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo lvextend -rl +100%FREE /dev/mapper/ubuntu — vg-ubuntu — lv
+</span></span></code></pre></div><p>參考資源：</p>
+<p><a href="https://www.peterdavehello.org/2016/01/ubuntu-based-gnulinux-firewall-ufw-essential-config/"><strong>Ufw防火牆設定</strong></a></p>
+<p><a href="https://www.howtoing.com/deploy-node-js-application-with-pm2-on-ubuntu"><strong>如何在Ubuntu 16.04上使用PM2部署Node.js应用程序</strong></a></p>
+<p><a href="https://tw.saowen.com/a/45fd6b0293c602372e720ea216d07c8ac0751f49c19e235126260221367818e6"><strong>windows下如何使用ssh遠端登入Linux</strong></a></p>
+<p><a href="https://loveamberbird.wordpress.com/2013/08/21/%E3%80%90%E7%AD%86%E8%A8%98%E3%80%91%E5%9C%A8linux%E8%88%87windows%E9%96%93%E5%82%B3%E9%80%81%E6%AA%94%E6%A1%88%E6%AD%A5%E9%A9%9F%E6%95%99%E5%AD%B8/"><strong>在Linux與Windows間傳送檔案 — 步驟教學</strong></a></p>
+<p><a href="https://stackoverflow.com/questions/31813080/windows-10-ssh-keys"><strong>win10如果要產生登入的SSH KEY</strong></a></p>
+<p><a href="https://blog.csdn.net/youyudexiaowangzi/article/details/48729897"><strong>sudo被玩壞參考</strong></a></p>
+<p><a href="https://askubuntu.com/questions/1090773/understanding-free-space-volumes-on-ubuntu%20https://blog.xuite.net/lichangying/wretch/214360626-%E5%A6%82%E4%BD%95%E5%8B%95%E6%85%8B%E6%94%BE%E5%A4%A7LVM&#43;on&#43;Linux">LVM storage釋放剩餘空間</a></p>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2020.06.15）</span><a href="https://medium.com/dean-lin/ubuntu-server%E5%9F%BA%E6%9C%AC%E7%92%B0%E5%A2%83-ffce3a8999d8" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/ubuntu/">Ubuntu</a>
+            <a class="chip chip-hash" href="/tags/ubuntu-server/">Ubuntu Server</a>
+            <a class="chip chip-hash" href="/tags/servers/">Servers</a>
+            <a class="chip chip-hash" href="/tags/ssh/">SSH</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202006%2Fubuntu-server-basic-setup%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202006%2Fubuntu-server-basic-setup%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/" data-title="Ubuntu Server基本環境" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202006/nginx-introduction/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">Nginx — 你網頁的好夥伴</span></a>
+          <a class="next" href="/blog/202006/network-diagnostics-commands/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">網路環境檢查</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#1ssh%e7%9a%84%e5%ae%89%e8%a3%9d%e7%82%ba%e4%ba%86ssh%e9%80%a3%e7%b7%9a">1、ssh的安裝(為了ssh連線)</a></li><li><a href="#2%e7%94%9f%e6%88%90%e9%87%91%e9%91%b0">2、生成金鑰</a></li><li><a href="#3%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6etcsshsshd_config">3、修改配置文件，/etc/ssh/sshd_config</a></li><li><a href="#4windows%e4%b8%8a%e5%95%9f%e5%8b%95putty%e9%80%b2%e8%a1%8c%e5%a6%82%e4%b8%8b%e9%85%8d%e7%bd%ae">4、windows上啟動putty，進行如下配置</a></li><li><a href="#5%e8%a8%ad%e5%ae%9a-authorized_keys-%e4%bf%a1%e4%bb%bb%e6%b8%85%e5%96%ae">5、設定 Authorized_keys 信任清單</a></li><li><a href="#6%e7%a2%ba%e5%ae%9a%e8%83%bd%e7%94%a8ssh-key%e7%99%bb%e5%85%a5%e5%be%8c%e5%86%8d%e5%8e%bb%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6">6、確定能用ssh key登入後再去修改配置文件</a></li><li><a href="#7-ubuntu-based-gnulinux-%e4%b8%8a%e7%9a%84%e9%98%b2%e7%81%ab%e7%89%86">7、 Ubuntu based GNU/Linux 上的防火牆</a></li><li><a href="#8%e6%af%8f%e5%8f%b0%e7%9a%84ubuntu-default-editor%e9%83%bd%e6%94%b9%e6%88%90vim">8、每台的ubuntu default editor都改成vim</a></li><li><a href="#9%e5%b0%87ip%e6%94%b9%e7%82%bastatic-ip">9、將ip改為static ip</a></li><li><a href="#10ubuntu%e6%96%b0%e5%a2%9e%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e8%a8%ad%e6%88%90-sudo-user">10、ubuntu新增使用者並設成 Sudo user</a></li><li><a href="#11linux%e8%88%87windows%e9%96%93%e5%82%b3%e9%80%81%e6%aa%94%e6%a1%88">11、Linux與Windows間傳送檔案</a></li><li><a href="#12lvm-storage%e7%9b%b8%e9%97%9c%e5%95%8f%e9%a1%8c">12、LVM storage相關問題</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202006%2Fubuntu-server-basic-setup%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202006%2Fubuntu-server-basic-setup%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/" data-title="Ubuntu Server基本環境" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAAAQBACdASoYAA0APw1mpkemIqGYBABjEMT0gAA097RMs62WD2eLK7HaAADwBv8WSH03xgREdncAAfmherc5ukh8yDjalnS5LxloBpmjxTraQJwpMFzTo6FfRLmApAJW7uzMK/FcUxrzh4r4W4jgIf&#43;njOxXt73f&#43;z6Z9WQFwVMgN4kYLqpGxyaeZRAAAA==" alt="" width="24" height="13"><img src="/blog/202208/useful-linux-commands/images/useful-linux-commands-01_hu_9200f9fb4a8b0aac.webp" srcset="/blog/202208/useful-linux-commands/images/useful-linux-commands-01_hu_1e0c9846f9d67574.webp 240w, /blog/202208/useful-linux-commands/images/useful-linux-commands-01_hu_7cc5ba89f5ea5a8c.webp 480w, /blog/202208/useful-linux-commands/images/useful-linux-commands-01_hu_b3652053a39f393e.webp 800w, /blog/202208/useful-linux-commands/images/useful-linux-commands-01_hu_9200f9fb4a8b0aac.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="626" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202208/useful-linux-commands/">那些沒人教你又超實用的 Linux 指令</a></h3>
+    <p class="card-desc">儘管在 Linux 用 cd、vi、mv、cp、rm、ls 這些基礎指令就能滿足大部分的需求，但遇到一些特殊狀況時，這些指令就不夠用了。這篇文章彙整了筆者常用的 Linux 指令，以「vim 編輯器、查詢 Server 各項資源、檢查網路環境」為主。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-08-17">2022.08.17</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>5 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAACwBACdASoYAA0APw1mp0emIqGYBABjEMT2AE6ZQYwAKT0t&#43;ZBWOeWNFDY9dVzkAP38GddmCUKQbZw8tILwgX2RMpR867A4fo4yTPL90my23ePkwsnfKp7s9yDgAQKyzb/o5Wm6/Gosjdu0FfbYe/IGQiydNIqVJRvHjg9jItx5jWbaNI7zftbgjYCH2bjP6gAAAA==" alt="" width="24" height="13"><img src="/blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-01_hu_f928c92c167a2d2a.webp" srcset="/blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-01_hu_f7f478a31330724b.webp 240w, /blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-01_hu_4d7880343424182c.webp 480w, /blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-01_hu_466cec59b5f3e2dc.webp 800w, /blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-01_hu_f928c92c167a2d2a.webp 1060w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1060" height="561" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202206/mysql-server-down-after-holiday/">放完假後 MySQL Server 就掛了，不是每個錯誤都能靠 Google 找到解答</a></h3>
+    <p class="card-desc">如果你用上圖的錯誤訊息去 Google 搜尋，相信會得到很多解答；但這篇文章遇到的問題，如果用關鍵字搜尋是找不到真正解答的；也因為這次的經驗讓我對 Ubuntu Server、MySQL、apt-mark 有更深一層的認識。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-06-21">2022.06.21</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAAAQBACdASoYAA0APw1oqEgmIyIYBABjEMT0gAAyb6sKkrPIjE7p2SpQYAD&#43;79PLsSA/CmRCYl286HCsRcqfbE6DG5nNhBxASHThEGiNLPlCdHcaBl/4SyRnM7xLkdflC4x&#43;AAAA" alt="" width="24" height="13"><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-01_hu_b7872b410e5795f1.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-01_hu_9b20030fe8d3037c.webp 240w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-01_hu_bec022753cd53676.webp 480w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-01_hu_eff1e9f3999c2623.webp 800w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-01_hu_b7872b410e5795f1.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="652" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/mysql-replication/">MySQL 主從架構</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/mysql-read-write-splitting-atlas/">Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting</a></h3>
+    <p class="card-desc">如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令正確分流</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-29">2021.03.29</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>5 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

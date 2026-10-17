@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Medium 文章管理｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/medium-%E6%96%87%E7%AB%A0%E7%AE%A1%E7%90%86/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Fri, 15 Jan 2021 17:48:16 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/medium-%E6%96%87%E7%AB%A0%E7%AE%A1%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>透過爬蟲讓 Airtable 管理你的 Medium 文章(上) — 遇到需求時的分析以及執行步驟</title>
+      <link>https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-1/</link>
+      <pubDate>Fri, 15 Jan 2021 17:48:16 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-1/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>我有一位每天寫部落格的朋友，他的部落格至今應該已經累積了500+以上的文章了，他與他的粉絲們遇到了一個問題：『文章太多了，找不到要找的文章。』</description>
+      <content:encoded><![CDATA[<pre tabindex="0"><code>這篇文章分享的內容大綱：
+Side Project 緣起
+一、分析需要呈現的資訊及技術
+二、技術實踐步驟
+三、程式執行步驟
+</code></pre><p><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-1/images/medium-to-airtable-crawler-part-1-01.webp" width="1400" height="714" alt="透過爬蟲讓 Airtable 管理你的 Medium 文章(上) — 遇到需求時的分析以及執行步驟（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="side-project-緣起">Side Project 緣起<a class="h-anchor" href="#side-project-%e7%b7%a3%e8%b5%b7" aria-label="這個段落的連結"></a></h2>
+<p>我有一位每天寫部落格的朋友，他的部落格至今應該已經累積了500+以上的文章了，他與他的粉絲們遇到了一個問題：『文章太多了，找不到要找的文章。』</p>
+<p>因為這個朋友主要的文章都放在 Medium 上面，為了要能更好的管理文章也開始使用 Airtable 這個表格管理工具，但因為文章的數量太大，單純靠手動去搬移及維護實在是不方便且容易有遺漏，所以就詢問我有什麼方法可以靠程式把 Medium 文章搬到 Airtable 裡面。</p>
+<p>在與朋友細聊並且觀察他整理的 Airtable 後，我整理了下面幾點：</p>
+<h3 id="-痛點分析">➤ 痛點分析<a class="h-anchor" href="#-%e7%97%9b%e9%bb%9e%e5%88%86%e6%9e%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>Medium只能以標題搜尋文章，但有時只記得文章的tag</li>
+<li>就算記得文章的類別，但同一個類別的文章太多要尋找舊文不易</li>
+<li>搜尋功能無法把有相同tag的文章列出來</li>
+<li>想要把把所有文章整理成表格方便自己/讀者查詢，但是光想就好累…</li>
+</ol>
+<h3 id="-需求">➤ 需求<a class="h-anchor" href="#-%e9%9c%80%e6%b1%82" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>提供簡潔好操作表格讓讀者搜尋/過濾/連結到文章</li>
+<li>表格可以輕鬆維護，無需太多人工處理</li>
+<li>過去的舊文也能直接匯入表格</li>
+</ol>
+<figure class="figure"><img src="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-1/images/medium-to-airtable-crawler-part-1-02.webp" width="1400" height="708" alt="此為專案目標呈現的範例" loading="lazy" decoding="async">
+  <figcaption>此為專案目標呈現的<a href="https://airtable.com/shrKfNZbU5p7rQ8xQ/tblFU6QIEZLGPekaV/viwHZDXZcUzG1ChZm?blocks=hide">範例</a></figcaption>
+</figure>
+
+<h2 id="一分析需要呈現的資訊及技術">一、分析需要呈現的資訊及技術<a class="h-anchor" href="#%e4%b8%80%e5%88%86%e6%9e%90%e9%9c%80%e8%a6%81%e5%91%88%e7%8f%be%e7%9a%84%e8%b3%87%e8%a8%8a%e5%8f%8a%e6%8a%80%e8%a1%93" aria-label="這個段落的連結"></a></h2>
+<h3 id="-使用-airtable-呈現資料">➤ 使用 Airtable 呈現資料<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8-airtable-%e5%91%88%e7%8f%be%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>擁有比 Google sheet 更好的視覺美感，並且對使用者來說易用性極高</li>
+<li>資料的操作邏輯非常接近資料庫，官方提供的 api 也簡單好懂</li>
+</ol>
+<h3 id="-使用-selenium-來爬蟲-medium-的資訊">➤ 使用 selenium 來爬蟲 Medium 的資訊<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8-selenium-%e4%be%86%e7%88%ac%e8%9f%b2-medium-%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>我們會以 Medium 的 Publication 作為根目錄往下搜尋所有文章</li>
+</ol>
+<blockquote>
+<p>ps.有很多方法可以抓到資訊，我只是選擇了自己比較熟悉的工具</p>
+</blockquote>
+<h2 id="二技術實踐步驟">二、技術實踐步驟<a class="h-anchor" href="#%e4%ba%8c%e6%8a%80%e8%a1%93%e5%af%a6%e8%b8%90%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h2>
+<p>STEP 1 : 先確認爬蟲能否爬到想要的資訊，如果爬不到想要的資訊就萬事皆休</p>
+<p>STEP 2 : 閱讀 Airtable api 文件，能否達到我們的需求(讀取/寫入/刪除)</p>
+<p>STEP 3 : 在爬蟲能抓到資料、Airtable api 能使用後，嘗試將他們串接起來</p>
+<p>STEP 4 : 透過爬不一樣的 Medium 部落格確認是否有 bug</p>
+<p>STEP 5 : 確認工具可以正常使用後撰寫技術文件讓大家能夠理解並使用</p>
+<h3 id="-執行過程中遇到的問題">➤ 執行過程中遇到的問題<a class="h-anchor" href="#-%e5%9f%b7%e8%a1%8c%e9%81%8e%e7%a8%8b%e4%b8%ad%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>因為 Medium 有提供排版的功能，所以每個人的版型都略有不同，甚至有些人還是混合的版型，這在一開始造成了我漏抓一些文章</li>
+<li>Airtable 的 api 文件簡單易懂，但是提供的功能只有CRUD的功能而已</li>
+<li>目前 Airtable 似乎還無法透過撰寫腳本來做 migration 之類的資料庫操作</li>
+</ol>
+<h2 id="三程式執行步驟">三、程式執行步驟<a class="h-anchor" href="#%e4%b8%89%e7%a8%8b%e5%bc%8f%e5%9f%b7%e8%a1%8c%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h2>
+<p>下面我會簡單說明程式的執行演算邏輯，如果有興趣看原始碼的朋友可以來<a href="https://github.com/dean9703111/medium_to_airtable">我的github觀看</a>喔(如果可以順手按個星星就更好惹)</p>
+<p>STEP 1 : 抓取線上 Airtable 儲存的資訊，我們會需要這些已知的資訊來協助我們判斷有哪些文章要新增到 Airtable ，或是 Airtable 上面有哪些資訊是要被刪除的</p>
+<p>STEP 2 : 爬蟲進入使用者指定的 Medium publication 頁面，先抓取這個頁面下有多少個 feature page(在 Airtable 會以主分類顯示)</p>
+<p>STEP 3 : 依序進入每個 feature page 將文章的<strong>標題、連結、發布時間</strong>抓起來</p>
+<p>STEP 4 : 接著會將這些文章與線上 Airtable 的資訊比對，確認是否為要寫入的新文章，如果是新文章就抓出裡面的tags</p>
+<p>STEP 5 : 先將 feature page(主分類)、medium tags 寫入各自的 table，因為文章資訊會需要關聯這兩個部分</p>
+<p>STEP 6 : 將新文章寫入 table</p>
+<p>STEP 7: 如果發現 Airtable 上的資訊已經不存在於 Medium 上則會刪除該紀錄</p>
+<h3 id="如果你對這個工具感興趣請參考下一篇透過爬蟲讓-airtable-管理你的-medium-文章下--如何使用這個工具">如果你對這個工具感興趣，請參考下一篇：<a href="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/">透過爬蟲讓 Airtable 管理你的 Medium 文章(下) — 如何使用這個工具</a><a class="h-anchor" href="#%e5%a6%82%e6%9e%9c%e4%bd%a0%e5%b0%8d%e9%80%99%e5%80%8b%e5%b7%a5%e5%85%b7%e6%84%9f%e8%88%88%e8%b6%a3%e8%ab%8b%e5%8f%83%e8%80%83%e4%b8%8b%e4%b8%80%e7%af%87%e9%80%8f%e9%81%8e%e7%88%ac%e8%9f%b2%e8%ae%93-airtable-%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84-medium-%e6%96%87%e7%ab%a0%e4%b8%8b--%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8%e9%80%99%e5%80%8b%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h3>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

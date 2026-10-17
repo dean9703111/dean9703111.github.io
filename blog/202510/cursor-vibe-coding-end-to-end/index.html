@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="如果你想嘗試 Vibe Coding，這是一隻讓「開始」變容易，「想法」有成果的影片。一開始會分享與 AI 釐清需求，討論出產品規格的技巧；並說明請 AI 撰寫程式前，我會如何設計專案的規則，讓 AI Agent 撰寫程式時，有參考的依據…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程">
+  <meta property="og:description" content="如果你想嘗試 Vibe Coding，這是一隻讓「開始」變容易，「想法」有成果的影片。一開始會分享與 AI 釐清需求，討論出產品規格的技巧；並說明請 AI 撰寫程式前，我會如何設計專案的規則，讓 AI Agent 撰寫程式時，有參考的依據…">
+  <meta property="og:url" content="https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2025-10-18T15:47:32&#43;08:00">
+  <meta property="article:modified_time" content="2025-10-18T15:47:32&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="AI 實戰">
+  <meta property="article:tag" content="Vibe Coding">
+  <meta property="article:tag" content="Cursor">
+  <meta property="article:tag" content="AI">
+  <meta property="article:tag" content="Node.js">
+  <meta property="article:tag" content="GitHub Pages">
+  <meta property="og:image" content="https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-og.jpg">
+  <meta name="twitter:title" content="Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程">
+  <meta name="twitter:description" content="如果你想嘗試 Vibe Coding，這是一隻讓「開始」變容易，「想法」有成果的影片。一開始會分享與 AI 釐清需求，討論出產品規格的技巧；並說明請 AI 撰寫程式前，我會如何設計專案的規則，讓 AI Agent 撰寫程式時，有參考的依據…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"AI 實戰"},"articleSection":"AI 實戰","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2025-10-18T15:47:32+08:00","datePublished":"2025-10-18T15:47:32+08:00","description":"如果你想嘗試 Vibe Coding，這是一隻讓「開始」變容易，「想法」有成果的影片。一開始會分享與 AI 釐清需求，討論出產品規格的技巧；並說明請 AI 撰寫程式前，我會如何設計專案的規則，讓 AI Agent 撰寫程式時，有參考的依據…","headline":"Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程","image":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"Cursor 教學","url":"https://deanlin.net/series/cursor/"}],"keywords":"Vibe Coding, Cursor, AI, Node.js, GitHub Pages","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://dean-lin.medium.com/cursor-%E6%95%99%E5%AD%B8-vibe-coding-%E5%AF%A6%E6%88%B0-%E5%BE%9E%E9%87%90%E6%B8%85%E9%9C%80%E6%B1%82%E5%88%B0%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%B7%9A-%E4%B8%80%E6%AC%A1%E6%90%9E%E6%87%82%E5%AE%8C%E6%95%B4%E9%96%8B%E7%99%BC%E6%B5%81%E7%A8%8B-75699da23e6c"],"timeRequired":"PT11M","url":"https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/","wordCount":5410},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/ai/","name":"AI 實戰","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/","name":"Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰</a></li>
+        <li><a href="/categories/tech/">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/ai/">AI 實戰</a>
+      </nav>
+      <h1 class="article-title">Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2025-10-18">2025.10.18</time>
+              <span>閱讀約 11 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・Cursor 教學 <b>3</b>/ 3</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#-%e9%87%90%e6%b8%85%e9%9c%80%e6%b1%82%e7%94%9f%e6%88%90%e5%b0%88%e6%a1%88%e8%a6%8f%e6%a0%bc">① 釐清需求，生成專案規格</a></li><li class="is-sub"><a href="#-%e6%9c%80%e5%b0%8f%e5%8f%af%e8%a1%8c%e6%80%a7%e6%96%b9%e6%a1%88">➤ 最小可行性方案</a></li><li class="is-sub"><a href="#-%e8%a3%bd%e4%bd%9c%e7%b4%94%e5%89%8d%e7%ab%af%e7%b6%b2%e9%a0%81">➤ 製作純前端網頁</a></li><li class="is-sub"><a href="#-%e7%9c%9f%e7%9a%84%e6%9c%83%e7%94%a8%e5%88%b0%e7%9a%84%e5%b7%a5%e5%85%b7">➤ 真的會用到的工具</a></li><li class="is-sub"><a href="#-%e6%96%b0%e5%a2%9e%e7%a9%ba%e8%b3%87%e6%96%99%e5%a4%be%e4%be%86%e9%96%8b%e5%a7%8b%e5%b0%88%e6%a1%88">➤ 新增空資料夾，來開始專案</a></li><li><a href="#-%e8%a8%ad%e8%a8%88%e8%a6%8f%e5%89%87%e8%ae%93-ai-%e7%9f%a5%e9%81%93%e5%81%9a%e4%ba%8b%e9%82%8f%e8%bc%af">② 設計規則，讓 AI 知道做事邏輯</a></li><li class="is-sub"><a href="#-%e5%bb%ba%e7%ab%8b%e5%b0%88%e6%a1%88%e7%9a%84-rules">➤ 建立專案的 Rules</a></li><li><a href="#-%e8%ae%93-ai-agent-%e5%8f%83%e8%80%83%e8%a6%8f%e6%a0%bc%e8%a6%8f%e5%89%87%e9%96%8b%e7%99%bc%e5%b0%88%e6%a1%88">③ 讓 AI Agent 參考規格、規則開發專案</a></li><li><a href="#-%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c%e5%84%aa%e5%8c%96%e5%b0%88%e6%a1%88%e6%96%b0%e5%a2%9e%e5%8a%9f%e8%83%bd">④ 解決問題、優化專案、新增功能</a></li><li class="is-sub"><a href="#-%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c">➤ 解決問題</a></li><li class="is-sub"><a href="#-%e5%84%aa%e5%8c%96%e5%b0%88%e6%a1%88">➤ 優化專案</a></li><li class="is-sub"><a href="#-%e6%96%b0%e5%a2%9e%e5%8a%9f%e8%83%bd">➤ 新增功能</a></li><li><a href="#-%e4%ba%86%e8%a7%a3-ai-%e7%94%9f%e6%88%90%e7%9a%84%e5%b0%88%e6%a1%88%e6%9e%b6%e6%a7%8b">⑤ 了解 AI 生成的專案架構</a></li><li class="is-sub"><a href="#-packagejson">➤ package.json</a></li><li class="is-sub"><a href="#-node_modules">➤ node_modules</a></li><li class="is-sub"><a href="#-gitignore">➤ .gitignore</a></li><li class="is-sub"><a href="#-readme">➤ README</a></li><li><a href="#-%e7%94%a8-github-pages-%e5%85%8d%e8%b2%bb%e7%99%bc%e5%b8%83%e7%b6%b2%e9%a0%81">⑥ 用 GitHub Pages 免費發布網頁</a></li><li class="is-sub"><a href="#-%e5%bb%ba%e7%ab%8b-repository">➤ 建立 Repository</a></li><li class="is-sub"><a href="#-%e6%8a%8a%e9%9b%bb%e8%85%a6%e5%b0%88%e6%a1%88%e8%88%87-github-repository-%e9%80%a3%e6%8e%a5">➤ 把電腦專案與 GitHub Repository 連接</a></li><li class="is-sub"><a href="#-%e7%a2%ba%e8%aa%8d%e6%9c%89%e6%9b%b4%e6%96%b0%e5%88%b0-github-repository">➤ 確認有更新到 GitHub Repository</a></li><li class="is-sub"><a href="#-%e5%88%b0-actions-%e5%88%86%e9%a0%81%e6%9f%a5%e7%9c%8b%e9%83%a8%e7%bd%b2%e7%9a%84%e7%8b%80%e6%b3%81">➤ 到 Actions 分頁查看部署的狀況</a></li><li><a href="#%e7%b5%90%e8%aa%9evibe-coding-%e7%9a%84%e5%ba%95%e5%b1%a4%e9%82%8f%e8%bc%af">結語：Vibe Coding 的底層邏輯</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>如果你想嘗試 Vibe Coding，這是一隻讓「開始」變容易，「想法」有成果的影片。</p>
+<p>一開始會分享與 <strong>AI 釐清需求，討論出產品規格的技巧；</strong>並說明請 AI 撰寫程式前，我會如何<strong>設計專案的規則</strong>，讓 AI Agent 撰寫程式時，有參考的依據。</p>
+<p>在準備好專案的規格與規則後，我才會讓 <strong>AI Agent 開始動手寫程式、完成專案</strong>。</p>
+<p>但程式完成，不代表結果符合預期；你可能會遇到<strong>錯誤訊息、外觀破版，或是想要新增更多功能。</strong>這邊也會跟大家示範，可以如何引導 AI，讓專案更加完整。</p>
+<p>在最後會分析整個專案架構，帶大家了解 <strong>AI Agent 到底幫我們做了哪些事；</strong>並透過 <strong>GitHub Pages 發布專案</strong>，讓你完成的網頁可以直接分享給朋友。</p>
+<blockquote>
+<p>建議搭配影片觀看實際的操作步驟。</p>
+</blockquote>
+<div class="yt" data-yt="wOnjdSDt-8A" data-title="YouTube 影片">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=wOnjdSDt-8A" target="_blank" rel="noopener" aria-label="播放影片：YouTube 影片">
+    <img src="https://i.ytimg.com/vi/wOnjdSDt-8A/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">YouTube 影片</span>
+  </a>
+</div>
+
+<figure class="figure"><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-01.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-01_hu_21f08ad3064398ca.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="788" alt="https://youtu.be/wOnjdSDt-8A" loading="lazy" decoding="async">
+  <figcaption><a href="https://youtu.be/wOnjdSDt-8A">https://youtu.be/wOnjdSDt-8A</a></figcaption>
+</figure>
+
+<blockquote>
+<p>第一次接觸 Cursor 與 Vibe Coding 的朋友，可以先參考下面的文章：</p>
+<p>➤ <a href="/blog/202509/cursor-getting-started/">Cursor 教學：入門到實戰，用 AI Agent 自動化你的工作流！</a></p>
+<p>➤ <a href="/blog/202509/cursor-productivity-extensions/">Cursor 教學：安裝 3 款讓 Vibe Coding 效率翻倍的工具！用「個人形象網站」實戰演練</a></p>
+</blockquote>
+<hr>
+<h2 id="-釐清需求生成專案規格">① 釐清需求，生成專案規格<a class="h-anchor" href="#-%e9%87%90%e6%b8%85%e9%9c%80%e6%b1%82%e7%94%9f%e6%88%90%e5%b0%88%e6%a1%88%e8%a6%8f%e6%a0%bc" aria-label="這個段落的連結"></a></h2>
+<p>我覺得 Vibe Coding 的目的，是要在短時間實踐你腦中的靈感，或解決現實生活遇到的痛點。</p>
+<h3 id="-最小可行性方案">➤ 最小可行性方案<a class="h-anchor" href="#-%e6%9c%80%e5%b0%8f%e5%8f%af%e8%a1%8c%e6%80%a7%e6%96%b9%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<p>儘管每個人想完成的專案大小不同，但建議大家先釐清目標的「最小可行性方案」</p>
+<p>把想要一口氣搞定大型專案的想法，從腦中拿掉；否則最終產生的結果，要馬不會動，要馬問題一堆。</p>
+<p>後續反而要花更多的時間，一一排除這些問題。</p>
+<h3 id="-製作純前端網頁">➤ 製作純前端網頁<a class="h-anchor" href="#-%e8%a3%bd%e4%bd%9c%e7%b4%94%e5%89%8d%e7%ab%af%e7%b6%b2%e9%a0%81" aria-label="這個段落的連結"></a></h3>
+<p>同時建議沒有程式背景的朋友，可以把「純前端網頁」，也就是這篇文章的範例，當成第一個 Vibe Coding 專案。</p>
+<p>因為不涉及後端、資料庫，所以比較沒有資訊安全、隱私外洩的問題。</p>
+<p>而且完成後可以直接把網頁分享給朋友，非常有成就感。</p>
+<h3 id="-真的會用到的工具">➤ 真的會用到的工具<a class="h-anchor" href="#-%e7%9c%9f%e7%9a%84%e6%9c%83%e7%94%a8%e5%88%b0%e7%9a%84%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h3>
+<p>另外專案的目標，最好設定為自己「真的會用到」的工具。</p>
+<p>像大家現在看我上面的 YT 影片，可能覺得我侃侃而談，講得流暢不卡詞。</p>
+<p>這不是因為我有多厲害，而是因為面前有一個提詞器；準備好逐字稿後，我只要錄影時照著念就好了。</p>
+<p>一開始我是使用網路上，其他人分享的線上提詞器；但免費的廣告一堆，付費的又塞了一堆用不到的功能。</p>
+<p>既然如此，我乾脆直接用 Vibe Coding 寫一款完全符合自己使用需求的提詞器，同時也讓大家免費使用。</p>
+<h3 id="-新增空資料夾來開始專案">➤ 新增空資料夾，來開始專案<a class="h-anchor" href="#-%e6%96%b0%e5%a2%9e%e7%a9%ba%e8%b3%87%e6%96%99%e5%a4%be%e4%be%86%e9%96%8b%e5%a7%8b%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<p>我們要先透過討論釐清這個網站需要有的功能；因此這邊不使用 AI Agent，而是先切換到 Ask 的模式來討論。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-02.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-02_hu_90ecdd0cb7e0f8fe.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-02.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="新增空資料夾，來開始專案（圖 2）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>我想要設計一個「純前端」的「提詞器」網頁
+想要以「最小可行性方案 MVP」來進行設計
+請從實際使用者的角度，將功能依據「必要、次要」的方式來分類
+並告訴我使用者體驗最佳的操作流程
+</code></pre><p>此時你會得到 AI 初步的規劃建議，如果你對結果不滿意，可以繼續討論。</p>
+<p>假使覺得這個規劃可以接受，就可以把它轉換成方便網頁工程師理解的需求規格。</p>
+<pre tabindex="0"><code>請扮演專業的 UI/UX 設計師，根據上面的討論
+用下面的格式，回傳「具體、可執行」的網頁設計規格。
+目標是幫助前端工程師能依據描述直接開始開發，內容需具備視覺與互動細節。
+
+輸出格式：
+# [頁面名稱]
+- 功能簡述：（一句話概述頁面目的）
+- 色系搭配：（主色、輔色、背景色、按鈕色）
+
+## [由上而下列出使用元素]
+請依畫面垂直順序列出元件，格式如下：
+- 元件名稱（如：頂部導覽列 / 按鈕 / Banner 區塊）
+  - 顏色：
+  - 寬度：
+  - 高度：
+  - 字型大小與樣式（如有文字）：
+  - 功能說明（該元件的目的）：
+  - 若為[按鈕] → 說明觸發任務（例：「送出表單」「切換主題」）
+  - 若為[功能按鍵] → 說明使用方式（例：「滑過顯示選單」「長按複製」）
+
+⚠️ 請只輸出上述格式內容，不要附加分析、理由或額外說明。
+</code></pre><p>透過這個提示詞，你就會得到一份非常詳盡的規格：</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-03.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-03_hu_93d7ce272b6855c9.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-03.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="新增空資料夾，來開始專案（圖 3）" loading="lazy" decoding="async"></p>
+<p>接下來切換成 Agent 模式，請他將前面對話的內容彙整成一個 Markdown 格式的 Prompt，儲存到專案「idea」的資料夾中。</p>
+<pre tabindex="0"><code>將上面對話的結論彙整成 Markdown 格式的 Spec
+請儲存到專案根目錄的「idea」資料夾中（若無自動建立），以好辨識的英文命名檔案
+還不需要實作
+</code></pre><p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-04.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-04_hu_6664d7304e2cd006.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-04.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="新增空資料夾，來開始專案（圖 4）" loading="lazy" decoding="async"></p>
+<p>之所以這麼做，就是產生一個<strong>可以讓我們手動編輯細節的規格文件</strong>，而且後續開發時可以回顧專案的設計。</p>
+<p>儘管相關訊息可以從過去的對話找到，但相信我，你幾乎不會翻過去的對話內容。</p>
+<blockquote class="pullquote"><p>儘管我們可以使用 AI Agent 模式，讓 AI 直接寫程式；但我更建議大家先討論出具體、明確的專案框架後，再請 AI 做事。</p>
+</blockquote>
+<p>近幾年流行一個名詞，叫做 SDD（Specification-Driven Development），也就是規格驅動開發</p>
+<p>比如今天的範例，就是用規格驅動 AI 開發，當目標足夠明確、解決的問題足夠具體時，你對生成的結果才有較高的掌握度，Vibe Coding 的成功率才會上升。</p>
+<p>如果你在想這些步驟會不會花太多時間。</p>
+<blockquote class="pullquote"><p>我可以用十多年的開發經驗跟你保證，如果初期沒寫好文件，日後要花好幾倍的時間去反覆修改。</p>
+</blockquote>
+<hr>
+<h2 id="-設計規則讓-ai-知道做事邏輯">② 設計規則，讓 AI 知道做事邏輯<a class="h-anchor" href="#-%e8%a8%ad%e8%a8%88%e8%a6%8f%e5%89%87%e8%ae%93-ai-%e7%9f%a5%e9%81%93%e5%81%9a%e4%ba%8b%e9%82%8f%e8%bc%af" aria-label="這個段落的連結"></a></h2>
+<p>今天的範例為「前端網頁」，可以只用簡單的 HTML、CSS、JavaScript 來完成。</p>
+<p>但為了讓大家對「專案」有更具體的概念，所以我以三大前端框架 Vue、React、Angular 做示範。</p>
+<p>在每個框架下，其實都還有各自的元件庫可以使用</p>
+<ul>
+<li><strong>Vue</strong>：Element Plus、Vuetify、Naive UI</li>
+<li><strong>React</strong>：Ant Design、Material UI、Chakra UI</li>
+<li><strong>Angular</strong>：Angular Material、NG-ZORRO、PrimeNG</li>
+</ul>
+<p>如果你對這些框架不熟悉，建議你可以先挑一個（ex: <strong>React + Material UI</strong>），未來 Vibe Coding 就直接指定他。</p>
+<p>之所以這麼做，是因為<strong>每個框架與元件庫會遇到的坑都不一樣</strong>，假使每次都用不同的框架來製作專案。</p>
+<p><strong>那可能每個坑都得走一遍，這是一件非常沒有效率的事情。</strong></p>
+<h3 id="-建立專案的-rules">➤ 建立專案的 Rules<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b%e5%b0%88%e6%a1%88%e7%9a%84-rules" aria-label="這個段落的連結"></a></h3>
+<p>接下我們要去建立專案的 Rules，讓他製作網站時知道要依循什麼規則。</p>
+<p>點擊右上角的設定，選擇「Rules &amp; Memories」，在 Project Rules 點擊新增。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-05.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-05_hu_fd701415f626d93e.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-05.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="建立專案的 Rules（圖 5）" loading="lazy" decoding="async"></p>
+<p>檔名我就直接打「spec」，然後選擇 Always Apply 讓他每次對話都會觸發。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-06.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-06_hu_62193cf6415a167a.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-06.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="建立專案的 Rules（圖 6）" loading="lazy" decoding="async"></p>
+<p>然後貼上設計的規則，在規則的部分，使用 Markdown 的語法撰寫就好，大家有興趣可以自行客製化，我只是提供一個基礎的範本。</p>
+<pre tabindex="0"><code>## 使用的框架與元件庫
+- 框架: React + Vite
+- Node 版本: 加 .nvmrc
+- 元件庫: Material UI
+
+## 注意事項
+- 請先搜尋網路上類似工具使用的套件
+- 需考量 RWD 響應頁面
+- 建立 .gitignore 來排除指定檔案上傳（ex: node_modules）
+
+## README
+- 專案介紹、功能列表、需求（Node 版本）、安裝與啟動、部署步驟、授權
+
+## GitHub Pages 部署
+- 使用 GitHub Actions
+- 僅 master branch 觸發
+</code></pre><hr>
+<h2 id="-讓-ai-agent-參考規格規則開發專案">③ 讓 AI Agent 參考規格、規則開發專案<a class="h-anchor" href="#-%e8%ae%93-ai-agent-%e5%8f%83%e8%80%83%e8%a6%8f%e6%a0%bc%e8%a6%8f%e5%89%87%e9%96%8b%e7%99%bc%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>在專案的需求規格以及規則都設計好後，接下來就可以用 AI Agent 設計初版網頁了。</p>
+<p>建議開一個新對話，選擇 Agent 模式，你直接跟他說：</p>
+<pre tabindex="0"><code>請參考「idea」的 SPEC，在專案根目錄新增「teleprompter-app」來實作專案
+</code></pre><p>稍等一段時間，AI Agent 就會根據 SPEC 把這個網站製作出來。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-07.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-07_hu_9c4e77355a0b505c.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-07.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="③ 讓 AI Agent 參考規格、規則開發專案（圖 7）" loading="lazy" decoding="async"></p>
+<p>如果他有自動幫你運行專案，你可以先請他關閉：</p>
+<pre tabindex="0"><code>幫我關閉專案
+</code></pre><p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-08.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-08_hu_206db7a424a2ba72.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-08.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="③ 讓 AI Agent 參考規格、規則開發專案（圖 8）" loading="lazy" decoding="async"></p>
+<p>這是因為在專案完成後，建議大家用新的 Cursor 視窗來來開啟這個專案，因為前面專案的規格與規則是為了產生這個專案而寫的，專案產生完畢後，繼續使用原有的規格、規則，可能會導致 AI 混亂。</p>
+<p>另外在安裝專案套件與啟動專案這塊，你可以直接跟 AI 說：</p>
+<pre tabindex="0"><code>幫我安裝套件並啟動專案
+</code></pre><p>不過我是更建議大家打開 package.json 這個檔案，裡面有專案的各種資訊，像 scripts 這塊就是你可以透過 npm 執行的各種指令。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-09.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-09_hu_1fc544e4118c6ed1.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-09.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="③ 讓 AI Agent 參考規格、規則開發專案（圖 9）" loading="lazy" decoding="async"></p>
+<p>像是基礎的開發啟動是 <code>npm run dev</code>、想要建立靜態檔用 <code>npm run build</code> 。</p>
+<p>如果想安裝套件，就用 <code>npm install</code>，他會安裝 <code>dependencies</code> 與 <code>devDependencies</code> 所列出的套件。</p>
+<p>這邊我們打開終端機，在下面貼上指令「npm run dev」來啟動專案（具體指令請參考 scripts）</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-10.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-10_hu_134293ce2b671632.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-10.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="③ 讓 AI Agent 參考規格、規則開發專案（圖 10）" loading="lazy" decoding="async"></p>
+<p>但提醒大家，不管我們前期的規格對功能、外型描述得多仔細；他完成的結果還是有可能會不如預期（比如影片範例就是一片空白）。</p>
+<figure class="figure"><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-11.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-11_hu_1a3c201a0f6ad3da.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-11.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="可以按下 F12 查看主控台是否有錯誤訊息" loading="lazy" decoding="async">
+  <figcaption>可以按下 F12 查看主控台是否有錯誤訊息</figcaption>
+</figure>
+
+<blockquote class="pullquote"><p><strong>別忘記，生成式 AI 的結果本來就是充滿隨機性的。</strong></p>
+</blockquote>
+<p>這些是我為何建議先完成最小可行性產品，因為範圍小，所以釐清錯誤、調整內容相對方便。</p>
+<blockquote class="pullquote"><p><strong>一但範圍大了，你連怎麼調整都會沒有頭緒。</strong></p>
+</blockquote>
+<p>所以千萬別想著靠一個指令就生成一套系統，因為光生成一個簡單的網頁都會遇到很多問題了。</p>
+<hr>
+<h2 id="-解決問題優化專案新增功能">④ 解決問題、優化專案、新增功能<a class="h-anchor" href="#-%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c%e5%84%aa%e5%8c%96%e5%b0%88%e6%a1%88%e6%96%b0%e5%a2%9e%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>以前端網頁來說，問題通常分成兩大塊：</p>
+<ul>
+<li><strong>外型</strong>：你可能覺得頁面的版型、顏色、按鈕大小不符合你的預期</li>
+<li><strong>功能</strong>：有些操作起來不符合你的預期</li>
+</ul>
+<h3 id="-解決問題">➤ 解決問題<a class="h-anchor" href="#-%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>比如我想要讓提詞器播放順利，可以這麼說：</p>
+<pre tabindex="0"><code>提詞器進入全螢幕後遇到以下問題：
+1. 第二次點擊播放時，進度條會直接到底
+2. 觸控板滑動時，頁面滑動與滑鼠感受不同
+3. 滑到中間位置時按播放，感覺是更從前面的位置開始
+</code></pre><h3 id="-優化專案">➤ 優化專案<a class="h-anchor" href="#-%e5%84%aa%e5%8c%96%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<p>另外這個網頁有一些快捷鍵，我希望具體的使用方式可以放在首頁輸入框下方，這邊我就貼上一個比較模糊的指令，跟他說：</p>
+<pre tabindex="0"><code>在首頁「輸入框」下方，新增「快捷鍵」提示的區塊，說明快捷鍵功能，請使用明顯的色系搭配
+</code></pre><p>這個 Prompt 我就沒有指定具體色系、寬度、高度，由 AI 自動判斷。</p>
+<p>等 AI 完成實作後，如果你不滿意，可以透過後續引導來微調細節。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-12.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-12_hu_d62dd802af3e9e1b.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-12.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="優化專案（圖 12）" loading="lazy" decoding="async"></p>
+<h3 id="-新增功能">➤ 新增功能<a class="h-anchor" href="#-%e6%96%b0%e5%a2%9e%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<p>這邊我再新增一個功能來做示範，比如我希望貼上文字後，能有中文、英文、符號的字數統計，以及總共行數：</p>
+<pre tabindex="0"><code>在首頁「輸入框」下方，增加「即時字數統計」的功能，在 1 列分 3 塊顯示
+- 中文字數、中文標點符號數
+- 英文單詞數、英文標點符號數
+- 總共行數
+希望文字有對應顏色搭配方便辨識
+</code></pre><p>等 AI 搞定後，我們回到網頁，然後貼上文字，初步確認計算是否符合需求。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-13.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-13_hu_2d17882452335fe5.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-13.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="新增功能（圖 13）" loading="lazy" decoding="async"></p>
+<p>其實這個提詞器還有很多細節可以優化，這邊給大家看我最後調整了哪些細節：</p>
+<ul>
+<li>在首頁的地方，我增加了自己社群的資訊</li>
+<li>把「字數統計、快捷鍵說明」這兩個區塊都改成一行顯示，減少空間上的浪費</li>
+<li>進入全螢幕畫面後，我把原本置中的內容改成靠左以符合我的習慣</li>
+<li>因為錄製影片時前面會有腳架，所以我設計了間隔，讓文字不要被腳架擋住</li>
+<li>設計了分段的功能，讓我可以調整講話節奏</li>
+<li>右上角多了一個「倒數計時器」，讓我知道現在的稿子會講多久</li>
+</ul>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-14.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-14_hu_fba6042d02910732.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-14.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="新增功能（圖 14）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-15.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-15_hu_dc4294b8dd18b785.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-15.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="https://deanlin.net/teleprompter-app" loading="lazy" decoding="async">
+  <figcaption><a href="https://deanlin.net/teleprompter-app">https://deanlin.net/teleprompter-app</a></figcaption>
+</figure>
+
+
+</div>
+
+<blockquote class="pullquote"><p>我覺得 Vibe Coding 的魅力不是一鍵搞定，而是你可以根據實際需求快速迭代產品，但前提是你知道自己要的是什麼。</p>
+</blockquote>
+<hr>
+<h2 id="-了解-ai-生成的專案架構">⑤ 了解 AI 生成的專案架構<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3-ai-%e7%94%9f%e6%88%90%e7%9a%84%e5%b0%88%e6%a1%88%e6%9e%b6%e6%a7%8b" aria-label="這個段落的連結"></a></h2>
+<p>接下來讓我們來瀏覽一下專案資料夾，了解 AI 幫我們做了哪些事情：</p>
+<h3 id="-packagejson">➤ package.json<a class="h-anchor" href="#-packagejson" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>scripts 這裡，有專案啟動、建立靜態資源的指令</li>
+<li>dependencies、devDependencies 則是專案使用套件的版本資訊</li>
+</ul>
+<p>未來隨著專案規模擴大，你可能會遇到框架與套件、套件與套件之間相容性的問題，到時可能就會有鎖定版本、升降版本的需求，原則上就是在這邊調整的。</p>
+<h3 id="-node_modules">➤ node_modules<a class="h-anchor" href="#-node_modules" aria-label="這個段落的連結"></a></h3>
+<p>「dependencies、devDependencies」列出的套件，都會被安裝到 node_moodules 的資料夾當中。</p>
+<p>以 Node.js 的專案來說，通常體積最大的就是 node_moodules 這個資料夾。</p>
+<p>因為套件版本已經有 package.json 控管，所以我們並不會把 node_moodules 上傳到 Git。</p>
+<p>至於如何把他從 Git 版控中移除，就要談到 .gitignore 這個檔案了</p>
+<h3 id="-gitignore">➤ .gitignore<a class="h-anchor" href="#-gitignore" aria-label="這個段落的連結"></a></h3>
+<p>這個檔案是用來告訴 Git 哪些檔案或資料夾不該被版本控制追蹤：</p>
+<ul>
+<li>MacOS 與 Windows 的系統暫存檔（.DS_Store/Thumbs.db）</li>
+<li>儲存專案套件的 node_modules 資料夾</li>
+<li>自動生成的結果，如 build 這類資料夾</li>
+<li>像 .env 這種會儲存個人設定與密鑰的設定檔</li>
+</ul>
+<h3 id="-readme">➤ README<a class="h-anchor" href="#-readme" aria-label="這個段落的連結"></a></h3>
+<p>這份文件會包含專案簡介、功能列表、安裝環境需求等資訊，可以幫助你快速掌握這個專案的重點資訊。</p>
+<hr>
+<h2 id="-用-github-pages-免費發布網頁">⑥ 用 GitHub Pages 免費發布網頁<a class="h-anchor" href="#-%e7%94%a8-github-pages-%e5%85%8d%e8%b2%bb%e7%99%bc%e5%b8%83%e7%b6%b2%e9%a0%81" aria-label="這個段落的連結"></a></h2>
+<p>確認專案都符合需求後，我們可以透過 GitHub Pages 發布專案，具體的執行流程可以參考專案中 「.github/workflow」 底下的 「deploy.yml」 設定檔。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-16.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-16_hu_8d2cd7effc24bbe5.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-16.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="⑥ 用 GitHub Pages 免費發布網頁（圖 16）" loading="lazy" decoding="async"></p>
+<p>在 GitHub 建立 Repository 後，會根據這邊設計的流程來發布專案。</p>
+<h3 id="-建立-repository">➤ 建立 Repository<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b-repository" aria-label="這個段落的連結"></a></h3>
+<p>Repository 名稱輸入「teleprompter-app」，因為我們這個專案預計要發佈到 GitHub Pages，所以選擇 Public。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-17.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-17_hu_68f8205b7751263c.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-17.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="建立 Repository（圖 17）" loading="lazy" decoding="async"></p>
+<h3 id="-把電腦專案與-github-repository-連接">➤ 把電腦專案與 GitHub Repository 連接<a class="h-anchor" href="#-%e6%8a%8a%e9%9b%bb%e8%85%a6%e5%b0%88%e6%a1%88%e8%88%87-github-repository-%e9%80%a3%e6%8e%a5" aria-label="這個段落的連結"></a></h3>
+<p>在終端機輸入 <code>git init</code> 來初始化專案 git。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-18.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-18_hu_17fa91b4105211c2.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-18.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="把電腦專案與 GitHub Repository 連接（圖 18）" loading="lazy" decoding="async"></p>
+<p>然後回到網頁，複製第一行 <code>git add…</code> 貼到專案的終端機，這樣我們就可以把電腦的專案與 GitHub 上面的專案連結。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-19.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-19_hu_d27a5e550d1db452.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-19.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="把電腦專案與 GitHub Repository 連接（圖 19）" loading="lazy" decoding="async"></p>
+<h3 id="-確認有更新到-github-repository">➤ 確認有更新到 GitHub Repository<a class="h-anchor" href="#-%e7%a2%ba%e8%aa%8d%e6%9c%89%e6%9b%b4%e6%96%b0%e5%88%b0-github-repository" aria-label="這個段落的連結"></a></h3>
+<p>點擊提交，就會在自己的電腦記錄這個變更，但如果想更新到雲端，你需要點擊 Push 才會成功喔！</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-20.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-20_hu_2c9718207dc75666.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-20.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="確認有更新到 GitHub Repository（圖 20）" loading="lazy" decoding="async"></p>
+<p>Push 後我們回到 GitHub 網頁，刷新一下頁面，如果能看到專案的內容，就代表你成功上傳專案了！</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-21.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-21_hu_ebacd5fb268f46f4.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-21.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="確認有更新到 GitHub Repository（圖 21）" loading="lazy" decoding="async"></p>
+<h3 id="-到-actions-分頁查看部署的狀況">➤ 到 Actions 分頁查看部署的狀況<a class="h-anchor" href="#-%e5%88%b0-actions-%e5%88%86%e9%a0%81%e6%9f%a5%e7%9c%8b%e9%83%a8%e7%bd%b2%e7%9a%84%e7%8b%80%e6%b3%81" aria-label="這個段落的連結"></a></h3>
+<p>成功的話會有綠色勾勾，失敗則是紅色叉叉，會需要點進去釐清具體的錯誤原因。</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-22.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-22_hu_8ffda6d0b859a410.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-22.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="到 Actions 分頁查看部署的狀況（圖 22）" loading="lazy" decoding="async"></p>
+<p>錯誤通常都是因為：</p>
+<ul>
+<li>靜態資源沒找到（static resource）</li>
+<li>語法格式錯誤（line error）</li>
+<li>套件相依問題（npm dependency）</li>
+</ul>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-23.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-23_hu_af062c0329e94df1.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-23.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="到 Actions 分頁查看部署的狀況（圖 23）" loading="lazy" decoding="async"></p>
+<p>把它複製起來貼到 AI 對話框，通常都能快速釐清問題並解決。</p>
+<p>如果一切順利，點擊進去就會看到這個專案的網址嚕：</p>
+<p><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-24.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-24_hu_230c1a4d397d4dd3.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-24.webp 947w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="947" height="548" alt="到 Actions 分頁查看部署的狀況（圖 24）" loading="lazy" decoding="async"></p>
+<p>之後這個專案都是使用這個網址，把它點開來，順利的話，就可以看到成品嚕～</p>
+<figure class="figure"><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-25.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-25_hu_6145d770ef161a88.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-25.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1125" alt="https://deanlin.net/teleprompter-app/" loading="lazy" decoding="async">
+  <figcaption><a href="https://deanlin.net/teleprompter-app/">https://deanlin.net/teleprompter-app/</a></figcaption>
+</figure>
+
+<p>如果影片看到了這裡，可以幫我點個讚鼓勵一下，我會持續分享更多實用教學。</p>
+<hr>
+<h2 id="結語vibe-coding-的底層邏輯">結語：Vibe Coding 的底層邏輯<a class="h-anchor" href="#%e7%b5%90%e8%aa%9evibe-coding-%e7%9a%84%e5%ba%95%e5%b1%a4%e9%82%8f%e8%bc%af" aria-label="這個段落的連結"></a></h2>
+<p>過去學程式、寫程式，是一個痛苦，且漫長的週期。</p>
+<p>沒學到一定的程度，你連小程式都開發不了。</p>
+<p>但現在有了 AI，即使你不會寫程式，也能透過對話的方式，一步步完成專案的建立。</p>
+<p>像今天這隻影片就分享了用 Vibe Coding 從 0 到 1 的完整過程，雖然專案的規模較小，不過日後面對更大型的專案時，底層邏輯與流程也是一樣的。</p>
+<p>建議大家先從小專案開始練習、熟悉開發的流程；這樣日後想設計大專案時，會更有完整的概念。</p>
+<p>另外隨著專案規模擴大，功能增加，你還需要搭配一些自動化測試的工具來輔助。</p>
+<p>單靠人工的方式手動測試，不但沒效率，還很容易有遺漏的測試項目。</p>
+<p>而且新功能的增加，有可能會導致舊功能壞掉，<strong>如果這隻 YT 影片的按讚破 200，我會再出一隻影片。</strong></p>
+<p>跟大家分享用 AI 撰寫測試程式的概念與技巧～</p>
+<blockquote class="pullquote"><p>之所以製作一系列 Vibe Coding 影片，是為了避免大家踩到我遇過的「坑」。</p>
+</blockquote>
+<p>如果你對 AI 工具、自我成長、職涯發展感興趣，<a href="https://dean-lin.medium.com/subscribe">歡迎追蹤我</a>！我會我會持續分享新的觀點 💡</p>
+<figure class="figure"><img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-26.webp" srcset="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-26_hu_b56b9783c6044813.webp 720w, /blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-26.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="914" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="/blog/202510/cursor-vibe-coding-end-to-end/images/cursor-vibe-coding-end-to-end-card-01_hu_f5dc2239930ff100.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2025.10.18）</span><a href="https://dean-lin.medium.com/cursor-%E6%95%99%E5%AD%B8-vibe-coding-%E5%AF%A6%E6%88%B0-%E5%BE%9E%E9%87%90%E6%B8%85%E9%9C%80%E6%B1%82%E5%88%B0%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%B7%9A-%E4%B8%80%E6%AC%A1%E6%90%9E%E6%87%82%E5%AE%8C%E6%95%B4%E9%96%8B%E7%99%BC%E6%B5%81%E7%A8%8B-75699da23e6c" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/vibe-coding/">Vibe Coding</a>
+            <a class="chip chip-hash" href="/tags/cursor/">Cursor</a>
+            <a class="chip chip-hash" href="/tags/ai/">AI</a>
+            <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
+            <a class="chip chip-hash" href="/tags/github-pages/">GitHub Pages</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202510%2Fcursor-vibe-coding-end-to-end%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202510%2Fcursor-vibe-coding-end-to-end%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/" data-title="Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/cursor/">Cursor 教學</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>3</b> 篇・共 3 篇</p>
+          </div>
+          <ol class="steps">
+            <li>
+              <a href="/blog/202509/cursor-getting-started/"><span class="n">01</span><span>Cursor 教學：入門到實戰，用 AI Agent 自動化你的工作流！</span></a>
+            </li>
+            <li>
+              <a href="/blog/202509/cursor-productivity-extensions/"><span class="n">02</span><span>Cursor 教學：安裝 3 款讓 Vibe Coding 效率翻倍的工具！用「個人形象網站」實戰演練</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">03</span><span>Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+          </ol>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202510/stop-being-a-pushover/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">沒人會把卑躬屈膝的狗，當成平等的人來對待</span></a>
+          <a class="next" href="/blog/202510/work-where-you-are-needed/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">去需要你的公司，累積最多的履歷</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#-%e9%87%90%e6%b8%85%e9%9c%80%e6%b1%82%e7%94%9f%e6%88%90%e5%b0%88%e6%a1%88%e8%a6%8f%e6%a0%bc">① 釐清需求，生成專案規格</a></li><li class="is-sub"><a href="#-%e6%9c%80%e5%b0%8f%e5%8f%af%e8%a1%8c%e6%80%a7%e6%96%b9%e6%a1%88">➤ 最小可行性方案</a></li><li class="is-sub"><a href="#-%e8%a3%bd%e4%bd%9c%e7%b4%94%e5%89%8d%e7%ab%af%e7%b6%b2%e9%a0%81">➤ 製作純前端網頁</a></li><li class="is-sub"><a href="#-%e7%9c%9f%e7%9a%84%e6%9c%83%e7%94%a8%e5%88%b0%e7%9a%84%e5%b7%a5%e5%85%b7">➤ 真的會用到的工具</a></li><li class="is-sub"><a href="#-%e6%96%b0%e5%a2%9e%e7%a9%ba%e8%b3%87%e6%96%99%e5%a4%be%e4%be%86%e9%96%8b%e5%a7%8b%e5%b0%88%e6%a1%88">➤ 新增空資料夾，來開始專案</a></li><li><a href="#-%e8%a8%ad%e8%a8%88%e8%a6%8f%e5%89%87%e8%ae%93-ai-%e7%9f%a5%e9%81%93%e5%81%9a%e4%ba%8b%e9%82%8f%e8%bc%af">② 設計規則，讓 AI 知道做事邏輯</a></li><li class="is-sub"><a href="#-%e5%bb%ba%e7%ab%8b%e5%b0%88%e6%a1%88%e7%9a%84-rules">➤ 建立專案的 Rules</a></li><li><a href="#-%e8%ae%93-ai-agent-%e5%8f%83%e8%80%83%e8%a6%8f%e6%a0%bc%e8%a6%8f%e5%89%87%e9%96%8b%e7%99%bc%e5%b0%88%e6%a1%88">③ 讓 AI Agent 參考規格、規則開發專案</a></li><li><a href="#-%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c%e5%84%aa%e5%8c%96%e5%b0%88%e6%a1%88%e6%96%b0%e5%a2%9e%e5%8a%9f%e8%83%bd">④ 解決問題、優化專案、新增功能</a></li><li class="is-sub"><a href="#-%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c">➤ 解決問題</a></li><li class="is-sub"><a href="#-%e5%84%aa%e5%8c%96%e5%b0%88%e6%a1%88">➤ 優化專案</a></li><li class="is-sub"><a href="#-%e6%96%b0%e5%a2%9e%e5%8a%9f%e8%83%bd">➤ 新增功能</a></li><li><a href="#-%e4%ba%86%e8%a7%a3-ai-%e7%94%9f%e6%88%90%e7%9a%84%e5%b0%88%e6%a1%88%e6%9e%b6%e6%a7%8b">⑤ 了解 AI 生成的專案架構</a></li><li class="is-sub"><a href="#-packagejson">➤ package.json</a></li><li class="is-sub"><a href="#-node_modules">➤ node_modules</a></li><li class="is-sub"><a href="#-gitignore">➤ .gitignore</a></li><li class="is-sub"><a href="#-readme">➤ README</a></li><li><a href="#-%e7%94%a8-github-pages-%e5%85%8d%e8%b2%bb%e7%99%bc%e5%b8%83%e7%b6%b2%e9%a0%81">⑥ 用 GitHub Pages 免費發布網頁</a></li><li class="is-sub"><a href="#-%e5%bb%ba%e7%ab%8b-repository">➤ 建立 Repository</a></li><li class="is-sub"><a href="#-%e6%8a%8a%e9%9b%bb%e8%85%a6%e5%b0%88%e6%a1%88%e8%88%87-github-repository-%e9%80%a3%e6%8e%a5">➤ 把電腦專案與 GitHub Repository 連接</a></li><li class="is-sub"><a href="#-%e7%a2%ba%e8%aa%8d%e6%9c%89%e6%9b%b4%e6%96%b0%e5%88%b0-github-repository">➤ 確認有更新到 GitHub Repository</a></li><li class="is-sub"><a href="#-%e5%88%b0-actions-%e5%88%86%e9%a0%81%e6%9f%a5%e7%9c%8b%e9%83%a8%e7%bd%b2%e7%9a%84%e7%8b%80%e6%b3%81">➤ 到 Actions 分頁查看部署的狀況</a></li><li><a href="#%e7%b5%90%e8%aa%9evibe-coding-%e7%9a%84%e5%ba%95%e5%b1%a4%e9%82%8f%e8%bc%af">結語：Vibe Coding 的底層邏輯</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202510%2Fcursor-vibe-coding-end-to-end%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202510%2Fcursor-vibe-coding-end-to-end%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/" data-title="Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202509/cursor-productivity-extensions/images/cursor-productivity-extensions-01_hu_8c56a77842d8e20d.webp" srcset="/blog/202509/cursor-productivity-extensions/images/cursor-productivity-extensions-01_hu_7642f3a354ffedd6.webp 240w, /blog/202509/cursor-productivity-extensions/images/cursor-productivity-extensions-01_hu_4c4efd9eb2e4b932.webp 480w, /blog/202509/cursor-productivity-extensions/images/cursor-productivity-extensions-01_hu_80b83de6bd408681.webp 800w, /blog/202509/cursor-productivity-extensions/images/cursor-productivity-extensions-01_hu_8c56a77842d8e20d.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a><span class="sep" aria-hidden="true">/</span><a href="/series/cursor/">Cursor 教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202509/cursor-productivity-extensions/">Cursor 教學：安裝 3 款讓 Vibe Coding 效率翻倍的工具！用「個人形象網站」實戰演練</a></h3>
+    <p class="card-desc">在這篇文章中，我會示範安裝 3 款工具，讓 Cursor AI Agent 效率直接翻倍，並以「個人形象網站」為例，完整實戰給你看！</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2025-09-28">2025.09.28</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>10 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202509/cursor-getting-started/images/cursor-getting-started-01_hu_284d2eaf1f73eecb.webp" srcset="/blog/202509/cursor-getting-started/images/cursor-getting-started-01_hu_56037c56f7b1eb1e.webp 240w, /blog/202509/cursor-getting-started/images/cursor-getting-started-01_hu_d19d9c4700b9cb2e.webp 480w, /blog/202509/cursor-getting-started/images/cursor-getting-started-01_hu_95821c737d13fb70.webp 800w, /blog/202509/cursor-getting-started/images/cursor-getting-started-01_hu_284d2eaf1f73eecb.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a><span class="sep" aria-hidden="true">/</span><a href="/series/cursor/">Cursor 教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202509/cursor-getting-started/">Cursor 教學：入門到實戰，用 AI Agent 自動化你的工作流！</a></h3>
+    <p class="card-desc">Cursor 不只是工程師專屬的程式編輯器（IDE），更是創作者的 AI 夥伴！斜槓講師、作家、影片創作者的我，就把它應用到課程規劃、文章撰寫、資料彙整、字幕生成、腳本設計、字卡規劃、音效建議…等多個領域。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2025-09-14">2025.09.14</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>8 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_a336123fd83d3944.webp" srcset="/blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_22189ad74f619fbe.webp 240w, /blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_31fe1e1d17628a7c.webp 480w, /blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_d273166fd35f3a5d.webp 800w, /blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_a336123fd83d3944.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202605/ai-speed-is-not-your-speed/">AI 的快，不是你的快；但 AI 的錯，會全部算在你頭上</a></h3>
+    <p class="card-desc">前陣子，有位朋友興奮地跟我說，他用 AI 只花 3 天就做出一個電商系統，準備要上線了。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-05-23">2026.05.23</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>2 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

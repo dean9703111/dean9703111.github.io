@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>用 AI 寫程式，卻覺得沒有比較快？｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="上個月企業內訓時，在課前有位工程師跟我說：「我每天都在用 AI 寫程式，但說實話，效率好像沒什麼提升。」因此我請他示範平常的用法。他先打開 ChatGPT、把需求貼上去、等回覆、複製回 VS Code、跑起來報錯、再把錯誤訊息貼回去問。…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202603/ai-coding-not-faster/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="用 AI 寫程式，卻覺得沒有比較快？">
+  <meta property="og:description" content="上個月企業內訓時，在課前有位工程師跟我說：「我每天都在用 AI 寫程式，但說實話，效率好像沒什麼提升。」因此我請他示範平常的用法。他先打開 ChatGPT、把需求貼上去、等回覆、複製回 VS Code、跑起來報錯、再把錯誤訊息貼回去問。…">
+  <meta property="og:url" content="https://deanlin.net/blog/202603/ai-coding-not-faster/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2026-03-31T19:24:21&#43;08:00">
+  <meta property="article:modified_time" content="2026-03-31T19:24:21&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="AI 實戰">
+  <meta property="article:tag" content="Claude Code">
+  <meta property="article:tag" content="AI">
+  <meta property="article:tag" content="Vibe Coding">
+  <meta property="article:tag" content="SDD">
+  <meta property="article:tag" content="CICD">
+  <meta property="og:image" content="https://deanlin.net/blog/202603/ai-coding-not-faster/images/ai-coding-not-faster-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="用 AI 寫程式，卻覺得沒有比較快？">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202603/ai-coding-not-faster/images/ai-coding-not-faster-og.jpg">
+  <meta name="twitter:title" content="用 AI 寫程式，卻覺得沒有比較快？">
+  <meta name="twitter:description" content="上個月企業內訓時，在課前有位工程師跟我說：「我每天都在用 AI 寫程式，但說實話，效率好像沒什麼提升。」因此我請他示範平常的用法。他先打開 ChatGPT、把需求貼上去、等回覆、複製回 VS Code、跑起來報錯、再把錯誤訊息貼回去問。…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202603/ai-coding-not-faster/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"AI 實戰"},"articleSection":"AI 實戰","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2026-03-31T19:24:21+08:00","datePublished":"2026-03-31T19:24:21+08:00","description":"上個月企業內訓時，在課前有位工程師跟我說：「我每天都在用 AI 寫程式，但說實話，效率好像沒什麼提升。」因此我請他示範平常的用法。他先打開 ChatGPT、把需求貼上去、等回覆、複製回 VS Code、跑起來報錯、再把錯誤訊息貼回去問。…","headline":"用 AI 寫程式，卻覺得沒有比較快？","image":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202603/ai-coding-not-faster/images/ai-coding-not-faster-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Claude Code, AI, Vibe Coding, SDD, CICD","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202603/ai-coding-not-faster/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E7%94%A8-ai-%E5%AF%AB%E7%A8%8B%E5%BC%8F-%E5%8D%BB%E8%A6%BA%E5%BE%97%E6%B2%92%E6%9C%89%E6%AF%94%E8%BC%83%E5%BF%AB-44d35450dd44"],"timeRequired":"PT3M","url":"https://deanlin.net/blog/202603/ai-coding-not-faster/","wordCount":1075},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/ai/","name":"AI 實戰","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202603/ai-coding-not-faster/","name":"用 AI 寫程式，卻覺得沒有比較快？","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰</a></li>
+        <li><a href="/categories/tech/">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/ai/">AI 實戰</a>
+      </nav>
+      <h1 class="article-title">用 AI 寫程式，卻覺得沒有比較快？</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2026-03-31">2026.03.31</time>
+              <span>閱讀約 3 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#-%e4%bd%bf%e7%94%a8-ai-agent%e8%ae%93-ai-%e7%9b%b4%e6%8e%a5%e5%b9%ab%e4%bd%a0%e5%81%9a%e4%ba%8b">使用 AI Agent，讓 AI 直接幫你做事</a></li><li><a href="#-%e7%9b%b4%e6%8e%a5%e5%95%8f-ai-%e5%b0%b1%e5%a5%bd%e5%b9%b9%e5%98%9b%e5%ad%b8">直接問 AI 就好，幹嘛學？</a></li><li><a href="#-%e6%8a%8a%e7%9b%ae%e6%a8%99%e5%be%9e%e5%ad%b8%e7%bf%92%e5%b7%a5%e5%85%b7%e6%94%b9%e7%82%ba%e8%a7%a3%e6%b1%ba%e7%97%9b%e9%bb%9e">把目標從「學習工具」改為「解決痛點」</a></li><li><a href="#-%e7%94%a8%e5%af%a6%e6%88%b0%e5%ae%8c%e6%95%b4%e7%90%86%e8%a7%a3%e6%b8%9b%e5%b0%91%e8%aa%8d%e7%9f%a5%e8%b2%a0%e6%93%94">用實戰完整理解，減少認知負擔</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>上個月企業內訓時，在課前有位工程師跟我說：「我每天都在用 AI 寫程式，但說實話，效率好像沒什麼提升。」</p>
+<p>因此我請他示範平常的用法。</p>
+<p>他先打開 ChatGPT、把需求貼上去、等回覆、複製回 VS Code、跑起來報錯、再把錯誤訊息貼回去問。</p>
+<p><strong>來回操作四五次後，我跟他說：「或許不是 AI 幫不了你，是你還沒用到合適的工具。」</strong></p>
+<hr>
+<h2 id="-使用-ai-agent讓-ai-直接幫你做事">使用 AI Agent，讓 AI 直接幫你做事<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8-ai-agent%e8%ae%93-ai-%e7%9b%b4%e6%8e%a5%e5%b9%ab%e4%bd%a0%e5%81%9a%e4%ba%8b" aria-label="這個段落的連結"></a></h2>
+<p>我使用 AI 輔助開發 3 年了，前兩年也是這樣用的；只把它當成一個比較聰明的「問答機器人」，有問題就問，問完自己動手。</p>
+<p>直到去年開始用 AI 程式碼編輯器，整個工作效率才明顯提升，兩者的差別在於：</p>
+<ul>
+<li>網頁版 AI 是「你問、它答、你自己做」。</li>
+<li>AI Agent 是「你說需求、它直接改程式碼、跑測試、遇到錯誤自己修」。</li>
+</ul>
+<p>內訓那天，我開場就直接 Demo 了一段 AI Agent 的開發流程。</p>
+<p>過程中我注意到，那位工程師全神貫注地盯著螢幕。</p>
+<p>結束後他跟我說：「<strong>我之前以為 AI 就是那樣了，完全不知道已經能做到這種程度。</strong>」</p>
+<p>他不是個案，很多學員的反應都差不多 ──</p>
+<p>他們不是不想用，而是「從來沒有」體驗過 AI Agent 的威力，所以一直停留在複製貼上的階段。</p>
+<hr>
+<h2 id="-直接問-ai-就好幹嘛學">直接問 AI 就好，幹嘛學？<a class="h-anchor" href="#-%e7%9b%b4%e6%8e%a5%e5%95%8f-ai-%e5%b0%b1%e5%a5%bd%e5%b9%b9%e5%98%9b%e5%ad%b8" aria-label="這個段落的連結"></a></h2>
+<p>不過，光是換工具還不夠。</p>
+<p>社群上常有人說「有問題直接問 AI 就好，幹嘛學？」</p>
+<p>也許未來有一天，AI 真的無所不能，但至少現在，還遠遠不是。</p>
+<p>過去 3 年來，我已經在 AI 工具上投入數千小時學習，直到現在也還在持續研究與嘗試。</p>
+<p><strong>因為使用 AI 真正困難的，從來不是工具本身；而是你知不知道怎麼把問題交給它、做完後該怎麼驗證、做錯了又該怎麼修正。</strong></p>
+<p>從「知道 AI 可以寫程式」到「真的把它用在工作上」，中間那條路，才是最多人卡住的地方。</p>
+<hr>
+<h2 id="-把目標從學習工具改為解決痛點">把目標從「學習工具」改為「解決痛點」<a class="h-anchor" href="#-%e6%8a%8a%e7%9b%ae%e6%a8%99%e5%be%9e%e5%ad%b8%e7%bf%92%e5%b7%a5%e5%85%b7%e6%94%b9%e7%82%ba%e8%a7%a3%e6%b1%ba%e7%97%9b%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<p>後來我發現，<strong>與其一直追著新工具跑，不如回頭看看自己的工作流，到底是哪裡卡住。</strong></p>
+<p>AI 時代每天都有新工具、更強的模型。如果目標是「學會工具」，學完很快就忘了。</p>
+<p>但如果出發點是「解決痛點」，你就會開始去想：</p>
+<ul>
+<li>需求怎麼寫，才不會讓 AI 跑偏？</li>
+<li>功能迭代後，怎麼確保專案不會壞掉？</li>
+<li>重複踩到的坑，有沒有辦法系統性地避免？</li>
+</ul>
+<p>過去我也針對這些主題，拍了許多 AI 寫程式的實戰教學。</p>
+<p>但我發現對剛接觸 AI 寫程式的人來說，很難透過碎片化的資訊，把技術應用到實際專案。</p>
+<hr>
+<h2 id="-用實戰完整理解減少認知負擔">用實戰完整理解，減少認知負擔<a class="h-anchor" href="#-%e7%94%a8%e5%af%a6%e6%88%b0%e5%ae%8c%e6%95%b4%e7%90%86%e8%a7%a3%e6%b8%9b%e5%b0%91%e8%aa%8d%e7%9f%a5%e8%b2%a0%e6%93%94" aria-label="這個段落的連結"></a></h2>
+<p>所以我開了這堂課。</p>
+<p>把過去 3 年摸索出來的開發流程，整理成一門從零開始的全端實戰課程。</p>
+<p>不只帶你認識工具，更帶你走完一輪真實的開發流程：<strong>從需求釐清、專案初始化、自動化測試，到版本控制和 Code Review。</strong></p>
+<p>會讓你看到 AI 可以在哪些環節介入，以及遇到問題時該怎麼處理。</p>
+<p>如果你也想把 AI 從「有在用」變成「融入工作流」，這門課就是我想給你的答案。</p>
+<p>👉 <strong>完整課綱</strong>: <a href="https://tibame.tw/Zmnts">https://tibame.tw/Zmnts</a></p>
+<p>📌 <strong>專屬折扣碼</strong>: DEANONLY</p>
+<p><img src="/blog/202603/ai-coding-not-faster/images/ai-coding-not-faster-01.webp" srcset="/blog/202603/ai-coding-not-faster/images/ai-coding-not-faster-01_hu_f47c15a09b60ae78.webp 720w, /blog/202603/ai-coding-not-faster/images/ai-coding-not-faster-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="788" alt="用實戰完整理解，減少認知負擔（圖 1）" loading="lazy" decoding="async"></p>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2026.03.31）</span><a href="https://medium.com/dean-lin/%E7%94%A8-ai-%E5%AF%AB%E7%A8%8B%E5%BC%8F-%E5%8D%BB%E8%A6%BA%E5%BE%97%E6%B2%92%E6%9C%89%E6%AF%94%E8%BC%83%E5%BF%AB-44d35450dd44" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/claude-code/">Claude Code</a>
+            <a class="chip chip-hash" href="/tags/ai/">AI</a>
+            <a class="chip chip-hash" href="/tags/vibe-coding/">Vibe Coding</a>
+            <a class="chip chip-hash" href="/tags/sdd/">SDD</a>
+            <a class="chip chip-hash" href="/tags/cicd/">CICD</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202603%2Fai-coding-not-faster%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202603%2Fai-coding-not-faster%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202603/ai-coding-not-faster/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202603/ai-coding-not-faster/" data-title="用 AI 寫程式，卻覺得沒有比較快？" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202603/claude-code-openspec/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</span></a>
+          <a class="next" href="/blog/202604/reusable-ai-skills/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">讓 AI 把過去解決過的問題，變成未來可以重複使用的能力</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#-%e4%bd%bf%e7%94%a8-ai-agent%e8%ae%93-ai-%e7%9b%b4%e6%8e%a5%e5%b9%ab%e4%bd%a0%e5%81%9a%e4%ba%8b">使用 AI Agent，讓 AI 直接幫你做事</a></li><li><a href="#-%e7%9b%b4%e6%8e%a5%e5%95%8f-ai-%e5%b0%b1%e5%a5%bd%e5%b9%b9%e5%98%9b%e5%ad%b8">直接問 AI 就好，幹嘛學？</a></li><li><a href="#-%e6%8a%8a%e7%9b%ae%e6%a8%99%e5%be%9e%e5%ad%b8%e7%bf%92%e5%b7%a5%e5%85%b7%e6%94%b9%e7%82%ba%e8%a7%a3%e6%b1%ba%e7%97%9b%e9%bb%9e">把目標從「學習工具」改為「解決痛點」</a></li><li><a href="#-%e7%94%a8%e5%af%a6%e6%88%b0%e5%ae%8c%e6%95%b4%e7%90%86%e8%a7%a3%e6%b8%9b%e5%b0%91%e8%aa%8d%e7%9f%a5%e8%b2%a0%e6%93%94">用實戰完整理解，減少認知負擔</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202603%2Fai-coding-not-faster%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202603%2Fai-coding-not-faster%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202603/ai-coding-not-faster/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202603/ai-coding-not-faster/" data-title="用 AI 寫程式，卻覺得沒有比較快？" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRgoBAABXRUJQVlA4IP4AAACwBgCdASoYABgAPw12rE2mI6IhKAqoxiGJ4gC&#43;aT0JzHgBjQx9EJg9QqtnwaZgB0ybETR&#43;LitvJ&#43;QEusgnMAD&#43;4DJOl4DGFvKceUKRRNo714hZOtC68n74CCdR9aNJLgq/9pZu0esxo7QO/MfPl&#43;sbTlb&#43;yE0QXuirLQn7zUTBX1odnVT00X34fE7QGhSd0C8RH70vTMVo/HsbGE6MDAk8Ksq51ndBWly94wG5gz3aCOpsJXTsOwKgUwyuoDvoBZM0h5Eq5D7qQNyjsISMM65/JNfcW&#43;&#43;LgSYejM/M81gzUP7aVWdObt0RAY7pxQ&#43;248y4H0UalQRh824gGgAAAA==" alt="" width="24" height="24"><img src="/blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_277f27d0674fde5b.webp" srcset="/blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_f60f0d4e2bb66bf8.webp 240w, /blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_ae725bc6214344a2.webp 480w, /blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_1395294e94bd4e59.webp 800w, /blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_277f27d0674fde5b.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="1200" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202605/will-ai-skills-last/">AI 工具幾乎每天都在變，現在學會的東西，明天還有用嗎？</a></h3>
+    <p class="card-desc">標題是我最近講座時，最常被問到問題。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-05-05">2026.05.05</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202603/claude-code-openspec/images/claude-code-openspec-01_hu_68150e163c32f2cd.webp" srcset="/blog/202603/claude-code-openspec/images/claude-code-openspec-01_hu_8c5f2e008e0803c5.webp 240w, /blog/202603/claude-code-openspec/images/claude-code-openspec-01_hu_d5548cc6e6276084.webp 480w, /blog/202603/claude-code-openspec/images/claude-code-openspec-01_hu_f70b92e03076ce0.webp 800w, /blog/202603/claude-code-openspec/images/claude-code-openspec-01_hu_68150e163c32f2cd.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a><span class="sep" aria-hidden="true">/</span><a href="/series/claude-code/">Claude Code 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></h3>
+    <p class="card-desc">最近收到的企業邀約中，除了有軟體部門想將 AI 導入開發工作流外，也有不少來自人力資源、執行業務部門的邀約。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-03-12">2026.03.12</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>15 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRiIBAABXRUJQVlA4IBYBAABQBwCdASoYABgAPw1sqkmmIyIUBqhjEMT2AE6ZQj8YQBugw6bQAatwRPZ2HNI27gEeCg5/60OfW&#43;BSfajim1T&#43;tamAAP7TeIRdDZH3dbrUQAIMiFXNEdnxI8Z9QkMDTaCK&#43;sdWwvHrpA31cPmnPjmWLMv6AKXOdw6unc2xTtyd4zXmAlqk2sFqIKRiuMZMpX2uwo0sb/qLLdqZ&#43;zt05GvlvgK9kxV0u5iK53xes12LZ72Rozzwkcm9Vv1BUVTC4iVGzZARfuxHWIbBic7kohIv7wRqaF6RW7cD&#43;6HwoaCgTouRxrcTFpPnuQeBHeqJCoJ8euKQOb6jWLJN8qd/e/4Nx/wosiUFxP28thnr7/fyb2uLyrUAAA==" alt="" width="24" height="24"><img src="/blog/202608/just-ask-ai/images/just-ask-ai-01_hu_5e42aef2ab0be0bb.webp" srcset="/blog/202608/just-ask-ai/images/just-ask-ai-01_hu_95692b04c7e6a09a.webp 240w, /blog/202608/just-ask-ai/images/just-ask-ai-01_hu_630d0cfacd3ddea2.webp 480w, /blog/202608/just-ask-ai/images/just-ask-ai-01_hu_37f6a12158b31414.webp 800w, /blog/202608/just-ask-ai/images/just-ask-ai-01_hu_5e42aef2ab0be0bb.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="1200" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202608/just-ask-ai/">遇到問題，直接問 AI 不香嗎？</a></h3>
+    <p class="card-desc">「香！」這是大多數人心中的答案。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-08-15">2026.08.15</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202603/ai-coding-not-faster/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

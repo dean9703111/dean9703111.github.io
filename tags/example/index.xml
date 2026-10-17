@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Example｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/example/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 02 Dec 2024 18:17:56 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/example/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>GitLab CI 實戰（踩坑）筆記</title>
+      <link>https://deanlin.net/blog/202412/gitlab-ci-notes/</link>
+      <pubDate>Mon, 02 Dec 2024 18:17:56 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202412/gitlab-ci-notes/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>GitLab CI 是 GitLab 的內建工具，每次 Push 都會觸發一次腳本執行，內容通常涵蓋測試、編譯、部署等一系列自定義內容。 這篇文章會分享設計上要注意的細節，以及實戰過程踩過的坑。</description>
+      <content:encoded><![CDATA[<p>GitLab CI 是 GitLab 的內建工具，每次 Push 都會觸發一次腳本執行，內容通常涵蓋測試、編譯、部署等一系列自定義內容。</p>
+<p>這篇文章會分享設計上要注意的細節，以及實戰過程踩過的坑，不會特別說明基礎資訊，想更深入理解的朋友可以參考<a href="https://docs.gitlab.com/ee/ci/">官網文件</a>；如果讀者有更好的方案，或對名詞有更精準的定義，歡迎留言分享。</p>
+<p><img src="https://deanlin.net/blog/202412/gitlab-ci-notes/images/gitlab-ci-notes-01.webp" width="1400" height="775" alt="GitLab CI 實戰（踩坑）筆記（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>文章大綱
+
+▋ GitLab CI 資料夾結構設計
+▋ 在 .gitlab/.default.gitlab-ci.yml 定義要執行 pipeline 的 Branchs
+▋ 根據專案需求定義對應的 Stages
+▋ 想在不同 stage 傳遞資料時，artifacts 跟 cache 的使用時機
+▋ 讓 stage 下的 job 並行執行 or 順序執行
+▋ notify 階段建議要有的資訊
+▋ Dockerfile 多階段構建
+▋ 其他的坑（套件安裝、相容性、單元測試）
+</code></pre><h2 id="-gitlab-ci-資料夾結構設計">GitLab CI 資料夾結構設計<a class="h-anchor" href="#-gitlab-ci-%e8%b3%87%e6%96%99%e5%a4%be%e7%b5%90%e6%a7%8b%e8%a8%ad%e8%a8%88" aria-label="這個段落的連結"></a></h2>
+<pre tabindex="0"><code>Project
+├── .gitlab-ci.yml
+└── .gitlab
+    ├── stages
+    │   ├── 1.xxx.yml
+    │   └── 2.xxx.yml
+    ├── .default.gitlab-ci.yml
+    └── docker-bake.hcl
+</code></pre><p>下面說明一下資料夾結構下各檔案要負責的任務：</p>
+<ul>
+<li><strong>.gitlab-ci.yml</strong>: 定義有要執行的 stages，以及參考的 yml 檔案（ex: <code>.gitlab/.default.gitlab-ci.yml</code>）。</li>
+<li><strong>.gitlab</strong>: 存放 GitLab 設定檔的資料夾。</li>
+<li><strong>.gitlab/stages</strong>: 存放各 stage 的資料夾，讓邏輯更容易維護。</li>
+<li><strong>.gitlab/stages/xxx.yml</strong>: 定義 stage 下各 jobs 要執行的任務。</li>
+<li><strong>.gitlab/.default.gitlab-ci.yml</strong>: 用來定義默認的設定，避免重複性的工作（ex: 設定通用的 <code>variables</code>、定義要執行 pipeline 的 branchs）。</li>
+<li><strong>.gitlab/docker-bake.hcl</strong>: 定義 Build Docker Image 的資訊（ex: 支援多平台、傳遞參數）。</li>
+</ul>
+<hr>
+<h2 id="-在-gitlabdefaultgitlab-ciyml-定義要執行-pipeline-的-branchs">在 .gitlab/.default.gitlab-ci.yml 定義要執行 pipeline 的 Branchs<a class="h-anchor" href="#-%e5%9c%a8-gitlabdefaultgitlab-ciyml-%e5%ae%9a%e7%be%a9%e8%a6%81%e5%9f%b7%e8%a1%8c-pipeline-%e7%9a%84-branchs" aria-label="這個段落的連結"></a></h2>
+<p>僅管我們期待每次 Push 一版都會觸發 pipeline，但有時也會有一些例外狀況（ex: 需要高頻率 Push 測試一些特殊功能）。</p>
+<p>以下面的設計來說，就是僅允許「merge_request_event」以及「release/<em>、hotfix/</em>、feature/*」，還有 Default Branch（ex: master、develop）會觸發 pipeline。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">workflow</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">rules</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>- <span style="color:#7ee787">if</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;$CI_PIPELINE_SOURCE == &#34;merge_request_event&#34;&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>- <span style="color:#7ee787">if</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;$CI_COMMIT_BRANCH =~ /^release\/.*$/&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>- <span style="color:#7ee787">if</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;$CI_COMMIT_BRANCH =~ /^hotfix\/.*$/&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>- <span style="color:#7ee787">if</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;$CI_COMMIT_BRANCH =~ /^feature\/.*$/&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>- <span style="color:#7ee787">if</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH&#39;</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><hr>
+<h2 id="-根據專案需求定義對應的-stages">根據專案需求定義對應的 Stages<a class="h-anchor" href="#-%e6%a0%b9%e6%93%9a%e5%b0%88%e6%a1%88%e9%9c%80%e6%b1%82%e5%ae%9a%e7%be%a9%e5%b0%8d%e6%87%89%e7%9a%84-stages" aria-label="這個段落的連結"></a></h2>
+<p>筆者習慣設計下面 5 個 Stages:</p>
+<ul>
+<li><strong>init</strong>: 在這個階段做套件安裝的任務（ex: npm install）。</li>
+<li><strong>analysis</strong>: 如果 init 順利才會進入這個階段，會在這裡進行單元測試(test)、Coding Style 檢查(lint)，並將對應的 report 保存到 artifacts 當中。</li>
+<li><strong>build_image</strong>: 如果前面都通過才會 Build Docker Image，並將 $TARGET_IMAGE:$TAG 保存到 artifacts/tags.txt 當中（要在 notify 階段使用）。</li>
+<li><strong>notify</strong>: 我將它設定為 always 執行，用來傳送 pipeline 成功/失敗的訊息到對應的 Chanel（ex: Zoom、Teams、Line）。</li>
+<li><strong>deploy</strong>: 根據實際需求設計部署流程。</li>
+</ul>
+<hr>
+<h2 id="-想在不同-stage-傳遞資料時artifacts-跟-cache-的使用時機">想在不同 stage 傳遞資料時，artifacts 跟 cache 的使用時機<a class="h-anchor" href="#-%e6%83%b3%e5%9c%a8%e4%b8%8d%e5%90%8c-stage-%e5%82%b3%e9%81%9e%e8%b3%87%e6%96%99%e6%99%82artifacts-%e8%b7%9f-cache-%e7%9a%84%e4%bd%bf%e7%94%a8%e6%99%82%e6%a9%9f" aria-label="這個段落的連結"></a></h2>
+<p>上個 stage 做完的事情，在下個 stage 是不會知道細節的。</p>
+<p>想要傳遞資訊就需要透過 artifacts 或 cache，而這兩者的用途不太一樣：</p>
+<ul>
+<li><strong>artifacts</strong>: 記錄這次 pipeline 獨有的資訊，像是 test report、image_id 這類的，建議要設定對應的 expire_in 時間，否則資料會永久保存消耗硬碟空間。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">analysis</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">artifacts</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">paths</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">reports</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">expire_in</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">1</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">day</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><ul>
+<li><strong>cache</strong>: 這個專案經常使用的資料，比如 node_modules 這類保存套件的資料夾。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">analysis</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">cache</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">key</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#34;${CI_PROJECT_PATH_SLUG}&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">paths</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">node_modules</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><hr>
+<h2 id="-讓-stage-下的-job-並行執行-or-順序執行">讓 stage 下的 job 並行執行 or 順序執行<a class="h-anchor" href="#-%e8%ae%93-stage-%e4%b8%8b%e7%9a%84-job-%e4%b8%a6%e8%a1%8c%e5%9f%b7%e8%a1%8c-or-%e9%a0%86%e5%ba%8f%e5%9f%b7%e8%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>如果沒有特別設計，stage 下的 job 默認都是並行執行的（比如 unit test &amp; lint 可以同時進行）；如果想要順序執行，可以透過 needs 來設定，範例如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">job1</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">stage</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">build</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">script</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>- <span style="color:#a5d6ff">echo &#34;Executing job1&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">job2</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">stage</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">build</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">script</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>- <span style="color:#a5d6ff">echo &#34;Executing job2&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">needs</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>- <span style="color:#a5d6ff">job1 </span><span style="color:#6e7681"> </span><span style="color:#8b949e;font-style:italic"># 等待 job1 完成後執行</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><hr>
+<h2 id="-notify-階段建議要有的資訊">notify 階段建議要有的資訊<a class="h-anchor" href="#-notify-%e9%9a%8e%e6%ae%b5%e5%bb%ba%e8%ad%b0%e8%a6%81%e6%9c%89%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
+<p>GitLab CI 通常要跑幾分鐘的時間（通常跟 unit test 多寡有關），所以要設計 notify 的機制來傳遞資訊，建議包含的內容如下：</p>
+<ul>
+<li><strong>project</strong>: $PROJECT_NAME，方便了解執行的專案。</li>
+<li><strong>branch</strong>: $CI_COMMIT_REF_NAME，了解哪個 branch 更新了。</li>
+<li><strong>result</strong>: 會包含成功與失敗的詳細資訊。</li>
+<li><strong>pipeline_link</strong>: $PIPELINE_LINK，出問題時點擊連結可以看到最直接的資訊。</li>
+<li><strong>image_id</strong>: 從 artifacts 裡面讀取。</li>
+</ul>
+<hr>
+<h2 id="-dockerfile-多階段構建">Dockerfile 多階段構建<a class="h-anchor" href="#-dockerfile-%e5%a4%9a%e9%9a%8e%e6%ae%b5%e6%a7%8b%e5%bb%ba" aria-label="這個段落的連結"></a></h2>
+<p>下面用一個範例來說明如何用多階段構建（multi-stage build）來減少 Docker Image 大小並提高效率（<code>COPY &ndash;from=builder</code> 的作用是從第一階段複製文件到第二階段）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 第一階段：使用 Node.js 安裝套件，並進行打包</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">FROM node:23.3-alpine as builder</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">WORKDIR /app</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">COPY package.json package-lock.json ./</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">RUN npm install</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">COPY . .</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">RUN npm run build</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 第二階段：使用 Nginx 部署靜態文件</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">FROM nginx:alpine3.20</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">COPY --from=builder /app/dist /usr/share/nginx/html</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">WORKDIR /usr/share/nginx/html</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">COPY ./build/nginx/default.conf /etc/nginx/conf.d/default.conf</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p>透過這個方案，最終的 Image 只有靜態文件跟 Nginx，不包含 Node.js 開發工具；不但減少 Image 大小，還減少了潛在攻擊面向。</p>
+<hr>
+<h2 id="-其他的坑套件安裝相容性單元測試">其他的坑（套件安裝、相容性、單元測試）<a class="h-anchor" href="#-%e5%85%b6%e4%bb%96%e7%9a%84%e5%9d%91%e5%a5%97%e4%bb%b6%e5%ae%89%e8%a3%9d%e7%9b%b8%e5%ae%b9%e6%80%a7%e5%96%ae%e5%85%83%e6%b8%ac%e8%a9%a6" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li><strong>套件無法順利安裝</strong>: 如果套件是經由私有庫來安裝的，就需要設定對應的網路環境；如果在 Dockerfile 裡面安裝，請記得將 <code>.npmrc</code> 這類設定 COPY 到對應的位置。</li>
+<li><strong>qemu-user-static 相容性錯誤</strong>: 有些專案需要指定對應的 platform 才能順利 build 出來（Dockerfile from 的 image 可能僅支持 arm 或 amd）。</li>
+<li><strong>單元測試錯誤突然暴增</strong>: 如果在 local 環境測試起來正常，但在 GitLab CI 時出現錯誤，那通常是「非同步」的問題，可以先用 <code>await</code> 拉長等待時間，並搭配 log 來釐清狀況。</li>
+</ul>
+<p>有段時間沒發純技術的文章了，希望能幫助到有相關需求的朋友們，也歡迎大家分享自己在 GitLab CI 的使用經驗。</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>根本是開外掛！普通人也能用 ChatGPT 提升生活品質！</title>
+      <link>https://deanlin.net/blog/202301/chatgpt-for-everyday-life/</link>
+      <pubDate>Mon, 23 Jan 2023 23:10:16 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/chatgpt-for-everyday-life/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>時間對每個人來說都是公平的，每一天都是 24 小時；但這 24 小時會因為富貴貧窮、積極消極而對每個人有著不同的意義。 如果問我 ChatGPT 對普通人來說最大的幫助是什麼，我覺得應該是獲得「主管、老闆」交代事情的權利吧！ 如果所有任務都要「事必躬親」，那再多的時間也不夠用</description>
+      <content:encoded><![CDATA[<p>時間對每個人來說都是公平的，每一天都是 24 小時；但這 24 小時會因為富貴貧窮、積極消極而對每個人有著不同的意義。</p>
+<p>如果問我 ChatGPT 對普通人來說最大的幫助是什麼，我覺得應該是獲得「主管、老闆」交代事情的權利吧！</p>
+<p>如果所有任務都要「事必躬親」，那再多的時間也不夠用；反過來，如果能把一些瑣事交代出去，我們的時間就變多了。</p>
+<p>今天筆者就來分享幾個能直接使用的案例，希望能幫讀者爭取更多屬於自己的時間。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/chatgpt-for-everyday-life/images/chatgpt-for-everyday-life-01.webp" width="1134" height="616" alt="img made form midjourney" loading="lazy" decoding="async">
+  <figcaption>img made form midjourney</figcaption>
+</figure>
+
+<pre tabindex="0"><code>大綱
+
+▋ 公文撰寫（ex：系統升級需要暫停服務）
+▋ 履歷撰寫
+▋ 公司活動企劃（ex：自強活動）
+▋ 文案發想
+▋ 讓你的文字更為通順
+▋ 結論：每個人都用得到的技術
+</code></pre><blockquote>
+<p>因本篇文章涉及大量對話，考慮到閱讀體驗性，故用文字取代截圖。</p>
+</blockquote>
+<h2 id="-公文撰寫ex系統升級需要暫停服務">公文撰寫（ex：系統升級需要暫停服務）<a class="h-anchor" href="#-%e5%85%ac%e6%96%87%e6%92%b0%e5%af%abex%e7%b3%bb%e7%b5%b1%e5%8d%87%e7%b4%9a%e9%9c%80%e8%a6%81%e6%9a%ab%e5%81%9c%e6%9c%8d%e5%8b%99" aria-label="這個段落的連結"></a></h2>
+<p>有時工作上會遇到公文撰寫的需求，如果是第一次接觸，那光是找範例、用字遣詞就會浪費不少時間。</p>
+<p>這類繁瑣的工作我覺得<strong>交給 ChatGPT 完成就好</strong>，而且可以根據你的需求改變語言。</p>
+<p><strong>我</strong>：「想請你幫我寫一則公告，目前公司的系統基於安全性考量需要升級，需要在 1 月 20 號下午 2 點到 3 點進行維護。」</p>
+<p><strong>ChatGPT</strong>：「</p>
+<p>尊敬的客戶，</p>
+<p>為了確保系統的安全性，我們將於1月20日下午2點至3點進行系統升級維護工作。在這段時間內，系統將無法使用。我們將盡快完成維護工作，並盡快恢復服務。</p>
+<p>對給您帶來的不便表示歉意，謝謝您的理解與配合。</p>
+<p>如有任何疑問，請隨時與我們聯繫。</p>
+<p>謝謝。</p>
+<p>公司名稱」</p>
+<p><strong>我</strong>：「幫我做一個英文版。」</p>
+<p><strong>ChatGPT</strong>：「<br>Dear valued customers,</p>
+<p>We will be conducting scheduled maintenance on January 20th from 2pm to 3pm to ensure the security and integrity of our systems. During this time, our services will be temporarily unavailable. We apologize for any inconvenience this may cause and assure you that we will work diligently to complete the maintenance as quickly as possible.</p>
+<p>If you have any questions or concerns, please do not hesitate to reach out to us.</p>
+<p>Thank you,</p>
+<p>Company Name」</p>
+<blockquote>
+<p>他可以撰寫公文，同樣也能幫你完成日常的電子郵件喔（請對方幫忙某件事、感謝信、辭職信…）！</p>
+</blockquote>
+<hr>
+<h2 id="-履歷撰寫">履歷撰寫<a class="h-anchor" href="#-%e5%b1%a5%e6%ad%b7%e6%92%b0%e5%af%ab" aria-label="這個段落的連結"></a></h2>
+<p>筆者過去擔任面試官時，最常遇到的就是候選人給的「資料不完善」，造成許多經歷我無法有效評估，而 ChatGPT 產生的履歷儘管中規中矩，但至少該提的部分都有放上去。</p>
+<p>在履歷撰寫的部分，你提供 ChatGPT 越多關鍵字，他就能組合出越符合你需求的履歷。</p>
+<blockquote>
+<p>我還真沒想到丟 GCP K8s 這個關鍵字，他就幫我把 Docker 微服務這些東西整合出來，是真的有在思考的。</p>
+</blockquote>
+<p><strong>我</strong>：「幫我用繁體中文寫一份讓面試官眼睛一亮的求職履歷。我是一名 Backend 工程師，有 5 年的工作經驗，熟悉 Node.js、MYSQL、PostgreSQL 等技術，也有 GCP K8s 的經驗，做過 RMA、OTA 等系統。」</p>
+<p><strong>ChatGPT</strong>：「<br>[個人資料]<br>姓名：XXX 電話：XXX email：XXX</p>
+<p>[教育經歷]</p>
+<ul>
+<li>XXX大學，資訊工程系，學士學位，XX年XX月 ~ XX年XX月</li>
+</ul>
+<p>[工作經歷]</p>
+<ul>
+<li>公司名稱：XXX公司 職稱：Backend工程師 時間：XX年XX月 ~ 至今</li>
+<li>負責公司核心產品的後端開發，包括RMA、OTA等系統</li>
+<li>技術框架：Node.js、MYSQL、PostgreSQL</li>
+<li>使用GCP K8s部署和管理後端服務</li>
+<li>實施持續交付和持續整合流程，提高開發效率和產品品質</li>
+<li>負責系統的性能優化，並導入監控和日誌系統，提高系統的可靠性和可追溯性</li>
+<li>協助團隊成員解決技術問題，提供技術指導</li>
+<li>參與需求分析、設計、開發、測試、部署等整個軟體開發流程</li>
+</ul>
+<p>[技能]</p>
+<ul>
+<li>熟悉Node.js、MYSQL、PostgreSQL等技術</li>
+<li>熟悉GCP K8s部署和管理後端服務</li>
+<li>熟悉微服務架構和持續交付流程</li>
+<li>熟悉Docker、Kubernetes等容器技術</li>
+<li>了解常見的性能優化方法和監控工具</li>
+</ul>
+<p>[自我評價]</p>
+<ul>
+<li>具有良好的溝通能力和團隊協作精神</li>
+<li>積極主動，能夠快速學習新技術</li>
+<li>熟悉常見的軟體開發流程和工具</li>
+<li>具有較強的邏輯思考能力和系統思考能力</li>
+<li>對於軟體開發充滿熱情，不斷追求技術提升和創新</li>
+</ul>
+<p>[附加資訊]</p>
+<ul>
+<li>參與過多個開源專案</li>
+<li>曾獲得過某IT公司頒發的最佳技術獎」</li>
+</ul>
+<blockquote>
+<p>對筆者來說，透過 ChatGPT 把中文履歷轉換成「英文履歷」是一個很實用的功能，這邊筆者就不再操作，不然有灌水嫌疑 XD（自己寫不好，又不想花錢請人幫忙改的可以嘗試看看 ChatGPT）</p>
+</blockquote>
+<hr>
+<h2 id="-公司活動企劃ex自強活動">公司活動企劃（ex：自強活動）<a class="h-anchor" href="#-%e5%85%ac%e5%8f%b8%e6%b4%bb%e5%8b%95%e4%bc%81%e5%8a%83ex%e8%87%aa%e5%bc%b7%e6%b4%bb%e5%8b%95" aria-label="這個段落的連結"></a></h2>
+<p>被交代非職位相關的任務時，你是否煩躁又一頭霧水？</p>
+<p>此時你可以把這份工作「外包」給 ChatGPT，讓他幫你收集資料，並提供對應的關鍵字。</p>
+<p><strong>我</strong>：「公司請我規劃 2 個月後的自強活動，目前公司的人數約 100 人，平均年齡在 40 歲上下，科技業，希望能增加員工間的向心力，請問怎麼規劃比較合適呢？」</p>
+<p><strong>ChatGPT</strong>：「自強活動是一種用於增強公司團隊精神和員工間向心力的活動。在規劃時，可以考慮以下建議:</p>
+<ol>
+<li>團隊建設活動: 安排一些團隊建設活動，如團隊挑戰、團隊冒險、團隊訓練等，讓員工在共同的目標和挑戰下建立團結精神。</li>
+<li>社交活動: 安排一些社交活動，如餐會、聚餐、戶外活動等，讓員工能夠增進彼此之間的關係。</li>
+<li>專業培訓: 提供專業培訓，如領導力、溝通技巧、團隊建設等，讓員工能夠提升自己的專業知識和技能。</li>
+<li>混合活動: 結合多種不同類型的活動，如團隊建設活動、社交活動、專業培訓等，讓員工在多元化的活動中增加向心力。</li>
+</ol>
+<p>建議您可以聯繫專業策劃公司來設計符合公司文化和員工喜好的自強活動，同時也可以與員工討論自強活動的需求，讓員工能夠在自強活動中增強團隊精神和增加向心力。」</p>
+<blockquote>
+<p>得到這份結果後，你可以發起一份問卷表單，讓大家投票選擇哪一種自強活動（自己不感興趣的可以事先過濾）。</p>
+</blockquote>
+<hr>
+<h2 id="-文案發想">文案發想<a class="h-anchor" href="#-%e6%96%87%e6%a1%88%e7%99%bc%e6%83%b3" aria-label="這個段落的連結"></a></h2>
+<p>目前實驗下來，ChatGPT 沒辦法寫出一份很好的文案，可能是筆者給的關鍵字與敘述不夠好。</p>
+<p>不過在「發想（腦力激盪）」的表現挺不錯的，如果你不滿意這次的回覆，可以點擊「Regenerate response」讓他重新回答這個問題。</p>
+<p><strong>我</strong>：「我想請你擔任一個文案行銷專家。我舉辦了一場研習會，邀請在臺灣獲得近距離魔術冠軍的朋友當講師，參與活動要收取 1000 元的費用，我要如何寫宣傳文案才能吸引大家報名呢？」</p>
+<p><strong>ChatGPT 第 1 次回應</strong>：「魔術是一種迷人的藝術，而在台灣，我們擁有一位獲得近距離魔術冠軍的頂尖講師。現在，您有機會在這次研習會中，直接學習他的魔術技巧和秘訣。這不僅是一次驚奇的體驗，還是提升自己的機會。只需 1000 元的費用，您就可以成為下一個魔術大師。快來報名吧，數量有限，先到先得！」</p>
+<p><strong>ChatGPT 第 2 次回應</strong>：「請先簡單地介紹一下活動的內容，如活動日期、時間、地點、主題、嘉賓等。</p>
+<p>接著，可以提出一些亮點來吸引參與者，例如:</p>
+<ul>
+<li>這是一場獲得近距離魔術冠軍教授的研習會，參與者將有機會學習到專業技巧</li>
+<li>這是一場非常罕見的機會，參與者將有機會近距離接觸並學習自己喜歡的領域</li>
+<li>活動費用相對於其他研習會來說是非常合理的，參與者可以獲得高價值的學習體驗</li>
+<li>活動將有專業的講師教授，參與者將有機會深入了解並提升自己的專業知識</li>
+</ul>
+<p>最後，可以鼓勵參與者提前報名，並告知他們可能錯過的機會。」</p>
+<blockquote>
+<p>我覺得 ChatGPT 對<strong>文案發想</strong>很有幫助，因為如果你不滿意這次的回覆，可以讓他再想一次，或是用「優化文案」這類的關鍵詞。</p>
+</blockquote>
+<hr>
+<h2 id="-讓你的文字更為通順">讓你的文字更為通順<a class="h-anchor" href="#-%e8%ae%93%e4%bd%a0%e7%9a%84%e6%96%87%e5%ad%97%e6%9b%b4%e7%82%ba%e9%80%9a%e9%a0%86" aria-label="這個段落的連結"></a></h2>
+<p>我想應該有很多人在寫文書時會遇到一個狀況，就是某一段話你怎麼寫都不太順暢，此時，你可以把這段話丟給 ChatGPT，詢問他的建議。</p>
+<p>像是我就把上面這段話丟給 ChatGPT，大家覺得他的建議如何呢？</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-for-everyday-life/images/chatgpt-for-everyday-life-02.webp" width="1091" height="274" alt="讓你的文字更為通順（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>如果怕自己的文章、句子有錯漏字，也可以讓 ChatGPT 來審核喔！</p>
+</blockquote>
+<hr>
+<h2 id="-結論每個人都用得到的技術">結論：每個人都用得到的技術<a class="h-anchor" href="#-%e7%b5%90%e8%ab%96%e6%af%8f%e5%80%8b%e4%ba%ba%e9%83%bd%e7%94%a8%e5%be%97%e5%88%b0%e7%9a%84%e6%8a%80%e8%a1%93" aria-label="這個段落的連結"></a></h2>
+<p>先前收到網友私訊詢問：「ChatGPT 跟普通人有什麼關係，我能透過他增加收入嗎？」</p>
+<p>筆者覺得這篇文章應該有回答到問題，有了 ChatGPT：</p>
+<ul>
+<li>節省撰寫公文、email 的時間 ➝ 你工作就有更多空擋</li>
+<li>撰寫履歷有了方向 ➝ 好的履歷，尤其是英文履歷能給你更多機會</li>
+<li>沒碰過的企劃馬上獲得範本 ➝ 知道接下來要向哪個單位溝通</li>
+<li>苦惱的文案迸出靈感 ➝ 減少加班的頻率</li>
+</ul>
+<p>時間就是金錢，多出來的時間要拿來進修、接外包，還是當薪水小偷就看讀者的安排了（接外包時請符合公司規定）。</p>
+<blockquote>
+<p><em>很多時</em>候我們要的並不是「最正確的答案」，而是一些建議與發想，讓我們在卡住的時候有方向（如果剛好能直接使用當然是最理想的）。</p>
+</blockquote>
+<p>不過一個技術到底好不好用、局限性在哪裡，真的要自己親自嘗試過才知道；上面分享的都算是較為成功的案例，這幾天筆者其實還做了很多嘗試，像是法律諮詢、旅遊規劃、美食推薦&hellip;等。</p>
+<p>但實際測試下來發現，這類包含「真實資訊」的問題，ChatGPT 的錯誤率非常「高」，像是給出的法條根本不存在、旅遊的景點真假參半、美食餐廳是虛構的。</p>
+<p>所以無論一個工具多方便，讀者還是要秉持獨立思考與小心求證的心態喔！</p>
+<blockquote>
+<p><strong>小提醒</strong>：請勿將個人的隱私資訊分享到 ChatGPT 上。</p>
+</blockquote>
+<p>未來筆者會出一系列使用 ChatGPT、openAI 的文章，如果你對這個議題感興趣，可以持續關注我的文章！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/chatgpt-for-everyday-life/images/chatgpt-for-everyday-life-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/chatgpt-for-everyday-life/images/chatgpt-for-everyday-life-03.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils</title>
+      <link>https://deanlin.net/blog/202301/vue-test-utils-examples/</link>
+      <pubDate>Thu, 19 Jan 2023 13:58:02 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/vue-test-utils-examples/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>今天這篇文章，筆者會用一個簡易的「登入頁面」，來介紹 @vue/test-utils 這款套件的常用功能（ex：getComponent、setValue、wrapper.vm、trigger button、Vue Router）</description>
+      <content:encoded><![CDATA[<p><a href="https://deanlin.net/blog/202301/vuetify-vite-unit-testing/">上一篇文章中</a>，我們成功在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing。</p>
+<p>今天這篇文章，筆者會用一個簡易的「登入頁面」，來介紹 @vue/test-utils 這款套件的常用功能：</p>
+<ul>
+<li>用 <strong>get</strong> 找出元素（element）</li>
+<li>用 <strong>getComponent</strong> 找出元件（component）</li>
+<li>用 <strong>setValue</strong> 模擬使用者對元件（component）輸入值</li>
+<li>透過 <strong>wrapper.vm</strong> 取得 data 資訊</li>
+<li>取得元素（element）的 <strong>attributes</strong> 屬性</li>
+<li>模擬使用者點擊輸入框（<strong>focus</strong>）輸入文字，然後離開（<strong>blur</strong>）的動作</li>
+<li>當操作錯誤時，能捕捉預期的 <strong>error message</strong></li>
+<li>確認使用者操作系統時，元件的 <strong>attributes</strong> 如預期改變（ex： disabled、type）</li>
+<li>當元素採用 v-show 策略時，用 <strong>isVisible</strong> 進行判斷</li>
+<li>模擬使用者 <strong>trigger button</strong> 事件</li>
+<li>使用 <strong>Vue Router</strong> 時，頁面是否如預期跳轉</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-01.webp" width="1148" height="599" alt="透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+ㄧ、從測試的角度來設計頁面規格
+二、撰寫登入頁程式
+三、從測試案例了解 @vue/test-utils 常用的功能
+  ▶︎ 測試檔案初始設定
+  ▶︎ 用 get 找出元素（element），並確認是有顯示在畫面上的（isVisible）
+  ▶︎ 透過 getComponent 取出元件，並指定「input」來 setValue
+  ▶︎ 在輸入框輸入後，用 wrapper.vm.xxx 確定 data 的有成功寫入
+  ▶︎ 取得元素的 attributes，確認設定符合預期
+  ▶︎ 模擬使用者點擊輸入框（focus）輸入文字，然後離開（blur）的動作
+  ▶︎ 使用者操作系統時，元件的 attributes 如預期改變
+  ▶︎ 模擬使用者 trigger button 事件，觀察頁面是否如預期跳轉（Vue Router）
+</code></pre><blockquote>
+<p><em>讀者可以直接到<a href="https://github.com/dean9703111/-vuetify-vite-ts-test-exmaples">筆者的 Github</a>，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。</em></p>
+</blockquote>
+<h2 id="ㄧ從測試的角度來設計頁面規格">ㄧ、從測試的角度來設計頁面規格<a class="h-anchor" href="#%e3%84%a7%e5%be%9e%e6%b8%ac%e8%a9%a6%e7%9a%84%e8%a7%92%e5%ba%a6%e4%be%86%e8%a8%ad%e8%a8%88%e9%a0%81%e9%9d%a2%e8%a6%8f%e6%a0%bc" aria-label="這個段落的連結"></a></h2>
+<p>在<a href="https://deanlin.net/blog/202301/frontend-testing-roadmap/">第一篇文章</a>有談到 TDD（Test-Driven Development），測試驅動開發。</p>
+<p>假使我們要設計一個登入頁，可以訂製如下規格：</p>
+<h3 id="-基礎元件功能">➤ 基礎元件功能<a class="h-anchor" href="#-%e5%9f%ba%e7%a4%8e%e5%85%83%e4%bb%b6%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>確認 email、password、LoginBtn 元素存在</li>
+<li>確認 Email 輸入框可以填資料</li>
+<li>確認 Password 輸入框可以填資料</li>
+<li>Email、Password 輸入後，data 對應的 formData 有存入相應的值</li>
+<li>預設 Password 輸入框的 type 為 password，不直接顯示</li>
+</ul>
+<h3 id="-測試錯誤的-emailpassword-情境">➤ 測試錯誤的 Email、Password 情境<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e9%8c%af%e8%aa%a4%e7%9a%84-emailpassword-%e6%83%85%e5%a2%83" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>當 Email 沒有填寫時，跳出 Required 的錯誤訊息</li>
+<li>當 Email 格式錯誤時，跳出相關錯誤訊息</li>
+<li>當 Password 沒有填寫時，跳出 Required 的錯誤訊息</li>
+<li>當 Password 字數不滿 8 位時，跳出相關錯誤訊息</li>
+</ul>
+<h3 id="-會讓元件屬性改變的行為">➤ 會讓元件屬性改變的行為<a class="h-anchor" href="#-%e6%9c%83%e8%ae%93%e5%85%83%e4%bb%b6%e5%b1%ac%e6%80%a7%e6%94%b9%e8%ae%8a%e7%9a%84%e8%a1%8c%e7%82%ba" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>當 Email、Password 未填寫時，登入按鈕為 Disabled</li>
+<li>當 Email、Password 格式錯誤時，登入按鈕為 Disabled</li>
+<li>當 Email、Password 格式正確時，登入按鈕可點擊</li>
+<li>點擊顯示 Password 的 icon 時，type 會轉換成 text</li>
+</ul>
+<h3 id="-登入功能">➤ 登入功能<a class="h-anchor" href="#-%e7%99%bb%e5%85%a5%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>輸入錯誤的帳號密碼，會彈出警視窗</li>
+<li>確認 Router 可以順利導向</li>
+</ul>
+<blockquote>
+<p>上面訂的規格，就是我們後續要測試的情境。</p>
+</blockquote>
+<hr>
+<h2 id="二撰寫登入頁程式">二、撰寫登入頁程式<a class="h-anchor" href="#%e4%ba%8c%e6%92%b0%e5%af%ab%e7%99%bb%e5%85%a5%e9%a0%81%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>在 views 資料夾下新增「Login.vue」來做登入頁，幾個重點說一下：</p>
+<ul>
+<li>使用 dataset（ex：data-test=”xxx”）來做標記，因為 id 或 class 通常都是因為其他用途而存在的，要是 coding 中不小心動到 id 或是 class 會造成測試不通過</li>
+<li>在 v-text-field 有設計「rules」來做校驗</li>
+<li>「valid」影響輸入按鈕是否能按，「pwshow」是密碼是否顯示，「loginFail」決定登入失敗的錯誤訊息是否顯示</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#7ee787">template</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#7ee787">div</span> class<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;d-flex align-center flex-column&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#7ee787">v-card</span> width<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;400&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#7ee787">v-container</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#7ee787">v-form</span> v-model<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;valid&#34;</span> lazy-validation&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#7ee787">v-alert</span>
+</span></span><span style="display:flex;"><span>            v-show<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;loginFail&#34;</span>
+</span></span><span style="display:flex;"><span>            type<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;error&#34;</span>
+</span></span><span style="display:flex;"><span>            class<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;mb-4&#34;</span>
+</span></span><span style="display:flex;"><span>            data-test<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;loginAlert&#34;</span>
+</span></span><span style="display:flex;"><span>          &gt;
+</span></span><span style="display:flex;"><span>            You are entering an incorrect email and/or password.
+</span></span><span style="display:flex;"><span>          &lt;/<span style="color:#7ee787">v-alert</span>&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#7ee787">v-text-field</span>
+</span></span><span style="display:flex;"><span>            v-model<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;formData.email&#34;</span>
+</span></span><span style="display:flex;"><span>            :rules<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;emailRules&#34;</span>
+</span></span><span style="display:flex;"><span>            label<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;Email&#34;</span>
+</span></span><span style="display:flex;"><span>            required
+</span></span><span style="display:flex;"><span>            data-test<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;email&#34;</span>
+</span></span><span style="display:flex;"><span>          &gt;&lt;/<span style="color:#7ee787">v-text-field</span>&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#7ee787">v-text-field</span>
+</span></span><span style="display:flex;"><span>            v-model<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;formData.password&#34;</span>
+</span></span><span style="display:flex;"><span>            :append-icon<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;pwShow ? &#39;mdi-eye&#39; : &#39;mdi-eye-off&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>            :rules<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;[rules.required, rules.min]&#34;</span>
+</span></span><span style="display:flex;"><span>            :type<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;pwShow ? &#39;text&#39; : &#39;password&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>            name<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;input-10-1&#34;</span>
+</span></span><span style="display:flex;"><span>            label<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;Password&#34;</span>
+</span></span><span style="display:flex;"><span>            hint<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;At least 8 characters&#34;</span>
+</span></span><span style="display:flex;"><span>            counter
+</span></span><span style="display:flex;"><span>            <span style="color:#f85149">@</span>click:append<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;pwShow = !pwShow&#34;</span>
+</span></span><span style="display:flex;"><span>            data-test<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;password&#34;</span>
+</span></span><span style="display:flex;"><span>          &gt;&lt;/<span style="color:#7ee787">v-text-field</span>&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#7ee787">v-spacer</span>&gt;&lt;/<span style="color:#7ee787">v-spacer</span>&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#7ee787">v-btn</span>
+</span></span><span style="display:flex;"><span>            x-large
+</span></span><span style="display:flex;"><span>            block
+</span></span><span style="display:flex;"><span>            :disabled<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;!valid&#34;</span>
+</span></span><span style="display:flex;"><span>            color<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;success&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f85149">@</span>click<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;login&#34;</span>
+</span></span><span style="display:flex;"><span>            data-test<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;loginBtn&#34;</span>
+</span></span><span style="display:flex;"><span>          &gt;
+</span></span><span style="display:flex;"><span>            Login
+</span></span><span style="display:flex;"><span>          &lt;/<span style="color:#7ee787">v-btn</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#7ee787">v-form</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;/<span style="color:#7ee787">v-container</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#7ee787">v-card</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#7ee787">div</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">template</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#7ee787">script</span> setup&gt;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { ref, reactive } from <span style="color:#a5d6ff">&#34;vue&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> router from <span style="color:#a5d6ff">&#34;@/router&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> valid <span style="color:#ff7b72;font-weight:bold">=</span> ref(<span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> pwShow <span style="color:#ff7b72;font-weight:bold">=</span> ref(<span style="color:#79c0ff">false</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> loginFail <span style="color:#ff7b72;font-weight:bold">=</span> ref(<span style="color:#79c0ff">false</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> formData <span style="color:#ff7b72;font-weight:bold">=</span> reactive({
+</span></span><span style="display:flex;"><span>  email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> emailRules <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>  (v) =&gt; <span style="color:#ff7b72;font-weight:bold">!!</span>v <span style="color:#ff7b72;font-weight:bold">||</span> <span style="color:#a5d6ff">&#34;Required&#34;</span>,
+</span></span><span style="display:flex;"><span>  (v) =&gt; <span style="color:#ff7b72;font-weight:bold">/</span>.<span style="color:#ff7b72;font-weight:bold">+</span><span style="color:#f85149">@</span>.<span style="color:#ff7b72;font-weight:bold">+</span><span style="color:#f85149">\</span>..<span style="color:#ff7b72;font-weight:bold">+</span><span style="color:#f85149">/.test(v) || &#34;E-mail must be valid&#34;,</span>
+</span></span><span style="display:flex;"><span>];
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> rules <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  required<span style="color:#ff7b72;font-weight:bold">:</span> (value) =&gt; <span style="color:#ff7b72;font-weight:bold">!!</span>value <span style="color:#ff7b72;font-weight:bold">||</span> <span style="color:#a5d6ff">&#34;Required&#34;</span>,
+</span></span><span style="display:flex;"><span>  min<span style="color:#ff7b72;font-weight:bold">:</span> (v) =&gt; (v <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> v.length <span style="color:#ff7b72;font-weight:bold">&gt;=</span> <span style="color:#a5d6ff">8</span>) <span style="color:#ff7b72;font-weight:bold">||</span> <span style="color:#a5d6ff">&#34;Min 8 characters&#34;</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> login <span style="color:#ff7b72;font-weight:bold">=</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 這邊只是為了方便理解，實際上應該要呼叫 api
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (
+</span></span><span style="display:flex;"><span>    formData.email <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;baoboa@mail.com&#34;</span> <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>    formData.password <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;baobaocute&#34;</span>
+</span></span><span style="display:flex;"><span>  ) {
+</span></span><span style="display:flex;"><span>    router.push(<span style="color:#a5d6ff">&#34;/home&#34;</span>);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>    loginFail.value <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">true</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">script</span>&gt;
+</span></span></code></pre></div><p>完成後在終端機輸入 <code>yarn dev</code>，然後進入網址：<a href="http://localhost:3000/">http://localhost:3000</a></p>
+<p><img src="https://deanlin.net/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-02.webp" width="1400" height="586" alt="二、撰寫登入頁程式（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>我這邊有調整「src/router/index.ts」，將 Login 的 path 設定為「/」，讀者可以<a href="https://github.com/dean9703111/vuetify-vite-ts-test-exmaples/blob/master/src/router/index.ts">參考 Github</a>。</p>
+</blockquote>
+<hr>
+<h2 id="三從測試案例了解-vuetest-utils-常用的功能">三、從測試案例了解 @vue/test-utils 常用的功能<a class="h-anchor" href="#%e4%b8%89%e5%be%9e%e6%b8%ac%e8%a9%a6%e6%a1%88%e4%be%8b%e4%ba%86%e8%a7%a3-vuetest-utils-%e5%b8%b8%e7%94%a8%e7%9a%84%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>這邊會取幾個測試案例來做解說，完成的範例請參考<a href="https://github.com/dean9703111/-vuetify-vite-ts-test-exmaples">筆者的 Github</a>（順手點個 Star 會讓筆者會開心一整天）。</p>
+<h3 id="-測試檔案初始設定">▶︎ 測試檔案初始設定<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e6%aa%94%e6%a1%88%e5%88%9d%e5%a7%8b%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<p>我們在 views 資料夾下新增「test」資料夾，並新增「Login.spec.ts」的測試檔案：</p>
+<ul>
+<li>透過 import 引入我們會使用到的方法</li>
+<li>這邊透過 beforeEach 來初始化我們要測試 Login.vue</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { describe, it, expect, beforeEach, vi } from <span style="color:#a5d6ff">&#34;vitest&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { mount, VueWrapper } from <span style="color:#a5d6ff">&#34;@vue/test-utils&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> Login from <span style="color:#a5d6ff">&#34;../Login.vue&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> vuetify from <span style="color:#a5d6ff">&#34;@/plugins/vuetify&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> router from <span style="color:#a5d6ff">&#34;@/router&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> wrapper<span style="color:#ff7b72;font-weight:bold">:</span> VueWrapper<span style="color:#ff7b72;font-weight:bold">&lt;</span>any<span style="color:#ff7b72;font-weight:bold">&gt;</span>;
+</span></span><span style="display:flex;"><span>beforeEach(<span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  wrapper <span style="color:#ff7b72;font-weight:bold">=</span> mount(Login, {
+</span></span><span style="display:flex;"><span>    global<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>      plugins<span style="color:#ff7b72;font-weight:bold">:</span> [vuetify, router],
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-用-get-找出元素element並確認是有顯示在畫面上的isvisible">▶︎ 用 get 找出元素（element），並確認是有顯示在畫面上的（isVisible）<a class="h-anchor" href="#-%e7%94%a8-get-%e6%89%be%e5%87%ba%e5%85%83%e7%b4%a0element%e4%b8%a6%e7%a2%ba%e8%aa%8d%e6%98%af%e6%9c%89%e9%a1%af%e7%a4%ba%e5%9c%a8%e7%95%ab%e9%9d%a2%e4%b8%8a%e7%9a%84isvisible" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>find 也可以達到一樣的效果，但沒找到時並不會回傳錯誤訊息。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;確認 Email、Password、LoginBtn 元素存在&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  expect(wrapper.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>).isVisible()).toBe(<span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>  expect(wrapper.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#39;[data-test=&#34;password&#34;]&#39;</span>).isVisible()).toBe(<span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>  expect(wrapper.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#39;[data-test=&#34;loginBtn&#34;]&#39;</span>).isVisible()).toBe(<span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-透過-getcomponent-取出元件並指定input來-setvalue">▶︎ 透過 getComponent 取出元件，並指定「input」來 setValue<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-getcomponent-%e5%8f%96%e5%87%ba%e5%85%83%e4%bb%b6%e4%b8%a6%e6%8c%87%e5%ae%9ainput%e4%be%86-setvalue" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>因為 Vuetify 的 v-text-field 是 div 層，所以需要再透過 get 往下找到 input 這個元素。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;確認 Email 輸入框可以填資料&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> emailInput <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>).<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> emailInput.setValue(<span style="color:#a5d6ff">&#34;test@mail.com&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(emailInput.element.value).toBe(<span style="color:#a5d6ff">&#34;test@mail.com&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-在輸入框輸入後用-wrappervmxxx-確定-data-的有成功寫入">▶︎ 在輸入框輸入後，用 wrapper.vm.xxx 確定 data 的有成功寫入<a class="h-anchor" href="#-%e5%9c%a8%e8%bc%b8%e5%85%a5%e6%a1%86%e8%bc%b8%e5%85%a5%e5%be%8c%e7%94%a8-wrappervmxxx-%e7%a2%ba%e5%ae%9a-data-%e7%9a%84%e6%9c%89%e6%88%90%e5%8a%9f%e5%af%ab%e5%85%a5" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;Email、Password 輸入後，data 對應的 formData 有寫入相應的值&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> formData <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>    email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;test@mail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;qazwsx1234&#34;</span>,
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> emailInput <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>).<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> emailInput.setValue(formData.email);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> passwordInput <span style="color:#ff7b72;font-weight:bold">=</span> wrapper
+</span></span><span style="display:flex;"><span>    .getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;password&#34;]&#39;</span>)
+</span></span><span style="display:flex;"><span>    .<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> passwordInput.setValue(formData.password);
+</span></span><span style="display:flex;"><span>  expect(wrapper.vm.formData).toEqual(formData);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-取得元素的-attributes確認設定符合預期">▶︎ 取得元素的 attributes，確認設定符合預期<a class="h-anchor" href="#-%e5%8f%96%e5%be%97%e5%85%83%e7%b4%a0%e7%9a%84-attributes%e7%a2%ba%e8%aa%8d%e8%a8%ad%e5%ae%9a%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;預設 Password 輸入框的 type 為 password，不直接顯示&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> password <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;password&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  expect(password.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).attributes().<span style="color:#ff7b72">type</span>).toBe(<span style="color:#a5d6ff">&#34;password&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-模擬使用者點擊輸入框focus輸入文字然後離開blur的動作並確認操作錯誤時能捕捉預期的-error-message">▶︎ 模擬使用者點擊輸入框（focus）輸入文字，然後離開（blur）的動作；並確認操作錯誤時，能捕捉預期的 error message<a class="h-anchor" href="#-%e6%a8%a1%e6%93%ac%e4%bd%bf%e7%94%a8%e8%80%85%e9%bb%9e%e6%93%8a%e8%bc%b8%e5%85%a5%e6%a1%86focus%e8%bc%b8%e5%85%a5%e6%96%87%e5%ad%97%e7%84%b6%e5%be%8c%e9%9b%a2%e9%96%8bblur%e7%9a%84%e5%8b%95%e4%bd%9c%e4%b8%a6%e7%a2%ba%e8%aa%8d%e6%93%8d%e4%bd%9c%e9%8c%af%e8%aa%a4%e6%99%82%e8%83%bd%e6%8d%95%e6%8d%89%e9%a0%90%e6%9c%9f%e7%9a%84-error-message" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-03.webp" width="1226" height="766" alt="︎ 模擬使用者點擊輸入框（focus）輸入文字，然後離開（blur）的動作；並確認操作錯誤時，能捕捉預期的 error message（圖 3）" loading="lazy" decoding="async"></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;當 Email 沒有填寫時，跳出 Required 的錯誤訊息&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> email <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;focus&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(<span style="color:#a5d6ff">&#34;123&#34;</span>); <span style="color:#8b949e;font-style:italic">//先隨便塞值
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(<span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;blur&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> emailErrorMsg <span style="color:#ff7b72;font-weight:bold">=</span> email.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;.v-messages__message&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(emailErrorMsg.text()).toEqual(<span style="color:#a5d6ff">&#34;Required&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-使用者操作系統時元件的-attributes-如預期改變exemailpassword-填寫正確登入按鈕-disabled-移除">▶︎ 使用者操作系統時，元件的 attributes 如預期改變（ex：Email、Password 填寫正確，登入按鈕 Disabled 移除）<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8%e8%80%85%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%b5%b1%e6%99%82%e5%85%83%e4%bb%b6%e7%9a%84-attributes-%e5%a6%82%e9%a0%90%e6%9c%9f%e6%94%b9%e8%ae%8aexemailpassword-%e5%a1%ab%e5%af%ab%e6%ad%a3%e7%a2%ba%e7%99%bb%e5%85%a5%e6%8c%89%e9%88%95-disabled-%e7%a7%bb%e9%99%a4" aria-label="這個段落的連結"></a></h3>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-04.webp" width="626" height="348" aria-label="︎ 使用者操作系統時，元件的 attributes 如預期改變（ex：Email、Password 填寫正確，登入按鈕 Disabled 移除）（圖 4）" data-gifv>
+    <source src="https://deanlin.net/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-04.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;當 Email、Password 格式正確時，登入按鈕可點擊&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> loginBtn <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#39;[data-test=&#34;loginBtn&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  expect(loginBtn.attributes().disabled).toBeDefined();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> formData <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>    email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baoboa@mail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baobaocute&#34;</span>,
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> email <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;focus&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(formData.email);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;blur&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> password <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;password&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.trigger(<span style="color:#a5d6ff">&#34;focus&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(formData.password);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.trigger(<span style="color:#a5d6ff">&#34;blur&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  expect(loginBtn.attributes().disabled).toBeUndefined();
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-模擬使用者-trigger-button-事件觀察頁面是否如預期跳轉vue-router">▶︎ 模擬使用者 trigger button 事件，觀察頁面是否如預期跳轉（Vue Router）<a class="h-anchor" href="#-%e6%a8%a1%e6%93%ac%e4%bd%bf%e7%94%a8%e8%80%85-trigger-button-%e4%ba%8b%e4%bb%b6%e8%a7%80%e5%af%9f%e9%a0%81%e9%9d%a2%e6%98%af%e5%90%a6%e5%a6%82%e9%a0%90%e6%9c%9f%e8%b7%b3%e8%bd%89vue-router" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;確認 Router 可以順利導向&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> formData <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>    email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baoboa@mail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baobaocute&#34;</span>,
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> email <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;focus&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(formData.email);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;blur&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> password <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;password&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.trigger(<span style="color:#a5d6ff">&#34;focus&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(formData.password);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.trigger(<span style="color:#a5d6ff">&#34;blur&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 使用真實的 Router 測試時，若想要捕捉 Push 的行為，須透過 vi.spyOn 來模擬 router.push
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> spyPush <span style="color:#ff7b72;font-weight:bold">=</span> vi.spyOn(router, <span style="color:#a5d6ff">&#34;push&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> wrapper.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#39;[data-test=&#34;loginBtn&#34;]&#39;</span>).trigger(<span style="color:#a5d6ff">&#34;click&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(spyPush).toHaveBeenCalledTimes(<span style="color:#a5d6ff">1</span>);
+</span></span><span style="display:flex;"><span>  expect(spyPush).toHaveBeenCalledWith(<span style="color:#a5d6ff">&#34;/home&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>在文章的最後，筆者也放一下所有測試的結果圖（可透過套件 or 指令 <code>yarn test</code> 執行）：</p>
+<p><img src="https://deanlin.net/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-05.webp" width="1400" height="1192" alt="︎ 模擬使用者 trigger button 事件，觀察頁面是否如預期跳轉（Vue Router）（圖 5）" loading="lazy" decoding="async"></p>
+<p>今天的文章就分享到這邊，我們下次再見～</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/2680ca82395e" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">單元測試系列文</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-card-01_hu_ef2384f40f02a8f4.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>手把手帶你實作 Microsoft Power Automate 超簡單範例</title>
+      <link>https://deanlin.net/blog/202010/power-automate-simple-example/</link>
+      <pubDate>Tue, 13 Oct 2020 11:50:58 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/power-automate-simple-example/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>把這篇文章獻給看完微軟教學依舊霧颯颯的朋友們，文章中會用一個超簡單的範例讓剛接觸的朋友們理解這這軟體是在做什麼的，以及如何操作</description>
+      <content:encoded><![CDATA[<p>把這篇文章獻給看完微軟教學依舊霧颯颯的朋友們，文章中會用一個超簡單的範例讓剛接觸的朋友們理解這這軟體如何操作</p>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-01.webp" width="900" height="450" alt="手把手帶你實作 Microsoft Power Automate 超簡單範例（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="-今日目標">🤔 今日目標<a class="h-anchor" href="#-%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>建立一個簡易的請假流程（填寫請假單→主管簽核→依簽核結果執行不同流程）</li>
+<li>將 Forms + Teams + Power Automate 工具串連起來</li>
+</ul>
+<h2 id="-開始實作流程">💡 開始實作流程<a class="h-anchor" href="#-%e9%96%8b%e5%a7%8b%e5%af%a6%e4%bd%9c%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<h2 id="新增-form-表單">新增 Form 表單<a class="h-anchor" href="#%e6%96%b0%e5%a2%9e-form-%e8%a1%a8%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<h3 id="setp-1--在-forms下新增表單">SETP 1 : 在 Forms下新增表單<a class="h-anchor" href="#setp-1--%e5%9c%a8-forms%e4%b8%8b%e6%96%b0%e5%a2%9e%e8%a1%a8%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-02.webp" width="1154" height="657" alt="SETP 1 : 在 Forms下新增表單（圖 2）" loading="lazy" decoding="async"></p>
+<h3 id="setp-2--填上標題與描述">SETP 2 : 填上標題與描述<a class="h-anchor" href="#setp-2--%e5%a1%ab%e4%b8%8a%e6%a8%99%e9%a1%8c%e8%88%87%e6%8f%8f%e8%bf%b0" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-03.webp" width="1154" height="412" alt="SETP 2 : 填上標題與描述（圖 3）" loading="lazy" decoding="async"></p>
+<h3 id="setp-3-新增問題">SETP 3: 新增問題<a class="h-anchor" href="#setp-3-%e6%96%b0%e5%a2%9e%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>對方填寫問題的資訊都能成為之後訊息組合的一部分</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-04.webp" width="1154" height="868" alt="目前這三個問題我都設定為必答" loading="lazy" decoding="async">
+  <figcaption>目前這三個問題我都設定為必答</figcaption>
+</figure>
+
+<hr>
+<h2 id="在-teams-新增一個請假專用頻道">在 Teams 新增一個請假專用頻道<a class="h-anchor" href="#%e5%9c%a8-teams-%e6%96%b0%e5%a2%9e%e4%b8%80%e5%80%8b%e8%ab%8b%e5%81%87%e5%b0%88%e7%94%a8%e9%a0%bb%e9%81%93" aria-label="這個段落的連結"></a></h2>
+<h3 id="step-1--新增頻道">STEP 1 : 新增頻道<a class="h-anchor" href="#step-1--%e6%96%b0%e5%a2%9e%e9%a0%bb%e9%81%93" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-05.webp" width="1223" height="550" alt="建議你建立全新的團隊來做這個實驗" loading="lazy" decoding="async">
+  <figcaption>建議你建立全新的團隊來做這個實驗</figcaption>
+</figure>
+
+<h3 id="step-2--填寫頻道資訊">STEP 2 : 填寫頻道資訊<a class="h-anchor" href="#step-2--%e5%a1%ab%e5%af%ab%e9%a0%bb%e9%81%93%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-06.webp" width="1223" height="737" alt="隱私權這樣設定是因為請假這件事團隊成員都知道會比較好溝通協調" loading="lazy" decoding="async">
+  <figcaption>隱私權這樣設定是因為請假這件事團隊成員都知道會比較好溝通協調</figcaption>
+</figure>
+
+<hr>
+<h2 id="在-power-automate-新增流程">在 Power automate 新增流程<a class="h-anchor" href="#%e5%9c%a8-power-automate-%e6%96%b0%e5%a2%9e%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<h3 id="step-1--建立自動化流程">STEP 1 : 建立自動化流程<a class="h-anchor" href="#step-1--%e5%bb%ba%e7%ab%8b%e8%87%aa%e5%8b%95%e5%8c%96%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-07.webp" width="1154" height="549" alt="STEP 1 : 建立自動化流程（圖 7）" loading="lazy" decoding="async"></p>
+<h3 id="step-2--選擇自動流程要觸發的程序">STEP 2 : 選擇自動流程要觸發的程序<a class="h-anchor" href="#step-2--%e9%81%b8%e6%93%87%e8%87%aa%e5%8b%95%e6%b5%81%e7%a8%8b%e8%a6%81%e8%a7%b8%e7%99%bc%e7%9a%84%e7%a8%8b%e5%ba%8f" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-08.webp" width="1154" height="714" alt="我們這個流程是要在 Form 表單提交時觸發" loading="lazy" decoding="async">
+  <figcaption>我們這個流程是要在 Form 表單提交時觸發</figcaption>
+</figure>
+
+<h3 id="step-3--在表單識別碼的地方選擇剛建立的-form">STEP 3 : 在表單識別碼的地方選擇剛建立的 Form<a class="h-anchor" href="#step-3--%e5%9c%a8%e8%a1%a8%e5%96%ae%e8%ad%98%e5%88%a5%e7%a2%bc%e7%9a%84%e5%9c%b0%e6%96%b9%e9%81%b8%e6%93%87%e5%89%9b%e5%bb%ba%e7%ab%8b%e7%9a%84-form" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-09.webp" width="956" height="287" alt="STEP 3 : 在表單識別碼的地方選擇剛建立的 Form（圖 9）" loading="lazy" decoding="async"></p>
+<h3 id="step-4--新步驟取得-form-表單回覆的內容">STEP 4 : 新步驟，取得 Form 表單回覆的內容<a class="h-anchor" href="#step-4--%e6%96%b0%e6%ad%a5%e9%a9%9f%e5%8f%96%e5%be%97-form-%e8%a1%a8%e5%96%ae%e5%9b%9e%e8%a6%86%e7%9a%84%e5%85%a7%e5%ae%b9" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-10.webp" width="940" height="762" alt="你可以用搜尋功能幫你快速找到這個動作" loading="lazy" decoding="async">
+  <figcaption>你可以用搜尋功能幫你快速找到這個<strong>動作</strong></figcaption>
+</figure>
+
+<h3 id="step-4--選擇你要接收哪個表單的資訊">STEP 4 : 選擇你要接收哪個表單的資訊<a class="h-anchor" href="#step-4--%e9%81%b8%e6%93%87%e4%bd%a0%e8%a6%81%e6%8e%a5%e6%94%b6%e5%93%aa%e5%80%8b%e8%a1%a8%e5%96%ae%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-11.webp" width="940" height="520" alt="回應識別碼選擇預設的即可" loading="lazy" decoding="async">
+  <figcaption>回應識別碼選擇預設的即可</figcaption>
+</figure>
+
+<h3 id="step-5--新步驟設定簽核機制">STEP 5 : 新步驟，設定簽核機制<a class="h-anchor" href="#step-5--%e6%96%b0%e6%ad%a5%e9%a9%9f%e8%a8%ad%e5%ae%9a%e7%b0%bd%e6%a0%b8%e6%a9%9f%e5%88%b6" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-12.webp" width="940" height="653" alt="STEP 5 : 新步驟，設定簽核機制（圖 12）" loading="lazy" decoding="async"></p>
+<h3 id="step-6-填寫主管簽核時會看到的內容">STEP 6: 填寫主管簽核時會看到的內容<a class="h-anchor" href="#step-6-%e5%a1%ab%e5%af%ab%e4%b8%bb%e7%ae%a1%e7%b0%bd%e6%a0%b8%e6%99%82%e6%9c%83%e7%9c%8b%e5%88%b0%e7%9a%84%e5%85%a7%e5%ae%b9" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-13.webp" width="940" height="689" alt="STEP 6: 填寫主管簽核時會看到的內容（圖 13）" loading="lazy" decoding="async"></p>
+<h3 id="step-6--新步驟建立簽核觸發條件">STEP 6 : 新步驟，建立簽核觸發條件<a class="h-anchor" href="#step-6--%e6%96%b0%e6%ad%a5%e9%a9%9f%e5%bb%ba%e7%ab%8b%e7%b0%bd%e6%a0%b8%e8%a7%b8%e7%99%bc%e6%a2%9d%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-14.webp" width="940" height="528" alt="STEP 6 : 新步驟，建立簽核觸發條件（圖 14）" loading="lazy" decoding="async"></p>
+<h3 id="step-6--用簽核結果來處理接下來流程">STEP 6 : 用簽核結果來處理接下來流程<a class="h-anchor" href="#step-6--%e7%94%a8%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e4%be%86%e8%99%95%e7%90%86%e6%8e%a5%e4%b8%8b%e4%be%86%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-15.webp" width="710" height="295" alt="STEP 6 : 用簽核結果來處理接下來流程（圖 15）" loading="lazy" decoding="async"></p>
+<h3 id="step-6--如果簽核結果為是就將訊息-post-到-teams-群組">STEP 6 : 如果簽核結果為是就將訊息 post 到 teams 群組<a class="h-anchor" href="#step-6--%e5%a6%82%e6%9e%9c%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e7%82%ba%e6%98%af%e5%b0%b1%e5%b0%87%e8%a8%8a%e6%81%af-post-%e5%88%b0-teams-%e7%be%a4%e7%b5%84" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-16.webp" width="637" height="518" alt="STEP 6 : 如果簽核結果為是就將訊息 post 到 teams 群組（圖 16）" loading="lazy" decoding="async"></p>
+<h3 id="step-7--填寫要發布的團隊及頻道撰寫訊息">STEP 7 : 填寫要發布的團隊及頻道，撰寫訊息<a class="h-anchor" href="#step-7--%e5%a1%ab%e5%af%ab%e8%a6%81%e7%99%bc%e5%b8%83%e7%9a%84%e5%9c%98%e9%9a%8a%e5%8f%8a%e9%a0%bb%e9%81%93%e6%92%b0%e5%af%ab%e8%a8%8a%e6%81%af" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-17.webp" width="634" height="407" alt="STEP 7 : 填寫要發布的團隊及頻道，撰寫訊息（圖 17）" loading="lazy" decoding="async"></p>
+<h3 id="step-8--如果簽核結果為否就回-email-說明">STEP 8 : 如果簽核結果為否，就回 email 說明<a class="h-anchor" href="#step-8--%e5%a6%82%e6%9e%9c%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e7%82%ba%e5%90%a6%e5%b0%b1%e5%9b%9e-email-%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-18.webp" width="632" height="526" alt="STEP 8 : 如果簽核結果為否，就回 email 說明（圖 18）" loading="lazy" decoding="async"></p>
+<h3 id="step-9--填寫-email-內容">STEP 9 : 填寫 email 內容<a class="h-anchor" href="#step-9--%e5%a1%ab%e5%af%ab-email-%e5%85%a7%e5%ae%b9" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-19.webp" width="632" height="452" alt="STEP 9 : 填寫 email 內容（圖 19）" loading="lazy" decoding="async"></p>
+<h3 id="step-10--將流程儲存">STEP 10 : 將流程儲存<a class="h-anchor" href="#step-10--%e5%b0%87%e6%b5%81%e7%a8%8b%e5%84%b2%e5%ad%98" aria-label="這個段落的連結"></a></h3>
+<h2 id="測試流程是否符合預期動作">測試流程是否符合預期動作<a class="h-anchor" href="#%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f%e5%8b%95%e4%bd%9c" aria-label="這個段落的連結"></a></h2>
+<h3 id="setp-1--開始測試流程">SETP 1 : 開始測試流程<a class="h-anchor" href="#setp-1--%e9%96%8b%e5%a7%8b%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-20.webp" width="1090" height="249" alt="SETP 1 : 開始測試流程（圖 20）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-21.webp" width="1090" height="249" alt="SETP 1 : 開始測試流程（圖 21）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-22.webp" width="1090" height="397" alt="千萬不要在這個畫面傻等，他會轉圈圈直到你觸發第一個動作" loading="lazy" decoding="async">
+  <figcaption><strong>千萬不要在這個畫面傻等</strong>，他會轉圈圈直到你觸發第一個動作</figcaption>
+</figure>
+
+<h3 id="setp-2--填寫表單確認流程觸發">SETP 2 : 填寫表單確認流程觸發<a class="h-anchor" href="#setp-2--%e5%a1%ab%e5%af%ab%e8%a1%a8%e5%96%ae%e7%a2%ba%e8%aa%8d%e6%b5%81%e7%a8%8b%e8%a7%b8%e7%99%bc" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-23.webp" width="1288" height="634" alt="先在剛建立的 Form 裡面取得表單連結，你也可以寄這個連結給特定人士" loading="lazy" decoding="async">
+  <figcaption>先在剛建立的 Form 裡面取得表單連結，你也可以寄這個連結給特定人士</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-24.webp" width="1288" height="865" alt="對方必須也有 office365 才能填寫" loading="lazy" decoding="async">
+  <figcaption>對方必須也有 office365 才能填寫</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-25.webp" width="1088" height="441" alt="提交表單後你就會看到流程已被觸發，但是信件通常要等一段時間才會收到" loading="lazy" decoding="async">
+  <figcaption>提交表單後你就會看到流程已被觸發，但是<strong>信件通常要等一段時間</strong>才會收到</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-26.webp" width="1400" height="1377" alt="確認我們標題與描述與設計一致" loading="lazy" decoding="async">
+  <figcaption>確認我們標題與描述與設計一致</figcaption>
+</figure>
+
+<h3 id="setp-3-拒絕請假">SETP 3: 拒絕請假<a class="h-anchor" href="#setp-3-%e6%8b%92%e7%b5%95%e8%ab%8b%e5%81%87" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-27.webp" width="1400" height="994" alt="按下 Reject 就會跳到網頁讓你填寫拒絕理由" loading="lazy" decoding="async">
+  <figcaption>按下 Reject 就會跳到網頁讓你填寫拒絕理由</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-28.webp" width="1087" height="431" alt="在上面的網頁按下確認後這個流程就執行完畢嚕～" loading="lazy" decoding="async">
+  <figcaption>在上面的網頁按下確認後這個流程就執行完畢嚕～</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-29.webp" width="1286" height="444" alt="同時也會收到請假被駁回的信件" loading="lazy" decoding="async">
+  <figcaption>同時也會收到請假被駁回的信件</figcaption>
+</figure>
+
+<h3 id="setp-4-接受請假">SETP 4: 接受請假<a class="h-anchor" href="#setp-4-%e6%8e%a5%e5%8f%97%e8%ab%8b%e5%81%87" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-30.webp" width="1400" height="1040" alt="按下 Approve 一樣會跳到網頁讓你填寫註解" loading="lazy" decoding="async">
+  <figcaption>按下 Approve 一樣會跳到網頁讓你填寫註解</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-31.webp" width="874" height="452" alt="同時在 Teams 團隊的頻道也會發布訊息通知大家" loading="lazy" decoding="async">
+  <figcaption>同時在 Teams 團隊的頻道也會發布訊息通知大家</figcaption>
+</figure>
+
+<hr>
+<blockquote class="pullquote"><p>雖然是一個超簡單範例，但實際動手操作起來也是要花一段時間才能完成需求的，希望今天的教學能給需要的人幫助喔～</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

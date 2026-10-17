@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Google Search｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/google-search/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Tue, 14 Jan 2025 22:45:48 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/google-search/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[n8n 教學]在 Google Sheet 自動建立 SEO 關鍵字矩陣</title>
+      <link>https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/</link>
+      <pubDate>Tue, 14 Jan 2025 22:45:48 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>「如何找到大量關鍵字」的其中一個方法，就是用 Google Search 取得「相關搜尋字詞」，然後將它整理成一個關鍵字矩陣。這篇文章用 n8n 把這個工作流整理成一個自動化流程。使用者只要填上自己的 Google Sheet URL，就能一鍵生成對應的 SEO 關鍵字矩陣！</description>
+      <content:encoded><![CDATA[<p>最近上邱韜誠的 SEO 課程時，「如何找到大量關鍵字」的其中一個方法，就是用 Google Search 取得「相關搜尋字詞」，然後將它整理成一個關鍵字矩陣。</p>
+<p>但如果要查大量的關鍵字，就會浪費很多時間在複製貼上的重複任務上。</p>
+<p>剛好最近在研究 n8n，就把這個工作流整理成一個自動化流程。使用者只要填上自己的 Google Sheet URL，就能一鍵生成對應的 SEO 關鍵字矩陣了！</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-01.webp" width="1400" height="789" alt="\[n8n 教學\]在 Google Sheet 自動建立 SEO 關鍵字矩陣（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>n8n 有<a href="https://n8n.io/">雲端</a>與本地（local）的開源版本，基於資訊安全與使用限制，筆者強烈建立在本地（local）建立環境，<a href="https://deanlin.net/blog/202501/n8n-docker-local-setup/">詳細的操作步驟可以參考這篇文章</a>。</p>
+</blockquote>
+<hr>
+<h2 id="-自動建立-seo-關鍵字矩陣工作流workflow簡介">自動建立 SEO 關鍵字矩陣工作流（Workflow）簡介<a class="h-anchor" href="#-%e8%87%aa%e5%8b%95%e5%bb%ba%e7%ab%8b-seo-%e9%97%9c%e9%8d%b5%e5%ad%97%e7%9f%a9%e9%99%a3%e5%b7%a5%e4%bd%9c%e6%b5%81workflow%e7%b0%a1%e4%bb%8b" aria-label="這個段落的連結"></a></h2>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-02.webp" width="1400" height="488" alt="自動建立 SEO 關鍵字矩陣工作流（Workflow）簡介（圖 2）" loading="lazy" decoding="async"></p>
+<p>上圖是完整的工作流（Workflow），下面說明一下執行步驟 &amp; 設計邏輯:</p>
+<p><strong>STEP 1</strong>: 填寫要讀取的 Google Sheet URL 與工作表名稱（set_google_sheet_info）。</p>
+<p><strong>STEP 2</strong>: 讀取 Google Sheet 裡面的要查詢的關鍵字（get_keywords）。</p>
+<p><strong>STEP 3</strong>: 第一層迴圈（loop_keywords_1st）會根據關鍵字來建立 Sheet（create_sheet）與查詢關鍵字（query_keywords_1st），並將資料格式化為可以使用的型態（format_query_result）給下一步驟。</p>
+<p><strong>STEP 4</strong>: 第二層迴圈（loop_keywords_2nd）會根據上一層給予的關聯關鍵字，再做第二次的搜尋（query_keywords_2nd），同樣也要將資料格式化爲可以使用的型態（format_query_result2）。</p>
+<p><strong>STEP 5</strong>: 得到 SEO 關鍵字後，要先把他們分成指定的群組（group_keys），並分割成適合寫入 Google Sheet 的格式（split_to_items）。</p>
+<p><strong>STEP 6</strong>: 最後透過迴圈（loop_append_row_data）過濾掉無法寫入的值（remove_undefined_key），先等待 2.5 秒（wait_2.5s），再逐行寫入 Google Sheet（append_row_data），避免太頻繁呼叫 API。</p>
+<p><strong>STEP 7</strong>: 完成這一切後，判斷是否為最後一次執行（skip_last_runtime），如果是最後一次就終止迴圈。</p>
+<p><strong>備註1</strong>: reset_with_runtimes、reset_with_even_runtimes 這兩個節點（Node），是為了在 Done 的情境下 Reset Loop Over Items 重複執行時累計的資料。</p>
+<p><strong>備註2</strong>: check_keyword_2nd_has_value、check_key_length 是為了處理空陣列的情境。</p>
+<hr>
+<h2 id="-如何使用這個-n8n-的工作流workflow">如何使用這個 n8n 的工作流（Workflow）<a class="h-anchor" href="#-%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8%e9%80%99%e5%80%8b-n8n-%e7%9a%84%e5%b7%a5%e4%bd%9c%e6%b5%81workflow" aria-label="這個段落的連結"></a></h2>
+<p>如果你只是想要使用這個 Workflow，可以直接複製筆者放在 <a href="https://github.com/dean9703111/n8n-google-sheet-exmaple/blob/master/workflow/google_sheet_keyword.json">GitHub 上的範本</a>，貼到 n8n 的 Workflow（不要懷疑，貼上就對了），並根據下面的步驟完成設定就可以執行了。</p>
+<p><strong>STEP 1</strong>: 建立一個 Google Sheet，在「工作表1」的第一欄填寫關鍵字（keyword），範例如下</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-03.webp" width="1123" height="585" alt="如何使用這個 n8n 的工作流（Workflow）（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>: 打開 n8n「set_google_sheet_info」的 Node，在「google_sheet_url」欄位上貼上自己的 Google Sheet URL</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-04.webp" width="1400" height="488" alt="如何使用這個 n8n 的工作流（Workflow）（圖 4）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-05.webp" width="1293" height="967" alt="如何使用這個 n8n 的工作流（Workflow）（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>: 打開「get_keywords、create_sheet、append_row_data」的 Node，選擇 Google Sheets account 的 Credential（如果過去沒有建立過，可以參考後面文章的教學）。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-06.webp" width="1400" height="488" alt="如何使用這個 n8n 的工作流（Workflow）（圖 6）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-07.webp" width="1293" height="967" alt="如何使用這個 n8n 的工作流（Workflow）（圖 7）" loading="lazy" decoding="async"></p>
+<p>完成上面的步驟後，點擊「Test workflow」就可以自動生成 Google SEO 關鍵字矩陣啦！從下圖可以看到</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-08.webp" width="1293" height="967" alt="如何使用這個 n8n 的工作流（Workflow）（圖 8）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-09.webp" width="1400" height="732" alt="如何使用這個 n8n 的工作流（Workflow）（圖 9）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-建立-google-sheets-api-的-credential">建立 Google Sheets API 的 Credential<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b-google-sheets-api-%e7%9a%84-credential" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>: 打開任一 Google Sheet Node，點擊「Create New Credential」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-10.webp" width="1292" height="960" alt="建立 Google Sheets API 的 Credential（圖 10）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>: 建立一個 <a href="https://cloud.google.com/">Google Cloud</a> 帳號，有 Gmail 就能直接使用，下面是登入後的畫面。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-11.webp" width="1400" height="705" alt="建立 Google Sheets API 的 Credential（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>: 進入「<a href="https://console.cloud.google.com/">控制台（Google Cloud Console）</a>」，選擇「New Project」並在 Project name 輸入「n8n test」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-12.webp" width="1400" height="626" alt="建立 Google Sheets API 的 Credential（圖 12）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 4</strong>: 建立完成後會出現下面的頁面，因為我們要開啟 Google Sheet 的權限，所以點擊「API &amp; Services」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-13.webp" width="1400" height="663" alt="建立 Google Sheets API 的 Credential（圖 13）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 5</strong>: 然後點擊「+ ENABLE APIS AND SERVICES」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-14.webp" width="1400" height="494" alt="建立 Google Sheets API 的 Credential（圖 14）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 6</strong>: 在搜尋框輸入「google sheet api」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-15.webp" width="1292" height="756" alt="建立 Google Sheets API 的 Credential（圖 15）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 7</strong>: 點擊「ENABLE」來開啟權限。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-16.webp" width="1292" height="601" alt="建立 Google Sheets API 的 Credential（圖 16）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 8</strong>: 開啟好權限後，點擊左側的「OAuth consent screen」建立 APP。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-17.webp" width="1293" height="960" alt="建立 Google Sheets API 的 Credential（圖 17）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 9</strong>: 資訊填寫完成後，要點擊「PUBLISH APP」才能使用（你也可以加入 User，用內測的方式使用）。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-18.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 18）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 10</strong>: 點擊上方的「+ CREATE CREDENTAILS」，選擇「OAuth Client ID」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-19.webp" width="1293" height="601" alt="建立 Google Sheets API 的 Credential（圖 19）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 11</strong>: Application type 選擇「Web application」，Name 自行決定。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-20.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 20）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 12</strong>: 在「Authorized redirect URIs」填入 n8n 的網址，如果你是在 local 操作就填寫 <code><a href="http://localhost:5678/rest/oauth2-credential/callback">http://localhost:5678/rest/oauth2-credential/callback</a></code></p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-21.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 21）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 13</strong>: 按下 Create 後就會取得最關鍵的「Client ID、Client secret」，把他們複製下來。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-22.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 22）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 14</strong>: 畫面切回到 n8n 的 Google Sheet Node，填上「Client ID、Client secret」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-23.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 23）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 15</strong>: 點擊「Sign in with Google」後，勇敢的點擊「繼續」與「前往」。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-24.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 24）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 16</strong>: 選擇允許 n8n 可以使用的範圍（這邊看個人需求，勾全選比較不會遇到權限的問題；但提醒大家這組 Secret 權限很大，千萬別外洩了）。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-25.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 25）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 17</strong>: 看到畫面出現「Got Connected」就代表你大功告成啦！！！</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-26.webp" width="1293" height="967" alt="建立 Google Sheets API 的 Credential（圖 26）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>如果看完這篇文章，代表你是一個充滿意志力的人，給自己拍拍手的同時，也可以幫筆者的文章拍拍手喔（這系列真的寫到快崩潰 QQ）。</p>
+</blockquote>
+<p><strong>延伸閱讀</strong>:</p>
+<ul>
+<li><a href="https://deanlin.net/blog/202501/n8n-docker-local-setup/">[n8n 教學]用 Docker 在 Local 建立免費 &amp; 無限次數使用的自動化工具</a></li>
+<li><a href="https://deanlin.net/blog/202501/n8n-core-nodes/">[n8n 教學]掌握重要節點 (Node) 使用情境：Set、Loop Over Items、If、Code、HTTP Request、Wait</a></li>
+</ul>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-card-01_hu_6ae694e05f7525f9.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/images/n8n-seo-keyword-matrix-27.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>會從萬事問 Google 變成萬事問 ChatGPT 嗎？</title>
+      <link>https://deanlin.net/blog/202301/google-vs-chatgpt/</link>
+      <pubDate>Sun, 29 Jan 2023 21:04:20 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/google-vs-chatgpt/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>ChatGPT 跟 Google 一樣能提供人們所需的資訊，甚至可以說跟Google相比，ChatGPT 取得資訊的門檻更低；因為使用者能透過對話的方式一步步接近答案，不需要透過關鍵字反覆嘗試。 但未來ChatGPT這類AI聊天機器人，真的能取代Google搜尋引擎嗎？</description>
+      <content:encoded><![CDATA[<p>筆者在前幾篇文章已經向大家展示 ChatGPT 在各個領域的應用。</p>
+<p>他跟 Google 一樣能提供人們所需的資訊，甚至可以說跟 Google 相比，ChatGPT 取得資訊的門檻更低；因為使用者能透過對話的方式一步步接近答案，不需要像 Google 透過關鍵字反覆嘗試。</p>
+<p>但未來 ChatGPT 這類 AI 聊天機器人，真的能取代 Google 搜尋引擎嗎？筆者想從幾個角度來討論，並給出自己認為合適的搭配方案。</p>
+<p><img src="https://deanlin.net/blog/202301/google-vs-chatgpt/images/google-vs-chatgpt-01.webp" width="1134" height="610" alt="會從萬事問 Google 變成萬事問 ChatGPT 嗎？（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+▋ 碰到問題尋求解答
+▋ 研究不熟悉的事物
+▋ 有能力完成，但不想花時間
+▋ 結語：沒有完美的技術
+</code></pre><h2 id="碰到問題尋求解答">碰到問題尋求解答<a class="h-anchor" href="#%e7%a2%b0%e5%88%b0%e5%95%8f%e9%a1%8c%e5%b0%8b%e6%b1%82%e8%a7%a3%e7%ad%94" aria-label="這個段落的連結"></a></h2>
+<p>無論 Google 還是 ChatGPT，其實都無法保證資訊的「正確性」。</p>
+<p>但兩者不同的地方在於，Google 會得到許多結果，而 ChatGPT 只會給你一個答案。</p>
+<p>如果有多個結果，你就會去嘗試哪個方案是「能用的」，然後再從能用的方案中找出「最好的」；而當獲得的是一個答案時，我們通常只會去嘗試這個方案能不能用，導致思考的範圍有「侷限性」。</p>
+<blockquote>
+<p>有時這個「侷限性」很可怕，因為 ChatGPT 的回答未必正確；沒有判斷能力的新手，可能會耗費大量時間在嘗試錯誤的方案。</p>
+</blockquote>
+<p>即使今天要求 ChatGPT 給你多個答案，並請他幫你分析各自的優劣，那也是 ChatGPT 給出的結果；少了「嘗試」與「證明」的過程，我們很難將知識內化。</p>
+<p>上面這段話並不是要否認 ChatGPT，而是在提醒讀者千萬不要陷入「只有一個」解決方案的思維困境；同樣的，Google 搜尋得到的第一個結果，也未必是最好的答案（不過通常是能執行的方案）。</p>
+<p>下面是筆者的感觸：</p>
+<ul>
+<li><strong>Google</strong>：在解決問題的過程中，你會學到其他相關知識，儘管費時較久，但對整體的掌握度更高（失敗的經驗會讓你有更深刻的理解）。</li>
+<li><strong>ChatGPT</strong>：你有機會在短時間解決問題，不過缺點是在得到解答後，就容易停止思考（如果不幸得到錯誤的解答，那可能會卡更久）。</li>
+</ul>
+<hr>
+<h2 id="研究不熟悉的事物">研究不熟悉的事物<a class="h-anchor" href="#%e7%a0%94%e7%a9%b6%e4%b8%8d%e7%86%9f%e6%82%89%e7%9a%84%e4%ba%8b%e7%89%a9" aria-label="這個段落的連結"></a></h2>
+<p>如果我們對一個事務完全不了解，無法分辨方案間的好壞時；Google 能給我們的幫助相對有限，因為此時的我們連「關鍵字」都不知道怎麼下，而不明確的關鍵字也只會得到發散的結果。</p>
+<p>但面對這種情境時，ChatGPT 卻能在一次次的對話中給你方向，因為關鍵字無需一次到位，他能理解你提供的「上下文」，像個咨詢師般給你「逐步」的指導，針對性地解決複雜問題。</p>
+<blockquote>
+<p>不過 ChatGPT 的資訊未必全部正確，如果發現某個步驟走不下去時，還是需要 Google 救援。</p>
+</blockquote>
+<hr>
+<h2 id="有能力完成但不想花時間">有能力完成，但不想花時間<a class="h-anchor" href="#%e6%9c%89%e8%83%bd%e5%8a%9b%e5%ae%8c%e6%88%90%e4%bd%86%e4%b8%8d%e6%83%b3%e8%8a%b1%e6%99%82%e9%96%93" aria-label="這個段落的連結"></a></h2>
+<p>有時需要撰寫帶有「特殊需求」的報告，比如：</p>
+<ul>
+<li>比較瀑布式開發與敏捷式開發的不同，並以敏捷式開發比較好作為結論。</li>
+<li>介紹 Git 常用的分支策略，並說明為何會這樣設計。</li>
+</ul>
+<p>或是整理「複雜情境」的問題，比如：</p>
+<ul>
+<li>團隊在跑 Scrum 時大家都不關心彼此的報告內容，我身為 Scrum Master 可以如何引導？</li>
+<li>核心價值對公司來說有什麼意義？以軟體公司舉例。</li>
+</ul>
+<p>如果使用 Google，你可能要搜尋多篇文章，然後再根據自己的需求拼湊出最終的版本；不過在「有能力判斷真偽」的前提下，ChatGPT 能快速的幫你進行整合。</p>
+<p>下面放兩個 ChatGPT 的回答供讀者參考：</p>
+<p><img src="https://deanlin.net/blog/202301/google-vs-chatgpt/images/google-vs-chatgpt-02.webp" width="901" height="504" alt="有能力完成，但不想花時間（圖 2）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202301/google-vs-chatgpt/images/google-vs-chatgpt-03.webp" width="910" height="568" alt="有能力完成，但不想花時間（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="結語沒有完美的技術">結語：沒有完美的技術<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e6%b2%92%e6%9c%89%e5%ae%8c%e7%be%8e%e7%9a%84%e6%8a%80%e8%a1%93" aria-label="這個段落的連結"></a></h2>
+<p>每個人對「完美」的定義不同，因為每個人對解答的期待都不一樣。</p>
+<p>筆者認為 Google 跟 ChatGPT 更像是一塊互補的拼圖，Google 通過你給的關鍵詞搜索相關資訊，你再從中分辨出需要的部分；而 ChatGPT 則是基於過去訓練的大量資料，用對話的形式向你提出建議。</p>
+<p>這邊就舉一個結合應用的場景：</p>
+<p><strong>SETP 1</strong>：你在 Google 找到一篇看不懂的英文文獻。</p>
+<p><strong>SETP 2</strong>：把文獻丟給 ChatGPT，讓他幫忙翻譯並整理成你看得懂的資訊。</p>
+<p><strong>SETP 3</strong>：確認這些資訊是否為自己需要的，以此加速學習與理解的過程。</p>
+<p>希望上面的範例能給讀者一些靈感，相信大家在使用的過程中能找出更多實用的搭配，發揮出各自的優勢！</p>
+<p>未來筆者會出一系列使用 ChatGPT、openAI 的文章，如果你對這個議題感興趣，可以持續關注我的文章！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/google-vs-chatgpt/images/google-vs-chatgpt-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/google-vs-chatgpt/images/google-vs-chatgpt-04.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

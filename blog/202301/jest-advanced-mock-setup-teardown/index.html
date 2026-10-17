@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Jest 框架進階應用（describe、Setup and Teardown、Mock function）｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="一個功能底下可能有很多函式，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="Jest 框架進階應用（describe、Setup and Teardown、Mock function）">
+  <meta property="og:description" content="一個功能底下可能有很多函式，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。">
+  <meta property="og:url" content="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2023-01-19T10:55:58&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T22:04:41&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Jest">
+  <meta property="article:tag" content="TypeScript">
+  <meta property="article:tag" content="Programming">
+  <meta property="article:tag" content="VS Code Extension">
+  <meta property="article:tag" content="Unit Test Framework">
+  <meta property="og:image" content="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-og.jpg">
+  <meta property="og:image:width" content="1150">
+  <meta property="og:image:height" content="597">
+  <meta property="og:image:alt" content="Jest 框架進階應用（describe、Setup and Teardown、Mock function）">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-og.jpg">
+  <meta name="twitter:title" content="Jest 框架進階應用（describe、Setup and Teardown、Mock function）">
+  <meta name="twitter:description" content="一個功能底下可能有很多函式，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T22:04:41+08:00","datePublished":"2023-01-19T10:55:58+08:00","description":"一個功能底下可能有很多函式，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。","headline":"Jest 框架進階應用（describe、Setup and Teardown、Mock function）","image":{"@type":"ImageObject","height":597,"url":"https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-og.jpg","width":1150},"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"前端單元測試","url":"https://deanlin.net/series/frontend-testing/"}],"keywords":"Jest, TypeScript, Programming, VS Code Extension, Unit Test Framework","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/jest-%E6%A1%86%E6%9E%B6%E9%80%B2%E9%9A%8E%E6%87%89%E7%94%A8-describe-setup-and-teardown-mock-function-f9760e2de97e"],"timeRequired":"PT5M","url":"https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/","wordCount":2163},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/","name":"Jest 框架進階應用（describe、Setup and Teardown、Mock function）","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">Jest 框架進階應用（describe、Setup and Teardown、Mock function）</h1>
+      <p class="article-lede">一個功能底下可能有很多函式，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。</p>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2023-01-19">2023.01.19</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 5 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・前端單元測試 <b>3</b>/ 5</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e6%b8%ac%e8%a9%a6%e5%88%86%e7%b5%84describe">一、測試分組（describe）</a></li><li><a href="#%e4%ba%8c%e5%9c%a8%e6%b8%ac%e8%a9%a6%e5%89%8d%e5%be%8c%e8%a6%81%e5%9f%b7%e8%a1%8c%e7%9a%84%e4%bb%bb%e5%8b%99setup-and-teardown">二、在測試前、後要執行的任務（Setup and Teardown）</a></li><li><a href="#%e4%b8%89%e7%94%a8-mock-function-%e6%b8%9b%e5%b0%91%e6%b8%ac%e8%a9%a6%e6%99%82%e7%9a%84%e7%9b%b8%e4%be%9d%e6%80%a7">三、用 Mock Function 減少測試時的相依性</a></li><li><a href="#%e5%9b%9bvscode-%e7%9a%84-jest-%e5%a4%96%e6%8e%9b">四、VSCode 的 Jest 外掛</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <blockquote>
+<p><em>如</em>果你對 Jest 這個測試框架還一無所知，建議先看<a href="/blog/202301/jest-unit-testing-typescript/">上一篇文章</a>喔！</p>
+</blockquote>
+<p>一個功能底下可能有很多函式，如果測試程式沒有適當的區分，那在遇到錯誤時會難以管理，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。</p>
+<p><img src="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-01.webp" srcset="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-01_hu_a4c603c95b9d3e.webp 720w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-01.webp 1150w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1150" height="597" alt="Jest 框架進階應用（describe、Setup and Teardown、Mock function）（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+一、測試分組（describe）
+二、在測試前、後要執行的任務（Setup and Teardown）
+三、用 Mock Function 減少測試時的相依性
+四、VSCode 的 Jest 外掛
+</code></pre><blockquote>
+<p>讀者可以直接到<a href="https://github.com/dean9703111/jest-typescript-starter/tree/master/jest-advanced">筆者的 Github </a>，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。</p>
+</blockquote>
+<h2 id="一測試分組describe">一、測試分組（describe）<a class="h-anchor" href="#%e4%b8%80%e6%b8%ac%e8%a9%a6%e5%88%86%e7%b5%84describe" aria-label="這個段落的連結"></a></h2>
+<p>比如今天我們設計一個計算機，裏面包含「加減乘除」等功能，如果要針對不同 function 做分組測試，我們可以這樣做：</p>
+<ul>
+<li><strong>calculator.ts</strong>：計算機基礎功能（加減乘除）。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> sum(a: <span style="color:#ff7b72">number</span>, b: <span style="color:#ff7b72">number</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">+</span> b;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> minus(a: <span style="color:#ff7b72">number</span>, b: <span style="color:#ff7b72">number</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">-</span> b;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> multiply(a: <span style="color:#ff7b72">number</span>, b: <span style="color:#ff7b72">number</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">*</span> b;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> divide(a: <span style="color:#ff7b72">number</span>, b: <span style="color:#ff7b72">number</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">/</span> b;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>calculator.test.ts</strong>：分組測試計算機基礎功能。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { sum, minus, multiply, divide } <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#34;./calculator&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;測試加法&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;1 + 1 = 2&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(sum(<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">1</span>)).toBe(<span style="color:#a5d6ff">2</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;3 + 3 = 7&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(sum(<span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">4</span>)).toBe(<span style="color:#a5d6ff">7</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;測試減法&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;5 - 1 = 4&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(minus(<span style="color:#a5d6ff">5</span>, <span style="color:#a5d6ff">1</span>)).toBe(<span style="color:#a5d6ff">4</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;3 - 3 = 0&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(minus(<span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">3</span>)).toBe(<span style="color:#a5d6ff">0</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;測試乘法&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;1 * 5 = 5&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(multiply(<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">5</span>)).toBe(<span style="color:#a5d6ff">5</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;3 * 3 = 9&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(multiply(<span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">3</span>)).toBe(<span style="color:#a5d6ff">9</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;測試除法&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;6 / 2 = 3&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(divide(<span style="color:#a5d6ff">6</span>, <span style="color:#a5d6ff">2</span>)).toBe(<span style="color:#a5d6ff">3</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;3 / 2 = 1.5&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(divide(<span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">2</span>)).toBe(<span style="color:#a5d6ff">1.5</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>運行測試指令 <code>npm run test</code>，順利的話就會看到下圖測試分組的結果嚕！</p>
+<p><img src="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-02.webp" srcset="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-02_hu_bdf72c30bd21a518.webp 720w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-02.webp 946w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="946" height="1042" alt="一、測試分組（describe）（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="二在測試前後要執行的任務setup-and-teardown">二、在測試前、後要執行的任務（Setup and Teardown）<a class="h-anchor" href="#%e4%ba%8c%e5%9c%a8%e6%b8%ac%e8%a9%a6%e5%89%8d%e5%be%8c%e8%a6%81%e5%9f%b7%e8%a1%8c%e7%9a%84%e4%bb%bb%e5%8b%99setup-and-teardown" aria-label="這個段落的連結"></a></h2>
+<p>Jest 有提供 4 種函數：</p>
+<ul>
+<li><strong>beforeAll</strong>：在所有測試開始前執行。</li>
+<li><strong>afterAll</strong>：在所有測試完畢後執行。</li>
+<li><strong>beforeEach</strong>：在每個測試開始前執行。</li>
+<li><strong>afterEach</strong>：在每個測試結束後執行。</li>
+</ul>
+<p>舉個例子，如果今天要設計「考核系統」，除了有考生外，還需要模擬出「合格」、「不合格」的情境，為了避免影響到資料庫，我們可以這樣做：</p>
+<ul>
+<li><strong>user.ts</strong>：我們先預設的 score 的基準為 60 分，可透過 addScore、minusScore 來加減分。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">default</span> <span style="color:#ff7b72">class</span> user {
+</span></span><span style="display:flex;"><span>  name: <span style="color:#ff7b72">string</span>;
+</span></span><span style="display:flex;"><span>  score: <span style="color:#ff7b72">number</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">constructor</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.score <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">60</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  addScore() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.score <span style="color:#ff7b72;font-weight:bold">+=</span> <span style="color:#a5d6ff">10</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  minusScore() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.score <span style="color:#ff7b72;font-weight:bold">-=</span> <span style="color:#a5d6ff">10</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>exam.test.ts</strong>：利用「beforeAll」將考生的資料初始化，並透過「beforeEach」將分組測試的分數重新校正（若少了這個動作，第二個測試會沿用上一個測試的結果，會變成 70–10=60 分），測試完畢後用「afterAll」將考生資料清空。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> user <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#34;./user&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> userDB: <span style="color:#ff7b72">user</span>[] <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> insertTestData <span style="color:#ff7b72;font-weight:bold">=</span> (name: <span style="color:#ff7b72">string</span>) <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> User <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> user();
+</span></span><span style="display:flex;"><span>  User.name <span style="color:#ff7b72;font-weight:bold">=</span> name;
+</span></span><span style="display:flex;"><span>  userDB.push(User);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> clearTestData <span style="color:#ff7b72;font-weight:bold">=</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  userDB.length <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>beforeAll(() <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  insertTestData(<span style="color:#a5d6ff">&#34;baobao&#34;</span>);
+</span></span><span style="display:flex;"><span>  insertTestData(<span style="color:#a5d6ff">&#34;mochi&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;baoboa 分數計算&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  beforeEach(() <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">0</span>].score <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">60</span>;
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;60 + 10 為 70 分&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">0</span>].addScore();
+</span></span><span style="display:flex;"><span>    expect(userDB[<span style="color:#a5d6ff">0</span>].score).toBe(<span style="color:#a5d6ff">70</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;60 - 10 為 50 分&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">0</span>].minusScore();
+</span></span><span style="display:flex;"><span>    expect(userDB[<span style="color:#a5d6ff">0</span>].score).toBe(<span style="color:#a5d6ff">50</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;mochi 分數計算&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  beforeEach(() <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">1</span>].score <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">60</span>;
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;60 + 10 為 70 分&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">1</span>].addScore();
+</span></span><span style="display:flex;"><span>    expect(userDB[<span style="color:#a5d6ff">1</span>].score).toBe(<span style="color:#a5d6ff">70</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;60 - 10 為 50 分&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">1</span>].minusScore();
+</span></span><span style="display:flex;"><span>    expect(userDB[<span style="color:#a5d6ff">1</span>].score).toBe(<span style="color:#a5d6ff">50</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>afterAll(() <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  clearTestData();
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>這邊補充說明一下，運行單個測試檔案的指令為： <code>npm run test -t path/user.test.ts</code>。</p>
+<p>如果運行順利，就會看到下圖的測試結果嚕！</p>
+<p><img src="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-03.webp" srcset="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-03_hu_b0b42c52c679595e.webp 720w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-03.webp 1232w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1232" height="624" alt="二、在測試前、後要執行的任務（Setup and Teardown）（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="三用-mock-function-減少測試時的相依性">三、用 Mock Function 減少測試時的相依性<a class="h-anchor" href="#%e4%b8%89%e7%94%a8-mock-function-%e6%b8%9b%e5%b0%91%e6%b8%ac%e8%a9%a6%e6%99%82%e7%9a%84%e7%9b%b8%e4%be%9d%e6%80%a7" aria-label="這個段落的連結"></a></h2>
+<p>單元測試時，我們更關心「單一功能」的正確與否；如果一個單元測試涵蓋太多函式，那在發生錯誤時，我們很難判斷到底是哪一段發生錯誤。</p>
+<ul>
+<li><strong>fetch.js</strong>：我們透過「fetchData」呼叫外部 api，而「hideComplete」是設計用來隱藏已完成的 todos。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> axios <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#34;axios&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> fetchData() {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> response <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> axios.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">`https://jsonplaceholder.typicode.com/todos`</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> response;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> hideComplete(data) {
+</span></span><span style="display:flex;"><span>  data <span style="color:#ff7b72;font-weight:bold">=</span> data.filter(<span style="color:#ff7b72">function</span> (value<span style="color:#ff7b72;font-weight:bold">:</span> { completed: <span style="color:#ff7b72">boolean</span> }) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> value.completed <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">false</span>;
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> data;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>fetch.test.js</strong>：為了減少相依性，我們不希望直接呼叫真實的 api，所以透過 <code>jest.mock</code> 將 axios 給 mock 起來；並透過 3 種情境測試：「有成功換成模擬資料、資料格式符合預期、獨立測試 hideComplete 函式」。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { fetchData, hideComplete } from <span style="color:#a5d6ff">&#34;./fetch&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> axios from <span style="color:#a5d6ff">&#34;axios&#34;</span>;
+</span></span><span style="display:flex;"><span>jest.mock(<span style="color:#a5d6ff">&#34;axios&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> mockedAxios <span style="color:#ff7b72;font-weight:bold">=</span> axios as jest.Mocked<span style="color:#ff7b72;font-weight:bold">&lt;</span><span style="color:#ff7b72">typeof</span> axios<span style="color:#ff7b72;font-weight:bold">&gt;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 模擬我們期望收到的資料結構
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> data <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    userId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,
+</span></span><span style="display:flex;"><span>    id<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,
+</span></span><span style="display:flex;"><span>    title<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;task 1&#34;</span>,
+</span></span><span style="display:flex;"><span>    completed<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">false</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    userId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">2</span>,
+</span></span><span style="display:flex;"><span>    id<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">2</span>,
+</span></span><span style="display:flex;"><span>    title<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;task 2&#34;</span>,
+</span></span><span style="display:flex;"><span>    completed<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#34;確認結果被替換成模擬資料&#34;</span>, <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  mockedAxios.get.mockResolvedValue(data);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> result <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> fetchData();
+</span></span><span style="display:flex;"><span>  expect(result).toEqual(data);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#34;驗證資料格式&#34;</span>, <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  mockedAxios.get.mockResolvedValue(data);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> result <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> fetchData();
+</span></span><span style="display:flex;"><span>  expect(<span style="color:#ff7b72">typeof</span> result[<span style="color:#a5d6ff">0</span>].userId).toBe(<span style="color:#a5d6ff">&#34;number&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(<span style="color:#ff7b72">typeof</span> result[<span style="color:#a5d6ff">0</span>].id).toBe(<span style="color:#a5d6ff">&#34;number&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(<span style="color:#ff7b72">typeof</span> result[<span style="color:#a5d6ff">0</span>].title).toBe(<span style="color:#a5d6ff">&#34;string&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(<span style="color:#ff7b72">typeof</span> result[<span style="color:#a5d6ff">0</span>].completed).toBe(<span style="color:#a5d6ff">&#34;boolean&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#34;測試 hideComplete 函式運作&#34;</span>, <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  mockedAxios.get.mockResolvedValue(data);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">let</span> result <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> fetchData();
+</span></span><span style="display:flex;"><span>  result <span style="color:#ff7b72;font-weight:bold">=</span> hideComplete(result);
+</span></span><span style="display:flex;"><span>  expect(result[<span style="color:#a5d6ff">0</span>].completed).toBe(<span style="color:#79c0ff">false</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>輸入<code>npm run test -t path/user.test.ts</code>後，如果順利就會看到下圖的測試結果嚕！</p>
+<p><img src="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-04.webp" srcset="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-04_hu_9e8996ddce83ec51.webp 720w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-04.webp 1256w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1256" height="616" alt="三、用 Mock Function 減少測試時的相依性（圖 4）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="四vscode-的-jest-外掛">四、VSCode 的 Jest 外掛<a class="h-anchor" href="#%e5%9b%9bvscode-%e7%9a%84-jest-%e5%a4%96%e6%8e%9b" aria-label="這個段落的連結"></a></h2>
+<p>每新增一個測試就要跑一次 <code>npm run test</code> 是不是很煩？如果想獨立測試某個檔案還要先確認文件路徑真的讓人心累 😨</p>
+<p>但好在 VSCode 有「<a href="https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest">Jest</a>」這個 Extensions 讓我們事半功倍。</p>
+<p><img src="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-05.webp" srcset="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-05_hu_fe18f48db37ad795.webp 720w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-05.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="480" alt="四、VSCode 的 Jest 外掛（圖 5）" loading="lazy" decoding="async"></p>
+<p>安裝完成後，VSCode 的左側會多出一個「Testing」的 icon，只要你在專案下有設定 <code>jest.config.js</code> 就會出現（如果還未設定可以參考<a href="/blog/202301/jest-unit-testing-typescript/">上一篇文章</a>）。</p>
+<p><img src="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-06.webp" srcset="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-06_hu_6c2d97e68fc0105f.webp 720w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-06.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="615" alt="四、VSCode 的 Jest 外掛（圖 6）" loading="lazy" decoding="async"></p>
+<p>在 test 文檔左側即可看到測試成功的「v」與失敗的「x」。</p>
+<p><img src="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-07.webp" srcset="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-07_hu_16bc34d15de1846.webp 720w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-07.webp 1048w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1048" height="462" alt="四、VSCode 的 Jest 外掛（圖 7）" loading="lazy" decoding="async"></p>
+<p>失敗的測試會在 expect 下方出現紅色底線，滑鼠移過去就會顯示預期值（Expected）與接收值（Received）的差異。</p>
+<p><img src="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-08.webp" srcset="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-08_hu_cafe82057464d291.webp 720w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-08.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="641" alt="四、VSCode 的 Jest 外掛（圖 8）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>備註</strong>：身邊有朋友在安裝外掛後遇到了一些奇怪的 Error 無法正常使用，重開 VSCode、看官方文檔怎麼調整都無用，最後用大絕「重新開機」就正常了</p>
+</blockquote>
+<hr>
+<p>常用的 Jest 應用就介紹到這邊，真的要自己動手實驗過才會理解裏面的原理喔！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/2680ca82395e" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">單元測試系列文</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-card-01_hu_ef2384f40f02a8f4.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2023.01.19）</span><a href="https://medium.com/dean-lin/jest-%E6%A1%86%E6%9E%B6%E9%80%B2%E9%9A%8E%E6%87%89%E7%94%A8-describe-setup-and-teardown-mock-function-f9760e2de97e" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/jest/">Jest</a>
+            <a class="chip chip-hash" href="/tags/typescript/">TypeScript</a>
+            <a class="chip chip-hash" href="/tags/programming/">Programming</a>
+            <a class="chip chip-hash" href="/tags/vs-code-extension/">VS Code Extension</a>
+            <a class="chip chip-hash" href="/tags/unit-test-framework/">Unit Test Framework</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202301%2Fjest-advanced-mock-setup-teardown%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202301%2Fjest-advanced-mock-setup-teardown%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/" data-title="Jest 框架進階應用（describe、Setup and Teardown、Mock function）" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/frontend-testing/">前端單元測試</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>3</b> 篇・共 5 篇</p>
+          </div>
+          <ol class="steps">
+            <li>
+              <a href="/blog/202301/frontend-testing-roadmap/"><span class="n">01</span><span>想幫前端專案導入測試框架？也許我的想法與學習地圖能給你一點方向</span></a>
+            </li>
+            <li>
+              <a href="/blog/202301/jest-unit-testing-typescript/"><span class="n">02</span><span>認識 Jest 測試框架，開始動手寫單元測試（TypeScript）</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">03</span><span>Jest 框架進階應用（describe、Setup and Teardown、Mock function）<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202301/vuetify-vite-unit-testing/"><span class="n">04</span><span>在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing</span></a>
+            </li>
+            <li>
+              <a href="/blog/202301/vue-test-utils-examples/"><span class="n">05</span><span>透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils</span></a>
+            </li>
+          </ol>
+          <a class="sb-next" href="/blog/202301/vuetify-vite-unit-testing/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202301/jest-unit-testing-typescript/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">認識 Jest 測試框架，開始動手寫單元測試（TypeScript）</span></a>
+          <a class="next" href="/blog/202301/vuetify-vite-unit-testing/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e6%b8%ac%e8%a9%a6%e5%88%86%e7%b5%84describe">一、測試分組（describe）</a></li><li><a href="#%e4%ba%8c%e5%9c%a8%e6%b8%ac%e8%a9%a6%e5%89%8d%e5%be%8c%e8%a6%81%e5%9f%b7%e8%a1%8c%e7%9a%84%e4%bb%bb%e5%8b%99setup-and-teardown">二、在測試前、後要執行的任務（Setup and Teardown）</a></li><li><a href="#%e4%b8%89%e7%94%a8-mock-function-%e6%b8%9b%e5%b0%91%e6%b8%ac%e8%a9%a6%e6%99%82%e7%9a%84%e7%9b%b8%e4%be%9d%e6%80%a7">三、用 Mock Function 減少測試時的相依性</a></li><li><a href="#%e5%9b%9bvscode-%e7%9a%84-jest-%e5%a4%96%e6%8e%9b">四、VSCode 的 Jest 外掛</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202301%2Fjest-advanced-mock-setup-teardown%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202301%2Fjest-advanced-mock-setup-teardown%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/" data-title="Jest 框架進階應用（describe、Setup and Teardown、Mock function）" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAAAwBACdASoYAA0APw1oqEemIyIYBABjEMT0gA7QADllwegKpOrMK0OV0gAA/tmAOLF1YtT/E63ZwDHGuSXQ9s&#43;p&#43;frcL/W4/mpskfQvr2FpcA/UDSicnHxgX8dGJiv5dj74aXzwiZgHXEsSEeJOOhXyB/gM//4eZP8gAA==" alt="" width="24" height="13"><img src="/blog/202301/jest-unit-testing-typescript/images/jest-unit-testing-typescript-01_hu_95fa023aaa2fde15.webp" srcset="/blog/202301/jest-unit-testing-typescript/images/jest-unit-testing-typescript-01_hu_e280e53bd408b793.webp 240w, /blog/202301/jest-unit-testing-typescript/images/jest-unit-testing-typescript-01_hu_4920a67ec47b452c.webp 480w, /blog/202301/jest-unit-testing-typescript/images/jest-unit-testing-typescript-01_hu_9850cf2bc2149721.webp 800w, /blog/202301/jest-unit-testing-typescript/images/jest-unit-testing-typescript-01_hu_95fa023aaa2fde15.webp 1147w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1147" height="599" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/frontend-testing/">前端單元測試</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/jest-unit-testing-typescript/">認識 Jest 測試框架，開始動手寫單元測試（TypeScript）</a></h3>
+    <p class="card-desc">這篇文章會從建立專案開始，依序帶你了解需要設定的環境、單元測試的結構，接著帶你完成第一個單元測試。 在對單元測試有基礎的概念後，會透過實際的範例讓你了解不同匹配器（Matchers）的使用時機，話不多說，我們直接開始吧！</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-19">2023.01.19</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADQAwCdASoYAA0APw1oqEemIyIYBABjEMT0gAA1dUVmIYIdrEzRgAAA/vDcQTbYxxJE4&#43;xi9BOn/AYUBfikZksr7b7h0HBG&#43;MOdJyrnHiFkaJ5T5/GZ3DTO4VuyuiJaOgAAAA==" alt="" width="24" height="13"><img src="/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01_hu_e4dae2cb277358e2.webp" srcset="/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01_hu_28204e60aba5c7a1.webp 240w, /blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01_hu_c207ef0464f27634.webp 480w, /blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01_hu_122f0be8dd61d3de.webp 800w, /blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01_hu_e4dae2cb277358e2.webp 1148w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1148" height="598" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/frontend-testing/">前端單元測試</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/vuetify-vite-unit-testing/">在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing</a></h3>
+    <p class="card-desc">這篇文章會先帶大家建立 Vuetify 的初始環境（Vue3 & Vite & TypeScript），並導入「Vue Test Utils」這款測試工具。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-19">2023.01.19</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAACQBACdASoYAA0APw1mp0emIqGYBABjEMTyAE6ZQAHr8Z/DZIgP84tTjf2Y5MAA/tum0rfdz87dbuaaQ7KGaSfWJOwKroXwvGOag&#43;LjcoWtYE6OJlCBZiziRgPbQ6HDPrFFPUzI&#43;N55&#43;z6QPrnSBwEfkITk/NSllzP0cXZJU4AAAA==" alt="" width="24" height="13"><img src="/blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_5c72c7a3b350bf1.webp" srcset="/blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_2bc9ca599af2fd6b.webp 240w, /blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_6dc10f3cc59770b8.webp 480w, /blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_729125b30fe63eb2.webp 800w, /blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_5c72c7a3b350bf1.webp 1150w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1150" height="602" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/frontend-testing/">前端單元測試</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/frontend-testing-roadmap/">想幫前端專案導入測試框架？也許我的想法與學習地圖能給你一點方向</a></h3>
+    <p class="card-desc">筆者自首，過去我只撰寫後端測試，總是忽略前端測試的重要性。 當初會這樣，是因為經手的專案規格變動頻繁，感覺測試寫完沒多久就要棄用；但近期與業界的朋友聊天時，他們跟我強調了 TDD（Test-Driven Development），也就是「測試驅動開發」的概念。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-19">2023.01.19</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

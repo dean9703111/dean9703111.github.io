@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Data Analysis｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/data-analysis/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 20 Jul 2023 22:54:53 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/data-analysis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>黑科技降臨！用 ChatGPT 產生會「動」的圖表（Advanced data analysis)</title>
+      <link>https://deanlin.net/blog/202307/chatgpt-animated-charts/</link>
+      <pubDate>Thu, 20 Jul 2023 22:54:53 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202307/chatgpt-animated-charts/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>上一篇文章筆者分享了如何使用 ChatGPT 生成中文統計圖表（Advanced data analysis)，而這一篇則會介紹到「資料清洗、動態圖表」的操作，讓我們達成一行程式都不寫就產生「消費者物價指數」的動畫！</description>
+      <content:encoded><![CDATA[<p><a href="https://deanlin.net/blog/202307/chatgpt-chinese-charts/">上一篇文章</a>筆者分享了如何使用 ChatGPT 生成中文統計圖表（Advanced data analysis)，而這一篇則會介紹到「資料清洗、動態圖表」的操作，讓我們達成一行程式都不寫就產生「消費者物價指數」的動畫！</p>
+<p><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-01.webp" width="1225" height="670" alt="黑科技降臨！用 ChatGPT 產生會「動」的圖表（Advanced data analysis)（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="step-1取得分析數據--以消費者物價指數為例">STEP 1：取得分析數據 — 以消費者物價指數為例<a class="h-anchor" href="#step-1%e5%8f%96%e5%be%97%e5%88%86%e6%9e%90%e6%95%b8%e6%93%9a--%e4%bb%a5%e6%b6%88%e8%b2%bb%e8%80%85%e7%89%a9%e5%83%b9%e6%8c%87%e6%95%b8%e7%82%ba%e4%be%8b" aria-label="這個段落的連結"></a></h2>
+<p>筆者到<a href="https://www.moea.gov.tw/Mns/dos/home/Home.aspx">經濟部統計處</a>的網頁，下載民國 91~112 年的「<a href="https://dmz26.moea.gov.tw/GA/common/Common.aspx?code=K&amp;no=2">消費者物價指數</a>」。</p>
+<p><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-02.webp" width="1400" height="1029" alt="STEP 1：取得分析數據 — 以消費者物價指數為例（圖 2）" loading="lazy" decoding="async"></p>
+<p>我們打開 Excel 看一下目前的資料格式：</p>
+<p><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-03.webp" width="1400" height="1354" alt="STEP 1：取得分析數據 — 以消費者物價指數為例（圖 3）" loading="lazy" decoding="async"></p>
+<p>其實這份 Excel 的結構已經不錯了，但左側的「年 月 別」有分割成「年、月」兩個欄位，所以可以預見 ChatGPT 在分析這部分的資料時可能會遇到問題。</p>
+<hr>
+<h2 id="step-2請-chatgpt-幫我們清洗資料">STEP 2：請 ChatGPT 幫我們清洗資料<a class="h-anchor" href="#step-2%e8%ab%8b-chatgpt-%e5%b9%ab%e6%88%91%e5%80%91%e6%b8%85%e6%b4%97%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h2>
+<p>在資料不乾淨的狀態下，ChatGPT 也可以生成圖表，但往往非常耗時，且失敗率極高；因此建議先請 ChatGPT 依照我們的需求調整目前的 Excel，我的 Prompt ：</p>
+<pre tabindex="0"><code>請依照下面步驟處理，並在完成後給我調整過的 Excel
+
+1. 先找到「年 月 別」，並將這一列當成第一列
+2. 「年 月 別」這個欄位下方被分割成兩欄，他們紀錄的是日期，左邊為年右邊為月，需要將年與月合併 
+3. 完成上面的合併後，如果該行只有「年」，就將這行刪除
+</code></pre><p><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-04.webp" width="903" height="595" alt="STEP 2：請 ChatGPT 幫我們清洗資料（圖 4）" loading="lazy" decoding="async"></p>
+<p>最後獲得清洗後的 Excel。</p>
+<p><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-05.webp" width="917" height="223" alt="STEP 2：請 ChatGPT 幫我們清洗資料（圖 5）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-06.webp" width="611" height="502" alt="STEP 2：請 ChatGPT 幫我們清洗資料（圖 6）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>筆者強烈建議先將 Excel 下載下來，然後開新的 Chat 來處理資料，這樣後續的成功率較高。</p>
+</blockquote>
+<hr>
+<h2 id="step-3將數據轉換為圖表">STEP 3：將數據轉換為圖表<a class="h-anchor" href="#step-3%e5%b0%87%e6%95%b8%e6%93%9a%e8%bd%89%e6%8f%9b%e7%82%ba%e5%9c%96%e8%a1%a8" aria-label="這個段落的連結"></a></h2>
+<p>確認格式與我們的期待相符後，就可以請他產生圖表了。</p>
+<pre tabindex="0"><code>請閱讀 Excel 的數據，並依照下面步驟整理資料
+
+1.「YearMonth」的列是用民國年，請轉換為西元年
+2. 轉換成西元年後，將每個月份的資料繪製成折線圖
+</code></pre><p><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-07.webp" width="796" height="601" alt="STEP 3：將數據轉換為圖表（圖 7）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>請繪製「總指數、食物類、衣著類、居住類」的折線圖
+</code></pre><p><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-08.webp" width="796" height="679" alt="STEP 3：將數據轉換為圖表（圖 8）" loading="lazy" decoding="async"></p>
+<p>折線圖的顏色相同不好閱讀，所以讓他分色系。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-09.webp" width="796" height="674" alt="請使用顏色差異大的線" loading="lazy" decoding="async">
+  <figcaption>請使用顏色差異大的線</figcaption>
+</figure>
+
+<hr>
+<h2 id="step-4讓圖表動起來">STEP 4：讓圖表動起來！<a class="h-anchor" href="#step-4%e8%ae%93%e5%9c%96%e8%a1%a8%e5%8b%95%e8%b5%b7%e4%be%86" aria-label="這個段落的連結"></a></h2>
+<p>經過一番努力，總於走到了這一步 😭</p>
+<pre tabindex="0"><code>請幫我生成折線圖的 GIF，Y 軸的數值請參考剛剛生成的圖，新的數據會從右側增加，以年為單位，先繪製前 10 年的圖，使用不需網路的方式來完成
+</code></pre><p><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-10.webp" width="796" height="365" alt="STEP 4：讓圖表動起來！（圖 10）" loading="lazy" decoding="async"></p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-11.webp" width="960" height="640" aria-label="STEP 4：讓圖表動起來！（圖 11）" data-gifv>
+    <source src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-11.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<p>確認過結果符合需求後，我請他繪製完整的年度、加快 GIF 速度，並使用我提供的字體重新繪製。</p>
+<p><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-12.webp" width="796" height="561" alt="STEP 4：讓圖表動起來！（圖 12）" loading="lazy" decoding="async"></p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-13.webp" width="960" height="640" aria-label="STEP 4：讓圖表動起來！（圖 13）" data-gifv>
+    <source src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-13.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<hr>
+<h2 id="advanced-data-analysis-使用心得">Advanced data analysis 使用心得<a class="h-anchor" href="#advanced-data-analysis-%e4%bd%bf%e7%94%a8%e5%bf%83%e5%be%97" aria-label="這個段落的連結"></a></h2>
+<p>在沒有相關指引的狀態下，我覺得 Advanced data analysis 使用起來挺痛苦的；除非你的資料超級簡單，否則通常會遇到一堆錯誤，下面是我建議的使用方式：</p>
+<ol>
+<li><strong>清洗資料</strong>：除非資料格式超漂亮，不然一定要先清洗資料並下載，以確認調整後的資料符合期待。</li>
+<li><strong>提供乾淨的資料</strong>：如果你提供的格式混亂，那 ChatGPT 理解會花很多時間，建議取得清洗的資料後，開一個新對話讓 ChatGPT 重新思考。</li>
+<li><strong>理解錯誤原因</strong>：除非你運氣爆棚，否則操作過程一定會遇到大量錯誤；建議你先閱讀錯誤原因，並引導 ChatGPT 執行的方向，一直按「繼續」可能是沒幫助的。</li>
+<li><strong>明確提出需求</strong>：一開始產生的結果通常不會讓人滿意，像是資料錯誤、顏色相似、無法顯示中文…你需要明確提出自己的需求。</li>
+<li><strong>不要想一次到位</strong>：一次解決一個問題，並確認結果是否符合需求。</li>
+</ol>
+<p>儘管 Advanced data analysis 能做出會動的圖表，但他的內存有限，如果想取得更好的結果，建議把程式複製到 Local （自己電腦）環境執行。</p>
+<p>希望這篇文章有拓寬大家對 Advanced data analysis 的使用思路！</p>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202307/chatgpt-animated-charts/images/chatgpt-animated-charts-14.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

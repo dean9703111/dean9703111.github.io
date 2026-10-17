@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Google Sheets API｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/google-sheets-api/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 10 Jun 2020 12:13:46 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/google-sheets-api/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>讓Line機器人變成你的小秘書</title>
+      <link>https://deanlin.net/blog/202006/line-bot-personal-assistant/</link>
+      <pubDate>Wed, 10 Jun 2020 12:13:46 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/line-bot-personal-assistant/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>機器人的秘書還不夠誘惑嗎ＸＤ</description>
+      <content:encoded><![CDATA[<blockquote>
+<p>為什麼撰寫這篇文章</p>
+</blockquote>
+<p>在<a href="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/">上一篇</a>文章已經介紹了Google App Script如何串接Line Message Api的應用，在這裡我將延續之前的議題，讓Line機器人變成你的小秘書</p>
+<blockquote>
+<p>文章目標</p>
+</blockquote>
+<ol>
+<li>使用Google Sheet裡面Script的功能</li>
+<li>使用簡單的SQL語法抓出Google Sheet中你需要的資訊</li>
+</ol>
+<blockquote>
+<p>本文章使用到的技術：</p>
+</blockquote>
+<ol>
+<li>Google App Script : 這次著重在執行SQL語法</li>
+<li>Google Sheet : 會把它當成讀取/寫入的資料庫</li>
+</ol>
+<h2 id="step-1-結合google-sheet的衍生應用">STEP 1: 結合Google Sheet的衍生應用<a class="h-anchor" href="#step-1-%e7%b5%90%e5%90%88google-sheet%e7%9a%84%e8%a1%8d%e7%94%9f%e6%87%89%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>Google App Script功能很多，但能做到什麼地步就看個人的想像能力，接下來我提供的只是一條思路，如果大家想到有趣的應用歡迎下方留言</p>
+</blockquote>
+<p>如果大家平常有使用Google sheet當成工作記錄習慣的話，你可以嘗試看看這個應用</p>
+<p>這裡我先創建一個Google Sheet，裡面建立一些清單(<a href="https://docs.google.com/spreadsheets/d/1ZdmsEkS27VWR6HF42_aka5rrtgu31saZoUupOD8Xx6s/edit?usp=sharing">你可以直接複製我的</a>)：</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-01.webp" width="1400" height="591" alt="STEP 1: 結合Google Sheet的衍生應用（圖 1）" loading="lazy" decoding="async"></p>
+<p>接著建立Google Sheet的Script</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-02.webp" width="1400" height="811" alt="STEP 1: 結合Google Sheet的衍生應用（圖 2）" loading="lazy" decoding="async"></p>
+<p>將以下程式複製貼上，如果您願意可以自由更改，記得將<a href="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/">上一篇</a>取得的line token放上去喔</p>
+<pre tabindex="0"><code>var ss = SpreadsheetApp.getActiveSpreadsheet()//抓取這張excel
+function doPost (e) {
+    var msg = JSON.parse(e.postData.contents);
+    // 取出 replayToken 和發送的訊息文字
+    var replyToken = msg.events[0].replyToken;
+    var userMessage = msg.events[0].message.text;
+
+    if (userMessage.indexOf(&#34;未完成&#34;) &gt; -1) {//分析傳遞字串確認是否有“未完成”
+        // QUERY(目標文件及範圍,SQL語法)
+        // 尋找sheet1範圍A2到C100裡面A跟B欄位的資料且C欄位為FALSE
+        var formulaToUse = &#39;=QUERY(Sheet1!A2:C100,&#34;SELECT A,B WHERE C = FALSE&#34;)&#39;
+        var result = query(formulaToUse)
+
+        var userMessage = &#39;未完成文件如下：\n&#39;;//單純的文字組成
+        result.forEach(row =&gt; {
+            userMessage = userMessage + row[0] + &#39;:&#39; + row[1] + &#39;\n&#39;
+        })
+        return sendLineMsg(userMessage, replyToken);
+    }
+    if (userMessage.indexOf(&#34;已完成&#34;) &gt; -1) {//分析傳遞字串確認是否有“已完成”
+        var formulaToUse = &#39;=QUERY(Sheet1!A2:C100,&#34;SELECT A,B WHERE C = TRUE&#34;)&#39;
+        var result = query(formulaToUse)
+        var userMessage = &#39;已完成文件如下：\n&#39;;
+        result.forEach(row =&gt; {
+            userMessage = userMessage + row[0] + &#39;:&#39; + row[1] + &#39;\n&#39;
+        })
+        return sendLineMsg(userMessage, replyToken);
+    }
+    if (userMessage.indexOf(&#34;功能&#34;) &gt; -1) {//這是列出你有提供功能的列表
+        return sendLineMsg(&#39;朕不給的你不能搶ㄎㄎ\n• 未完成 ：列出excel未完成清單\n• 已完成 ：列出excel已完成清單&#39;, replyToken);
+    }
+}
+function query (request) { //執行SQL語法的地方
+    var sheet = ss.insertSheet(); //先插入一張新的sheet(也許有更好的做法，如果有請告訴我ＱＱ)
+    sheet.getActiveRange().setFormula(request); //執行SQL
+    var result = sheet.getDataRange().getValues(); //把整張表抓下來
+    ss.deleteSheet(sheet); //把sheet刪除
+    Logger.log(result);//可透過log來看輸出的資訊(上方的View Logs)
+    return result; //回傳結果
+}
+function sendLineMsg (Message, replyToken) {
+    var CHANNEL_ACCESS_TOKEN = &#39;你的 Channel access token&#39;;
+
+    var url = &#39;https://api.line.me/v2/bot/message/reply&#39;;
+    UrlFetchApp.fetch(url, {
+        &#39;headers&#39;: {
+            &#39;Content-Type&#39;: &#39;application/json; charset=UTF-8&#39;,
+            &#39;Authorization&#39;: &#39;Bearer &#39; + CHANNEL_ACCESS_TOKEN,
+        },
+        &#39;method&#39;: &#39;post&#39;,
+        &#39;payload&#39;: JSON.stringify({
+            &#39;replyToken&#39;: replyToken,
+            &#39;messages&#39;: [{
+                &#39;type&#39;: &#39;text&#39;,
+                &#39;text&#39;: Message,
+            }],
+        }),
+    });
+}
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/8f6d1e06b079ae3061d450d459cedc2c" rel="noopener">line_secretary.gs</a>（GitHub Gist）</p>
+<p>接下來要將這個程式發布（如果有授權相關問題必須都接受才會通過）</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-03.webp" width="998" height="408" alt="STEP 1: 結合Google Sheet的衍生應用（圖 3）" loading="lazy" decoding="async"></p>
+<p>Project version記得每次都要選擇New(否則不會更新)，並且要允許任何人可以存取這隻app，不然你的程式無法被line機器人執行</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-04.webp" width="892" height="804" alt="STEP 1: 結合Google Sheet的衍生應用（圖 4）" loading="lazy" decoding="async"></p>
+<p>接下來複製你這串web app URL給LINE Message Api使用</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-05.webp" width="892" height="534" alt="STEP 1: 結合Google Sheet的衍生應用（圖 5）" loading="lazy" decoding="async"></p>
+<p>貼到webhook URL上面後按下Save</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-06.webp" width="1400" height="698" alt="STEP 1: 結合Google Sheet的衍生應用（圖 6）" loading="lazy" decoding="async"></p>
+<h2 id="step-2--驗證串接成功">STEP 2 : 驗證串接成功<a class="h-anchor" href="#step-2--%e9%a9%97%e8%ad%89%e4%b8%b2%e6%8e%a5%e6%88%90%e5%8a%9f" aria-label="這個段落的連結"></a></h2>
+<p>打開你的LINE就可以輸入下面三種文字，機器人就會做相對應的回覆喔！</p>
+<ol>
+<li>功能</li>
+<li>未完成</li>
+<li>已完成</li>
+</ol>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-07.webp" width="748" height="1140" alt="STEP 2 : 驗證串接成功（圖 7）" loading="lazy" decoding="async"></p>
+<p>希望大家喜歡這篇文章的應用～</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

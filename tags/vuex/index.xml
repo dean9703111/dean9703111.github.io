@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Vuex｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/vuex/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 01 Apr 2021 10:49:29 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/vuex/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>5 分鐘帶你搞懂 Vue、Vuex、Vuetify、Nuxt.js 之間的關係</title>
+      <link>https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/</link>
+      <pubDate>Thu, 01 Apr 2021 10:49:29 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>有了框架後做什麼都很方便，但因為太方便導致有時連工具負責哪一塊都功能有點霧颯颯，如果你搞不太懂 Vue、Veux、Vuetify、Nuxt.js 之間的關係、具體各自負責什麼事情的話可以參考這篇文章釐清自己的觀念喔！</description>
+      <content:encoded><![CDATA[<p>有了框架後做什麼都很方便，但因為太方便導致有時連工具負責哪一塊都功能有點霧颯颯，如果你搞不太懂 Vue、Veux、Vuetify、Nuxt.js 之間的關係、具體各自負責什麼事情的話可以參考這篇文章釐清自己的觀念喔！</p>
+<p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-01.webp" width="1400" height="788" alt="5 分鐘帶你搞懂 Vue、Vuex、Vuetify、Nuxt.js 之間的關係（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>Vue.js
+➤ 過去只有 Javascript、HTML、CSS 時有什麼問題？
+➤ 框架的優勢
+Vuex
+➤ Vue過去傳值時面臨什麼問題？
+➤ 如何解決這個問題？
+Vuetify
+➤ 提供前端工程師豐富的 MD component
+➤ 強大的社群支持並穩定更新
+➤ 自由決定導入 component
+Nuxt.js
+➤ Vue.js 的應用框架
+➤ SSR 伺服器端渲染
+</code></pre><h2 id="vuejs">Vue.js<a class="h-anchor" href="#vuejs" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>一個優秀的 Javascript 框架</p>
+</blockquote>
+<h3 id="-過去只有-javascripthtmlcss-時有什麼問題">➤ 過去只有 Javascript、HTML、CSS 時有什麼問題？<a class="h-anchor" href="#-%e9%81%8e%e5%8e%bb%e5%8f%aa%e6%9c%89-javascripthtmlcss-%e6%99%82%e6%9c%89%e4%bb%80%e9%ba%bc%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>難以維護</strong>：專案結構龐大時 Javascript、HTML、CSS 維護難度會成幾何式上升，各式各樣的邏輯都集中在 Javascript 裡面導致程式可讀性極低</li>
+<li><strong>效能低落</strong>：如果 Javascript 頻繁操作 DOM 元素時會不斷觸發 Reflow &amp; Repaint 的流程，頁面重複渲染的過程會消耗大量效能</li>
+</ul>
+<h3 id="-框架的優勢">➤ 框架的優勢<a class="h-anchor" href="#-%e6%a1%86%e6%9e%b6%e7%9a%84%e5%84%aa%e5%8b%a2" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>資料與 UI 分離</strong>：過去 Javascript 要動態的去更新 DOM 來塞入資料，但框架透過資料雙向綁定，工程師可以專注處理資料的邏輯面</li>
+<li><strong>模組化的 UI</strong>：一個網站會有許多重複出現的元素(按鈕、表單、表格…)，在框架中可以這些常用的元素設計成 component，要使用時再根據實際需求填入資料及參數即可，大幅提升工程師理解與維護的能力。</li>
+<li><strong>更好的效能</strong>：採取 <strong>Virtual DOM</strong> 概念，當資料變動時先計算好要變動的地方，以此抵銷無意義的變更，並且重複使用已存在的 DOM 元素</li>
+</ul>
+<h2 id="vuex">Vuex<a class="h-anchor" href="#vuex" aria-label="這個段落的連結"></a></h2>
+<h3 id="-vue過去傳值時面臨什麼問題">➤ Vue過去傳值時面臨什麼問題？<a class="h-anchor" href="#-vue%e9%81%8e%e5%8e%bb%e5%82%b3%e5%80%bc%e6%99%82%e9%9d%a2%e8%87%a8%e4%bb%80%e9%ba%bc%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>過去 Vue 裡面 component 的參數傳遞都是採用 <code>emit</code>跟 <code>props</code> ，但如果 component 的關係並非 parent/child 而是像下圖想要將 Component B 的資訊傳到 Component C ，這種操作不但需要很多 <code>emit</code>跟 <code>props</code> 還會造成程式碼閱讀困難</p>
+<p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-02.webp" width="1400" height="409" alt="Vue過去傳值時面臨什麼問題？（圖 2）" loading="lazy" decoding="async"></p>
+<h3 id="-如何解決這個問題">➤ 如何解決這個問題？<a class="h-anchor" href="#-%e5%a6%82%e4%bd%95%e8%a7%a3%e6%b1%ba%e9%80%99%e5%80%8b%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>根據上面的問題，官方推出專門用來『狀態管理』的工具，你可以把它想像成 Vue 裡面的全域變數，將狀態(state)全部放在倉庫(store)來進行管理。</p>
+<p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-03.webp" width="701" height="551" alt="如何解決這個問題？（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>更新 state</strong>：在 <strong>Vuex</strong> 裡面，儲存狀態的為 <strong>State</strong>，component 需要更動 <strong>State </strong>時，需要透過 <strong>Actions </strong>發出一個 <strong>Commit</strong> 去呼叫 <strong>Mutations</strong>，再由 <strong>Mutations </strong>去更改 <strong>State</strong>。</p>
+<p><strong>取得 state</strong>：而 component 的資料更新可以在 <strong>compute</strong> 裡面使用 <strong>mapGetters</strong> 使用 <strong>getters</strong> 的 function 或是用 <strong>mapState</strong> 直接取用 state 的資料</p>
+<h2 id="vuetify">Vuetify<a class="h-anchor" href="#vuetify" aria-label="這個段落的連結"></a></h2>
+<h3 id="-提供前端工程師豐富的-md-component">➤ 提供前端工程師豐富的 MD component<a class="h-anchor" href="#-%e6%8f%90%e4%be%9b%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e8%b1%90%e5%af%8c%e7%9a%84-md-component" aria-label="這個段落的連結"></a></h3>
+<p>你可以把 Vuetify 當成 Vue 的 Material Design framework，他不但省去了你自己手工打造 UI component 的時間，還為每個 component 提供許多可以自由定義的 property 讓版型更加靈活。</p>
+<h3 id="-強大的社群支持並穩定更新">➤ 強大的社群支持並穩定更新<a class="h-anchor" href="#-%e5%bc%b7%e5%a4%a7%e7%9a%84%e7%a4%be%e7%be%a4%e6%94%af%e6%8c%81%e4%b8%a6%e7%a9%a9%e5%ae%9a%e6%9b%b4%e6%96%b0" aria-label="這個段落的連結"></a></h3>
+<p>截至今天在 Github 上有高達 30K 的星星，如果你在開發上遇到問題在他們 <a href="https://discord.com/invite/s93b7Fv">discord社區</a>上發問也能很快得到解答。</p>
+<p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-04.webp" width="1400" height="107" alt="強大的社群支持並穩定更新（圖 4）" loading="lazy" decoding="async"></p>
+<p>官方每個禮拜都會穩定更新版本，相比於其他 Vue 的 framework 是非常穩定的</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-05.webp" width="971" height="562" alt="image from:https://vuetifyjs.com/en/introduction/why-vuetify/#why-vuetify3f" loading="lazy" decoding="async">
+  <figcaption>image from:<a href="https://vuetifyjs.com/en/introduction/why-vuetify/#why-vuetify3f">https://vuetifyjs.com/en/introduction/why-vuetify/#why-vuetify3f</a></figcaption>
+</figure>
+
+<h3 id="-自由決定導入-component">➤ 自由決定導入 component<a class="h-anchor" href="#-%e8%87%aa%e7%94%b1%e6%b1%ba%e5%ae%9a%e5%b0%8e%e5%85%a5-component" aria-label="這個段落的連結"></a></h3>
+<p>官方稱為 <strong>Auto treeshaking</strong>，在使用 Vuetify 時你可能覺得他非常『肥』，裡面包了一堆你專案中用不到 component，但因為有 <strong>Auto treeshaking </strong>的機制所以只會導入你有使用的 component</p>
+<h2 id="nuxtjs">Nuxt.js<a class="h-anchor" href="#nuxtjs" aria-label="這個段落的連結"></a></h2>
+<h3 id="-vuejs-的應用框架">➤ Vue.js 的應用框架<a class="h-anchor" href="#-vuejs-%e7%9a%84%e6%87%89%e7%94%a8%e6%a1%86%e6%9e%b6" aria-label="這個段落的連結"></a></h3>
+<p>把 webpack、vue loader、vuex、router 的設定都集中在一起，減少使用者的配置成本</p>
+<h3 id="-ssr-伺服器端渲染">➤ SSR 伺服器端渲染<a class="h-anchor" href="#-ssr-%e4%bc%ba%e6%9c%8d%e5%99%a8%e7%ab%af%e6%b8%b2%e6%9f%93" aria-label="這個段落的連結"></a></h3>
+<p>因為由 server 端組成 HTML 後回傳，所以 Google 在 SEO 解析時可以很好的分析 DOM 元素，藉此提升網站的 SEO 水平</p>
+<blockquote>
+<p>Nuxt.js 也是能做 SPA(無SSR)、產生靜態網頁</p>
+</blockquote>
+<hr>
+<p><strong>參考資源</strong>： <a href="https://medium.com/itsems-frontend/vue-vuex1-state-mutations-364163b3acac">Vuex 是什麼? 怎麼用?</a>、<a href="https://tw.alphacamp.co/blog/why-use-front-end-framework">前端框架的功能與優點</a></p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>Vue的基本常識</title>
+      <link>https://deanlin.net/blog/202007/vue-basics/</link>
+      <pubDate>Fri, 10 Jul 2020 17:10:11 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202007/vue-basics/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>雖然用了一段時間的Vue，但自認對他的了解還不夠深刻，於是讀了一些大神文章，依照自己的理解做了整理筆記，希望大家都能吸收這些基本常識。</description>
+      <content:encoded><![CDATA[<p>雖然用了一段時間的Vue，但自認對他的了解還不夠深刻，於是讀了一些大神文章，依照自己的理解做了整理筆記，希望大家都能吸收這些基本常識。</p>
+<p><img src="https://deanlin.net/blog/202007/vue-basics/images/vue-basics-01.webp" width="1280" height="720" alt="Vue的基本常識（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="spasingle-page-application簡易說明">SPA，single page application簡易說明<a class="h-anchor" href="#spasingle-page-application%e7%b0%a1%e6%98%93%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>他會在一開始init web page時就把html, js, css這些需要的load完，因此在換頁時只需要load新頁面所需要的元件，基本上是用router-link的方式來完成換頁功能</p>
+</blockquote>
+<h3 id="優點">優點：<a class="h-anchor" href="#%e5%84%aa%e9%bb%9e" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>使用者體驗良好，省去每次刷新頁面的等待，大幅減少loading相同元素的耗能</li>
+<li>基於上一個原因，server的壓力也減少許多</li>
+<li>前後端分離，前端專心處理渲染，後端專心處理數據</li>
+</ul>
+<h3 id="缺點">缺點：<a class="h-anchor" href="#%e7%bc%ba%e9%bb%9e" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>第一次loading時間較長</li>
+<li>因為是單頁瀏覽，所以不支援上一頁/下一頁功能</li>
+<li>SEO難度高，因為所有內容都在同一頁</li>
+</ul>
+<hr>
+<h2 id="v-if與v-show的區別">v-if與v-show的區別<a class="h-anchor" href="#v-if%e8%88%87v-show%e7%9a%84%e5%8d%80%e5%88%a5" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>v-if是根據條件是否成立來決定渲染/銷毀</li>
+<li>v-show是無條件渲染，他就是一個css的display的功能</li>
+</ul>
+<blockquote>
+<p>如果你使用場景偶爾才切換條件就使用v-if，可以減少資源浪費；但如果需要高頻率切換就使用v-show吧</p>
+</blockquote>
+<hr>
+<h2 id="vue-parent-component--child-component特性">Vue parent component , child component特性<a class="h-anchor" href="#vue-parent-component--child-component%e7%89%b9%e6%80%a7" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>Parent component可以透過props傳遞到child component，而child component如果想要傳遞變更事件及資料就需要用$emit來觸發parent的事件</p>
+</blockquote>
+<p>如果你想要在child 變更props，請這樣操作：</p>
+<p>這個props傳入一個initial value，child component會希望可以操作這個init value，如果想要做這個操作，你需要在child component裡面新增data的屬性，並給予props的initial value</p>
+<pre tabindex="0"><code>props: [&#39;initialValue&#39;],
+data: function () {
+    return {
+        counter: this.initialValue
+    }
+}
+</code></pre><p>這個props傳入一個origin value，child component想要對他做一個換算或是變更，這樣建議用computed</p>
+<pre tabindex="0"><code>props: [&#39;size&#39;],
+computed: {
+    normalizedSize: function () {
+        return this.size.trim().toLowerCase()
+    }
+}
+</code></pre><hr>
+<h2 id="computed-vs-watch">Computed VS Watch<a class="h-anchor" href="#computed-vs-watch" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>Computed是用來計算的，有緩存的特性，只有裡面依賴的參數調整時才會觸發，且一定有計算完的回傳值</li>
+<li>Watch主要是觀察數據變更，比較常用來做一些消耗相對多resourcec或是非同步運算的事情(ex:call api)</li>
+</ul>
+<hr>
+<h2 id="給object-array新的valuevue要如何偵測">給object array新的value，vue要如何偵測<a class="h-anchor" href="#%e7%b5%a6object-array%e6%96%b0%e7%9a%84valuevue%e8%a6%81%e5%a6%82%e4%bd%95%e5%81%b5%e6%b8%ac" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>因為javascript限制，下面兩個範例是vue無法偵測的，需要進行修正：</p>
+</blockquote>
+<pre tabindex="0"><code>//vm.items[indexOfItem] = newValue
+vm.$set(vm.items, indexOfItem, newValue)
+//vm.items.length = newLength
+vm.items.splice(newLength)
+</code></pre><hr>
+<h2 id="vue的生命週期">Vue的生命週期<a class="h-anchor" href="#vue%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>Component初始化-&gt;屬性綁定&amp;編譯templete-&gt;掛載dom-&gt;渲染更新…-&gt;銷毀</p>
+</blockquote>
+<hr>
+<h2 id="parent-component--child-component-life-cycle">Parent component &amp; Child component life cycle<a class="h-anchor" href="#parent-component--child-component-life-cycle" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>基本原則就是父親開始動作後兒子才能動作，兒子動作完畢後，父親才會正式停下來</p>
+</blockquote>
+<h3 id="component-mounted">Component mounted<a class="h-anchor" href="#component-mounted" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>父 beforeCreate -&gt; 父 created -&gt; 父 beforeMount -&gt; 子 beforeCreate -&gt; 子 created -&gt; 子 beforeMount -&gt; 子 mounted -&gt; 父 mounted</li>
+</ul>
+<h3 id="child-component-update">Child component update<a class="h-anchor" href="#child-component-update" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>父 beforeUpdate -&gt; 子 beforeUpdate -&gt; 子 updated -&gt; 父 updated</li>
+</ul>
+<h3 id="parent-component-update">Parent component update<a class="h-anchor" href="#parent-component-update" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>父 beforeUpdate -&gt; 父 updated</li>
+</ul>
+<h3 id="destroyed">Destroyed<a class="h-anchor" href="#destroyed" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>父 beforeDestroy -&gt; 子 beforeDestroy -&gt; 子 destroyed -&gt; 父 destroyed</li>
+</ul>
+<hr>
+<h2 id="vue的生命週期中可以做異步請求">Vue的生命週期中可以做異步請求<a class="h-anchor" href="#vue%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f%e4%b8%ad%e5%8f%af%e4%bb%a5%e5%81%9a%e7%95%b0%e6%ad%a5%e8%ab%8b%e6%b1%82" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>created、beforeMounted、mounted都可以，因為data已經存在，可以去做相關的操作，但建議在created階段操作：</p>
+</blockquote>
+<ul>
+<li>可更早取得server端數據，減少頁面loading時間</li>
+<li>ssr不支援beforeMounted、mounted，放在created可保持程式邏輯一致性(如果前後端分離通常是在client端做渲染較不會有這個問題)</li>
+</ul>
+<hr>
+<h2 id="什麼階段可以對dom操作">什麼階段可以對DOM操作<a class="h-anchor" href="#%e4%bb%80%e9%ba%bc%e9%9a%8e%e6%ae%b5%e5%8f%af%e4%bb%a5%e5%b0%8ddom%e6%93%8d%e4%bd%9c" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>在mounted階段可以對DOM操作，這個階段已經完成整個頁面的component了</p>
+</blockquote>
+<hr>
+<h2 id="parent-component如何監聽child-component的生命週期">Parent component如何監聽Child component的生命週期<a class="h-anchor" href="#parent-component%e5%a6%82%e4%bd%95%e7%9b%a3%e8%81%bdchild-component%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>用$emit的方式</li>
+</ol>
+<pre tabindex="0"><code>// Parent.vue
+&lt;Child @mounted=”doSomething”/&gt;
+// Child.vue
+mounted() { this.$emit(“mounted”); }
+</code></pre><p>2. 用@hook方式(較推薦)</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Parent.vue
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72;font-weight:bold">&lt;</span>Child <span style="color:#f85149">@</span>hook<span style="color:#ff7b72;font-weight:bold">:</span>mounted<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#f85149">”</span>doSomething<span style="color:#f85149">”</span> <span style="color:#ff7b72;font-weight:bold">&gt;&lt;</span><span style="color:#f85149">/Child&gt;</span>
+</span></span><span style="display:flex;"><span>doSomething() {
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#f85149">‘</span>父组件监听到 mounted 钩子函数 <span style="color:#f85149">…’</span>);
+</span></span><span style="display:flex;"><span>},
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Child.vue
+</span></span></span><span style="display:flex;"><span>mounted(){
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#f85149">‘</span>子组件触发 mounted 钩子函数 <span style="color:#f85149">…’</span>);
+</span></span><span style="display:flex;"><span>},
+</span></span></code></pre></div><hr>
+<h2 id="keep-alive的作用">Keep-alive的作用<a class="h-anchor" href="#keep-alive%e7%9a%84%e4%bd%9c%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>keep-alive是 Vue 的原生元件，專門做為 Cache 的解決方案，避免頁面中的組件重新被渲染。<a href="https://medium.com/%E4%B8%80%E5%80%8B%E5%B0%8F%E5%B0%8F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E9%9A%A8%E6%89%8B%E7%AD%86%E8%A8%98/vue-%E8%81%B0%E6%98%8E%E4%BD%BF%E7%94%A8-keep-alive-%E9%81%94%E5%88%B0-cache-%E7%9B%AE%E7%9A%84-691cfb3c8bf0">詳細可參考</a></p>
+</blockquote>
+<hr>
+<h2 id="為什麼component中的data是一個函數然後return一個object而new-vue卻可以直接是一個object">為什麼component中的data是一個函數，然後return一個object，而new Vue卻可以直接是一個object<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bccomponent%e4%b8%ad%e7%9a%84data%e6%98%af%e4%b8%80%e5%80%8b%e5%87%bd%e6%95%b8%e7%84%b6%e5%be%8creturn%e4%b8%80%e5%80%8bobject%e8%80%8cnew-vue%e5%8d%bb%e5%8f%af%e4%bb%a5%e7%9b%b4%e6%8e%a5%e6%98%af%e4%b8%80%e5%80%8bobject" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>因為component是要用來重複使用的，如果data是一個object這樣component之間會資料錯亂，而當他是一個函數的時候就可以完成區隔</p>
+<p>而new Vue則不會重複使用，所以沒有被引用的問題</p>
+</blockquote>
+<pre tabindex="0"><code>// data
+data() {
+    return {
+        message: “子组件”,
+        childName:this.name
+    }
+}
+// new Vue
+new Vue({
+    el: ‘#app’,
+    router,
+    template: ‘&lt;App/&gt;’,
+    components: {App}
+})
+</code></pre><hr>
+<h2 id="v-model原理">v-model原理<a class="h-anchor" href="#v-model%e5%8e%9f%e7%90%86" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>v-model主要是在input, select, textarea這些元素中建立雙向綁定的工具，他會在不同元素中拋出不一樣的事件：</p>
+</blockquote>
+<ul>
+<li>text 和 textarea 元素使用 value 屬性和 input 事件；</li>
+<li>checkbox 和 radio 使用 checked 屬性和 change 事件；</li>
+<li>select 字段将 value 作為 prop 並將 change 作為事件。</li>
+</ul>
+<hr>
+<h2 id="vue-component間communicate-方式">Vue component間communicate 方式<a class="h-anchor" href="#vue-component%e9%96%93communicate-%e6%96%b9%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>props / $emit 父子component通信</li>
+<li><a href="https://blog.csdn.net/zhouzuoluo/article/details/81097339">ref 與 $parent / $children</a> 父子component通信</li>
+<li>EventBus ($emit / $on) 你可以把它當成全域的事件，只要有監聽便可接收，但請在destory該component前也要把監聽事件destory掉</li>
+<li><a href="https://medium.com/@bebebobohaha/vue-eventbus-%E4%BA%8B%E4%BB%B6%E7%B8%BD%E7%B7%9A-9673e04f6a5f">EventBus 事件總線</a></li>
+<li>Vuex，你可以把他想像成一個網站暫存的store，你可以更改及存取state</li>
+</ul>
+<hr>
+<h2 id="vuex-概念">Vuex 概念<a class="h-anchor" href="#vuex-%e6%a6%82%e5%bf%b5" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>核心為store，用來存取state；可使用mutation提交的方式來過改變state資料</p>
+</blockquote>
+<hr>
+<h2 id="ssr優缺點">SSR優缺點<a class="h-anchor" href="#ssr%e5%84%aa%e7%bc%ba%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<h3 id="優點-1">優點：<a class="h-anchor" href="#%e5%84%aa%e9%bb%9e-1" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>好的SEO，因為網頁已經再server side組裝完成，所以搜尋引擎能直接抓到渲染好的頁面</li>
+<li>首頁加載快速，因為都由server side轉換完成了</li>
+</ul>
+<h3 id="缺點-1">缺點：<a class="h-anchor" href="#%e7%bc%ba%e9%bb%9e-1" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>更多的開發條件限制：像是life cycle渲染階段只能用beforeCreate、created</li>
+<li>server負擔更重：因為都是server side作轉換，所以負擔更重，cache的設計更加顯得重要</li>
+</ul>
+<hr>
+<h2 id="vue-router種類">vue-router種類<a class="h-anchor" href="#vue-router%e7%a8%ae%e9%a1%9e" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>hash, history, abstract(default)</p>
+</blockquote>
+<hr>
+<h2 id="mvvm是什麼">MVVM是什麼<a class="h-anchor" href="#mvvm%e6%98%af%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>由Model-View-ViewModel組成</p>
+</blockquote>
+<ul>
+<li>Model: 由後端接口api return 回來的資料(ex: json data)</li>
+</ul>
+<pre tabindex="0"><code>{ “url”: “/your/server/data/api”, “res”: { “success”: true, “name”: “IoveC”, “domain”: “www.cnblogs.com&#34; } }
+</code></pre><ul>
+<li>View: 前端UI介面由HTML/CSS構建</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#7ee787">div</span> id<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">”app”</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#7ee787">p</span>&gt;{{message}}&lt;/<span style="color:#7ee787">p</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#7ee787">button</span> v-on:click<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">”showMessage()”</span>&gt;Click me&lt;/<span style="color:#7ee787">button</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">div</span>&gt;
+</span></span></code></pre></div><ul>
+<li>ViewModel: 前端開發人員根據api回傳的資料做二次封裝提供給View使用</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">var</span> app <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Vue({
+</span></span><span style="display:flex;"><span>el<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#f85149">‘#</span>app<span style="color:#f85149">’</span>,
+</span></span><span style="display:flex;"><span>data<span style="color:#ff7b72;font-weight:bold">:</span> { <span style="color:#8b949e;font-style:italic">// 用于描述视图状态
+</span></span></span><span style="display:flex;"><span>    message<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#f85149">‘</span>Hello Vue<span style="color:#ff7b72;font-weight:bold">!</span><span style="color:#f85149">’</span>,
+</span></span><span style="display:flex;"><span>},
+</span></span><span style="display:flex;"><span>methods<span style="color:#ff7b72;font-weight:bold">:</span> { <span style="color:#8b949e;font-style:italic">// 用于描述视图行为
+</span></span></span><span style="display:flex;"><span>    showMessage(){
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> vm <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">this</span>;
+</span></span><span style="display:flex;"><span>        alert(vm.message);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>},
+</span></span><span style="display:flex;"><span>created(){
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> vm <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">this</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Ajax 获取 Model 层的数据
+</span></span></span><span style="display:flex;"><span>    ajax({
+</span></span><span style="display:flex;"><span>        url<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#f85149">‘</span><span style="color:#ff7b72;font-weight:bold">/</span>your<span style="color:#ff7b72;font-weight:bold">/</span>server<span style="color:#ff7b72;font-weight:bold">/</span>data<span style="color:#ff7b72;font-weight:bold">/</span>api<span style="color:#f85149">’</span>,
+</span></span><span style="display:flex;"><span>        success(res){
+</span></span><span style="display:flex;"><span>            vm.message <span style="color:#ff7b72;font-weight:bold">=</span> res;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>}})
+</span></span></code></pre></div><hr>
+<h2 id="virtual-dom優缺點">Virtual DOM優缺點<a class="h-anchor" href="#virtual-dom%e5%84%aa%e7%bc%ba%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<h3 id="優點-2">優點：<a class="h-anchor" href="#%e5%84%aa%e9%bb%9e-2" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>保證基礎效能</li>
+<li>無須手動去調整DOM，增加開發效率</li>
+<li>跨平台，如果SSR，WEEX</li>
+</ul>
+<h3 id="缺點-2">缺點：<a class="h-anchor" href="#%e7%bc%ba%e9%bb%9e-2" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>無法極致優化，畢竟這些都是自動產生的</li>
+</ul>
+<hr>
+<h2 id="vue中key的作用">Vue中Key的作用<a class="h-anchor" href="#vue%e4%b8%adkey%e7%9a%84%e4%bd%9c%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>key是Vue中node節點的唯一值，透過他diff操作可更快速準確</p>
+</blockquote>
+<hr>
+<h2 id="vue可考慮優化項目">Vue可考慮優化項目<a class="h-anchor" href="#vue%e5%8f%af%e8%80%83%e6%85%ae%e5%84%aa%e5%8c%96%e9%a0%85%e7%9b%ae" aria-label="這個段落的連結"></a></h2>
+<h3 id="coding部分">coding部分<a class="h-anchor" href="#coding%e9%83%a8%e5%88%86" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>v-if/v-show使用情境區分</li>
+<li>computed/watch使用情境區分</li>
+<li>v-for記得要有key，避免使用v-if(這部分應該交由server端就完成data的filter)</li>
+<li>監聽的事件在component destroy時是否有銷毀</li>
+<li>Image lazy loading</li>
+<li>第三方插件依照需求引入</li>
+</ul>
+<h3 id="webpack部分">Webpack部分<a class="h-anchor" href="#webpack%e9%83%a8%e5%88%86" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>Webpack對圖片進行壓縮</li>
+<li>共用component規劃</li>
+<li>共用css設計</li>
+</ul>
+<h3 id="web部分">web部分<a class="h-anchor" href="#web%e9%83%a8%e5%88%86" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>gzip</li>
+<li>CND</li>
+<li>Browser cache</li>
+</ul>
+<p>參考資源：<a href="https://juejin.im/post/5d59f2a451882549be53b170#comment">https://juejin.im/post/5d59f2a451882549be53b170#comment</a></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

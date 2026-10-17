@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="這幾年做企業內訓的時候，我會請客戶提供內部的「去識別化資料」，這樣我才能根據公司實際狀況設計課程。https://youtu.be/Mx7d0nSF61k 這幾年做企業內訓的時候，我會請客戶提供內部的「去識別化資料」，這樣我才能根據公司實際…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化">
+  <meta property="og:description" content="這幾年做企業內訓的時候，我會請客戶提供內部的「去識別化資料」，這樣我才能根據公司實際狀況設計課程。https://youtu.be/Mx7d0nSF61k 這幾年做企業內訓的時候，我會請客戶提供內部的「去識別化資料」，這樣我才能根據公司實際…">
+  <meta property="og:url" content="https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2026-10-15T18:09:14&#43;08:00">
+  <meta property="article:modified_time" content="2026-10-15T18:09:14&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="AI 實戰">
+  <meta property="article:tag" content="資訊安全">
+  <meta property="article:tag" content="AI 資安">
+  <meta property="article:tag" content="資安">
+  <meta property="article:tag" content="去識別化">
+  <meta property="article:tag" content="Vibe Coding">
+  <meta property="og:image" content="https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-og.jpg">
+  <meta name="twitter:title" content="【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化">
+  <meta name="twitter:description" content="這幾年做企業內訓的時候，我會請客戶提供內部的「去識別化資料」，這樣我才能根據公司實際狀況設計課程。https://youtu.be/Mx7d0nSF61k 這幾年做企業內訓的時候，我會請客戶提供內部的「去識別化資料」，這樣我才能根據公司實際…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"AI 實戰"},"articleSection":"AI 實戰","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2026-10-15T18:09:14+08:00","datePublished":"2026-10-15T18:09:14+08:00","description":"這幾年做企業內訓的時候，我會請客戶提供內部的「去識別化資料」，這樣我才能根據公司實際狀況設計課程。https://youtu.be/Mx7d0nSF61k 這幾年做企業內訓的時候，我會請客戶提供內部的「去識別化資料」，這樣我才能根據公司實際…","headline":"【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化","image":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"資訊安全, AI 資安, 資安, 去識別化, Vibe Coding","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/ai-%E9%99%B7%E9%98%B1-ep3-%E8%B3%87%E6%96%99%E5%88%A5%E7%9B%B4%E6%8E%A5%E4%B8%9F-ai-word-excel-pdf-txt-%E4%B8%80%E9%8D%B5%E5%8E%BB%E8%AD%98%E5%88%A5%E5%8C%96-41ab2e54922c"],"timeRequired":"PT9M","url":"https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/","wordCount":4175},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/ai/","name":"AI 實戰","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/","name":"【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰</a></li>
+        <li><a href="/categories/tech/">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/ai/">AI 實戰</a>
+      </nav>
+      <h1 class="article-title">【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2026-10-15">2026.10.15</time>
+              <span>閱讀約 9 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li class="is-sub"><a href="#-%e9%a7%ad%e5%ae%a2%e5%b8%b8%e7%94%a8%e7%9a%84%e9%87%a3%e9%ad%9a%e6%89%8b%e6%b3%95">➤ 駭客常用的釣魚手法</a></li><li class="is-sub"><a href="#-%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7%e5%88%86%e4%ba%ab">➤ 去識別化工具分享</a></li><li class="is-sub"><a href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96">① 為什麼需要去識別化</a></li><li class="is-sub"><a href="#-%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7%e5%af%a6%e6%88%b0-demo">② 去識別化工具實戰 Demo</a></li><li class="is-sub"><a href="#-%e5%9c%a8-ai-%e6%99%82%e4%bb%a3%e6%89%93%e9%80%a0%e5%ae%a2%e8%a3%bd%e5%8c%96%e7%9a%84%e5%b7%a5%e5%85%b7">③ 在 AI 時代，打造客製化的工具</a></li><li><a href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96-1">① 為什麼需要去識別化</a></li><li class="is-sub"><a href="#-%e6%89%8b%e5%8b%95%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e7%9a%84%e5%95%8f%e9%a1%8c">➤ 手動去識別化的問題</a></li><li class="is-sub"><a href="#-%e5%ae%89%e5%85%a8%e7%9a%84%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7">➤ 安全的去識別化工具</a></li><li><a href="#-%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7%e5%af%a6%e6%88%b0-demo-1">② 去識別化工具實戰 Demo</a></li><li class="is-sub"><a href="#step-1%e4%b8%8a%e5%82%b3%e6%aa%94%e6%a1%88">STEP 1｜上傳檔案</a></li><li class="is-sub"><a href="#step-2%e7%9c%8b%e9%a0%90%e8%a6%bd">STEP 2｜看預覽</a></li><li class="is-sub"><a href="#step-3%e4%ba%ba%e5%b7%a5%e8%aa%bf%e6%95%b4">STEP 3｜人工調整</a></li><li class="is-sub"><a href="#step-4%e4%b8%8b%e8%bc%89">STEP 4｜下載</a></li><li class="is-sub"><a href="#step-5%e4%b8%8a%e5%82%b3-ai">STEP 5｜上傳 AI</a></li><li class="is-sub"><a href="#step-6%e9%82%84%e5%8e%9f">STEP 6｜還原</a></li><li class="is-sub"><a href="#step-7%e8%87%aa%e8%a8%82%e8%a6%8f%e5%89%87">STEP 7｜自訂規則</a></li><li><a href="#-%e5%9c%a8-ai-%e6%99%82%e4%bb%a3%e6%89%93%e9%80%a0%e5%ae%a2%e8%a3%bd%e5%8c%96%e7%9a%84%e5%b7%a5%e5%85%b7-1">③ 在 AI 時代，打造客製化的工具</a></li><li class="is-sub"><a href="#-%e8%a6%81%e4%b8%8d%e8%a6%81%e7%94%a8%e8%b3%87%e6%96%99%e5%ba%ab">➤ 要不要用資料庫</a></li><li class="is-sub"><a href="#-%e5%be%9e%e8%87%aa%e5%b7%b1%e7%9a%84%e9%9c%80%e6%b1%82%e5%87%ba%e7%99%bc">➤ 從自己的需求出發</a></li><li class="is-sub"><a href="#-%e9%99%a4%e4%ba%86%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e9%82%84%e8%a6%81%e8%83%bd%e9%82%84%e5%8e%9f">➤ 除了去識別化還要能還原</a></li><li class="is-sub"><a href="#-%e9%81%ae%e7%9a%84%e7%af%84%e5%9c%8d%e8%a6%81%e5%89%9b%e5%89%9b%e5%a5%bd">➤ 遮的範圍要剛剛好</a></li><li class="is-sub"><a href="#-%e8%a6%8f%e6%a0%bc%e9%a9%85%e5%8b%95%e9%96%8b%e7%99%bc">➤ 規格驅動開發</a></li><li><a href="#%e7%b5%90%e8%aa%9e%e6%8a%8a%e8%b3%87%e8%a8%8a%e4%ba%a4%e7%b5%a6-ai%e8%b2%ac%e4%bb%bb%e9%82%84%e6%98%af%e8%a6%81%e8%87%aa%e5%b7%b1%e6%89%9b">結語：把資訊交給 AI，責任還是要自己扛</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <figure class="figure"><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-01.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-01_hu_a914ed3e44c62c4e.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="788" alt="https://youtu.be/Mx7d0nSF61k" loading="lazy" decoding="async">
+  <figcaption><a href="https://youtu.be/Mx7d0nSF61k">https://youtu.be/Mx7d0nSF61k</a></figcaption>
+</figure>
+
+<p>這幾年做企業內訓的時候，我會請客戶提供內部的「去識別化資料」，這樣我才能根據公司實際狀況設計課程。</p>
+<p>但實際收到檔案時，通常裡面還是會殘留一些比較敏感的資訊，比如「姓名、電話、Email、身分證字號、地址…」</p>
+<p>我知道承辦人員已經很努力了，<strong>只是當檔案太多、操作又很瑣碎時，就算有心去做，也很容易漏掉。</strong></p>
+<p>就像一份 Excel 有多個工作表時，可能處理完第一個，後面的就忘記了。</p>
+<p>而 PDF 更麻煩，因為檔案無法直接編輯，所以有些人會用白框遮擋，但其實被遮擋後文字依舊可以被複製。</p>
+<p>其實我收到這些檔案還好，因為合作時有簽署保密協議。</p>
+<blockquote class="pullquote"><p>但如果是直接丟給 AI，情況就不一樣了</p>
+</blockquote>
+<p><strong>你上傳的資料，是有可能會被 AI 拿去訓練模型而導致外洩。</strong></p>
+<blockquote>
+<p><em>完整的 Demo，可以觀看 YT 喔 👉</em></p>
+<p><em>對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。</em></p>
+</blockquote>
+<div class="yt" data-yt="Mx7d0nSF61k" data-title="【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化 | 資訊安全 | Vibe Coding | AI 資安 | ChatGPT | Claude">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=Mx7d0nSF61k" target="_blank" rel="noopener" aria-label="播放影片：【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化 | 資訊安全 | Vibe Coding | AI 資安 | ChatGPT | Claude">
+    <img src="https://i.ytimg.com/vi/Mx7d0nSF61k/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化 | 資訊安全 | Vibe Coding | AI 資安 | ChatGPT | Claude</span>
+  </a>
+</div>
+
+<blockquote>
+<p>這邊先帶大家看一下 ChatGPT 與 Claude 如何關閉這個設定。</p>
+</blockquote>
+<p>ChatGPT 可以點擊左下角頭像，選擇設定，切換到資料控制的分頁後，將「協助改善所有人的模型體驗」切換成關閉。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-02.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-02_hu_f1e34fdddf699a96.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="814" alt="【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化（圖 2）" loading="lazy" decoding="async"></p>
+<p>而 Claude 也是點擊左下角頭像，選擇設定（Settings），切換到隱私權（ Privacy）分頁後，將「Help improve our AI models」切換成關閉。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-03.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-03_hu_69bc2bf2a66acac4.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-03.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="814" alt="【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化（圖 3）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>建議大家檢查一下自己的帳號，因為預設是開啟的。</p>
+</blockquote>
+<h2 class="h-minor" id="-駭客常用的釣魚手法">➤ 駭客常用的釣魚手法<a class="h-anchor" href="#-%e9%a7%ad%e5%ae%a2%e5%b8%b8%e7%94%a8%e7%9a%84%e9%87%a3%e9%ad%9a%e6%89%8b%e6%b3%95" aria-label="這個段落的連結"></a></h2>
+<p>不過就算把設定關閉，也不代表上傳的資料就安全了，<strong>因為你的帳號有可能被駭客盜用</strong>。</p>
+<p>最常見的手法，就是冒用你公司的 CEO、技術長這些高階主管；用他們的頭像，以及相同的 Email 前綴，以填寫 Google 表單的名義寄信給你。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-04.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-04_hu_68b4999b59e563a8.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-04.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="640" alt="駭客常用的釣魚手法（圖 4）" loading="lazy" decoding="async"></p>
+<p>你點連結後，可能會看到一個非常像 Google 的登入畫面。</p>
+<blockquote class="pullquote"><p>此時只要不小心輸入了帳號密碼，你的帳號就被盜了。</p>
+</blockquote>
+<p>駭客掌握帳號後，除了可以直接登入你的信箱外，還可透過它登入其他應用程式，比如進入 AI 工具瀏覽對話紀錄。</p>
+<p>假如你提供的敏感資料完全沒有去識別化，那對駭客來說真的就是得來全不費功夫。</p>
+<p>所以建議大家除了要給帳號加上多重驗證要素外，把敏感資料上傳給 AI 前，也要做到去識別化的動作。</p>
+<h2 class="h-minor" id="-去識別化工具分享">➤ 去識別化工具分享<a class="h-anchor" href="#-%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7%e5%88%86%e4%ba%ab" aria-label="這個段落的連結"></a></h2>
+<p>這邊分享一個我設計的<a href="https://deanlin.net/data-deidentification/">免費去識別化工具</a>：</p>
+<ol>
+<li>支援 Word、Excel、PDF、TXT 等多種格式</li>
+<li>可以一次處理 10 個檔案</li>
+<li>能辨識並隱藏姓名、身分證、電話、地址等常見隱私資訊</li>
+<li>發現有辨識錯誤或遺漏的地方，也能手動增加或取消</li>
+<li>工具以純前端網頁設計，所以檔案從頭到尾，都不會離開你的電腦</li>
+<li>在 AI 處理完後，還能還原回來</li>
+</ol>
+<figure class="figure"><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-05.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-05_hu_7eb5f1c445434b77.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-05.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="710" alt="https://deanlin.net/data-deidentification/" loading="lazy" decoding="async">
+  <figcaption><a href="https://deanlin.net/data-deidentification/">https://deanlin.net/data-deidentification/</a></figcaption>
+</figure>
+
+<p>這篇文章我會分成三個部分：</p>
+<h2 class="h-minor" id="-為什麼需要去識別化">① 為什麼需要去識別化<a class="h-anchor" href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96" aria-label="這個段落的連結"></a></h2>
+<p>從資訊安全的角度分享去識別化的重要性，以及過去手動處理的痛點與風險</p>
+<h2 class="h-minor" id="-去識別化工具實戰-demo">② 去識別化工具實戰 Demo<a class="h-anchor" href="#-%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7%e5%af%a6%e6%88%b0-demo" aria-label="這個段落的連結"></a></h2>
+<p>示範工具在實務應用上的使用場景：「資料去識別化、與 AI 協作、還原資料」</p>
+<h2 class="h-minor" id="-在-ai-時代打造客製化的工具">③ 在 AI 時代，打造客製化的工具<a class="h-anchor" href="#-%e5%9c%a8-ai-%e6%99%82%e4%bb%a3%e6%89%93%e9%80%a0%e5%ae%a2%e8%a3%bd%e5%8c%96%e7%9a%84%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h2>
+<p>分享製作工具時的設計思路，大家了解後可以根據自己的需求來優化功能</p>
+<hr>
+<h2 id="-為什麼需要去識別化-1">① 為什麼需要去識別化<a class="h-anchor" href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96-1" aria-label="這個段落的連結"></a></h2>
+<p>許多公司都會要求員工把敏感資料上傳給 AI 前，要先去識別化；但又沒有提供對應的工具，所以很多人是用土法煉鋼的方式，純手搓。</p>
+<h3 id="-手動去識別化的問題">➤ 手動去識別化的問題<a class="h-anchor" href="#-%e6%89%8b%e5%8b%95%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>以 Word 來說，我發現許多人是用「取代」的功能一個一個換，但要取代的內容一多就很容易漏。</p>
+<p>而且除非你有設計對照表，否則改完後就回不去了。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-06.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-06_hu_63dabb3ed94501c6.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-06.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="手動去識別化的問題（圖 6）" loading="lazy" decoding="async"></p>
+<p>另外 Excel 最常見的疏漏，就是第一個工作表處理完了，但後面幾個就忘了</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-07.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-07_hu_dc2a08f63984df7d.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-07.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="手動去識別化的問題（圖 7）" loading="lazy" decoding="async"></p>
+<p>至於 PDF 更麻煩，很多人會直接畫一個白框蓋上去；表面上看起來是遮掉了，但如果框選起來複製貼上，你會發現資料還在。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-08.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-08_hu_fd8178efdd1bfdd8.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-08.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="手動去識別化的問題（圖 8）" loading="lazy" decoding="async"></p>
+<h3 id="-安全的去識別化工具">➤ 安全的去識別化工具<a class="h-anchor" href="#-%e5%ae%89%e5%85%a8%e7%9a%84%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h3>
+<p>前面的痛點，是讓大家了解<strong>手動處理是一件繁瑣，且漏洞百出的方案</strong>。</p>
+<p>資料去識別化這個任務，其實我們是可以透過工具處理的。</p>
+<p>如果在網路搜尋「去識別化工具」，你會看到有許多現成的服務可以使用。</p>
+<p>但提醒一下大家，除非你了解服務背後使用的技術架構；否則你原本的目標是去識別化，結果卻直接把機敏資料送給對方。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-09.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-09_hu_37246ee5e5eff0f7.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="安全的去識別化工具（圖 9）" loading="lazy" decoding="async"></p>
+<p>所以我不敢推薦別人製作的工具，因為萬一推薦錯了，就會產生資安危機</p>
+<p>因此我乾脆自己做一個，這樣企業在提供資料給我的時候，就能透過這個工具，更輕鬆地處理敏感資料。</p>
+<p>講課時，也能直接示範給學員看如何使用，並培養資訊安全的意識。</p>
+<hr>
+<h2 id="-去識別化工具實戰-demo-1">② 去識別化工具實戰 Demo<a class="h-anchor" href="#-%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7%e5%af%a6%e6%88%b0-demo-1" aria-label="這個段落的連結"></a></h2>
+<p>這邊我就直接跟大家示範這款工具的操作方式。</p>
+<p>網址：<a href="https://deanlin.net/data-deidentification/">https://deanlin.net/data-deidentification/</a></p>
+<h3 id="step-1上傳檔案">STEP 1｜上傳檔案<a class="h-anchor" href="#step-1%e4%b8%8a%e5%82%b3%e6%aa%94%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<p>打開網頁後，你可以直接把檔案拖進來；工具支援 Word、Excel、PDF、Markdown 等多種常見格式，最多可以同時處理 10 個檔案。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-10.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-10_hu_1fa125fdd622837a.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-10.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 1｜上傳檔案（圖 10）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>如果是信件或對話紀錄，也可以直接貼上文字</p>
+</blockquote>
+<p>如果你只是想嘗試這款工具如何使用，我也有內建不同格式的範例，這邊我先以 Word 格式的合約來跟大家示範。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-11.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-11_hu_d6269b17715a56c1.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-11.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 1｜上傳檔案（圖 11）" loading="lazy" decoding="async"></p>
+<h3 id="step-2看預覽">STEP 2｜看預覽<a class="h-anchor" href="#step-2%e7%9c%8b%e9%a0%90%e8%a6%bd" aria-label="這個段落的連結"></a></h3>
+<p>點擊「載入」後你可以看到，預覽的排版跟原本的 Word 幾乎是一樣的，被辨識為敏感資料的部分，會換成方括號加上類別。</p>
+<p>像公司、統編、姓名、電話、電子郵件，都被隱藏起來了。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-12.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-12_hu_696a39ea81e01aa0.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-12.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 2｜看預覽（圖 12）" loading="lazy" decoding="async"></p>
+<p>如果想看原始資料，滑鼠移過去就會直接顯示。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-13.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-13_hu_74f3675231d2a5a2.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-13.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 2｜看預覽（圖 13）" loading="lazy" decoding="async"></p>
+<p>預設是「部分保留」，會留下姓氏、電話前幾碼、地址的縣市行政區，這些可能會拿來統計的部分。</p>
+<p>如果不需要統計，可以把「部分保留」改成「全部隱藏」，這樣所有敏感資訊就會全部轉為編碼。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-14.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-14_hu_3345be418e4b72fb.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-14.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 2｜看預覽（圖 14）" loading="lazy" decoding="async"></p>
+<h3 id="step-3人工調整">STEP 3｜人工調整<a class="h-anchor" href="#step-3%e4%ba%ba%e5%b7%a5%e8%aa%bf%e6%95%b4" aria-label="這個段落的連結"></a></h3>
+<p>不過自動偵測一定會有誤判，所以建議大家在預覽階段先瀏覽一下。</p>
+<p>比如你如果認為銀行帳戶屬於敏感資訊，但沒有被隱藏，可以用滑鼠圈起來，選好類別，就能手動隱藏。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-15.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-15_hu_686214fb4f82f1ae.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-15.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 3｜人工調整（圖 15）" loading="lazy" decoding="async"></p>
+<p>而抓錯，或認為不需要隱藏的，點一下標記，按「取消去識別化」，就會恢復原文。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-16.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-16_hu_2d40a8da09ba3784.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-16.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 3｜人工調整（圖 16）" loading="lazy" decoding="async"></p>
+<p>如果想檢視這份文件有多少內容被去識別化，也可以直接「展開偵測清單」快速瀏覽：</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-17.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-17_hu_b49422d544672412.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-17.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 3｜人工調整（圖 17）" loading="lazy" decoding="async"></p>
+<h3 id="step-4下載">STEP 4｜下載<a class="h-anchor" href="#step-4%e4%b8%8b%e8%bc%89" aria-label="這個段落的連結"></a></h3>
+<p>確認一切都符合預期後，點擊上方的「下載」，你就會獲得兩個檔案，一個是去識別化的文件，另一個是 CSV 編碼表。</p>
+<p>這兩個檔案是一組的，如果 CSV 編碼表沒有好好保存，未來資料會無法順利還原。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-18.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-18_hu_a78fefe009e4eb55.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-18.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 4｜下載（圖 18）" loading="lazy" decoding="async"></p>
+<h3 id="step-5上傳-ai">STEP 5｜上傳 AI<a class="h-anchor" href="#step-5%e4%b8%8a%e5%82%b3-ai" aria-label="這個段落的連結"></a></h3>
+<p>完成資料去識別化後，我們就能放心地提供給 AI 了。</p>
+<p>比如把 Word 上傳給 ChatGPT，請他協助確認合約細節，比如跟他說：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span>我是甲方，請從法務角度確認合約中是否有不利於甲方的條款，如果有，請給出合適的處理方案，並直接從原本 Word 契約書裡面調整，調整的部分用紅字標注
+</span></span></code></pre></div><p>等 AI 優化完後，我們拿到了新版的契約書，變更的部分都有用紅字顯示。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-19.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-19_hu_63a3b38a52c09c2f.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-19.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 5｜上傳 AI（圖 19）" loading="lazy" decoding="async"></p>
+<h3 id="step-6還原">STEP 6｜還原<a class="h-anchor" href="#step-6%e9%82%84%e5%8e%9f" aria-label="這個段落的連結"></a></h3>
+<p>接下來，如果你確認變更的條款都符合預期後，可以回到工具「還原」的分頁。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-20.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-20_hu_4703e033f1da7353.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-20.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 6｜還原（圖 20）" loading="lazy" decoding="async"></p>
+<p>把 AI 處理完的檔案，跟剛剛的編碼表一起上傳；就會看到內容都被還原了，並且檔案可以順利下載。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-21.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-21_hu_1e73deffc690168c.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-21.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 6｜還原（圖 21）" loading="lazy" decoding="async"></p>
+<h3 id="step-7自訂規則">STEP 7｜自訂規則<a class="h-anchor" href="#step-7%e8%87%aa%e8%a8%82%e8%a6%8f%e5%89%87" aria-label="這個段落的連結"></a></h3>
+<p>那如果你覺得內建的這些規則還不夠用，想要自己新增，這個工具也有保留彈性。</p>
+<p>這邊我點擊「換一個檔案」，用範例中客戶資料 Excel 來示範，先點擊「載入」。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-22.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-22_hu_d4c5d850647203cb.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-22.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 7｜自訂規則（圖 22）" loading="lazy" decoding="async"></p>
+<p>你可以看到第一欄就是「客戶編號」，如果你想要把它隱藏，手動一行一行處理太慢了。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-23.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-23_hu_dc1b3b8dcb7275f4.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-23.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 7｜自訂規則（圖 23）" loading="lazy" decoding="async"></p>
+<p>此時，可以到「偵測規則」的分頁，來新增自訂規則，如果你不知道規則要怎麼寫，可以按「複製 AI 提示詞」。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-24.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-24_hu_5cf166d4a7ce50f6.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-24.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 7｜自訂規則（圖 24）" loading="lazy" decoding="async"></p>
+<p>貼給你常用的 AI，再補上客戶編號長什麼樣子，AI 就會幫你把規則寫好。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-25.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-25_hu_67df2150bbc815ed.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-25.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 7｜自訂規則（圖 25）" loading="lazy" decoding="async"></p>
+<p>把規則貼回來，按「新增規則」，接著回到去識別化頁面，你會發現整欄客戶編號都有去識別化了。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-26.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-26_hu_62ff9838e22b45d8.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-26.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="STEP 7｜自訂規則（圖 26）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-在-ai-時代打造客製化的工具-1">③ 在 AI 時代，打造客製化的工具<a class="h-anchor" href="#-%e5%9c%a8-ai-%e6%99%82%e4%bb%a3%e6%89%93%e9%80%a0%e5%ae%a2%e8%a3%bd%e5%8c%96%e7%9a%84%e5%b7%a5%e5%85%b7-1" aria-label="這個段落的連結"></a></h2>
+<p>這個工具，其實我是用 Vibe Coding 完成的，接下來跟大家分享，我設計工具時的思路。</p>
+<p>未來如果你也想做自己的工具，可以參考看看。</p>
+<h3 id="-要不要用資料庫">➤ 要不要用資料庫<a class="h-anchor" href="#-%e8%a6%81%e4%b8%8d%e8%a6%81%e7%94%a8%e8%b3%87%e6%96%99%e5%ba%ab" aria-label="這個段落的連結"></a></h3>
+<p>首先規劃工具的時候，我會先判斷資料是否要儲存，以及「資料庫」是否為必要元素。</p>
+<p>因為多了資料庫就代表你需要建立完整的系統架構，需要涵蓋前端、後端，以及註冊、登入、管理、維運等元素。</p>
+<p>除了複雜度大幅上升外，資訊安全的問題也隨之而來。</p>
+<p>以今天介紹的「去識別化工具」為案例。</p>
+<p>如果我有設計對應的系統架構，儘管可以獲得更準確的辨識，甚至對會員進行收費。</p>
+<p>但相對的，我就需要保障會員上傳的資料，並提供相應的售後服務。</p>
+<p>在評估完要付出的成本與可能獲得的收益後，我最後決定採用「純前端網頁」的形式分享。</p>
+<p><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-27.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-27_hu_1a9ba86ce6cc2e44.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-27.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="811" alt="要不要用資料庫（圖 27）" loading="lazy" decoding="async"></p>
+<p>檔案只在瀏覽器裡處理，不會傳到任何伺服器，少了一整層要保護的資料。架構也單純很多，非常適合用 Vibe Coding 來做。</p>
+<h3 id="-從自己的需求出發">➤ 從自己的需求出發<a class="h-anchor" href="#-%e5%be%9e%e8%87%aa%e5%b7%b1%e7%9a%84%e9%9c%80%e6%b1%82%e5%87%ba%e7%99%bc" aria-label="這個段落的連結"></a></h3>
+<p>另外大家在選擇 Vibe Coding 的主題時，建議從自己實際的需求出發，這樣功能才會想得夠細，並且有辦法判斷成果是否符合需求。</p>
+<p>不過 AI 在完成第一個版本後，一定會有很多不夠完善的細節需要優化。</p>
+<p>絕對不是網路上那些號稱「一個指令生成系統」那麼簡單。</p>
+<h3 id="-除了去識別化還要能還原">➤ 除了去識別化還要能還原<a class="h-anchor" href="#-%e9%99%a4%e4%ba%86%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e9%82%84%e8%a6%81%e8%83%bd%e9%82%84%e5%8e%9f" aria-label="這個段落的連結"></a></h3>
+<p>比如 AI 給我提供的第一個版本，就只有提供去識別化的功能。</p>
+<p>但實際上手操作一段時間後，我就發現如果去識別化後無法還原，那其實很多應用會受限。</p>
+<p>比如合約調整完畢後，難道我要自己手動把原有資料填寫回去嗎？</p>
+<p>所以我就請 AI 把敏感資料設計為 CSV 編碼表，讓我可以還原。</p>
+<h3 id="-遮的範圍要剛剛好">➤ 遮的範圍要剛剛好<a class="h-anchor" href="#-%e9%81%ae%e7%9a%84%e7%af%84%e5%9c%8d%e8%a6%81%e5%89%9b%e5%89%9b%e5%a5%bd" aria-label="這個段落的連結"></a></h3>
+<p>但講了幾堂課後，我發現把敏感資料全部遮擋雖然解決了去識別化的問題。</p>
+<p>但有時這些敏感資料會需要拿來統計分析，像是用身分證前兩碼看地區跟性別，或是用地址的縣市、行政區做分析。</p>
+<blockquote class="pullquote"><p>全部變成編碼，就會無法回推</p>
+</blockquote>
+<p>所以我後來又加上了「部分保留」的功能，資訊會根據不同類別進行對應的遮擋。</p>
+<h3 id="-規格驅動開發">➤ 規格驅動開發<a class="h-anchor" href="#-%e8%a6%8f%e6%a0%bc%e9%a9%85%e5%8b%95%e9%96%8b%e7%99%bc" aria-label="這個段落的連結"></a></h3>
+<p>也跟大家分享我在製作這款工具時，使用的是「規格驅動開發（SDD）」的方式。</p>
+<p>這個技巧可以讓 AI 在寫程式前，先用文字幫你把專案的細節完善，畢竟不是每個人都擅長寫專案的需求規格。</p>
+<p>關於這個議題，過去我有拍兩隻影片分享，分別是 <a href="https://youtu.be/FeQv7mngg6Q">OpenSpec</a> 與 <a href="https://youtu.be/16IIi5uNx_M">Spec Kit</a> 的應用。</p>
+<p>它們可以幫你把模糊的需求變得具體，並設計成完善的任務清單，讓我們用更省力的方式，完成有品質的成果。</p>
+<hr>
+<h2 id="結語把資訊交給-ai責任還是要自己扛">結語：把資訊交給 AI，責任還是要自己扛<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e6%8a%8a%e8%b3%87%e8%a8%8a%e4%ba%a4%e7%b5%a6-ai%e8%b2%ac%e4%bb%bb%e9%82%84%e6%98%af%e8%a6%81%e8%87%aa%e5%b7%b1%e6%89%9b" aria-label="這個段落的連結"></a></h2>
+<p>在影片的最後提醒大家幾件事：</p>
+<ol>
+<li>如果你發現工作中的某個流程很繁瑣，或許可以<strong>自己 Vibe Coding 一個工具</strong>來解決</li>
+<li>上傳敏感資料前請先去識別化，但<strong>自動偵測可能會有誤判，還是要自己檢查一遍</strong></li>
+<li><strong>編碼表可以把所有資料還原，不要跟檔案一起丟給 AI</strong>，否則去識別化的意義就消失了</li>
+<li>去識別化，不等於匿名化，像是資料裡寫著「某縣市行政區的鋼材加工廠」；如果那個行政區剛好只有這一家鋼材加工廠，就算公司名稱遮掉了，大家還是一看就知道是誰，所以<strong>要去識別化到什麼程度，還是要依照資料的內容，自行評估</strong>。</li>
+</ol>
+<blockquote class="pullquote"><p>別忘記，當你把資料交給 AI 的那一刻，責任還是要由人類來承擔。</p>
+</blockquote>
+<p>今天分享的這套去識別化工具我有把它免費開源：</p>
+<p>GitHub 連結：<a href="https://github.com/dean9703111/data-deidentification">https://github.com/dean9703111/data-deidentification</a></p>
+<p>如果有功能想要新增，可以 Fork 修改成適合自己的版本；歡迎路過按個 Star，讓我知道自己的分享對大家有幫助。</p>
+<figure class="figure"><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-28.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-28_hu_4f3eae7789b93ec9.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-28.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="710" alt="https://github.com/dean9703111/data-deidentification" loading="lazy" decoding="async">
+  <figcaption><a href="https://github.com/dean9703111/data-deidentification">https://github.com/dean9703111/data-deidentification</a></figcaption>
+</figure>
+
+<p>好的，今天的分享就到這邊，如果這個系列有給你啟發與幫助；別忘了按讚、訂閱，並把文章分享給需要的朋友。</p>
+<figure class="figure"><img src="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-29.webp" srcset="/blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-29_hu_b56b9783c6044813.webp 720w, /blog/202610/ai-traps-ep3-data-anonymization/images/ai-traps-ep3-data-anonymization-29.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="914" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2026.10.15）</span><a href="https://medium.com/dean-lin/ai-%E9%99%B7%E9%98%B1-ep3-%E8%B3%87%E6%96%99%E5%88%A5%E7%9B%B4%E6%8E%A5%E4%B8%9F-ai-word-excel-pdf-txt-%E4%B8%80%E9%8D%B5%E5%8E%BB%E8%AD%98%E5%88%A5%E5%8C%96-41ab2e54922c" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/%E8%B3%87%E8%A8%8A%E5%AE%89%E5%85%A8/">資訊安全</a>
+            <a class="chip chip-hash" href="/tags/ai-%E8%B3%87%E5%AE%89/">AI 資安</a>
+            <a class="chip chip-hash" href="/tags/%E8%B3%87%E5%AE%89/">資安</a>
+            <a class="chip chip-hash" href="/tags/%E5%8E%BB%E8%AD%98%E5%88%A5%E5%8C%96/">去識別化</a>
+            <a class="chip chip-hash" href="/tags/vibe-coding/">Vibe Coding</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202610%2Fai-traps-ep3-data-anonymization%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202610%2Fai-traps-ep3-data-anonymization%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/" data-title="【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202610/when-rest-feels-like-guilt/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li class="is-sub"><a href="#-%e9%a7%ad%e5%ae%a2%e5%b8%b8%e7%94%a8%e7%9a%84%e9%87%a3%e9%ad%9a%e6%89%8b%e6%b3%95">➤ 駭客常用的釣魚手法</a></li><li class="is-sub"><a href="#-%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7%e5%88%86%e4%ba%ab">➤ 去識別化工具分享</a></li><li class="is-sub"><a href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96">① 為什麼需要去識別化</a></li><li class="is-sub"><a href="#-%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7%e5%af%a6%e6%88%b0-demo">② 去識別化工具實戰 Demo</a></li><li class="is-sub"><a href="#-%e5%9c%a8-ai-%e6%99%82%e4%bb%a3%e6%89%93%e9%80%a0%e5%ae%a2%e8%a3%bd%e5%8c%96%e7%9a%84%e5%b7%a5%e5%85%b7">③ 在 AI 時代，打造客製化的工具</a></li><li><a href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96-1">① 為什麼需要去識別化</a></li><li class="is-sub"><a href="#-%e6%89%8b%e5%8b%95%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e7%9a%84%e5%95%8f%e9%a1%8c">➤ 手動去識別化的問題</a></li><li class="is-sub"><a href="#-%e5%ae%89%e5%85%a8%e7%9a%84%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7">➤ 安全的去識別化工具</a></li><li><a href="#-%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e5%b7%a5%e5%85%b7%e5%af%a6%e6%88%b0-demo-1">② 去識別化工具實戰 Demo</a></li><li class="is-sub"><a href="#step-1%e4%b8%8a%e5%82%b3%e6%aa%94%e6%a1%88">STEP 1｜上傳檔案</a></li><li class="is-sub"><a href="#step-2%e7%9c%8b%e9%a0%90%e8%a6%bd">STEP 2｜看預覽</a></li><li class="is-sub"><a href="#step-3%e4%ba%ba%e5%b7%a5%e8%aa%bf%e6%95%b4">STEP 3｜人工調整</a></li><li class="is-sub"><a href="#step-4%e4%b8%8b%e8%bc%89">STEP 4｜下載</a></li><li class="is-sub"><a href="#step-5%e4%b8%8a%e5%82%b3-ai">STEP 5｜上傳 AI</a></li><li class="is-sub"><a href="#step-6%e9%82%84%e5%8e%9f">STEP 6｜還原</a></li><li class="is-sub"><a href="#step-7%e8%87%aa%e8%a8%82%e8%a6%8f%e5%89%87">STEP 7｜自訂規則</a></li><li><a href="#-%e5%9c%a8-ai-%e6%99%82%e4%bb%a3%e6%89%93%e9%80%a0%e5%ae%a2%e8%a3%bd%e5%8c%96%e7%9a%84%e5%b7%a5%e5%85%b7-1">③ 在 AI 時代，打造客製化的工具</a></li><li class="is-sub"><a href="#-%e8%a6%81%e4%b8%8d%e8%a6%81%e7%94%a8%e8%b3%87%e6%96%99%e5%ba%ab">➤ 要不要用資料庫</a></li><li class="is-sub"><a href="#-%e5%be%9e%e8%87%aa%e5%b7%b1%e7%9a%84%e9%9c%80%e6%b1%82%e5%87%ba%e7%99%bc">➤ 從自己的需求出發</a></li><li class="is-sub"><a href="#-%e9%99%a4%e4%ba%86%e5%8e%bb%e8%ad%98%e5%88%a5%e5%8c%96%e9%82%84%e8%a6%81%e8%83%bd%e9%82%84%e5%8e%9f">➤ 除了去識別化還要能還原</a></li><li class="is-sub"><a href="#-%e9%81%ae%e7%9a%84%e7%af%84%e5%9c%8d%e8%a6%81%e5%89%9b%e5%89%9b%e5%a5%bd">➤ 遮的範圍要剛剛好</a></li><li class="is-sub"><a href="#-%e8%a6%8f%e6%a0%bc%e9%a9%85%e5%8b%95%e9%96%8b%e7%99%bc">➤ 規格驅動開發</a></li><li><a href="#%e7%b5%90%e8%aa%9e%e6%8a%8a%e8%b3%87%e8%a8%8a%e4%ba%a4%e7%b5%a6-ai%e8%b2%ac%e4%bb%bb%e9%82%84%e6%98%af%e8%a6%81%e8%87%aa%e5%b7%b1%e6%89%9b">結語：把資訊交給 AI，責任還是要自己扛</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202610%2Fai-traps-ep3-data-anonymization%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202610%2Fai-traps-ep3-data-anonymization%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/" data-title="【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_a336123fd83d3944.webp" srcset="/blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_22189ad74f619fbe.webp 240w, /blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_31fe1e1d17628a7c.webp 480w, /blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_d273166fd35f3a5d.webp 800w, /blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_a336123fd83d3944.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202605/ai-speed-is-not-your-speed/">AI 的快，不是你的快；但 AI 的錯，會全部算在你頭上</a></h3>
+    <p class="card-desc">前陣子，有位朋友興奮地跟我說，他用 AI 只花 3 天就做出一個電商系統，準備要上線了。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-05-23">2026.05.23</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>2 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202605/manus-ai-agent-guide/images/manus-ai-agent-guide-01_hu_8f589702254a4ea2.webp" srcset="/blog/202605/manus-ai-agent-guide/images/manus-ai-agent-guide-01_hu_6ac4309ae0fb7b55.webp 240w, /blog/202605/manus-ai-agent-guide/images/manus-ai-agent-guide-01_hu_17cb932d60bca5d3.webp 480w, /blog/202605/manus-ai-agent-guide/images/manus-ai-agent-guide-01_hu_84a76153a4d27fe5.webp 800w, /blog/202605/manus-ai-agent-guide/images/manus-ai-agent-guide-01_hu_8f589702254a4ea2.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a><span class="sep" aria-hidden="true">/</span><a href="/series/manus/">Manus AI Agent</a></div>
+
+    <h3 class="card-title"><a href="/blog/202605/manus-ai-agent-guide/">【Manus 實戰教學】從研究、簡報到個人網站，帶你掌握普通人也能上手的 AI Agent</a></h3>
+    <p class="card-desc">這幾年協助企業導入 AI 時，發現對大部分的企業來說；他們判斷是否要導入一個 AI 工具的標準，除了功能與實際業務的「匹配度」外，他們其實更在意工具的「使用門檻」。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-05-13">2026.05.13</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>14 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRgoBAABXRUJQVlA4IP4AAACwBgCdASoYABgAPw12rE2mI6IhKAqoxiGJ4gC&#43;aT0JzHgBjQx9EJg9QqtnwaZgB0ybETR&#43;LitvJ&#43;QEusgnMAD&#43;4DJOl4DGFvKceUKRRNo714hZOtC68n74CCdR9aNJLgq/9pZu0esxo7QO/MfPl&#43;sbTlb&#43;yE0QXuirLQn7zUTBX1odnVT00X34fE7QGhSd0C8RH70vTMVo/HsbGE6MDAk8Ksq51ndBWly94wG5gz3aCOpsJXTsOwKgUwyuoDvoBZM0h5Eq5D7qQNyjsISMM65/JNfcW&#43;&#43;LgSYejM/M81gzUP7aVWdObt0RAY7pxQ&#43;248y4H0UalQRh824gGgAAAA==" alt="" width="24" height="24"><img src="/blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_277f27d0674fde5b.webp" srcset="/blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_f60f0d4e2bb66bf8.webp 240w, /blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_ae725bc6214344a2.webp 480w, /blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_1395294e94bd4e59.webp 800w, /blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_277f27d0674fde5b.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="1200" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202605/will-ai-skills-last/">AI 工具幾乎每天都在變，現在學會的東西，明天還有用嗎？</a></h3>
+    <p class="card-desc">標題是我最近講座時，最常被問到問題。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-05-05">2026.05.05</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

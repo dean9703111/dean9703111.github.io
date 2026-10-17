@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="最近與一群工程師朋友聚餐時，我們聊到公司導入 AI 加速開發後，遇到的各種問題。其中討論最熱烈的點，就是大家 Code Review 的負擔大幅增加，畢竟 AI 寫程式的速度，實在太快了。在過去，一天完成既定工作量就是好員工；但現在有了…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202602/git-worktree-ai-agents/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系">
+  <meta property="og:description" content="最近與一群工程師朋友聚餐時，我們聊到公司導入 AI 加速開發後，遇到的各種問題。其中討論最熱烈的點，就是大家 Code Review 的負擔大幅增加，畢竟 AI 寫程式的速度，實在太快了。在過去，一天完成既定工作量就是好員工；但現在有了…">
+  <meta property="og:url" content="https://deanlin.net/blog/202602/git-worktree-ai-agents/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2026-02-24T17:10:50&#43;08:00">
+  <meta property="article:modified_time" content="2026-02-24T17:10:50&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="AI 實戰">
+  <meta property="article:tag" content="Git Worktree">
+  <meta property="article:tag" content="AI Agent">
+  <meta property="article:tag" content="Agent Skills">
+  <meta property="article:tag" content="Vibe Coding">
+  <meta property="article:tag" content="Code Review">
+  <meta property="og:image" content="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-og.jpg">
+  <meta name="twitter:title" content="【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系">
+  <meta name="twitter:description" content="最近與一群工程師朋友聚餐時，我們聊到公司導入 AI 加速開發後，遇到的各種問題。其中討論最熱烈的點，就是大家 Code Review 的負擔大幅增加，畢竟 AI 寫程式的速度，實在太快了。在過去，一天完成既定工作量就是好員工；但現在有了…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202602/git-worktree-ai-agents/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"AI 實戰"},"articleSection":"AI 實戰","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2026-02-24T17:10:50+08:00","datePublished":"2026-02-24T17:10:50+08:00","description":"最近與一群工程師朋友聚餐時，我們聊到公司導入 AI 加速開發後，遇到的各種問題。其中討論最熱烈的點，就是大家 Code Review 的負擔大幅增加，畢竟 AI 寫程式的速度，實在太快了。在過去，一天完成既定工作量就是好員工；但現在有了…","headline":"【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系","image":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Git Worktree, AI Agent, Agent Skills, Vibe Coding, Code Review","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202602/git-worktree-ai-agents/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/git-worktree-%E5%AF%A6%E6%88%B0-%E6%8C%87%E6%8F%AE-ai-agents-%E5%90%8C%E6%99%82%E9%81%8B%E4%BD%9C-%E6%90%AD%E9%85%8D-agent-skills-%E5%BB%BA%E7%AB%8B%E8%87%AA%E5%8B%95%E5%8C%96%E5%8D%94%E4%BD%9C%E9%AB%94%E7%B3%BB-b5b5244ae966"],"timeRequired":"PT14M","url":"https://deanlin.net/blog/202602/git-worktree-ai-agents/","wordCount":6882},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/ai/","name":"AI 實戰","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202602/git-worktree-ai-agents/","name":"【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰</a></li>
+        <li><a href="/categories/tech/">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/ai/">AI 實戰</a>
+      </nav>
+      <h1 class="article-title">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2026-02-24">2026.02.24</time>
+              <span>閱讀約 14 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li class="is-sub"><a href="#-%e7%bc%ba%e4%b9%8f%e6%b7%b1%e5%ba%a6%e6%80%9d%e8%80%83">① 缺乏深度思考</a></li><li class="is-sub"><a href="#-%e6%87%b6%e5%be%97-code-review">② 懶得 Code Review</a></li><li class="is-sub"><a href="#-%e6%9c%80%e7%b5%82%e5%b0%8e%e8%87%b4%e7%9a%84%e7%b5%90%e6%9e%9c">③ 最終導致的結果</a></li><li class="is-sub"><a href="#-%e7%88%b2%e4%bb%80%e9%ba%bc%e7%89%88%e6%9c%ac%e6%8e%a7%e5%88%b6%e5%be%88%e9%87%8d%e8%a6%81">① 爲什麼版本控制很重要</a></li><li class="is-sub"><a href="#-%e5%ae%8c%e6%88%90%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad">② 完成前置作業</a></li><li class="is-sub"><a href="#-agent-skills%e9%80%8f%e9%81%8e-git-worktree-%e6%8b%86%e5%88%86%e4%bb%bb%e5%8b%99%e8%a8%ad%e8%a8%88-spec">③ Agent Skills：透過 Git Worktree 拆分任務、設計 SPEC</a></li><li class="is-sub"><a href="#-agent-skills%e6%8b%86%e5%88%86-commit%e8%ae%93%e9%82%8f%e8%bc%af%e5%8f%af%e8%a2%ab%e8%bf%bd%e8%b9%a4">④ Agent Skills：拆分 Commit，讓邏輯可被追蹤</a></li><li class="is-sub"><a href="#-%e9%99%8d%e4%bd%8e-code-review-%e8%b2%a0%e6%93%94">⑤ 降低 Code Review 負擔</a></li><li><a href="#-%e7%bc%ba%e4%b9%8f%e7%89%88%e6%8e%a7%e6%a6%82%e5%bf%b5%e6%98%af%e7%81%bd%e9%9b%a3%e7%9a%84%e8%b5%b7%e9%bb%9e">① 缺乏版控概念，是災難的起點</a></li><li><a href="#-%e5%bb%ba%e7%ab%8b-git-worktree-%e7%92%b0%e5%a2%83git--pnpm--extensions">② 建立 Git Worktree 環境：Git &#43; pnpm &#43; Extensions</a></li><li class="is-sub"><a href="#-%e7%a2%ba%e8%aa%8d-git-%e7%89%88%e6%9c%ac">➤ 確認 Git 版本</a></li><li class="is-sub"><a href="#-%e5%ae%89%e8%a3%9d-pnpm">➤ 安裝 pnpm</a></li><li class="is-sub"><a href="#-%e5%ae%89%e8%a3%9d-extensions">➤ 安裝 Extensions</a></li><li class="is-sub"><a href="#-%e4%ba%86%e8%a7%a3-git-worktree-%e5%b7%a5%e4%bd%9c%e6%a8%a1%e5%bc%8f">➤ 了解 Git Worktree 工作模式</a></li><li><a href="#-agent-skill%e8%87%aa%e5%8b%95%e5%bb%ba%e7%ab%8b%e5%88%86%e6%94%af%e8%88%87%e9%96%8b%e7%99%bc%e8%a6%8f%e6%a0%bc">③ Agent Skill：自動建立分支與開發規格</a></li><li><a href="#-%e6%8c%87%e6%8f%ae%e5%a4%9a%e5%80%8b-ai-agents-%e5%90%8c%e6%99%82%e5%9f%b7%e8%a1%8c">④ 指揮多個 AI Agents 同時執行</a></li><li><a href="#-%e5%a5%bd%e7%9a%84-pull-request%e8%ae%93-code-review-%e8%ae%8a%e8%bc%95%e9%ac%86">⑤ 好的 Pull Request，讓 Code Review 變輕鬆</a></li><li><a href="#%e7%b5%90%e8%aa%9e%e4%ba%ba%e6%89%8d%e6%98%af-ai-%e7%9a%84%e7%93%b6%e9%a0%b8">結語：人，才是 AI 的瓶頸</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-01.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-01_hu_2838f54f643e5b49.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="788" alt="【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系（圖 1）" loading="lazy" decoding="async"></p>
+<p>最近與一群工程師朋友聚餐時，我們聊到公司導入 AI 加速開發後，遇到的各種問題。</p>
+<p>其中討論最熱烈的點，就是大家 <strong>Code Review 的負擔大幅增加</strong>，畢竟 AI 寫程式的速度，實在太快了。</p>
+<blockquote>
+<p><strong>在過去，一天完成既定工作量就是好員工；但現在有了 AI 的幫助，有些公司會認為，一天要完成 3 倍工作量才算達到 KPI。</strong></p>
+</blockquote>
+<p>而這，就衍生了一系列的問題：</p>
+<h2 class="h-minor" id="-缺乏深度思考">① 缺乏深度思考<a class="h-anchor" href="#-%e7%bc%ba%e4%b9%8f%e6%b7%b1%e5%ba%a6%e6%80%9d%e8%80%83" aria-label="這個段落的連結"></a></h2>
+<p>因為 KPI 大幅上升，大家為了追上進度，就會犧牲對需求的深度思考，或者說，直接讓 AI 代替思考。</p>
+<h2 class="h-minor" id="-懶得-code-review">② 懶得 Code Review<a class="h-anchor" href="#-%e6%87%b6%e5%be%97-code-review" aria-label="這個段落的連結"></a></h2>
+<p>完成的功能增加，就會導致功能合併到主線時的 Code Review 負擔，以往會認真思考別人的設計是否合理，但如果要看的份量太多，很多人就放棄理解直接合併。</p>
+<h2 class="h-minor" id="-最終導致的結果">③ 最終導致的結果<a class="h-anchor" href="#-%e6%9c%80%e7%b5%82%e5%b0%8e%e8%87%b4%e7%9a%84%e7%b5%90%e6%9e%9c" aria-label="這個段落的連結"></a></h2>
+<p>團隊集體責任感下降、專案理解力降低、程式碼品質降低、上線後錯誤增加。</p>
+<hr>
+<p>切記，我們雖然可以讓 AI 自己檢查、修改、寫測試程式，但這只是確保產品的底線。</p>
+<blockquote class="pullquote"><p>假使用 AI 開發過中大型專案，就會理解全權交給 AI 有多麼的不切實際。</p>
+</blockquote>
+<p><strong>AI 產生的程式碼很多，但這不是你不檢查的原因，我們應該去想怎麼利用 AI 去優化檢查流程。</strong></p>
+<blockquote class="pullquote"><p>別忘記，當你對 AI 產出的內容，按下同意的那一刻，所有的錯誤必須由人類來承擔。</p>
+</blockquote>
+<p>所以今天這篇文章，我要跟大家分享如何用 Git Worktree 搭配 Agent Skills，來解決前面提到的痛點：</p>
+<h2 class="h-minor" id="-爲什麼版本控制很重要">① 爲什麼版本控制很重要<a class="h-anchor" href="#-%e7%88%b2%e4%bb%80%e9%ba%bc%e7%89%88%e6%9c%ac%e6%8e%a7%e5%88%b6%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
+<p>我會先展示一個經典的錯誤案例，讓大家更直觀的理解，如果沒有基礎的版本控制概念，專案會遭遇哪些災難。</p>
+<h2 class="h-minor" id="-完成前置作業">② 完成前置作業<a class="h-anchor" href="#-%e5%ae%8c%e6%88%90%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad" aria-label="這個段落的連結"></a></h2>
+<p>接著帶大家了解 Git Worktree 基礎操作，並安裝 pnpm 減少磁碟空間浪費，以及分享有哪些好用的擴充套件能增加我們操作效率。</p>
+<h2 class="h-minor" id="-agent-skills透過-git-worktree-拆分任務設計-spec">③ Agent Skills：透過 Git Worktree 拆分任務、設計 SPEC<a class="h-anchor" href="#-agent-skills%e9%80%8f%e9%81%8e-git-worktree-%e6%8b%86%e5%88%86%e4%bb%bb%e5%8b%99%e8%a8%ad%e8%a8%88-spec" aria-label="這個段落的連結"></a></h2>
+<p>然後就要進入實作階段，這邊會先提出一個複雜功能，以此觸發 Agent Skills 執行 Git Worktree 拆分任務，讓每個功能都有自己的工作區，這樣 AI Agent 就可以同時執行。</p>
+<h2 class="h-minor" id="-agent-skills拆分-commit讓邏輯可被追蹤">④ Agent Skills：拆分 Commit，讓邏輯可被追蹤<a class="h-anchor" href="#-agent-skills%e6%8b%86%e5%88%86-commit%e8%ae%93%e9%82%8f%e8%bc%af%e5%8f%af%e8%a2%ab%e8%bf%bd%e8%b9%a4" aria-label="這個段落的連結"></a></h2>
+<p>在確認功能符合預期後，我會請 AI 根據調整檔案分階段的 commit，讓邏輯在未來可以被追蹤。</p>
+<h2 class="h-minor" id="-降低-code-review-負擔">⑤ 降低 Code Review 負擔<a class="h-anchor" href="#-%e9%99%8d%e4%bd%8e-code-review-%e8%b2%a0%e6%93%94" aria-label="這個段落的連結"></a></h2>
+<p>把修改推送上去後，我們要透過 Pull Request 將變更的內容合併到主分支，為了讓 Code Review 的人快速理解，我們可以請 AI 根據變更生成 PR 模板。</p>
+<blockquote>
+<p>如果你是第一次接觸 Agent Skills，我過去有拍一隻影片分享安裝、使用、製作的技巧：<a href="https://youtu.be/xe00zJEtuMo">https://youtu.be/xe00zJEtuMo</a></p>
+</blockquote>
+<p><strong>如果你剛接觸 Vibe Coding ，或是進入職場不久，相信這隻影片會讓你了解業界在導入 AI 開發時，遇到的實際狀況。</strong></p>
+<blockquote>
+<p>完整的 Demo，可以觀看 YT 喔 👉</p>
+<p>對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。</p>
+</blockquote>
+<div class="yt" data-yt="1VuLTQidbPM" data-title="YouTube 影片">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=1VuLTQidbPM" target="_blank" rel="noopener" aria-label="播放影片：YouTube 影片">
+    <img src="https://i.ytimg.com/vi/1VuLTQidbPM/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">YouTube 影片</span>
+  </a>
+</div>
+
+<hr>
+<h2 id="-缺乏版控概念是災難的起點">① 缺乏版控概念，是災難的起點<a class="h-anchor" href="#-%e7%bc%ba%e4%b9%8f%e7%89%88%e6%8e%a7%e6%a6%82%e5%bf%b5%e6%98%af%e7%81%bd%e9%9b%a3%e7%9a%84%e8%b5%b7%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<p>現在輸入簡單的指令，AI 就可以根據需求完成功能，甚至一口氣完成 10 個功能都沒有問題。</p>
+<p>從表面上來看，效率倍增，但實際上有非常多的隱患，這邊展示一個實際案例讓大家更能理解：</p>
+<figure class="figure"><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-02.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-02_hu_591f1182b235d2c.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="755" alt="參考 PR: https://github.com/deancourse/git-worktree-demo/pull/1" loading="lazy" decoding="async">
+  <figcaption>參考 PR: <a href="https://github.com/deancourse/git-worktree-demo/pull/1">https://github.com/deancourse/git-worktree-demo/pull/1</a></figcaption>
+</figure>
+
+<p>在團隊合作時，如果想把自己的修改合併回主線，會先開一個 Pull Request，讓其他人幫你檢查程式碼、討論是否需要修改，確認沒問題後再合併。</p>
+<p>以這個 Pull Request 舉例，標題寫著「新增 i18n 多語系、淺色深色主題設計、常見 QA 問答區…」等多個功能，感覺做了很多事。</p>
+<blockquote class="pullquote"><p>但從專案管理的角度來看，其實每個功能都應該對應到不同的 feature branch，不要在一個分支中放多個功能。</p>
+</blockquote>
+<p>把視角切換到「Files changed」，你會對我說的話更有體會，像這個 Pull Request 涵蓋了 18 個檔案，有近千多行的程式變更；從 Code Review 的角度來看，你根本無法了解變更的功能要對應到哪些檔案。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-03.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-03_hu_8f7556f256315dff.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-03.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="755" alt="① 缺乏版控概念，是災難的起點（圖 3）" loading="lazy" decoding="async"></p>
+<p>再來，我們看一下「Commits」的分頁，你會發現改了這麼多功能，竟然只有一個 commit，而且訊息也非常的簡單。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-04.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-04_hu_7b70f3a086244e1f.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-04.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="755" alt="① 缺乏版控概念，是災難的起點（圖 4）" loading="lazy" decoding="async"></p>
+<p>這會導致未來發生問題時，我們無法追溯當時的設計邏輯，完全沒有參考價值。</p>
+<p><strong>其實這邊所展示的問題，在過去就已經存在了，但在使用 AI 加速開發後，問題被成倍放大。</strong></p>
+<p>因此接下來要跟大家分享，如何透過 Git Worktree 與 Agent Skills 來解決這些痛點。</p>
+<hr>
+<h2 id="-建立-git-worktree-環境git--pnpm--extensions">② 建立 Git Worktree 環境：Git + pnpm + Extensions<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b-git-worktree-%e7%92%b0%e5%a2%83git--pnpm--extensions" aria-label="這個段落的連結"></a></h2>
+<p>為了方便大家可以跟著影片操作，我在 GitHub 有上傳一個練習用的專案，歡迎大家路過按個 Star：</p>
+<figure class="figure"><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-05.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-05_hu_b6331c38fd19a1d1.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-05.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="694" alt="https://github.com/deancourse/git-worktree-demo" loading="lazy" decoding="async">
+  <figcaption><a href="https://github.com/deancourse/git-worktree-demo">https://github.com/deancourse/git-worktree-demo</a></figcaption>
+</figure>
+
+<p>這邊我建議大家點擊 fork，將專案複製到自己的帳號下：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-06.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-06_hu_f0b6c46db63dd3c4.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-06.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="753" alt="② 建立 Git Worktree 環境：Git &#43; pnpm &#43; Extensions（圖 6）" loading="lazy" decoding="async"></p>
+<p>然後點擊 Code，從裡面複製專案網址：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-07.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-07_hu_9ab9d3cb872a8614.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-07.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="753" alt="② 建立 Git Worktree 環境：Git &#43; pnpm &#43; Extensions（圖 7）" loading="lazy" decoding="async"></p>
+<p>接著打開你熟悉的程式碼編輯器，這邊我以 Google 最近推出的 Antigravity 來示範，這是 Google 最新推出的 AI 程式碼編輯</p>
+<p>目前登入 Google 帳號就可以使用，但如果付費升級到 Pro 會有更高的使用額度：</p>
+<figure class="figure"><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-08.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-08_hu_e0509a84476d1a03.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-08.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="https://antigravity.google/" loading="lazy" decoding="async">
+  <figcaption><a href="https://antigravity.google/">https://antigravity.google/</a></figcaption>
+</figure>
+
+<p>但如果你熟悉的是 Cursor 或 Claude 等其他 AI 工具也沒關係，因為以 Agent Skills 的設定來說，只有路徑稍微不同而已。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-09.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-09_hu_986032fc66e4edd6.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="② 建立 Git Worktree 環境：Git &#43; pnpm &#43; Extensions（圖 9）" loading="lazy" decoding="async"></p>
+<p>好的，我們再把注意力轉回 Antigravity，點擊 <code>Clone Repository</code>，貼上剛剛複製的網址來下載專案：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-10.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-10_hu_b4dcc66d53afe93b.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-10.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="② 建立 Git Worktree 環境：Git &#43; pnpm &#43; Extensions（圖 10）" loading="lazy" decoding="async"></p>
+<p>接下來要先跟大家分享，安裝哪些工具可以更舒適的使用 Git Worktree 功能：</p>
+<h3 id="-確認-git-版本">➤ 確認 Git 版本<a class="h-anchor" href="#-%e7%a2%ba%e8%aa%8d-git-%e7%89%88%e6%9c%ac" aria-label="這個段落的連結"></a></h3>
+<p>首先，我們要確認電腦的 Git 版本。</p>
+<blockquote>
+<p>提醒一下大家，因為這隻影片會使用到 Node.js 與 Git 等技術，如果你是第一次接觸，我有專門錄一隻影片分享詳細的操作步驟喔！</p>
+<p><a href="https://youtu.be/5DEV_K0JauQ">https://youtu.be/5DEV_K0JauQ</a></p>
+</blockquote>
+<p><a href="https://git-scm.com/">安裝好 Git 後</a>，點擊上方的 Toggle Panel 開啟終端機，輸入指令 <code>git -v</code> 確認有正確安裝。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-11.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-11_hu_843817c6014e0d64.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-11.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="確認 Git 版本（圖 11）" loading="lazy" decoding="async"></p>
+<p>另外提醒安裝過的朋友，<strong>如果你的版本低於 2.30，建議升級到最新版本，這樣 Git Worktree 功能會較為完整。</strong></p>
+<h3 id="-安裝-pnpm">➤ 安裝 pnpm<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-pnpm" aria-label="這個段落的連結"></a></h3>
+<p>因為 Git Worktree 會建立多個工作目錄，而 Node.js 專案的 node_modules 動輒上百 MB。</p>
+<p>如果用 <code>npm</code> 安裝會消耗大量硬碟資源，因此我推薦大家使用 <code>pnpm</code> 這款套件。</p>
+<p>在終端機輸入 <code>npm install -g pnpm</code> 便可完成全局安裝。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-12.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-12_hu_5484ce611524e282.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-12.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="安裝 pnpm（圖 12）" loading="lazy" decoding="async"></p>
+<p>pnpm 會將所有套件存放在電腦的一個共用儲存區，各專案的 node_modules 只是透過連結指向同一份套件。</p>
+<p>雖然每個 Worktree 需要執行 pnpm install，但不會重新下載套件，非常適合搭配 Git Worktree 進行並行開發。</p>
+<h3 id="-安裝-extensions">➤ 安裝 Extensions<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-extensions" aria-label="這個段落的連結"></a></h3>
+<p>然後我們把視角轉到左側選單，點擊「Extensions」的分頁，這邊推薦大家安裝兩款外掛。</p>
+<p>第一款是「Git Worktree Manager」，他能讓你透過介面輕鬆的建立、切換、清理 Worktree。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-13.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-13_hu_c9d4831df7eed63f.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-13.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="安裝 Extensions（圖 13）" loading="lazy" decoding="async"></p>
+<p>第二款是「GitLens」，安裝好後，你把滑鼠移到對應的程式碼位置時，可以直接看到 Commit 的歷史。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-14.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-14_hu_caaa93fb26eec393.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-14.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="安裝 Extensions（圖 14）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>不過這邊要提醒一下大家，這些外掛大部分是由第三方開發的，安裝前請自行評估安全性。</p>
+</blockquote>
+<h3 id="-了解-git-worktree-工作模式">➤ 了解 Git Worktree 工作模式<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3-git-worktree-%e5%b7%a5%e4%bd%9c%e6%a8%a1%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>做好前置作業後，我們先在終端機輸入 <code>pnpm install</code> 安裝套件。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-15.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-15_hu_3352ecde69014a00.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-15.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 15）" loading="lazy" decoding="async"></p>
+<p>安裝完成後，輸入 <code>pnpm run dev</code> 便可啟動專案，下面就會有一個「localhost:3000」的網址。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-16.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-16_hu_b7d43561ea64dd7a.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-16.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 16）" loading="lazy" decoding="async"></p>
+<p>確認專案可以順利啟動後，我們回到 Antigravity，點擊左側剛剛安裝好的「Git Worktree Manager」，然後點擊這個資料夾的符號來新增 Worktree。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-17.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-17_hu_7cd684fd3aefd573.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-17.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 17）" loading="lazy" decoding="async"></p>
+<p>因為我們要從現在的主分支，切換到其他分支，所以選擇第一個「Create new branch」</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-18.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-18_hu_caba867e54c9d23f.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-18.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 18）" loading="lazy" decoding="async"></p>
+<p>至於分支的名稱就打 <code>test</code>，主要是先讓大家了解 Git Worktree 概念；至於目錄，使用系統自動生成的就好了，最後點擊「Create」，就會直接把工作區的內容複製一份過去。</p>
+<p>此時，你就會看到 test 出現在 Worktree List 當中：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-19.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-19_hu_a2787688616d6879.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-19.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 19）" loading="lazy" decoding="async"></p>
+<p>點擊後便會開啟一個新的工作區，打開終端機後，要在輸入 <code>pnpm install</code> 來安裝套件；<strong>你會發現套件幾乎在瞬間安裝完畢，打開 node_modules 資料夾，你會發現有箭頭圖示「↩」。</strong></p>
+<p>代表只是建立資料夾的連結，而非重新下載套件，這就是 pnpm 的運作方式，可以幫我們節省硬碟空間。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-20.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-20_hu_6d824cde89d26da7.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-20.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 20）" loading="lazy" decoding="async"></p>
+<p>然後我們嘗試輸入 <code>pnpm run dev</code> 啟動專案，這次的網址變成了「localhost:3001」，點擊後，網頁也可以順利呈現。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-21.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-21_hu_1d6b995dfaabcc17.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-21.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 21）" loading="lazy" decoding="async"></p>
+<p>這邊的示範，是想要讓大家了解<strong>每個 Worktree 都是獨立的工作目錄，所以可以同時跑不同的 dev server 跟 port</strong>。</p>
+<p>當然，也代表我們可以<strong>同時指揮多個 AI Agent 並行開發不同功能。</strong></p>
+<p>也跟大家說明一下，如何把 Worktree 刪除；在刪除前，請先把剛剛啟動的專案關閉。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-22.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-22_hu_cf3360e0a1eb2b26.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-22.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 22）" loading="lazy" decoding="async"></p>
+<p>然後回到 Git Worktree Manager 的介面，點擊右鍵，在 Worktree Action 當中選擇 Remove Worktree，就可以移除了。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-23.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-23_hu_6a1f45bd94e7325f.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-23.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 23）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-agent-skill自動建立分支與開發規格">③ Agent Skill：自動建立分支與開發規格<a class="h-anchor" href="#-agent-skill%e8%87%aa%e5%8b%95%e5%bb%ba%e7%ab%8b%e5%88%86%e6%94%af%e8%88%87%e9%96%8b%e7%99%bc%e8%a6%8f%e6%a0%bc" aria-label="這個段落的連結"></a></h2>
+<p>前面有說到，不同的功能應該使用不同的 feature branch 來開發；但具體怎麼拆分功能，以及 branch 的名稱如何命名，我們可以直接設計一個 Agent Skill 來幫我們搞定。</p>
+<p>如果你是 Fork 我的專案，在根目錄下方會有一個「.agent」的資料夾，我有放一些 Skills 讓大家跟著影片一起體驗：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-24.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-24_hu_31714651732b5194.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-24.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="③ Agent Skill：自動建立分支與開發規格（圖 24）" loading="lazy" decoding="async"></p>
+<p>像這邊我設計了一個 <code>git-worktree-design</code> 技能，把 Markdown 點開來後，跟大家說明一下設計的邏輯：</p>
+<ol>
+<li>首先會檢查目前專案分支的狀況，確認既有 Worktree，以及是否有沒提交的變更。</li>
+<li>然後將複雜的需求拆成獨立的 feature branch 以及參考的規格後，用表格預覽，使用者確認後才會執行。</li>
+<li>接下來就會根據 Skill 指定的格式建立 Worktree。</li>
+<li>並順便安裝好每個 Worktree 的套件。</li>
+<li>然後新增這個 feature 要執行的 SPEC，方便後續 AI Agent 的開發。</li>
+<li>完成以上任務後，會再用表格像我們展示完成的結果。</li>
+</ol>
+<p>了解 Skill 的設計邏輯後，我們在右側與 AI 的對話視窗中，輸入指令</p>
+<pre tabindex="0"><code>採用 Worktree，新增淺色深色主題設計、常見 QA 問答區、Cookie 同意彈窗
+</code></pre><p>此時，你會發現 AI 判斷需要使用 Git Worktree 這個 Skill，並初步規劃了每個 Worktree 要參考的規格：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-25.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-25_hu_4e9af58dc91c3293.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-25.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="③ Agent Skill：自動建立分支與開發規格（圖 25）" loading="lazy" decoding="async"></p>
+<p>確認沒問題後，就可以讓 AI 幫我們執行下去，稍等一段時間後，AI 說他已經幫我們完成了對應的設計。</p>
+<p>打開左側 Git Worktree Manager 的分頁，可以看到看到新增的 Worktree：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-26.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-26_hu_a21a5e845251399f.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-26.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="③ Agent Skill：自動建立分支與開發規格（圖 26）" loading="lazy" decoding="async"></p>
+<p>這邊點擊其中一個 Worktree，你可以看到 AI 有根據我們的指示，用 pnpm 來安裝套件，所以 node_modules 下面資料夾有這個箭頭符號。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-27.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-27_hu_1c1a0f7280f4b20e.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-27.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="③ Agent Skill：自動建立分支與開發規格（圖 27）" loading="lazy" decoding="async"></p>
+<p>並且根目錄的地方有存放給「git-Worktree-spec.md」這個給 AI Agent 參考的規格，確保執行的方向。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-28.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-28_hu_45b00f40d6e08936.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-28.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="③ Agent Skill：自動建立分支與開發規格（圖 28）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-指揮多個-ai-agents-同時執行">④ 指揮多個 AI Agents 同時執行<a class="h-anchor" href="#-%e6%8c%87%e6%8f%ae%e5%a4%9a%e5%80%8b-ai-agents-%e5%90%8c%e6%99%82%e5%9f%b7%e8%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>但讓 AI 參考規格開發前，跟大家分享一個小技巧。先開啟與 AI 對話的視窗，點擊右上方的「…」選擇 Customizations，選擇 Workflows：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-29.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-29_hu_a6ae9dffd28f39ca.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-29.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 29）" loading="lazy" decoding="async"></p>
+<p>我有設計一個自動化流程，這樣只要輸入快捷鍵，就可以讓 AI 知道讀取規格、執行實作、驗收結果的步驟：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-30.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-30_hu_f9b8edd9772b3d48.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-30.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 30）" loading="lazy" decoding="async"></p>
+<p>這邊我們先點開其中一個 Worktree，輸入「/」，選擇剛剛的那個 workflow，點擊「Enter」他就會開始執行了：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-31.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-31_hu_1ea303f2eb61f239.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-31.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 31）" loading="lazy" decoding="async"></p>
+<p>以往我們開發功能因為在同一個工作區，所以需要一個完成後才能執行下一個。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-32.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-32_hu_c6cd05a55584fb23.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-32.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 32）" loading="lazy" decoding="async"></p>
+<p>但用 Git Worktree 的好處，就是可以多個 AI Agent 同時執行。這邊我也把另外兩個 Worktree 打開，輸入「/」讓他們根據 workflow 來執行。</p>
+<p>但如果如果要在多個視窗切換，來觀察不同 AI Agent 執行的進度有點麻煩。</p>
+<p>所以我們可以點擊上方的「Open Agent Manager」，這樣就能知道 Agent 執行的過程是否需要我們介入。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-33.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-33_hu_197e3080d2f5747d.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-33.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 33）" loading="lazy" decoding="async"></p>
+<p>像這邊轉圈圈就是代表執行中，而稍等一段時間後，就會變成鈴鐺提醒的符號。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-34.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-34_hu_caa25d76aaa4c955.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-34.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 34）" loading="lazy" decoding="async"></p>
+<p>稍等一段時間後，AI 就在不同的工作區，完成了各自的功能，這邊我們也可以從 SPEC 的修改中，看到他已經自我驗證了功能符合需求。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-35.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-35_hu_7170f112e4707458.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-35.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 35）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>但 AI 完成後，人類一定也要自行確認結果是否符合期待，這邊我先開啟各個 worktree 的瀏覽器。</p>
+</blockquote>
+<p>把所有服務都啟動後，也剛好趁這個機會，跟大家說明不同功能分 feature 開發的好處</p>
+<p>首先是我們人類驗證功能會比較輕鬆，因為要確認的面向單一</p>
+<ul>
+<li>像 Cookie 的部分，就是下方在使用者進入時，會有彈窗提示</li>
+</ul>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-36.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-36_hu_3b9bc75e931fbda2.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-36.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 36）" loading="lazy" decoding="async"></p>
+<ul>
+<li>而淺色深色主題這塊，則是上方多了一個按鈕，讓使用者自由切換主題</li>
+</ul>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-37.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-37_hu_9ac846a343574efe.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-37.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 37）" loading="lazy" decoding="async"></p>
+<ul>
+<li>至於常見問答，也有根據主題新增了對應的區塊</li>
+</ul>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-38.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-38_hu_e7f7dc4adf78bb41.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-38.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 38）" loading="lazy" decoding="async"></p>
+<p>再確認修改符合預期後，先把 Agent Manager 關閉，我們要把 Worktree 的變更推送上去。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-39.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-39_hu_3048f74748e4caf5.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-39.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 39）" loading="lazy" decoding="async"></p>
+<p>比如我們來打開淺色深色主題的 Worktree，以往我們可能是人工手打，或是點擊「Generate」讓 AI 自動產生。</p>
+<p>但人工手打不僅耗時，每個人的撰寫習慣也各不相同；但假使點擊 Generate 讓 AI 自動產生，他生成的訊息有時候是英文，有時是中文，而且長短很隨機。</p>
+<blockquote class="pullquote"><p>所以 commit 這塊，我也有設計一個 Skill，讓 AI 根據我的指引生成。</p>
+</blockquote>
+<p>我們先回到專案的目錄，點擊「.agent」資料夾，在 skills 底下有一個「git-smart-commit」的技能：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-40.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-40_hu_700038ac9a2ba1af.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-40.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 40）" loading="lazy" decoding="async"></p>
+<p>他的任務就是把雜亂的變更，拆分成有意義的 commit；<strong>畢竟請 AI 輔助開發時，很可能一口氣改了很多個檔案，如果全部放在一個 commit，那這個 commit 就跟沒寫一樣。</strong></p>
+<p>這邊我們把左側的選單切換到 Source Control，你就會看到這個淺色深色主題有修改到多個檔案</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-41.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-41_hu_d63e33fafdb07fa3.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-41.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 41）" loading="lazy" decoding="async"></p>
+<p>這邊我就在對話窗輸入</p>
+<pre tabindex="0"><code>新增 commit
+</code></pre><p>稍等一段時間，會看到 AI 根據變更的檔案，生成對應的 commit 訊息：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-42.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-42_hu_a1e0e4eca132f6f6.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-42.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 42）" loading="lazy" decoding="async"></p>
+<p>commit 送出後，記得要點擊 Publish Branch 才會將檔案上傳喔！</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-43.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-43_hu_ca8bdc612a35bac2.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-43.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 43）" loading="lazy" decoding="async"></p>
+<p>完成後可以把這個工作區關閉，另外兩個 Worktree 也是一樣操作即可。</p>
+<p>都 Publish 之後，我們回到 GitHub 網頁，此時你會看到下拉選單中有剛剛上傳的 branch：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-44.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-44_hu_657ba4443918d13a.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-44.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 44）" loading="lazy" decoding="async"></p>
+<p>隨便點擊一個，就可以看到剛剛撰寫的 commit 訊息：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-45.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-45_hu_f2dc3d356eb76a7a.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-45.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 45）" loading="lazy" decoding="async"></p>
+<p>但目前的 feature 都在不同的 branch，所以接下來會帶大家透過 Pull Reqeust，將功能合併到主線。</p>
+<hr>
+<h2 id="-好的-pull-request讓-code-review-變輕鬆">⑤ 好的 Pull Request，讓 Code Review 變輕鬆<a class="h-anchor" href="#-%e5%a5%bd%e7%9a%84-pull-request%e8%ae%93-code-review-%e8%ae%8a%e8%bc%95%e9%ac%86" aria-label="這個段落的連結"></a></h2>
+<p>這邊先點擊上方的「Pull Requests」：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-46.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-46_hu_6005950ef080da4f.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-46.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 46）" loading="lazy" decoding="async"></p>
+<p>選擇「New Pull Requests」：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-47.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-47_hu_97815e5b4e842e21.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-47.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 47）" loading="lazy" decoding="async"></p>
+<p>如果你是 fork 我的專案，這邊要特別注意，base 要改成自己的帳號，然後 compare 要選擇想合併進來的 feature 分支：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-48.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-48_hu_2a4ff80ccb73c25b.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-48.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 48）" loading="lazy" decoding="async"></p>
+<p>建立 PR 後，你會看到要填寫標題與描述，根據我的工作經驗，PR 是決定專案品質的重要環節：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-49.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-49_hu_15e3374d8644f35.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-49.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 49）" loading="lazy" decoding="async"></p>
+<p>因為他是讓團隊成員 Code Review 時，理解你到底做了些什麼的文件</p>
+<p><strong>如果隨便寫寫，那審核的人通常也是隨意看看；畢竟直接讀程式碼，去理解功能為何這樣設計，真的太消耗腦力了。</strong></p>
+<blockquote class="pullquote"><p>我知道很多人嫌寫 PR 很麻煩，所以我也設計了一個 Skill，用來生成 Pull Request 的草稿。</p>
+</blockquote>
+<p>這邊我們把視角切換到 Antigravity，這個 Skill 一樣是放在「.agent/skills」底下，名稱叫做「git-pr-description」。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-50.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-50_hu_71e27078bf4e94a3.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-50.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 50）" loading="lazy" decoding="async"></p>
+<p>這邊跟大家簡述這個 Skill 的設計</p>
+<ol>
+<li>首先，預設合併的目標為 master 這個主線分支，如果你是用 main/develop 等其他的分支請自行調整。</li>
+<li>接下來就會把當前的分支與目標分支進行比對，讀取差異的檔案與 commit 訊息，這邊也再次跟大家提醒 commit 訊息是很重要的，你不想寫，至少要讓 AI 幫你寫吧。</li>
+<li>而後就是分析變更的內容，然後生成 Pull Request 的 Title 與 Description。</li>
+<li>其中 Description 的部分，我是要求他參考「pr-template」的這個範例檔來撰寫，如果大家想把這個 Skill 導入目前的工作流，可以改寫這個檔案。</li>
+</ol>
+<p>講了這麼多，我直接示範給大家看比較快；一樣打開 Agent Manager，然後再各自的 Agent 輸入。</p>
+<pre tabindex="0"><code>撰寫 PR
+</code></pre><p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-51.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-51_hu_d05ab1a5689e6227.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-51.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 51）" loading="lazy" decoding="async"></p>
+<p>稍等一段時間後，他就會根據 Skill 提供的格式生成 Pull Request 的草稿了：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-52.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-52_hu_ba7576a51cd66e67.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-52.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 52）" loading="lazy" decoding="async"></p>
+<p>這邊我們把它複製到 GitHub 後，我強烈建議大家至少要跟著測試案例執行過一遍。</p>
+<p>如果是前端專案的話，建議附上對應的圖片，這樣可以減少別人 Code Review 時的負擔，同時也確認了功能符合預期。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-53.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-53_hu_f9122dea3b4f2ac3.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-53.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 53）" loading="lazy" decoding="async"></p>
+<p>如果專案是自己開發的，那就直接點擊 Merge 合併就好。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-54.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-54_hu_45ed183ef46ca3f9.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-54.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 54）" loading="lazy" decoding="async"></p>
+<p>接下來回到 Antigravity，合併好的 Worktree，我個人會建議直接點擊右鍵，在 Worktree Action 當中選擇 Remove Worktree 將他移除，避免 Worktree 太多管理困難。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-55.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-55_hu_6fd57835fc1ec9be.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-55.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 55）" loading="lazy" decoding="async"></p>
+<p>至於另外兩個 Worktree 也是一樣操作，先建立 Pull Request，接著用 AI 生成對應的 Review 草稿，確認沒問題後合併回主線，完成這一切後記得移除 Worktree。</p>
+<p>但有一點要提醒一下大家，因為 Worktree AI Agent 同時開發，所以開發當下不會知道彼此的變更</p>
+<p><strong>所以把功能合併回主線時，可能出現衝突</strong>；像常見問答跟淺色深色的分支在合併時，都遇到了這個問題：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-56.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-56_hu_50217b5f781628ef.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-56.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 56）" loading="lazy" decoding="async"></p>
+<p>點擊「Resolve conflicts」可以看到發生衝突的位置，但我個人並不建議在網頁上調整，因為你無法得知調整後的實際狀況：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-57.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-57_hu_65205ea4b24fe5d1.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-57.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 57）" loading="lazy" decoding="async"></p>
+<p><strong>我建議回到程式碼編輯器上操作，本地解決完衝突，確認結果符合預期後再更新上去。</strong></p>
+<p>這邊先回到 Antigravity 的頁面，我以切換淺色深色主題這個分支來做示範。</p>
+<p>首先，我們要打開終端機，執行 <code>git fetch origin</code> 拉取遠端最新資料 然後再執行 <code>git merge origin/master</code> 來同步主線的更新。</p>
+<p>執行後，你就會發現左側 Source Control 這個地方，在 Merge Changes 有一個衝突的檔案：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-58.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-58_hu_4692c454484f1c74.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-58.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 58）" loading="lazy" decoding="async"></p>
+<p>打開後就會看到產生衝突的位置，衝突通常分成「語法衝突」跟「邏輯衝突」。</p>
+<blockquote>
+<p>邏輯衝突較難處理，因為要考量到相容性或是改寫程式，這個之後有機會透過一個主題專門分享。</p>
+</blockquote>
+<p>而現在看到的這個是調整 CSS 網頁外型的語法衝突；只是括號位置撞到了而已，所以我選擇 Accept Current Change。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-59.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-59_hu_2af4b17e49aee130.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-59.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 59）" loading="lazy" decoding="async"></p>
+<p>這邊也跟大家提一下前面安裝 Gitlens 外掛的好處，像這邊滑鼠移到程式碼時，你就可以看到當時是誰更新了這段程式、更新的目的是什麼：</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-60.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-60_hu_279f2ca4a6c06960.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-60.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 60）" loading="lazy" decoding="async"></p>
+<p>處理完衝突後，按下「+」，然後輸入 commit</p>
+<pre tabindex="0"><code>chore: sync with master
+</code></pre><p>這是與主線同步的意思，然後點擊「Sync Changes」推送上去。</p>
+<p>此時回到 GitHub，刷新一下網頁，就會發現可以順利合併嚕！</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-61.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-61_hu_adfcadbc98133ae0.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-61.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 61）" loading="lazy" decoding="async"></p>
+<p>等所有 feature 都合併到主線後，我們可以在 master 的這個地方輸入 <code>git pull</code>，拉回變更。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-62.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-62_hu_349b9aae5871162c.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-62.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 62）" loading="lazy" decoding="async"></p>
+<p>然後輸入 <code>pnpm run dev</code>，來確認合併後的內容是否符合預期。</p>
+<p><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-63.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-63_hu_6db1577e1d151cd7.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-63.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 63）" loading="lazy" decoding="async"></p>
+<p>這邊把視角切到網頁，我們可以看到第一次進入時，下方會有 Cookie 的詢問視窗，上面可以切換淺色、深色主題，往下滑一點，常見問題的段落也有順利顯示。</p>
+<p>如果文章看到這邊，先給自己拍拍手，然後別忘記幫忙點個讚。</p>
+<blockquote>
+<p>假使你有跟著教學做到這個步驟，歡迎留言，讓我知道觀眾裡面有狠人，因為這個主題真的不容易。</p>
+</blockquote>
+<hr>
+<h2 id="結語人才是-ai-的瓶頸">結語：人，才是 AI 的瓶頸<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e4%ba%ba%e6%89%8d%e6%98%af-ai-%e7%9a%84%e7%93%b6%e9%a0%b8" aria-label="這個段落的連結"></a></h2>
+<p>完成這隻影片後，我不禁有個特別的感悟。</p>
+<p>因為這隻影片不管是專案範例、Commit 訊息、Agent Skills，甚至連 Pull Request 都是 AI 生成的。</p>
+<p>我從頭到尾一行程式都沒有寫，主要任務就是去 Review AI 給的建議、執行的成果。</p>
+<blockquote class="pullquote"><p>我想未來絕大多數產品，背後也都是 AI 在進行開發與迭代。</p>
+</blockquote>
+<p>但這並不代表 AI 可以取代工程師，雖然現在人人都可以寫程式；<strong>但「團隊溝通、功能擴充、系統維護、問題解決」都是需要經驗的。</strong></p>
+<p>就拿今天的影片來舉例好了，我是因為觀察到 Code Review 的速度，已經跟不上 AI 寫程式的速度。</p>
+<blockquote class="pullquote"><p>當人成為 AI 的瓶頸時，就要去分析如何降低門檻。</p>
+</blockquote>
+<p>比如不同功能要建立各自的分支，以減少 Code Review 的認知負擔。又或者完成功能後，請 AI 分析程式碼分段 commit，並撰寫 Pull Request 草稿，讓團隊協作的資訊有一致性。</p>
+<p><strong>雖然每一步都是 AI 在執行，但如果沒有業界的實戰經驗，大家對這些工具如何與 AI 協作是沒有概念的。</strong></p>
+<p>但這些才是真正的痛點，只要設計好就能提升個人與團隊的工作效率。</p>
+<p>當然，我相信一定還有很多更好的方案，歡迎大家留言分享。</p>
+<blockquote class="pullquote"><p>最後提醒大家，不管 AI 多強大，總需要有個人按下同意按鈕。</p>
+</blockquote>
+<blockquote class="pullquote"><p>當你按下去的那刻，責任就歸屬於你，畢竟 AI 還不能幫人背鍋。</p>
+</blockquote>
+<p>如果這篇文章對你有幫助，可以順手按個讚，並把文章分享給對 AI 主題感興趣的朋友們。</p>
+<figure class="figure"><img src="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-64.webp" srcset="/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-64_hu_b56b9783c6044813.webp 720w, /blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-64.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="914" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2026.02.24）</span><a href="https://medium.com/dean-lin/git-worktree-%E5%AF%A6%E6%88%B0-%E6%8C%87%E6%8F%AE-ai-agents-%E5%90%8C%E6%99%82%E9%81%8B%E4%BD%9C-%E6%90%AD%E9%85%8D-agent-skills-%E5%BB%BA%E7%AB%8B%E8%87%AA%E5%8B%95%E5%8C%96%E5%8D%94%E4%BD%9C%E9%AB%94%E7%B3%BB-b5b5244ae966" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/git-worktree/">Git Worktree</a>
+            <a class="chip chip-hash" href="/tags/ai-agent/">AI Agent</a>
+            <a class="chip chip-hash" href="/tags/agent-skills/">Agent Skills</a>
+            <a class="chip chip-hash" href="/tags/vibe-coding/">Vibe Coding</a>
+            <a class="chip chip-hash" href="/tags/code-review/">Code Review</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202602%2Fgit-worktree-ai-agents%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202602%2Fgit-worktree-ai-agents%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202602/git-worktree-ai-agents/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202602/git-worktree-ai-agents/" data-title="【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202602/antigravity-agent-skills/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">【Antigravity Agent Skills 教學】用實戰搞懂原理，讓 AI 從庸才變專家</span></a>
+          <a class="next" href="/blog/202603/claude-code-openspec/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li class="is-sub"><a href="#-%e7%bc%ba%e4%b9%8f%e6%b7%b1%e5%ba%a6%e6%80%9d%e8%80%83">① 缺乏深度思考</a></li><li class="is-sub"><a href="#-%e6%87%b6%e5%be%97-code-review">② 懶得 Code Review</a></li><li class="is-sub"><a href="#-%e6%9c%80%e7%b5%82%e5%b0%8e%e8%87%b4%e7%9a%84%e7%b5%90%e6%9e%9c">③ 最終導致的結果</a></li><li class="is-sub"><a href="#-%e7%88%b2%e4%bb%80%e9%ba%bc%e7%89%88%e6%9c%ac%e6%8e%a7%e5%88%b6%e5%be%88%e9%87%8d%e8%a6%81">① 爲什麼版本控制很重要</a></li><li class="is-sub"><a href="#-%e5%ae%8c%e6%88%90%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad">② 完成前置作業</a></li><li class="is-sub"><a href="#-agent-skills%e9%80%8f%e9%81%8e-git-worktree-%e6%8b%86%e5%88%86%e4%bb%bb%e5%8b%99%e8%a8%ad%e8%a8%88-spec">③ Agent Skills：透過 Git Worktree 拆分任務、設計 SPEC</a></li><li class="is-sub"><a href="#-agent-skills%e6%8b%86%e5%88%86-commit%e8%ae%93%e9%82%8f%e8%bc%af%e5%8f%af%e8%a2%ab%e8%bf%bd%e8%b9%a4">④ Agent Skills：拆分 Commit，讓邏輯可被追蹤</a></li><li class="is-sub"><a href="#-%e9%99%8d%e4%bd%8e-code-review-%e8%b2%a0%e6%93%94">⑤ 降低 Code Review 負擔</a></li><li><a href="#-%e7%bc%ba%e4%b9%8f%e7%89%88%e6%8e%a7%e6%a6%82%e5%bf%b5%e6%98%af%e7%81%bd%e9%9b%a3%e7%9a%84%e8%b5%b7%e9%bb%9e">① 缺乏版控概念，是災難的起點</a></li><li><a href="#-%e5%bb%ba%e7%ab%8b-git-worktree-%e7%92%b0%e5%a2%83git--pnpm--extensions">② 建立 Git Worktree 環境：Git &#43; pnpm &#43; Extensions</a></li><li class="is-sub"><a href="#-%e7%a2%ba%e8%aa%8d-git-%e7%89%88%e6%9c%ac">➤ 確認 Git 版本</a></li><li class="is-sub"><a href="#-%e5%ae%89%e8%a3%9d-pnpm">➤ 安裝 pnpm</a></li><li class="is-sub"><a href="#-%e5%ae%89%e8%a3%9d-extensions">➤ 安裝 Extensions</a></li><li class="is-sub"><a href="#-%e4%ba%86%e8%a7%a3-git-worktree-%e5%b7%a5%e4%bd%9c%e6%a8%a1%e5%bc%8f">➤ 了解 Git Worktree 工作模式</a></li><li><a href="#-agent-skill%e8%87%aa%e5%8b%95%e5%bb%ba%e7%ab%8b%e5%88%86%e6%94%af%e8%88%87%e9%96%8b%e7%99%bc%e8%a6%8f%e6%a0%bc">③ Agent Skill：自動建立分支與開發規格</a></li><li><a href="#-%e6%8c%87%e6%8f%ae%e5%a4%9a%e5%80%8b-ai-agents-%e5%90%8c%e6%99%82%e5%9f%b7%e8%a1%8c">④ 指揮多個 AI Agents 同時執行</a></li><li><a href="#-%e5%a5%bd%e7%9a%84-pull-request%e8%ae%93-code-review-%e8%ae%8a%e8%bc%95%e9%ac%86">⑤ 好的 Pull Request，讓 Code Review 變輕鬆</a></li><li><a href="#%e7%b5%90%e8%aa%9e%e4%ba%ba%e6%89%8d%e6%98%af-ai-%e7%9a%84%e7%93%b6%e9%a0%b8">結語：人，才是 AI 的瓶頸</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202602%2Fgit-worktree-ai-agents%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202602%2Fgit-worktree-ai-agents%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202602/git-worktree-ai-agents/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202602/git-worktree-ai-agents/" data-title="【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRkoAAABXRUJQVlA4ID4AAACQAwCdASoYAA0APw1oqUgmIyIYBABjEMT0gAAzI&#43;VaaMOJKBYIAP7qaDkcrO/ZTBW3xGqLiunqNl0EOm8AAA==" alt="" width="24" height="13"><img src="/blog/202604/reusable-ai-skills/images/reusable-ai-skills-01_hu_2eadf86b07ce8d6f.webp" srcset="/blog/202604/reusable-ai-skills/images/reusable-ai-skills-01_hu_adfaad067787831c.webp 240w, /blog/202604/reusable-ai-skills/images/reusable-ai-skills-01_hu_1d872fe4aa1ee988.webp 480w, /blog/202604/reusable-ai-skills/images/reusable-ai-skills-01_hu_e7fe7df45eb9c051.webp 800w, /blog/202604/reusable-ai-skills/images/reusable-ai-skills-01_hu_2eadf86b07ce8d6f.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="638" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202604/reusable-ai-skills/">讓 AI 把過去解決過的問題，變成未來可以重複使用的能力</a></h3>
+    <p class="card-desc">前陣子與朋友聚會時，我們交流了彼此用 AI 開發專案的心得。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-04-09">2026.04.09</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202602/antigravity-agent-skills/images/antigravity-agent-skills-01_hu_6ec185e93ac6c7ea.webp" srcset="/blog/202602/antigravity-agent-skills/images/antigravity-agent-skills-01_hu_472b2f5836d82347.webp 240w, /blog/202602/antigravity-agent-skills/images/antigravity-agent-skills-01_hu_739299bba5fc919c.webp 480w, /blog/202602/antigravity-agent-skills/images/antigravity-agent-skills-01_hu_fbaf386a4726d6d9.webp 800w, /blog/202602/antigravity-agent-skills/images/antigravity-agent-skills-01_hu_6ec185e93ac6c7ea.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a><span class="sep" aria-hidden="true">/</span><a href="/series/antigravity/">Google Antigravity</a></div>
+
+    <h3 class="card-title"><a href="/blog/202602/antigravity-agent-skills/">【Antigravity Agent Skills 教學】用實戰搞懂原理，讓 AI 從庸才變專家</a></h3>
+    <p class="card-desc">安裝專業技能、掌握客製化技巧、節省 Token 額度</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-02-02">2026.02.02</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>15 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202608/manus-skills/images/manus-skills-01_hu_d7185c3822881dd9.webp" srcset="/blog/202608/manus-skills/images/manus-skills-01_hu_ca321a20ba33b7c6.webp 240w, /blog/202608/manus-skills/images/manus-skills-01_hu_20e449a5c0cabceb.webp 480w, /blog/202608/manus-skills/images/manus-skills-01_hu_248dbecadc336e5a.webp 800w, /blog/202608/manus-skills/images/manus-skills-01_hu_d7185c3822881dd9.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a><span class="sep" aria-hidden="true">/</span><a href="/series/manus/">Manus AI Agent</a></div>
+
+    <h3 class="card-title"><a href="/blog/202608/manus-skills/">【Manus Skill 技能教學】教會 AI 一次，他永遠記得！讓 AI Agent 自動完成你的工作流</a></h3>
+    <p class="card-desc">最珍貴的不是別人的 Prompt，而是你打磨成果的流程</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-08-05">2026.08.05</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>17 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202602/git-worktree-ai-agents/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

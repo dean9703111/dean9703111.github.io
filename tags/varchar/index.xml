@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Varchar｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/varchar/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Fri, 13 May 2022 15:22:40 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/varchar/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異</title>
+      <link>https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/</link>
+      <pubDate>Fri, 13 May 2022 15:22:40 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>因為剛好朋友在專案的搜尋上遇到效能瓶頸，在看過程式碼後，發現他在 Table 做 Join 時都是挑選文字欄位，因此研判這應該就是導致效率低下的主要原因；為了實驗文字欄位（VARCHAR）與數值欄位（INTEGER）在 Join…</description>
+      <content:encoded><![CDATA[<p>因為剛好朋友在專案的搜尋上遇到效能瓶頸，在看過程式碼後，發現他在 Table 做 Join 時都是挑選文字欄位，因此研判這應該就是導致效率低下的主要原因；為了實驗文字欄位（VARCHAR）與數值欄位（INTEGER）在 Join 時的效能差異，特別撰寫了這篇文章，但實驗有點結果打破了我過往的認知…</p>
+<p><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-01.webp" width="1233" height="652" alt="Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+一、模擬情境說明
+二、在 DB 建立測試測試對照組 Table
+三、設計＆建立模擬資料
+四、設計測試程式
+五、模擬每個情境，取得測試結果
+六、令人意外的總結
+</code></pre><blockquote>
+<p>大家也可以<a href="https://github.com/dean9703111/table-join-varchar-int-performance">直接 Clone 筆者 GitHub 上的專案</a>來了解喔。（如果順便按個 Star更好😀）</p>
+</blockquote>
+<h2 id="一模擬情境說明">一、模擬情境說明<a class="h-anchor" href="#%e4%b8%80%e6%a8%a1%e6%93%ac%e6%83%85%e5%a2%83%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
+<p>假設一個商城系統：</p>
+<ul>
+<li>有 1W 個顧客</li>
+<li>每位顧客有 10 筆訂單（10W 筆訂單）</li>
+<li>每筆訂單有 10 筆購買的商品（100W 筆購買的商品）</li>
+</ul>
+<p>如果今天想要搜尋某個價格區間的「商品」，有哪些「使用者」購買；使用文字欄位（ex：VARCHAR）與數值欄位（ex：INT），在效能上實際會有多少差異。</p>
+<hr>
+<h2 id="二在-db-建立測試測試對照組-table">二、在 DB 建立測試測試對照組 Table<a class="h-anchor" href="#%e4%ba%8c%e5%9c%a8-db-%e5%bb%ba%e7%ab%8b%e6%b8%ac%e8%a9%a6%e6%b8%ac%e8%a9%a6%e5%b0%8d%e7%85%a7%e7%b5%84-table" aria-label="這個段落的連結"></a></h2>
+<p>如果想知道詳細的程式，或是打算在 Local 端模擬一樣的環境，大家可以參考我在<a href="https://github.com/dean9703111/table-join-varchar-int-performance">GitHub 上面的專案</a></p>
+<p>這裡我們分成 3 種情境來做測試：</p>
+<p><strong>情境 A</strong>： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index<br><strong>情境 B</strong>： 將 Foreign Key 的設計拿掉，改為使用 Index<br><strong>情境 C</strong>： 把 Index 全部拿掉，來看看到底有多慘</p>
+<p>DB 我選擇的是 MySQL，而 Table 的設計如下：</p>
+<h3 id="-users顧客">➤ users（顧客）<a class="h-anchor" href="#-users%e9%a1%a7%e5%ae%a2" aria-label="這個段落的連結"></a></h3>
+<a class="linkcard" href="https://sheetsu.com/tables/b96042fd7f" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Table</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>sheetsu.com</span>
+  </span>
+</a>
+
+<h3 id="-orders訂單">➤ orders（訂單）<a class="h-anchor" href="#-orders%e8%a8%82%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<a class="linkcard" href="https://sheetsu.com/tables/74b89104e6" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Table</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>sheetsu.com</span>
+  </span>
+</a>
+
+<p>設計「user_id、user_name」是為了對比文字欄位（ex：VARCHAR）與數值欄位（ex：INTEGER）的差異，<strong>皆有建立 Foreign Key</strong>。</p>
+<h3 id="-items購買的商品">➤ items（購買的商品）<a class="h-anchor" href="#-items%e8%b3%bc%e8%b2%b7%e7%9a%84%e5%95%86%e5%93%81" aria-label="這個段落的連結"></a></h3>
+<a class="linkcard" href="https://sheetsu.com/tables/5417e3d700" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Table</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>sheetsu.com</span>
+  </span>
+</a>
+
+<p>設計「order_id、order_sn」是為了對比文字欄位（ex：VARCHAR）與數值欄位（ex：INTEGER）的差異，<strong>皆有建立 Foreign Key</strong>。</p>
+<p>可用如下指令建立資料：</p>
+<ul>
+<li>Clone 專案：<code>git clone <a href="mailto:git@github.com">git@github.com</a>:dean9703111/table-join-varchar-int-performance.git</code></li>
+<li>安裝套件：<code>npm install</code></li>
+<li>安裝 sequelize cli：<code>npm install -g sequelize-cli</code></li>
+<li>將 config 資料夾底下的 config.exmaple.json 複製為 config.json，並填入自己的 DB 資訊</li>
+<li>建立 DB：<code>sequelize db:create</code></li>
+<li>執行 migration 建立 Tables：<code>sequelize db:migrate</code></li>
+</ul>
+<blockquote>
+<p>資料都是使用 Node.js 搭配 sequelize 這款套件來建立的，如果想了解詳細使用方式，可以參考我先前的的<a href="https://deanlin.net/blog/202205/sequelize-migration-seeder/">文章</a>。</p>
+</blockquote>
+<figure class="figure"><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-02.webp" width="1204" height="240" alt="建立測試 DB" loading="lazy" decoding="async">
+  <figcaption>建立測試 DB</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-03.webp" width="1204" height="1354" alt="建立測試各種情境的 Table" loading="lazy" decoding="async">
+  <figcaption>建立測試各種情境的 Table</figcaption>
+</figure>
+
+<blockquote>
+<p>在沒設計 Index 的 Table（users/orders） 對照組中，會新增 user_id/order_id 的欄位，此欄位內容與 id 欄位相同，單純用來測試效能用的。</p>
+</blockquote>
+<hr>
+<h2 id="三設計建立模擬資料">三、設計＆建立模擬資料<a class="h-anchor" href="#%e4%b8%89%e8%a8%ad%e8%a8%88%e5%bb%ba%e7%ab%8b%e6%a8%a1%e6%93%ac%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h2>
+<p>我們需要設計 3 個 Seeder，將期望的資料塞入：</p>
+<p><strong>STEP 1</strong>：建立 1W 個顧客<br><strong>STEP 2</strong>：為每位顧客建立 10 筆訂單（user_id、user_name 需與 user Table 關聯）<br><strong>STEP 3</strong>：為每筆訂單建立 10 筆購買的商品（order_id、order_sn 需與 order Table 關聯）</p>
+<p>執行全部 Seeder：</p>
+<pre tabindex="0"><code>sequelize db:seed:all
+</code></pre><p><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-04.webp" width="1204" height="558" alt="三、設計＆建立模擬資料（圖 4）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>因為沒建立 Index 的 Table 搜尋效能比想像的更加悲劇，所以在這個情境下將 User 的數量減為 1/10，也就是說購買商品(item)的數量只有 10W 筆。</p>
+</blockquote>
+<hr>
+<h2 id="四設計測試程式">四、設計測試程式<a class="h-anchor" href="#%e5%9b%9b%e8%a8%ad%e8%a8%88%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>我們需要設計一個可以根據上面 3 種情境測試的程式，同時用 3 種常見的查詢來比較各自的效能：</p>
+<ol>
+<li>單筆查詢：<code>findOne</code></li>
+<li>多筆查詢：<code>findMutiple</code></li>
+<li>設定條件的批量查詢 ：<code>searchRange</code> (大約會找出 1/5 的資料，用來測試匯出大量報表功能)</li>
+</ol>
+<p>程式放在下面，有興趣再看就好，這不是本文的重點，我知道還有很多細節可以優化 😇</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { sequelize } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./models&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { QueryTypes } <span style="color:#ff7b72;font-weight:bold">=</span> sequelize;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> getJoinCol (colType, setting) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> orderJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> itemJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (setting <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;&#34;</span> <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> colType <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;Int&#34;</span>) {
+</span></span><span style="display:flex;"><span>        orderJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`orders.user_id = users.user_id`</span>
+</span></span><span style="display:flex;"><span>        itemJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`items.order_id = orders.order_id`</span>
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">else</span> <span style="color:#ff7b72">if</span> (colType <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;Int&#34;</span>) {
+</span></span><span style="display:flex;"><span>        orderJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders.user_id = </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users.id`</span>
+</span></span><span style="display:flex;"><span>        itemJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.order_id = </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders.id`</span>
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">else</span> <span style="color:#ff7b72">if</span> (colType <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;VarChar&#34;</span>) {
+</span></span><span style="display:flex;"><span>        orderJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders.user_name = </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users.name`</span>
+</span></span><span style="display:flex;"><span>        itemJoinCol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.order_sn = </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders.sn`</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> { <span style="color:#a5d6ff">&#34;orderJoinCol&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> orderJoinCol, <span style="color:#a5d6ff">&#34;itemJoinCol&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> itemJoinCol }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> findOne (colType, setting) {
+</span></span><span style="display:flex;"><span>    console.time(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">FindOne`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> {orderJoinCol,itemJoinCol} <span style="color:#ff7b72;font-weight:bold">=</span> getJoinCol (colType, setting)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> sequelize.query(<span style="color:#a5d6ff">`SELECT 
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users.name, </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.price FROM </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders ON </span><span style="color:#a5d6ff">${</span>orderJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items ON </span><span style="color:#a5d6ff">${</span>itemJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           WHERE </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.name = &#39;Dumpitem5000-10-10&#39;`</span>, { type<span style="color:#ff7b72;font-weight:bold">:</span> QueryTypes.SELECT });
+</span></span><span style="display:flex;"><span>    console.timeEnd(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">FindOne`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> findMutiple (colType, setting) {
+</span></span><span style="display:flex;"><span>    console.time(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">FindMutiple`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> {orderJoinCol,itemJoinCol} <span style="color:#ff7b72;font-weight:bold">=</span> getJoinCol (colType, setting)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> sequelize.query(<span style="color:#a5d6ff">`SELECT 
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users.name, </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.price FROM </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders ON </span><span style="color:#a5d6ff">${</span>orderJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items ON </span><span style="color:#a5d6ff">${</span>itemJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           WHERE </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.name in 
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">            (&#39;Dumpitem3000-10-10&#39;,&#39;Dumpitem5000-10-10&#39;,&#39;Dumpitem7500-10-10&#39;)`</span>
+</span></span><span style="display:flex;"><span>        , { type<span style="color:#ff7b72;font-weight:bold">:</span> QueryTypes.SELECT });
+</span></span><span style="display:flex;"><span>    console.timeEnd(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">FindMutiple`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> searchRange (colType, setting) {
+</span></span><span style="display:flex;"><span>    console.time(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">SearchRange`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> {orderJoinCol,itemJoinCol} <span style="color:#ff7b72;font-weight:bold">=</span> getJoinCol (colType, setting)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> sequelize.query(<span style="color:#a5d6ff">`SELECT 
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users.name, </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.price FROM </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">users
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">orders ON </span><span style="color:#a5d6ff">${</span>orderJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           LEFT JOIN </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items ON </span><span style="color:#a5d6ff">${</span>itemJoinCol<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">           WHERE </span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">items.price &lt; 80`</span>, { type<span style="color:#ff7b72;font-weight:bold">:</span> QueryTypes.SELECT });
+</span></span><span style="display:flex;"><span>    console.timeEnd(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>colType<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span>setting<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">SearchRange`</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> test (type) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">switch</span> (type) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">case</span> <span style="color:#a5d6ff">&#39;foreign&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;foreign_&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">break</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">case</span> <span style="color:#a5d6ff">&#39;index&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;index_&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">break</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">default</span><span style="color:#ff7b72;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;Int&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>            findOne(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>            findMutiple(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>            searchRange(<span style="color:#a5d6ff">&#34;VarChar&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// test(&#34;foreign&#34;)//有建立 foreign Key 的
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// test(&#34;index&#34;)//有建立 index 的
+</span></span></span><span style="display:flex;"><span>test()<span style="color:#8b949e;font-style:italic">//什麼都沒有設定的
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/30fa6b0419a8ffd10886ab7aba9921f5" rel="noopener">table-join-index.js</a>（GitHub Gist）</p>
+<hr>
+<h2 id="五模擬每個情境取得測試結果">五、模擬每個情境，取得測試結果<a class="h-anchor" href="#%e4%ba%94%e6%a8%a1%e6%93%ac%e6%af%8f%e5%80%8b%e6%83%85%e5%a2%83%e5%8f%96%e5%be%97%e6%b8%ac%e8%a9%a6%e7%b5%90%e6%9e%9c" aria-label="這個段落的連結"></a></h2>
+<h3 id="-情境-a-將-join-的欄位設計-foreign-key搜尋用到的欄位也設計-index">➤ 情境 A： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-a-%e5%b0%87-join-%e7%9a%84%e6%ac%84%e4%bd%8d%e8%a8%ad%e8%a8%88-foreign-key%e6%90%9c%e5%b0%8b%e7%94%a8%e5%88%b0%e7%9a%84%e6%ac%84%e4%bd%8d%e4%b9%9f%e8%a8%ad%e8%a8%88-index" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>ER Diagram</li>
+</ul>
+<figure class="figure"><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-05.webp" width="954" height="555" alt="以 foreign 為開頭的 Table" loading="lazy" decoding="async">
+  <figcaption>以 foreign 為開頭的 Table</figcaption>
+</figure>
+
+<blockquote>
+<p>小知識 : 如果 Foreign Key關聯的欄位為 Primary Key，它會自動建立 Index。</p>
+</blockquote>
+<ul>
+<li>執行程式</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-06.webp" width="860" height="910" alt="情境 A： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>測試數據：</strong></p>
+<ul>
+<li>INTEGER 單筆查詢：787.003ms</li>
+<li>INTEGER 多筆查詢：773.931ms</li>
+<li>INTEGER 設定條件的批量查詢：3.555s</li>
+<li>VARCHAR 單筆查詢：767.987ms</li>
+<li>VARCHAR 多筆查詢：773.861ms</li>
+<li>VARCHAR 設定條件的批量查詢：6.049s</li>
+</ul>
+<h3 id="-情境-b-將-foreign-key-的設計拿掉改為使用-index">➤ 情境 B： 將 Foreign Key 的設計拿掉，改為使用 Index<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-b-%e5%b0%87-foreign-key-%e7%9a%84%e8%a8%ad%e8%a8%88%e6%8b%bf%e6%8e%89%e6%94%b9%e7%82%ba%e4%bd%bf%e7%94%a8-index" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>ER Diagram</li>
+</ul>
+<figure class="figure"><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-07.webp" width="860" height="457" alt="以 Index 為開頭的 Table" loading="lazy" decoding="async">
+  <figcaption>以 Index 為開頭的 Table</figcaption>
+</figure>
+
+<ul>
+<li>執行程式</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-08.webp" width="860" height="913" alt="情境 B： 將 Foreign Key 的設計拿掉，改為使用 Index（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>測試數據：</strong></p>
+<ul>
+<li>INTEGER 單筆查詢：464.168ms</li>
+<li>INTEGER 多筆查詢：540.567ms</li>
+<li>INTEGER 設定條件的批量查詢：2.624s</li>
+<li>VARCHAR 單筆查詢：447.98ms</li>
+<li>VARCHAR 多筆查詢：549.225ms</li>
+<li>VARCHAR 設定條件的批量查詢：4.824s</li>
+</ul>
+<h3 id="-情境-c-把-index-全部拿掉來看看到底有多慘">➤ 情境 C： 把 Index 全部拿掉，來看看到底有多慘<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-c-%e6%8a%8a-index-%e5%85%a8%e9%83%a8%e6%8b%bf%e6%8e%89%e4%be%86%e7%9c%8b%e7%9c%8b%e5%88%b0%e5%ba%95%e6%9c%89%e5%a4%9a%e6%85%98" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>ER Diagram</li>
+</ul>
+<figure class="figure"><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-09.webp" width="852" height="398" alt="什麼都沒設計，僅有自動生成的 Primary Key" loading="lazy" decoding="async">
+  <figcaption>什麼都沒設計，僅有自動生成的 Primary Key</figcaption>
+</figure>
+
+<ul>
+<li>執行程式</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-10.webp" width="852" height="909" alt="情境 C： 把 Index 全部拿掉，來看看到底有多慘（圖 10）" loading="lazy" decoding="async"></p>
+<p><strong>測試數據</strong>：</p>
+<ul>
+<li>INTEGER 單筆查詢：1.217s</li>
+<li>INTEGER 多筆查詢：1.205s</li>
+<li>INTEGER 設定條件的批量查詢：3:08.252 (m:ss.mmm)</li>
+<li>VARCHAR 單筆查詢：1.755s</li>
+<li>VARCHAR 多筆查詢：1.964s</li>
+<li>VARCHAR 設定條件的批量查詢：44.285s</li>
+</ul>
+<hr>
+<h2 id="六令人意外的總結">六、令人意外的總結<a class="h-anchor" href="#%e5%85%ad%e4%bb%a4%e4%ba%ba%e6%84%8f%e5%a4%96%e7%9a%84%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<p>這邊先列出比較表，方便大家理解：</p>
+<a class="linkcard" href="https://sheetsu.com/tables/64262891c4" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Table</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>sheetsu.com</span>
+  </span>
+</a>
+
+<p>在這張表裡面有我預料的結果，也有我沒想到的結果，我歸類如下：</p>
+<ul>
+<li>批量查詢時，如果有設定 Foreign Key、Index，INTEGER 的搜尋效率優於 VARCHAR。</li>
+<li>在有設定 Foreign Key、Index，那單筆、多筆查詢的效率是差不多的，跟使用 INTEGER 還是 VARCHAR 關聯性不大。</li>
+<li>Foreign Key 的搜尋效率略低於 Index（可能是我在資料表上設計的不足）。</li>
+<li>如果沒建立 Index，那搜尋效率慘不忍睹（即使資料只有 1/10，效能還是超悲劇）。</li>
+<li>如果沒建立 Index，在批量查詢時，INTEGER 查詢效率低於 VARCHAR（這部分我真的搞不懂為什麼）。</li>
+</ul>
+<p>老實說，這個實驗結果反而把我弄得有點迷糊，也許還要從更多面向做測試，追尋知識的道路真的任重道遠🤕</p>
+<blockquote>
+<p>本篇是從「搜尋花費時間」的角度來實驗，歡迎高手從硬體消耗資源的角度來實驗。</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,1652 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>團隊合作｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/categories/teamwork/</link>
+    <description>帶團隊、做專案、跟人協作的實戰心得：溝通、設計思考、專案管理，以及工程師在職場上最常踩的坑。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Sat, 11 May 2024 10:32:39 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/categories/teamwork/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[Gitlab] 建立 Merge Request Templates，讓團隊合作更加順利！</title>
+      <link>https://deanlin.net/blog/202405/gitlab-merge-request-templates/</link>
+      <pubDate>Sat, 11 May 2024 10:32:39 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202405/gitlab-merge-request-templates/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。 但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」 這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。</description>
+      <content:encoded><![CDATA[<p>在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。</p>
+<p>但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」</p>
+<p>這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上；有些交代不清楚的 Merge Request 如果被合併了，也容易在未來發現 Bug 時難以釐清問題。</p>
+<p>而解決上面問題的方式也很簡單：「建立 Template（模板）」</p>
+<p>如果大家都按照模板撰寫，就能保證每個 MR 都有一定的品質。</p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-01.webp" width="1147" height="645" alt="\[Gitlab\] 建立 Merge Request Templates，讓團隊合作更加順利！（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="merge-request-要有哪些資訊">Merge Request 要有哪些資訊？<a class="h-anchor" href="#merge-request-%e8%a6%81%e6%9c%89%e5%93%aa%e4%ba%9b%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
+<p>筆者個人建議一個好的 Merge Request 要包含以下元素：</p>
+<ol>
+<li><strong>概要 &amp; 背景</strong>：簡短描述這次 Merge Request 的目的，讓 Code Review 的人可以快速理解前因後果。</li>
+<li><strong>相關資訊</strong>：放上專案需求規格連結、關聯的 Project/branch、會議紀錄等資訊。</li>
+<li><strong>變更內容</strong>：說明新增/修改/移除了什麼內容，如果邏輯複雜可以簡述演算法。</li>
+<li><strong>測試步驟</strong>：描述如何驗證這次的變更，包括需要運行的測試和預期結果。</li>
+</ol>
+<p>大家可以參考我的 Merge Request Template 格式（Markdown 語法）：</p>
+<pre tabindex="0"><code># 概要 &amp; 背景
+
+# 相關資訊
+
+- 需求規格: 
+- 關聯的 Project/branch: 
+- 任務 Ticket/會議紀錄: 
+
+# 變更內容
+
+- [新增] xxx
+- [修改] yyy
+- [移除] zzz
+
+# 測試步驟
+
+### 測試項目 1
+
+- STEP 1: 
+- STEP 2: 
+- STEP 3: 
+
+預期結果:
+</code></pre><p>英文版：</p>
+<pre tabindex="0"><code># Summary &amp; Background
+
+# Relevant Information
+
+- Requirement Specifications: 
+- Associated Project/Branch: 
+- Task Ticket/Meeting Notes: 
+
+# Changes
+
+- [Added] xxx
+- [Modified] yyy
+- [Removed] zzz
+
+# Testing Steps
+
+### Test Case 1
+
+- STEP 1: 
+- STEP 2: 
+- STEP 3: 
+
+Expected Result:
+</code></pre><hr>
+<h2 id="在-gitlab-建立-merge-request-templates-的步驟">在 Gitlab 建立 Merge Request Templates 的步驟<a class="h-anchor" href="#%e5%9c%a8-gitlab-%e5%bb%ba%e7%ab%8b-merge-request-templates-%e7%9a%84%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h2>
+<h3 id="step-1-選擇-project-default-branch建立存放-templates-的資料夾">STEP 1: 選擇 Project default branch，建立存放 Templates 的資料夾<a class="h-anchor" href="#step-1-%e9%81%b8%e6%93%87-project-default-branch%e5%bb%ba%e7%ab%8b%e5%ad%98%e6%94%be-templates-%e7%9a%84%e8%b3%87%e6%96%99%e5%a4%be" aria-label="這個段落的連結"></a></h3>
+<p>我們要先在根目錄下建立 <code>.gitlab/merge_request_templates/</code> 的資料夾。</p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-02.webp" width="1400" height="407" alt="STEP 1: 選擇 Project default branch，建立存放 Templates 的資料夾（圖 2）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-03.webp" width="1400" height="137" alt="STEP 1: 選擇 Project default branch，建立存放 Templates 的資料夾（圖 3）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>小提醒</strong>：一定要在「default branch（ex: main、develop）」下建立，否則是沒有效的。</p>
+</blockquote>
+<h3 id="step-2-在資料夾下建立md的-templates">STEP 2: 在資料夾下建立「.md」的 Templates<a class="h-anchor" href="#step-2-%e5%9c%a8%e8%b3%87%e6%96%99%e5%a4%be%e4%b8%8b%e5%bb%ba%e7%ab%8bmd%e7%9a%84-templates" aria-label="這個段落的連結"></a></h3>
+<p>你可以直接複製筆者在前面提供的 Markdown Template，這邊我將檔案命名為「merge.md」。</p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-04.webp" width="1400" height="915" alt="STEP 2: 在資料夾下建立「.md」的 Templates（圖 4）" loading="lazy" decoding="async"></p>
+<p>這邊我開一個測試的 branch 來做 Merge request，大家可以看到在 Description 旁邊有一個下拉選單，裡面的 merge 就是我們剛剛新增的模板。</p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-05.webp" width="1400" height="669" alt="STEP 2: 在資料夾下建立「.md」的 Templates（圖 5）" loading="lazy" decoding="async"></p>
+<p>選擇後就能看到剛剛建立的 Merge request Template：</p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-06.webp" width="1400" height="747" alt="STEP 2: 在資料夾下建立「.md」的 Templates（圖 6）" loading="lazy" decoding="async"></p>
+<p>相信一個好的 Merge request Template 能提高專案的品質，並加速團隊的協作流程，減少不必要的溝通成本。</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/7f3c9b6e2442" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">軟體工程</span>
+    <span class="lc-desc">Edit description</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-card-01_hu_8de84ea4754d7f76.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>接案不再鬼遮眼！10 個獲得好專案 &amp; 好客戶的方法 ── 設計管理系列文</title>
+      <link>https://deanlin.net/blog/202403/find-good-freelance-clients/</link>
+      <pubDate>Sun, 03 Mar 2024 22:31:51 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202403/find-good-freelance-clients/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>身為過來人，筆者在開頭先給大家一個忠告：「千萬不要有案子就接！」</description>
+      <content:encoded><![CDATA[<p>身為過來人，筆者在開頭先給大家一個忠告：「千萬不要有案子就接！」</p>
+<p>如果你已經淪落到這單不接就會餓死，那我建議你老實回去上班；因為接到爛案子，只會把你拖入更深的泥潭。</p>
+<p><img src="https://deanlin.net/blog/202403/find-good-freelance-clients/images/find-good-freelance-clients-01.webp" width="1000" height="562" alt="接案不再鬼遮眼！10 個獲得好專案 &amp; 好客戶的方法 ── 設計管理系列文（圖 1）" loading="lazy" decoding="async"></p>
+<p>這篇文章會從 3 個面向給大家建議，畢竟有判斷、努力的方向才能持續成長。</p>
+<pre tabindex="0"><code>文章大綱
+
+ㄧ、什麼是好專案？
+二、如何接到好專案？
+三、如何判斷對方是否為好客戶？
+</code></pre><h2 id="ㄧ什麼是好專案">ㄧ、什麼是好專案？<a class="h-anchor" href="#%e3%84%a7%e4%bb%80%e9%ba%bc%e6%98%af%e5%a5%bd%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>人的時間、精力有限，把注意力投入在「好專案」上，才有辦法持續成長。</p>
+<ol>
+<li><strong>客戶尊重你</strong>：如果客戶是在了解你後才選擇你，而不是因為價格而選擇你。那他通常會比較尊重你的時間與流程，並讓你有一定的發揮空間。</li>
+<li><strong>能賺錢</strong>：如果你是在工作之餘接案，那建議用 1.5~2 倍的時薪來計算報價；如果 [報價] 大於 [時薪 * 預估工時]，那才算是有利潤空間。更詳細的報價計算請<a href="https://deanlin.net/blog/202402/freelance-pricing/">參考這篇文章</a>。</li>
+<li><strong>對未來發展有幫助</strong>：有些專案在結束後根本無法成為你的「作品」，甚至讓人想直接把他丟到資源回收桶；因此在專案中能學到新技術、拓展視野，甚至獲得曝光帶來新客戶，也是一個重要的考量點。</li>
+</ol>
+<p>不過在現實生活中，專案有符合上面其中一兩個就該偷笑了。</p>
+<p>以筆者過去的經驗來說，「好客戶」往往是好專案最重要的基礎條件。</p>
+<p>當人對了，一切都會往好的地方發展；如果彼此理念差異太大，就算你賺到了錢，也會有種人被抽乾的感覺，真的得不償失。</p>
+<hr>
+<h2 id="二如何接到好專案">二、如何接到好專案？<a class="h-anchor" href="#%e4%ba%8c%e5%a6%82%e4%bd%95%e6%8e%a5%e5%88%b0%e5%a5%bd%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>如果你只是個 nobody，那是很難接到好專案的。</p>
+<p>因為你要靠自己主動去找案源，但會釋出的案源通常都是一些難搞的 Case，不然早就有認識的人接單了。</p>
+<p>所以如果想獲得好專案，<strong>讓更多人認識你是很重要的</strong>；但這塊需要花比較多的時間長久經營，下面分享幾個筆者持續在做的事情：</p>
+<ol>
+<li><strong>分享自己的專業知識、作品</strong>：從 2020 年開始，我將自己的專業知識、作品分享到 FB、Medium、iT邦幫忙等平台，這些積累讓我獲得超過 200 萬次的曝光，讓更多潛在客戶認識我。</li>
+<li><strong>分享到特定的社團</strong>：因為在個人版面發技術文根本沒人鳥我，所以我會將專業文章分享到技術社團，這樣才可能吸引到同好交流（擁有相似背景的人溝通起來會更有 Sense）。在合適的場合才會遇到對的人，減少浪費時間的可能性。</li>
+<li><strong>強化個人特質</strong>：如果客戶是慕名而來，那專案會順利很多；但在資訊爆炸的時代想做到這點，你除了要有個人特質外，還要高頻率的曝光，畢竟被看見才會有機會。</li>
+<li><strong>準備履歷＆作品集</strong>：要定期更新自己的履歷＆作品集，這樣遇到機會時，你才有辦法有脈絡的分享自己的觀點（前提是你有好的作品）。</li>
+</ol>
+<p>提醒一下大家：「好的作品才會帶來好的專案。」</p>
+<hr>
+<h2 id="三如何判斷對方是否為好客戶">三、如何判斷對方是否為好客戶？<a class="h-anchor" href="#%e4%b8%89%e5%a6%82%e4%bd%95%e5%88%a4%e6%96%b7%e5%b0%8d%e6%96%b9%e6%98%af%e5%90%a6%e7%82%ba%e5%a5%bd%e5%ae%a2%e6%88%b6" aria-label="這個段落的連結"></a></h2>
+<p>好客戶不常見，如果遇到請盡量培養成長期合作關係。</p>
+<p>我們可以參考下面 3 點來做判斷：</p>
+<ol>
+<li><strong>知道自己要什麼</strong>：有些客戶會在發想的階段找設計師、廠商討論，他們知道自己要做這個專案，但還沒有方向。但如果客戶不知道專案目的、目標族群、後續規劃… 那你要有後續討論難以對焦的心理準備，因為這些問題都可能導致時程延宕。如果走一步算一步，那設計規格肯定會一直調整，事情不斷重工，甚至無法結案。</li>
+<li><strong>願意簽約</strong>：如果不簽合約，那代表客戶並不在意自己的權益。近一步思考，他可能不在意這個專案，這代表你們所做的討論、決策都可能隨時變卦。</li>
+<li><strong>願意描述現狀</strong>：有些客戶希望你當個通靈師，不說需求要你猜；但這並不合理，就像我們看醫生會說自己不舒服的地方，這樣才能對症下藥。設計也是一樣，客戶可能不知道自己的問題，但描述現況與期待是必要的。</li>
+</ol>
+<hr>
+<h2 id="四結語">四、結語<a class="h-anchor" href="#%e5%9b%9b%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>雖然前面講了很多，但在沒作品的菜鳥時期；為了累積作品，部分有疑慮的專案還是得接。</p>
+<p>我們能做的，就是當問題浮現時，把他優化到流程與文件中。</p>
+<p>這樣你之後就知道在面對有疑慮的專案時，要在合約加上哪些備註，或是於交付內容上加限制，並在報價時把發生問題的時間成本考量進去。</p>
+<blockquote>
+<p>以上是「職涯必修設計管理學」的 Part 5心得筆記 ，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202403/find-good-freelance-clients/images/find-good-freelance-clients-card-01_hu_c3bc820ac49b9199.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>一篇搞定！6 個提高接案報價的秘訣 ── 設計管理系列文</title>
+      <link>https://deanlin.net/blog/202402/raise-freelance-rates/</link>
+      <pubDate>Tue, 27 Feb 2024 18:40:25 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202402/raise-freelance-rates/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>很多人在接案時，會覺得專業能力與報價應該成正比。 但實際上，在累積一定的接案經驗後，繼續提高專業能力，並不會增加你的議價空間。 因為大部分的客戶並沒有那麼高的要求，你也許有 90 分的實力，但客戶只要 70 分的結果。 那麼在遇到瓶頸後，我們可以用哪些方法提高報價呢？</description>
+      <content:encoded><![CDATA[<p>很多人在接案時，會覺得專業能力與報價應該成正比。</p>
+<p>但實際上，在累積一定的接案經驗後，繼續提高專業能力，並不會增加你的議價空間。</p>
+<p>因為大部分的客戶並沒有那麼高的要求，你也許有 90 分的實力，但客戶只要 70 分的結果。</p>
+<p>那麼在遇到瓶頸後，我們可以用哪些方法提高報價呢？</p>
+<p>這篇文章會分享 6 個技巧，最後 3 個能立即見效！</p>
+<p><img src="https://deanlin.net/blog/202402/raise-freelance-rates/images/raise-freelance-rates-01.webp" width="983" height="552" alt="一篇搞定！6 個提高接案報價的秘訣 ── 設計管理系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="ㄧ經營個人品牌">ㄧ、經營個人品牌<a class="h-anchor" href="#%e3%84%a7%e7%b6%93%e7%87%9f%e5%80%8b%e4%ba%ba%e5%93%81%e7%89%8c" aria-label="這個段落的連結"></a></h2>
+<p>既然有接案的本事，那肯定有自己的專業。</p>
+<p>你可以嘗試將自己行業中的技術、心得、經驗，透過文章、影片的方式分享出去。</p>
+<p>在特定領域持續分享自己的專業，會讓看到這些資訊的人對你產生信任感；如果他們未來找你談合作，就會對你有更多的尊重。</p>
+<p>這道理就像如果只為了填飽肚子，你可以直接購買超商的微波食品。</p>
+<p>但如果特地預定了某間餐廳，一定是對他有不同的期待，就算價格略高也可以接受。</p>
+<hr>
+<h2 id="二在專業領域有自己的見解">二、在專業領域有自己的見解<a class="h-anchor" href="#%e4%ba%8c%e5%9c%a8%e5%b0%88%e6%a5%ad%e9%a0%98%e5%9f%9f%e6%9c%89%e8%87%aa%e5%b7%b1%e7%9a%84%e8%a6%8b%e8%a7%a3" aria-label="這個段落的連結"></a></h2>
+<p>有些人可能會覺得市場上已經有很多大神在分享經驗，根本不缺我這個小咖吧？</p>
+<p>但其實並不是這個樣子的，因為每個人都有自己的背景、興趣、專長，從而產生出不同的視角。</p>
+<p>就像大家在做同一個專案，每個人負責的任務、在意的細節、理解的程度往往有很大的差異。</p>
+<p>不同的人生經驗會塑造出專屬自己的哲學觀，這是他人難以複製與取代的。</p>
+<p>不管你的專業水平如何，都會有自己的受眾。</p>
+<hr>
+<h2 id="三將成果分享到社團">三、將成果分享到社團<a class="h-anchor" href="#%e4%b8%89%e5%b0%87%e6%88%90%e6%9e%9c%e5%88%86%e4%ba%ab%e5%88%b0%e7%a4%be%e5%9c%98" aria-label="這個段落的連結"></a></h2>
+<p>在完成文章、影片後，除了發表到自己的頁面外；不要害羞，直接分享到相關的社團吧。</p>
+<p>如果只發表在自己的頁面，那會注意到你的人就只有認識的朋友。</p>
+<p>但分享到社團，會直接打破原有的舒適圈，讓更多的人認識你（批評你）。</p>
+<p>分享我們為客戶製作的產品，其實也算是變向在幫客戶做宣傳、曝光，擁有很棒的廣告效果（這部分請先經過客戶同意）。</p>
+<blockquote>
+<p>不過上面提到的都需要花時間經營，接下來分享幾個能夠立即見效的。</p>
+</blockquote>
+<hr>
+<h2 id="四提供更多選擇">四、提供更多選擇<a class="h-anchor" href="#%e5%9b%9b%e6%8f%90%e4%be%9b%e6%9b%b4%e5%a4%9a%e9%81%b8%e6%93%87" aria-label="這個段落的連結"></a></h2>
+<p>當客戶提出需求時，你可以基於這些內容提供更完整的解決方案。</p>
+<p>這不但可以增加客戶對你的專業能力的信任，還可以提高報價。</p>
+<p>因為客戶提出的需求，往往只在自己的認知範圍內，但其實還有很多細節是專業人士才會注意到的。</p>
+<p>就像是我們訂外送，你可能一開始只是想買個雞腿便當，但在結帳前跳出加購飲料的優惠時，可能就順手加入購物車一起結帳。</p>
+<hr>
+<h2 id="五建立接案的-sop">五、建立接案的 SOP<a class="h-anchor" href="#%e4%ba%94%e5%bb%ba%e7%ab%8b%e6%8e%a5%e6%a1%88%e7%9a%84-sop" aria-label="這個段落的連結"></a></h2>
+<p>時間就是金錢，但很多時候我們會把時間浪費在重複的事情上。</p>
+<p>像下面這些資料，我建議要先準備好，並持續優化：</p>
+<ul>
+<li>個人履歷、作品集（與客戶初步接洽時提供）</li>
+<li>介紹服務的項目（初步認識＆討論）</li>
+<li>報價單</li>
+<li>合約</li>
+</ul>
+<p>上面的文件做好模板後，建議製作一份檢查清單（範例如下），避免資訊錯誤顯得不專業：</p>
+<ul>
+<li>公司名稱</li>
+<li>報價日期</li>
+<li>報價金額</li>
+<li>規格內容</li>
+<li>檢查錯字</li>
+</ul>
+<hr>
+<h2 id="六提供內容詳盡的報價單">六、提供內容詳盡的報價單<a class="h-anchor" href="#%e5%85%ad%e6%8f%90%e4%be%9b%e5%85%a7%e5%ae%b9%e8%a9%b3%e7%9b%a1%e7%9a%84%e5%a0%b1%e5%83%b9%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<p>如果報價單的內容只有一行字，那客戶根本搞不清楚自己買了什麼東西。</p>
+<p>就像我們購買高單價的商品時，一定會仔細看上面的說明，內容越清楚，我們會越信任他（哪怕我們看不懂）。</p>
+<hr>
+<h2 id="總結">總結<a class="h-anchor" href="#%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<p>經營個人品牌可以提高客戶的信任度，因為很少有人會為了追求短期利益而損害自己的聲譽。</p>
+<p>如果我們有能力提供客戶更多選擇，就有機會提高客單價。</p>
+<p>制定明確的接案 SOP 可以減少重工的時間，而一份詳盡的報價單能提高成交的機率。</p>
+<p>希望這篇文章能幫大家爭取到更高的報價，也歡迎留言分享你的接案經驗。</p>
+<blockquote>
+<p>以上是「職涯必修設計管理學」的 Part 4心得筆記 ，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202402/raise-freelance-rates/images/raise-freelance-rates-card-01_hu_b35dac1b6e2ac71b.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>這年頭誰不想多賺點錢？但接案怎麼報價才合理？ ── 設計管理系列文</title>
+      <link>https://deanlin.net/blog/202402/freelance-pricing/</link>
+      <pubDate>Thu, 22 Feb 2024 18:36:53 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202402/freelance-pricing/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>談錢很俗，但接案不談錢是在做身體健康的喔？</description>
+      <content:encoded><![CDATA[<p>談錢很俗，但接案不談錢是在做身體健康的喔？</p>
+<p>如果打算長期接案，你一定要建立一套自己的報價邏輯體系；避免客戶詢問時，你愣在那邊支支吾吾不知如何回應。</p>
+<p><img src="https://deanlin.net/blog/202402/freelance-pricing/images/freelance-pricing-01.webp" width="1144" height="643" alt="這年頭誰不想多賺點錢？但接案怎麼報價才合理？ ── 設計管理系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="接案僅適用於在某個領域擁有專業的人">接案僅適用於在某個領域擁有「專業」的人<a class="h-anchor" href="#%e6%8e%a5%e6%a1%88%e5%83%85%e9%81%a9%e7%94%a8%e6%96%bc%e5%9c%a8%e6%9f%90%e5%80%8b%e9%a0%98%e5%9f%9f%e6%93%81%e6%9c%89%e5%b0%88%e6%a5%ad%e7%9a%84%e4%ba%ba" aria-label="這個段落的連結"></a></h2>
+<p>請不要把接案當成自己練功的玩具，那是對自己與客戶的不負責。</p>
+<p>建議對專業的掌握度到達「得心應手」後，再考慮去接案。</p>
+<p>否則…你可能連評估專案工時的能力都不具備。</p>
+<hr>
+<h2 id="報價是專業--客戶信任度--產品利潤的總體考量">報價是「專業 + 客戶信任度 + 產品利潤」的總體考量<a class="h-anchor" href="#%e5%a0%b1%e5%83%b9%e6%98%af%e5%b0%88%e6%a5%ad--%e5%ae%a2%e6%88%b6%e4%bf%a1%e4%bb%bb%e5%ba%a6--%e7%94%a2%e5%93%81%e5%88%a9%e6%bd%a4%e7%9a%84%e7%b8%bd%e9%ab%94%e8%80%83%e9%87%8f" aria-label="這個段落的連結"></a></h2>
+<p>這就是為什麼老牌的接案公司、個人工作室往往案源不斷，甚至要排隊的原因。</p>
+<p>因為除了專業很重要外，過去的作品、成果能夠增加客戶的信任度。</p>
+<p>就像我們在買東西時，往往會挑大品牌，甚至去比哪個品牌得獎比較多，而不會冒險購買沒聽過的雜牌（除非是為了省錢）。</p>
+<p>而剛出來接案的新手、沒什麼作品的工作室，就像是貨架上的雜牌；甲方會選擇你，通常是因為你有價格上的優勢。</p>
+<p><strong>所以接案初期通常是虧的，你賺到的錢甚至可能低於本職工作的時薪。</strong></p>
+<p>另外，不同產業的報價存在著巨大的差距。</p>
+<p>像賺錢的產業往往有高額預算，而夕陽產業就算給出行業內最有誠意的價格，可能預算還不到前者的一半。</p>
+<hr>
+<h2 id="報價不是憑感覺他是有邏輯的">報價不是憑感覺，他是有邏輯的！<a class="h-anchor" href="#%e5%a0%b1%e5%83%b9%e4%b8%8d%e6%98%af%e6%86%91%e6%84%9f%e8%a6%ba%e4%bb%96%e6%98%af%e6%9c%89%e9%82%8f%e8%bc%af%e7%9a%84" aria-label="這個段落的連結"></a></h2>
+<p>下面提供一個基礎的報價公式給大家:</p>
+<p>報價 = 勞動成本 + 材料成本 + 其他成本 + 風險預期 + 利潤</p>
+<ul>
+<li><strong>勞動成本</strong>: 時薪 X 工時（如果是接外包，筆者會用本職工作的時薪 X 1.5~2 倍來計算）。</li>
+<li><strong>材料成本</strong>: 是否需要用到付費軟體、硬體設備、場地租借。</li>
+<li><strong>其他成本</strong>: 多久開一次會、每次開會幾個小時、在哪裡開會（實體會議需考慮通勤成本）。</li>
+<li><strong>風險預期</strong>: 完全順利的專案幾乎不存在於現實，所以在工時的預估上，建議多抓 1.2~1.3 倍的時間（如果你已經預感到這個客戶會雷，就報一個你接了不會後悔的價格）。</li>
+<li><strong>利潤</strong>: 這個就當成 Bonus 吧，可以抓總報價的 10~30% 之間。</li>
+</ul>
+<p>上面的公式只是讓大家有一個初步的概念，如果你是新手，建議先用「勞動成本」作為報價基礎。</p>
+<hr>
+<h2 id="報價並沒有標準答案">報價並沒有標準答案<a class="h-anchor" href="#%e5%a0%b1%e5%83%b9%e4%b8%a6%e6%b2%92%e6%9c%89%e6%a8%99%e6%ba%96%e7%ad%94%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>有時報的價格太低，客戶反而會懷疑你做事的品質。</p>
+<p>報價的數字需要合理且具競爭力，因為客戶往往會請多個人（單位）出報價單，然後從中選出最合適的（所以會寫報價單很重要）。</p>
+<p><strong>報價的平衡點，就是讓客戶買單的同時，也讓自己賺到合理的利潤。</strong></p>
+<blockquote>
+<p>以上是「職涯必修設計管理學」的 Part 3心得筆記 ，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202402/freelance-pricing/images/freelance-pricing-card-01_hu_badaa4061404e900.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>為什麼有些小變更需要等一段時間才能更新？ ── 工程師血淚史</title>
+      <link>https://deanlin.net/blog/202402/why-small-changes-take-time/</link>
+      <pubDate>Thu, 22 Feb 2024 13:57:29 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202402/why-small-changes-take-time/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>在工程師的職涯中，「修改文字」應該是我遇過最多次的需求變更。</description>
+      <content:encoded><![CDATA[<p>在工程師的職涯中，「修改文字」應該是我遇過最多次的需求變更。</p>
+<p>對不了解系統上線流程的人來說，他們會覺得這不過就是個小調整，為什麼每次都要我三催四請的？</p>
+<p>對開發的工程師來說，他們會覺得這些人有完沒完啊？這些文字不是都已經討論過了，為什麼每隔幾天，甚至幾小時就要改一次？</p>
+<p>實際上，改動文字對工程師來說可能花不到 1 分鐘的時間。</p>
+<p>但對有上版流程的公司來說，每次更新可能都要花 1 小時以上（就算只有改一個字）。</p>
+<p>今天這篇文章不是要談誰對誰錯，或是如何用技巧來迴避問題；而是要分享面對問題時，可以如何一步步「解決」他。</p>
+<p>文章寫完後，感覺自己在寫技術發展史；另外，這是朋友向我分享的經驗，絕對不是我自己的。</p>
+<p><img src="https://deanlin.net/blog/202402/why-small-changes-take-time/images/why-small-changes-take-time-01.webp" width="982" height="550" alt="為什麼有些小變更需要等一段時間才能更新？ ── 工程師血淚史（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="石器時代寫死在程式碼">石器時代：寫死在程式碼<a class="h-anchor" href="#%e7%9f%b3%e5%99%a8%e6%99%82%e4%bb%a3%e5%af%ab%e6%ad%bb%e5%9c%a8%e7%a8%8b%e5%bc%8f%e7%a2%bc" aria-label="這個段落的連結"></a></h2>
+<p>在最遠古的時期，網頁上的文字是寫死在程式碼的。</p>
+<p>雖然直觀，但維護性極低。</p>
+<p>因為面對「修改文字」的需求變更，開發人員可能改了 A 頁面，卻忘了還有 B、C、D 等頁面也用到一樣的詞彙。</p>
+<hr>
+<h2 id="大航海時代建立語言包維護">大航海時代：建立語言包維護<a class="h-anchor" href="#%e5%a4%a7%e8%88%aa%e6%b5%b7%e6%99%82%e4%bb%a3%e5%bb%ba%e7%ab%8b%e8%aa%9e%e8%a8%80%e5%8c%85%e7%b6%ad%e8%ad%b7" aria-label="這個段落的連結"></a></h2>
+<p>如果系統只用同一種語言，那寫死在程式還勉強能維護。</p>
+<p>但如果接下來要進軍國際市場，有中、日、英、法等多國語系的需求時，我想工程師就會崩潰了。</p>
+<p>因為寫死在程式碼是完全行不通的，雖然很痛苦，但開發人員會需要把系統中所有的文字抽出來，建立「語言包」來維護才能解決這個需求。</p>
+<p>這樣未來在面對「修改文字」的需求變更時，開發人員只要在單一檔案處理，透過模組化的管理，可以大幅降低遺漏的可能性。</p>
+<hr>
+<h2 id="工業時代提供-google-sheet-讓產品方填寫">工業時代：提供 Google Sheet 讓產品方填寫<a class="h-anchor" href="#%e5%b7%a5%e6%a5%ad%e6%99%82%e4%bb%a3%e6%8f%90%e4%be%9b-google-sheet-%e8%ae%93%e7%94%a2%e5%93%81%e6%96%b9%e5%a1%ab%e5%af%ab" aria-label="這個段落的連結"></a></h2>
+<p>把文字集中到語言包維護後，其實面對修改文字的需求就很容易處理了。</p>
+<p>但…接下來要討論的是「人」的問題。</p>
+<p>因為產品方會一直看系統的文字，看著看著可能就覺得哪裡不順眼，不順眼就要改！</p>
+<p>所以在新版本上線後，可能一週內會收到多次文字變更的需求。</p>
+<p>在這樣的狀況下，現實生活中最容易遇到的就是「漏訊息」；當訊息有前後因果關係、重複資訊的時候，失誤在所難免。</p>
+<p>為了減少產品方打擾 PM 與工程師的頻率，以及減少訊息遺漏的問題。</p>
+<p>提供一份格式律定好的 Google Sheet，讓產品方在線上「修改文字」是一個不錯的方案。</p>
+<p>這樣雙方約定一個時間一次性更新即可（會跑一個將 Google Sheet 轉成語言包的腳本）。</p>
+<hr>
+<h2 id="科技時代直接透過管理介面修改文字">科技時代：直接透過管理介面修改文字<a class="h-anchor" href="#%e7%a7%91%e6%8a%80%e6%99%82%e4%bb%a3%e7%9b%b4%e6%8e%a5%e9%80%8f%e9%81%8e%e7%ae%a1%e7%90%86%e4%bb%8b%e9%9d%a2%e4%bf%ae%e6%94%b9%e6%96%87%e5%ad%97" aria-label="這個段落的連結"></a></h2>
+<p>改成 Google Sheet 後，雙方和平了好一段時間。</p>
+<p>但還有一個問題，那就是這種修改沒有「即時性」。</p>
+<p>因為程式每次上版都需要 Build Docker Image、跑回歸測試、上多個環境確認…</p>
+<p>你可以理解為這些步驟至少要花費一小時以上的時間，而且會涉及到不同團隊的人（開發、QA、PM…）。</p>
+<p>如果今天只是要修改文字，這樣的操作完全不符合成本效益。</p>
+<p>所以目前的最新方案，就是在後台管理介面中，新增修改文字的功能，讓產品方可以依照自己的需求即時進行調整（搭配預覽頁）。</p>
+<hr>
+<h2 id="總結">總結<a class="h-anchor" href="#%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<p>修改文字是一個常見的需求變更，而且很多時候是在系統上線後才發生。</p>
+<p>對工程師來說，修改文字這件事的確很簡單，但背後所需花費的時間與人力成本其實很高。</p>
+<p>相信看完這篇文章後，大家可以理解為什麼有些小變更需要等一段時間才能更新。</p>
+<p>儘管這篇不是純粹的技術文，但還是提醒一下讀者，每個時代的演進都需要不少時間成本。</p>
+<p>這些改進所用到的技術並不困難，但問題在於：</p>
+<ul>
+<li>有足夠多的時間來做優化嗎？</li>
+<li>這個問題真的有優化的必要性嗎？</li>
+<li>優化帶來的效益符合成本嗎？</li>
+</ul>
+<p>因此千萬不要看完這篇文章後，就拿他去跟工程師吵架，我可不背這個黑鍋。</p>
+<p>也許最後的方案在不久後會遇到其他挑戰，但這不就是「有問題我才有工作嗎？」</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>為什麼接案就像踩地雷？苦主幫你來掃雷 ── 設計管理系列文</title>
+      <link>https://deanlin.net/blog/202402/freelance-pitfalls/</link>
+      <pubDate>Sun, 11 Feb 2024 14:36:09 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202402/freelance-pitfalls/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>很多人想透過接案來增加收入、豐富履歷，但往往踏入後，才發現這原來是一個踩地雷遊戲！</description>
+      <content:encoded><![CDATA[<p>很多人想透過接案來增加收入、豐富履歷，但往往踏入後，才發現這原來是一個踩地雷遊戲！</p>
+<p>筆者過去接過的案子涵蓋網頁設計、APP 製作、網路爬蟲、專欄文章、線上課程、企業內訓…</p>
+<p>不管是好的、壞的，還是奇怪的甲方全都遇過，所以在上設計管理的課程時很有「共鳴感」。</p>
+<p><strong>如果你有接案的打算，那這篇文章一定要讀到最後，別人踩過的坑，我們沒必要親自體會。</strong></p>
+<blockquote>
+<p>PS. 這篇文章沒有要批評任何一方的意思，其實無論甲方還是乙方都需要後天學習，沒有人天生就會。</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202402/freelance-pitfalls/images/freelance-pitfalls-01.webp" width="1145" height="640" alt="為什麼接案就像踩地雷？苦主幫你來掃雷 ── 設計管理系列文（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>文章大綱
+
+ㄧ、與客戶初步接洽
+二、初步認識＆討論
+三、深入釐清需求
+四、提供報價單
+五、提供時程
+六、提供合約＆簽約
+七、結語
+</code></pre><blockquote>
+<p>文章大綱所列出的，是接案常見的流程，可能會根據實際狀況增減。</p>
+</blockquote>
+<h2 id="ㄧ與客戶初步接洽">ㄧ、與客戶初步接洽<a class="h-anchor" href="#%e3%84%a7%e8%88%87%e5%ae%a2%e6%88%b6%e5%88%9d%e6%ad%a5%e6%8e%a5%e6%b4%bd" aria-label="這個段落的連結"></a></h2>
+<p>建議先跟客戶確認以下 3 點，避免浪費彼此的時間：</p>
+<ul>
+<li><strong>時程</strong>: 了解客戶對專案時程的期待，確認彼此的時程能對上；當遇到急件時，你一定要考慮自己是否能夠如期完成。</li>
+<li><strong>類型</strong>: 判斷自己是否做過類似的專案，以及是否擅長這類型的專案。</li>
+<li><strong>預算</strong>: 你要初步提供自己可以接受的報價區間，避免談到後面才發現客戶無法負擔。</li>
+</ul>
+<p>很多人會因為害怕或缺乏經驗，不敢在一開始跟客戶確認以上事宜，導致專案在一個很模糊的狀態下進行；但殊不知，這些模糊地帶往往會導致合作到後期彼此撕破臉。</p>
+<p>另外你不要想著每次接洽都會成功，因為客戶可能一次聯繫很多人，避免出狀況時沒有備案。</p>
+<p>這次沒有選你，未必是你不好，只是他們心目中的第一名接下了這個專案。</p>
+<hr>
+<h2 id="二初步認識討論">二、初步認識＆討論<a class="h-anchor" href="#%e4%ba%8c%e5%88%9d%e6%ad%a5%e8%aa%8d%e8%ad%98%e8%a8%8e%e8%ab%96" aria-label="這個段落的連結"></a></h2>
+<p>客戶選擇你，不代表他了解你。</p>
+<p>所以在跟客戶第一次見面時，建議你要先介紹自己過去的作品、做事的流程，讓客戶判斷自己是否能配合。</p>
+<p>同時你也要了解客戶對這個專案的期待，像是專案的目標與背景資訊。</p>
+<p>這邊也建議你了解一下客戶過往的做事流程，在資訊透明的狀態下才有可能合作愉快。</p>
+<hr>
+<h2 id="三深入釐清需求">三、深入釐清需求<a class="h-anchor" href="#%e4%b8%89%e6%b7%b1%e5%85%a5%e9%87%90%e6%b8%85%e9%9c%80%e6%b1%82" aria-label="這個段落的連結"></a></h2>
+<p>在初步確定合作意向後，建議約一個較大型的會議。</p>
+<p>在這階段要讓專案相關利害人一同加入討論，以確認對方的需求。</p>
+<hr>
+<h2 id="四提供報價單">四、提供報價單<a class="h-anchor" href="#%e5%9b%9b%e6%8f%90%e4%be%9b%e5%a0%b1%e5%83%b9%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<p>如果沒有白紙黑字，那報價就只是憑感覺；以下是撰寫報價單要注意的事項：</p>
+<ul>
+<li><strong>不要有模糊空間</strong>: 規格要講清楚，能修改幾次要列出來，要明訂具體的流程。</li>
+<li><strong>附上但書</strong>: 具體寫上你不做的部分；並寫上如果真的要做，你會如何報價。</li>
+</ul>
+<p>而這份報價單可以：</p>
+<ul>
+<li><strong>讓客戶思考預算</strong>: 有時客戶天馬行空，我們需要透過報價單把他拉回現實；如果有預算考量，可以在這個階段幫客戶收斂專案範圍，讓他對內容進行取捨。</li>
+<li><strong>幫我們初步篩選客戶</strong>: 在報價後，有些客戶會開始殺價或是提出不合理的需求；如果覺得對方的行為讓你覺得不舒服，那建議不要繼續合作下去，因為通常會越來越痛苦。</li>
+</ul>
+<blockquote>
+<p><strong>Tips</strong>: 與其消耗能量克服痛苦，不如一開始就選擇合適的客戶？</p>
+</blockquote>
+<hr>
+<h2 id="五提供時程">五、提供時程<a class="h-anchor" href="#%e4%ba%94%e6%8f%90%e4%be%9b%e6%99%82%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<p>有些專案的時程會長達幾個月，甚至以年為單位。</p>
+<p>為了確保雙方的認知相同，我們要與客戶討論：</p>
+<ul>
+<li><strong>重要檢核點（里程碑）</strong>: 除了規畫專案時程外，還要列出每個階段可以驗收的項目；並在進行驗收前，確保相關利害關係人皆可參與這些重大會議（不然可能在後續被有決策權的人推翻重來）。</li>
+<li><strong>專案交付時間</strong>: 定下時間後，後續合約就會按照這個時間走。</li>
+</ul>
+<hr>
+<h2 id="六提供合約">六、提供合約<a class="h-anchor" href="#%e5%85%ad%e6%8f%90%e4%be%9b%e5%90%88%e7%b4%84" aria-label="這個段落的連結"></a></h2>
+<p>前面細節都確認完後，就可以準備簽約了，但簽約有很多細節需要注意，筆者有空時會再寫另一篇文章分享。</p>
+<p>不過這邊也要提醒大家，簽約不代表有保障，就算對象是大公司也一樣。</p>
+<p>因為法律流程跑起來曠日費時，我就聽說過有的公司的樓梯間堆滿法院傳票。</p>
+<hr>
+<h2 id="七結語">七、結語<a class="h-anchor" href="#%e4%b8%83%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>你沒看錯，這篇文章談的只是「接案前要注意的事項」。</p>
+<p>還有很多細節沒有寫進文章，比如: <a href="https://deanlin.net/blog/202402/freelance-pricing/">如何報價</a>、<a href="https://deanlin.net/blog/202402/raise-freelance-rates/">如何提高報價</a>、<a href="https://deanlin.net/blog/202403/find-good-freelance-clients/">如何接到好專案、如何判斷是否為好客戶</a>…</p>
+<p>接案其實很累，因為前期的溝通也是專案的成本。</p>
+<p>如果在這個階段發現客戶不合適，建議及時停損，勉強的結果通常不好。</p>
+<p>同時提醒大家，如果你在有正職的狀態下接案，請謹慎評估自己的身心狀況；因為接案而搞砸本業，那就真的本末倒置了。</p>
+<blockquote>
+<p>以上是「職涯必修設計管理學」的 Part 2心得筆記 ，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202402/freelance-pitfalls/images/freelance-pitfalls-card-01_hu_24efc7be6282fe2d.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>為什麼「管理」是每個人職涯的必修學分？</title>
+      <link>https://deanlin.net/blog/202312/why-management-matters-for-everyone/</link>
+      <pubDate>Thu, 07 Dec 2023 17:48:23 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202312/why-management-matters-for-everyone/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>說到管理，很多人都覺得這是主管才需要學習、考慮的課題。 但其實不管團隊、專案還是作品，都是需要被管理的。 如果一切都靠本能去做，那麼團隊沒有方向、專案延遲交付、作品四散各地…這些可說是必然發生的悲劇。 就算為了減少自己的加班頻率，我們都該對「管理」有更深一層的認知。</description>
+      <content:encoded><![CDATA[<p>說到管理，很多人都覺得這是主管才需要學習、考慮的課題。</p>
+<p>但其實不管團隊、專案還是作品，都是需要被管理的。</p>
+<p>如果一切都靠本能去做，那麼專案延遲交付、團隊缺乏方向、作品四散各地…這些可說是必然發生的悲劇。</p>
+<p>就算為了減少自己的加班頻率，我們都該對「管理」有更深一層的認知。</p>
+<p><img src="https://deanlin.net/blog/202312/why-management-matters-for-everyone/images/why-management-matters-for-everyone-01.webp" width="1085" height="611" alt="為什麼「管理」是每個人職涯的必修學分？（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="管理是為了降低意外發生的可能性">管理是為了降低「意外」發生的可能性<a class="h-anchor" href="#%e7%ae%a1%e7%90%86%e6%98%af%e7%82%ba%e4%ba%86%e9%99%8d%e4%bd%8e%e6%84%8f%e5%a4%96%e7%99%bc%e7%94%9f%e7%9a%84%e5%8f%af%e8%83%bd%e6%80%a7" aria-label="這個段落的連結"></a></h2>
+<p>每個人都是獨立的個體，所以有各自的想法、做事的習慣；如果沒有講好合作模式，那專案做到一半撕破臉基本上是家常便飯。</p>
+<p>下面先列出幾個減少「意外」的方法：</p>
+<ul>
+<li><strong>簽訂合約</strong>: 不管專案大小，合作對象的親疏遠近，筆者強烈建議有合作就要簽約；簽約是專業的展現，也是對雙方的保障。</li>
+<li><strong>需求規格</strong>: 客戶的需求通常很模糊，不過我們可以透過需求規格，將這些發散的想法收斂成具體、可執行、可驗收的白紙黑字。</li>
+<li><strong>設計流程</strong>: 我們需要設計一套可以重複使用，並不斷優化的工作流程。明確的工作流程可以減少揣測彼此想法造成的誤會，並讓我們在面對不同專案、合作對象時有穩定的表現。</li>
+<li><strong>會議記錄</strong>: 任何會議、談話都需要有明確的文字紀錄，而且記錄要包含「是誰說的、前因後果、最終決議」等，這樣日後遇到爭議時才能釐清狀況。</li>
+</ul>
+<p><strong>將複雜的事務結構化</strong>，我們才有辦法有效管理，並持續執行。</p>
+<p><strong>將模糊的資訊明確化</strong>，我們做事才有效率，減少重工的可能性。</p>
+<hr>
+<h2 id="搞清楚誰有決策的權利">搞清楚誰有「決策」的權利<a class="h-anchor" href="#%e6%90%9e%e6%b8%85%e6%a5%9a%e8%aa%b0%e6%9c%89%e6%b1%ba%e7%ad%96%e7%9a%84%e6%ac%8a%e5%88%a9" aria-label="這個段落的連結"></a></h2>
+<p>有時專案執行到一半，突然一通電話打來要你砍掉重練，因為公司高層覺得專案執行的方向錯了。</p>
+<p>收到通知的你可能覺得很靠北，但這個在業界其實很常見，即便有需求規格、會議記錄佐證，但權力夠大的人就是可以推翻一切。</p>
+<p>如果想減少這種狀況發生，就要在一開始搞清楚誰才是最後的「決策者」，並建議每次會議的結論需要由他畫押才算數。</p>
+<blockquote>
+<p>很多時候專案的窗口、PM 甚至是主管，都只是在揣摩「決策者」的想法。</p>
+</blockquote>
+<hr>
+<h2 id="建立文件減少資訊斷層">建立文件減少資訊「斷層」<a class="h-anchor" href="#%e5%bb%ba%e7%ab%8b%e6%96%87%e4%bb%b6%e6%b8%9b%e5%b0%91%e8%b3%87%e8%a8%8a%e6%96%b7%e5%b1%a4" aria-label="這個段落的連結"></a></h2>
+<p>有些專案為了求快，許多細節都是靠口耳相傳；這導致相關人員請假時，你需要重新說明一遍。</p>
+<p>最差的狀況是關鍵人物相繼離職，而公司根本沒人知道過去發生了什麼事，然後專案就直接爛掉了。</p>
+<p>為了避免資訊斷層，或是全公司只有一個人了解專案脈絡，最好將文件清晰的整合到一個大家都能閱讀的地方。</p>
+<hr>
+<h2 id="報價與工時都要有邏輯">報價與工時都要有「邏輯」<a class="h-anchor" href="#%e5%a0%b1%e5%83%b9%e8%88%87%e5%b7%a5%e6%99%82%e9%83%bd%e8%a6%81%e6%9c%89%e9%82%8f%e8%bc%af" aria-label="這個段落的連結"></a></h2>
+<p>接案時你要對客戶報價，工作時你要向公司預估時程。</p>
+<p>但有時類似的專案、功能，我們會給出不同的報價、估時；此時對方可能會問你：「為什麼跟上次不一樣？」</p>
+<p>如果你說不出報價、估時背後的邏輯，就會導致客戶、主管對你的印象大打折扣，甚至質疑你的專業能力。</p>
+<p>為了避免這種事發生，建議準備一套報價、估時的邏輯＆公式，當對方有疑慮時，就可以有系統地進行說明。</p>
+<hr>
+<h2 id="失敗的經驗很珍貴但不用親身體驗">失敗的經驗很珍貴，但不用親身體驗<a class="h-anchor" href="#%e5%a4%b1%e6%95%97%e7%9a%84%e7%b6%93%e9%a9%97%e5%be%88%e7%8f%8d%e8%b2%b4%e4%bd%86%e4%b8%8d%e7%94%a8%e8%a6%aa%e8%ba%ab%e9%ab%94%e9%a9%97" aria-label="這個段落的連結"></a></h2>
+<p>寫這篇文章的時候有點感慨，想著自己為什麼在經過社會的毒打後才上到這堂課。</p>
+<p>課程中所提到的案例都是在現實生活中會遇到的，相信在社會走跳一段時間的朋友們會很有共鳴。</p>
+<p>人的生命有限，透過了解他人經歷來豐富自己閱歷，是更有效的成長方式。</p>
+<blockquote>
+<p>以上是「職涯必修設計管理學」的 Part 1 心得筆記 ，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202312/why-management-matters-for-everyone/images/why-management-matters-for-everyone-card-01_hu_ed3013b9c31c269a.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>你的設計，真的有解決問題嗎？ ── 設計思考系列文</title>
+      <link>https://deanlin.net/blog/202312/does-your-design-solve-the-problem/</link>
+      <pubDate>Fri, 01 Dec 2023 18:48:20 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202312/does-your-design-solve-the-problem/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>說到「設計」，大家第一直覺可能都是想到「視覺設計」，所以要好看。但有時設計是為了「解決問題」而誕生，因此這篇文章想透過業界的實際案例，從不同角度跟大家做個討論。</description>
+      <content:encoded><![CDATA[<p>說到「設計」，大家第一直覺可能都是想到「視覺設計」，所以要好看。</p>
+<p>但有時設計是為了「解決問題」而誕生，因此這篇文章想透過業界的實際案例，從不同角度跟大家做個討論。</p>
+<p><img src="https://deanlin.net/blog/202312/does-your-design-solve-the-problem/images/does-your-design-solve-the-problem-01.webp" width="1144" height="637" alt="你的設計，真的有解決問題嗎？ ── 設計思考系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="如何讓車子降速">如何讓車子降速<a class="h-anchor" href="#%e5%a6%82%e4%bd%95%e8%ae%93%e8%bb%8a%e5%ad%90%e9%99%8d%e9%80%9f" aria-label="這個段落的連結"></a></h2>
+<p>無論如何宣導，路上一定有車子超速，而超速就可能導致事故發生。</p>
+<p>既然事實證明宣導的用處不大，那麼交通事故率高的地方，就會看到下圖的降速坡。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202312/does-your-design-solve-the-problem/images/does-your-design-solve-the-problem-02.webp" width="620" height="200" alt="圖片來源：http://www.changhan.tw/safe004.html" loading="lazy" decoding="async">
+  <figcaption>圖片來源：<a href="http://www.changhan.tw/safe004.html">http://www.changhan.tw/safe004.html</a></figcaption>
+</figure>
+
+<p>因為車子在經過凸起物時會稍微顛起來一下，因此有自動降速的效果。</p>
+<p>如果從視覺的角度來看，你不會覺得他是一個好設計，但他卻給我們帶來了幫助。</p>
+<hr>
+<h2 id="如何保護路上的行人">如何保護路上的行人<a class="h-anchor" href="#%e5%a6%82%e4%bd%95%e4%bf%9d%e8%ad%b7%e8%b7%af%e4%b8%8a%e7%9a%84%e8%a1%8c%e4%ba%ba" aria-label="這個段落的連結"></a></h2>
+<p>台灣有很多的巷弄並沒有專屬人行道，進而導致「人車爭道」，走在路上都有被撞的風險。</p>
+<p>但近幾年，大家應該發現路上越來越多這種綠色的「標線型人行道」，他可以讓駕駛注意到這塊是給行人走的。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202312/does-your-design-solve-the-problem/images/does-your-design-solve-the-problem-03.webp" width="1024" height="767" alt="圖片來源：https://www.chinatimes.com/newspapers/20230306000618-260106?chdtv" loading="lazy" decoding="async">
+  <figcaption>圖片來源：<a href="https://www.chinatimes.com/newspapers/20230306000618-260106?chdtv">https://www.chinatimes.com/newspapers/20230306000618-260106?chdtv</a></figcaption>
+</figure>
+
+<p>因為給了彼此明確的界線，所以許多過去常發生意外的路段在加上這個設計後，事故與傷亡的機率已大幅降低。</p>
+<hr>
+<h2 id="有質感的設計-vs-好賣的設計">有質感的設計 VS 好賣的設計<a class="h-anchor" href="#%e6%9c%89%e8%b3%aa%e6%84%9f%e7%9a%84%e8%a8%ad%e8%a8%88-vs-%e5%a5%bd%e8%b3%a3%e7%9a%84%e8%a8%ad%e8%a8%88" aria-label="這個段落的連結"></a></h2>
+<p>下面舉一個課程中提到的商業案例，泰山的「大吸管」飲料。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202312/does-your-design-solve-the-problem/images/does-your-design-solve-the-problem-04.webp" width="1160" height="539" alt="圖片來源：https://www.taisun.com.tw/brand/bigstraw/" loading="lazy" decoding="async">
+  <figcaption>圖片來源：<a href="https://www.taisun.com.tw/brand/bigstraw/">https://www.taisun.com.tw/brand/bigstraw/</a></figcaption>
+</figure>
+
+<p>原本設計時，飲料包裝上是沒有實體照片的，只有圓滾滾的吉祥物。</p>
+<p>但業者看到後希望加上實體照片，因為這個產品是「食品」；從商業的角度來講，加上實體照片更能讓消費者看到時產生「食慾」。</p>
+<p>如果從視覺設計的角度來看，只有吉祥物的版本很清爽；但如果想要賣得好，你就必須要放上照片。</p>
+<p>對客戶來說，讓他們賺到錢，才是解決問題的設計。</p>
+<hr>
+<h2 id="專業也是會被市場淘汰的">「專業」也是會被市場淘汰的<a class="h-anchor" href="#%e5%b0%88%e6%a5%ad%e4%b9%9f%e6%98%af%e6%9c%83%e8%a2%ab%e5%b8%82%e5%a0%b4%e6%b7%98%e6%b1%b0%e7%9a%84" aria-label="這個段落的連結"></a></h2>
+<p>在文章的最後一段，想跟大家聊聊「設計自己人生」的議題。</p>
+<p>長期關注我部落格的朋友，應該會發現我文章的主題相當多元。</p>
+<p>前兩年我的文章以「專業技術、團隊合作、工程師職涯」為主，而今年新增了「AI 應用、設計思維」等主題。</p>
+<p>有朋友問我：「為什麼要接觸這麼多領域？主題不會太發散了嗎？」</p>
+<p>我回答：「部落格對我來說，除了分享知識外，也是記錄自己學習的過程；我會根據市場趨勢動態調整文章的內容，因為我無法保證自己的專業在 10 年後還會被市場需要。」</p>
+<p>謹記，現在很夯的產業，很可能在新技術推出後就逐漸沒落；不要把雞蛋放在同一個籃子裡，專業也是一樣。</p>
+<p>目前工程師這個身份，是我的核心價值與主要收入來源。但除了持續提升專業能力外，我還會持續接觸新事物，並將其與原本的知識結合運用。</p>
+<blockquote>
+<p>以上就是「設計思考全方位」第五單元的心得筆記，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202312/does-your-design-solve-the-problem/images/does-your-design-solve-the-problem-card-01_hu_1fa33569279a75fa.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>問對問題，就解決一半的問題 ── 設計思考系列文</title>
+      <link>https://deanlin.net/blog/202311/ask-the-right-questions/</link>
+      <pubDate>Tue, 28 Nov 2023 12:12:46 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202311/ask-the-right-questions/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>今年我到很多企業分享 AI 工具的應用，除了介紹使用場景外，也花了不少時間講解「定義問題」的方式。</description>
+      <content:encoded><![CDATA[<p>今年我到很多企業分享 AI 工具的應用，除了介紹使用場景外，也花了不少時間講解「定義問題」的方式。</p>
+<p>因為 AI 跟人類一樣，如果你沒辦法清晰、具體的描述問題，你只會得到模稜兩可、不符預期的結果。</p>
+<p>如果你覺得 AI、人類無法給你期待的答案，其實很多時候是因為根本沒把問題表達清楚，因此造成垃圾進，垃圾出 (Garbage in, garbage out) 的結果。</p>
+<p><img src="https://deanlin.net/blog/202311/ask-the-right-questions/images/ask-the-right-questions-01.webp" width="1086" height="610" alt="問對問題，就解決一半的問題 ── 設計思考系列文（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>PS.</strong> 儘管這篇文章談的是「設計思考」，但與 AI 溝通時，設計思考也是相當重要的一環。</p>
+</blockquote>
+<h2 id="問題背後的問題">問題背後的問題<a class="h-anchor" href="#%e5%95%8f%e9%a1%8c%e8%83%8c%e5%be%8c%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>過去帶新人時，常常工作到一半就會收到私訊：「不好意思，可以問你一個問題嗎？」</p>
+<p>收到訊息時，我通常會眉頭一皺，因為我根本不知道他要問什麼問題，所以先詢問他：「哪裡遇到問題了呢？」</p>
+<p>新人：「我 xxx 功能做到一半卡住了。」</p>
+<p>我：「為什麼會卡住？」</p>
+<p>新人：「我使用 yyy 套件，但不知道 xxx 功能怎麼用。」</p>
+<p>我：「你有看過套件的官方文件嗎？」</p>
+<p>新人：「我看不懂官方文件。」</p>
+<p>從表面來看，是新人功能做不出來；但真正的問題是「看不懂官方文件」，所以就算這次你幫了他，他下次遇到問題時還是會跑來找你。</p>
+<hr>
+<h2 id="不是每個人都很有耐心">不是每個人都很有耐心<a class="h-anchor" href="#%e4%b8%8d%e6%98%af%e6%af%8f%e5%80%8b%e4%ba%ba%e9%83%bd%e5%be%88%e6%9c%89%e8%80%90%e5%bf%83" aria-label="這個段落的連結"></a></h2>
+<p>在上面的案例中，我問了「3」次才抵達問題核心。</p>
+<p>但在職場上，每個人都很忙，即使筆者也不能保證自己每次都很有耐心。</p>
+<p>如果想請對方幫忙，盡可能一開始就完善的描述問題，而不要用開放式的詢問，建議的基本架構：</p>
+<ul>
+<li><strong>具體說明自己遇到的問題</strong>：可以搭配圖片、文件，讓對方在最短的時間掌握問題。</li>
+<li><strong>表達自己曾經做過的嘗試</strong>：即使是失敗的嘗試也列上去，否則就像是個伸手牌。</li>
+<li><strong>詢問對方可以討論的時間</strong>：因為對方可能手上有事情在忙，如果沒有約時間，可能已讀後就忘記了。</li>
+</ul>
+<p>所以上面新人的問題就可以改成：「我想透過 yyy 套件達成 xxx 功能。但按照官方文件的範例（<a href="https://github.com/">https://github.com/</a>）實作後，還是做不出 xxx 功能，一直跑出 zzz 的錯誤訊息，不太確定是不是自己方向弄錯了。請問哪個時間點方便向您請教呢？感謝。」</p>
+<blockquote>
+<p>表達越完善，對方越能在短時間了解問題，以增加回覆意願，或跟你說這個問題可以跟誰詢問。</p>
+</blockquote>
+<hr>
+<h2 id="把申論題改成選擇題">把申論題改成選擇題<a class="h-anchor" href="#%e6%8a%8a%e7%94%b3%e8%ab%96%e9%a1%8c%e6%94%b9%e6%88%90%e9%81%b8%e6%93%87%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>前幾篇設計思考的文章，都有談到「同理心」的重要性。</p>
+<p>其實在發問前，我們可以先思考一下如果自己收到這個問題，會不會想回答，或者有什麼資訊不完整的地方。</p>
+<p>當你站在對方的角度來思考，問出的問題就會不太一樣。</p>
+<p>讓我們回想一下學生時期，相信大家在寫考卷的時候，比起申論題，應該更多人喜歡選擇題吧？</p>
+<p>我們可以將「你覺得這個配色溫暖嗎？」這種開放式的問題，改成「你覺得 A 配色跟 B 配色哪個比較溫暖？」這類選擇題，這樣就會大幅降低對方回答的壓力。</p>
+<hr>
+<h2 id="把模糊的答案變精準">把模糊的答案變精準<a class="h-anchor" href="#%e6%8a%8a%e6%a8%a1%e7%b3%8a%e7%9a%84%e7%ad%94%e6%a1%88%e8%ae%8a%e7%b2%be%e6%ba%96" aria-label="這個段落的連結"></a></h2>
+<p>這是一個資本主義的社會，如果目標不夠具體，就容易花了很多錢但得不到成效。</p>
+<p>就拿廣告來舉例好了，任何產品都有他的受眾。</p>
+<p>如果你只問客戶他們的受眾是誰，客戶可能回答：「上班族。」</p>
+<p>但上班族的市場很大，從 22~65 歲都是上班族；所以你需要更近一步的詢問，比如：</p>
+<ul>
+<li>愛好（ex：戶外活動、逛展覽、運動、宅家裡…）</li>
+<li>產業（ex：金融、科技、醫療、服務…）</li>
+<li>薪資水平</li>
+</ul>
+<p>透過細分市場你才有辦法聚焦，如果什麼都想要，下場往往是什麼都得不到。</p>
+<blockquote>
+<p>以上就是「設計思考全方位」第五單元的心得筆記，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202311/ask-the-right-questions/images/ask-the-right-questions-card-01_hu_4165eba9fac6b177.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>如何用「同理」建立長久合作關係 ── 設計思考系列文</title>
+      <link>https://deanlin.net/blog/202311/empathy-for-lasting-collaboration/</link>
+      <pubDate>Fri, 24 Nov 2023 18:42:23 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202311/empathy-for-lasting-collaboration/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>只要是人，都有他過去的歷史、情感、困惑、強項… 面對不同意見時，許多人並不是用「引導」，而是要對方「按造自己」的想法做事。 若涉及自己的專業領域，我們更容易選擇後者，但話說出口前，我們不妨思考幾個問題…</description>
+      <content:encoded><![CDATA[<p>只要是人，都有他過去的歷史、情感、困惑、強項…</p>
+<p>面對不同意見時，許多人並不是用「引導」，而是要對方「按照自己」的想法做事。</p>
+<p>若涉及自己的專業領域，我們更容易選擇後者，但話說出口前，我們不妨思考幾個問題：</p>
+<ul>
+<li>他為什麼要聽你的話？</li>
+<li>憑什麼覺得別人應該聽你的話？</li>
+<li>你過去做了什麼事，值得讓別人要照著你說的去做？</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202311/empathy-for-lasting-collaboration/images/empathy-for-lasting-collaboration-01.webp" width="1087" height="600" alt="如何用「同理」建立長久合作關係 ── 設計思考系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="你真的知道對方的需求嗎">你真的知道對方的需求嗎？<a class="h-anchor" href="#%e4%bd%a0%e7%9c%9f%e7%9a%84%e7%9f%a5%e9%81%93%e5%b0%8d%e6%96%b9%e7%9a%84%e9%9c%80%e6%b1%82%e5%97%8e" aria-label="這個段落的連結"></a></h2>
+<p>鄭司維老師在課程中提出的一個有趣問題：「你知道客戶買電鑽，是為了做什麼嗎？」</p>
+<p>通常買電鑽是為了在牆壁上鑽洞（表層目標），但鑽洞會導致牆面結構破壞（負面影響）；如果客戶的目標只是為了掛畫（真實的目標），推薦他購買自黏畫框就好了（更好的解決方案）。</p>
+<p>透過這個例子，是先讓大家認知到「客戶的選擇未必是對的」；以及更好的解決方案，是建立在有「背景知識」與「同理心」之上。</p>
+<hr>
+<h2 id="為什麼無障礙廁所的鏡子是傾斜的">為什麼無障礙廁所的鏡子是傾斜的？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e7%84%a1%e9%9a%9c%e7%a4%99%e5%bb%81%e6%89%80%e7%9a%84%e9%8f%a1%e5%ad%90%e6%98%af%e5%82%be%e6%96%9c%e7%9a%84" aria-label="這個段落的連結"></a></h2>
+<p>下次大家經過無障礙廁所時，可以探頭看一下裡面的鏡子，你會發現有些鏡子是往下斜的。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202311/empathy-for-lasting-collaboration/images/empathy-for-lasting-collaboration-02.webp" width="350" height="600" alt="圖片來源：https://tw.buy.yahoo.com/gdsale/gdsale.asp?gdid=p0991263230918" loading="lazy" decoding="async">
+  <figcaption>圖片來源：<a href="https://tw.buy.yahoo.com/gdsale/gdsale.asp?gdid=p0991263230918">https://tw.buy.yahoo.com/gdsale/gdsale.asp?gdid=p0991263230918</a></figcaption>
+</figure>
+
+<p>因為對於一些坐輪椅的人來說，這才是他們的視角。</p>
+<p>如果你想同理別人，你就需要站在對方視角來看事情，這樣才能體會他遇到的困難與不便。</p>
+<hr>
+<h2 id="同理能加深彼此的羈絆">同理能加深彼此的羈絆<a class="h-anchor" href="#%e5%90%8c%e7%90%86%e8%83%bd%e5%8a%a0%e6%b7%b1%e5%bd%bc%e6%ad%a4%e7%9a%84%e7%be%88%e7%b5%86" aria-label="這個段落的連結"></a></h2>
+<p>但同理時你可能會遇到一些問題：</p>
+<ol>
+<li>我們以為的同理，在對方看來可能是同情。</li>
+<li>你同理了對方，但對方根本不知道自己要的是什麼。</li>
+</ol>
+<p>我們要承認自己不可能完全同理，因為我們就不是他；但我們嘗試同理的過程，對方是可以感受到的。</p>
+<p>就像女生月經來，如果男生問要不要喝熱水、吃巧克力，女生通常都會生悶氣；因為男生沒有同理，而是直接說出解決方案。</p>
+<p>同理就是要減少這種 SOP 的感受，去理解一句話背後的意義；但同時你也要了解一個人的個性，否則會導致誤判。</p>
+<hr>
+<h2 id="不用跟每個人都建立長久關係">不用跟每個人都建立長久關係<a class="h-anchor" href="#%e4%b8%8d%e7%94%a8%e8%b7%9f%e6%af%8f%e5%80%8b%e4%ba%ba%e9%83%bd%e5%bb%ba%e7%ab%8b%e9%95%b7%e4%b9%85%e9%97%9c%e4%bf%82" aria-label="這個段落的連結"></a></h2>
+<p>通常溝通幾次後，你就能判斷對方是否值得深交；了解彼此的能力、達成共識，這樣合作的關係才容易長久。</p>
+<p>以工作來說，有些東西可以明文規定；但不能規定的部分，我們可以用長期經營的方式，去做共創，彼此成長。</p>
+<p>反過來，如果你認為對方只值得短期的合作，那就不要想太多；讓我們在規定的範圍內做好彼此的事情，這樣我們都不會受傷。</p>
+<hr>
+<h2 id="讓客戶接納你的建議">讓客戶接納你的建議<a class="h-anchor" href="#%e8%ae%93%e5%ae%a2%e6%88%b6%e6%8e%a5%e7%b4%8d%e4%bd%a0%e7%9a%84%e5%bb%ba%e8%ad%b0" aria-label="這個段落的連結"></a></h2>
+<p>很多客戶認為自己比你更懂，所以你需要展現出自己的專業，讓客戶知道你也是懂行、做過功課的。</p>
+<p>比如客戶在跟你討論設計風格的時候，我們應該先去了解產品目前的行銷策略、目標 TA、推廣方式等等；等這些資訊都明確後，我們才在這些資訊的基礎上給出對應的設計風格。</p>
+<p>如果客戶對你的專業有信任度（Sense 有到位），推動專案才會順利，也埋下日後合作的種子。</p>
+<blockquote>
+<p><strong>補充</strong>：如果該做的都有到位，但老闆、主管、客戶還是無法溝通，那要思考一下這個環境是否要繼續待下去，否則永遠不會進步。</p>
+</blockquote>
+<hr>
+<h2 id="認知造就了你的世界">認知造就了你的世界<a class="h-anchor" href="#%e8%aa%8d%e7%9f%a5%e9%80%a0%e5%b0%b1%e4%ba%86%e4%bd%a0%e7%9a%84%e4%b8%96%e7%95%8c" aria-label="這個段落的連結"></a></h2>
+<p>我們吃慣了台灣的義大利麵、法式餐點、泰式料理，但到了當地後，你可能會感到不適應，因為很多料理到台灣都經過「文化適應」。</p>
+<p>當地著名的餐廳未必符合你的口味，但這份經驗能讓你理解當地人的口味；道地的未必好吃，好吃的未必道地。</p>
+<p>透過餐飲文化的不同，我們就能了解，同樣的決策換一個時空背景可能就不合適了，我們不要總覺得自己是對的。</p>
+<p>在文章的最後，建議大家可以透過旅行、讀書、看電影、聽講座…等方式拓展自己的視野與想像力。</p>
+<p>你對世界的認識越深，就能理解不同的文化、背景，去同理對方在想什麼。</p>
+<blockquote>
+<p>以上就是「設計思考全方位」第三、四單元的心得筆記，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202311/empathy-for-lasting-collaboration/images/empathy-for-lasting-collaboration-card-01_hu_bedf782cbfecde03.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>為什麼生活中常常看到愚蠢的設計？ ── 設計思考系列文</title>
+      <link>https://deanlin.net/blog/202311/why-bad-design-is-everywhere/</link>
+      <pubDate>Thu, 23 Nov 2023 18:51:39 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202311/why-bad-design-is-everywhere/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>如果日常生活中感到某些東西用起來卡卡的，那通常是因為設計時欠缺思考。</description>
+      <content:encoded><![CDATA[<p>如果日常生活中感到某些東西用起來卡卡的，那通常是因為設計時欠缺思考。</p>
+<p>舉凡演講簡報的字太小、展覽動線堪比迷宮、看不懂主題的海報、操作到一半就卡住的網站…愚蠢的設計在各行各業都能看到。</p>
+<p>但在批評這些設計前，也許我們可以先思考一下他們誕生的原因。</p>
+<p><img src="https://deanlin.net/blog/202311/why-bad-design-is-everywhere/images/why-bad-design-is-everywhere-01.webp" width="1400" height="781" alt="為什麼生活中常常看到愚蠢的設計？ ── 設計思考系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="你在乎自己的作品嗎">你在乎自己的作品嗎？<a class="h-anchor" href="#%e4%bd%a0%e5%9c%a8%e4%b9%8e%e8%87%aa%e5%b7%b1%e7%9a%84%e4%bd%9c%e5%93%81%e5%97%8e" aria-label="這個段落的連結"></a></h2>
+<p>出社會後，我們無法隨心所欲地讓作品往自己期待的方向發展。</p>
+<p>很多時候老闆、主管、客戶，會把自己的想法強壓到作品上面；一開始你會反抗，但時間久了，大多數的人為了生活還是選擇了「妥協」。</p>
+<p>這樣的想法一但成為了習慣，你就會失去身為創作者最重要的靈魂，變成一個聽命行事的木偶。</p>
+<p>如果創作只是為了「完成任務」，那我們就不太會去思考。少了思考、少了全盤的考量，那最終設計出來的成果很可能根本不能用。</p>
+<blockquote>
+<p>就像是學生交作業，很多時候只是為做而做。</p>
+</blockquote>
+<hr>
+<h2 id="你紀錄過自己的想法嗎">你紀錄過自己的想法嗎？<a class="h-anchor" href="#%e4%bd%a0%e7%b4%80%e9%8c%84%e9%81%8e%e8%87%aa%e5%b7%b1%e7%9a%84%e6%83%b3%e6%b3%95%e5%97%8e" aria-label="這個段落的連結"></a></h2>
+<p>做事前，你會把自己為什麼這樣做的想法記錄下來嗎？還是想到什麼就去做什麼？</p>
+<p>如果想到什麼就做什麼，那最後的成果可能毫無邏輯；甚至很多人做完後也忘記了當初為什麼要這麼做，所以做了很多的白工。</p>
+<p>更可怕的是，有些人在解決 A 問題後，還製造了 B、C、D 的問題；不要懷疑，筆者在業界已經聽過非常多這類的鬼故事。</p>
+<p>就算是為了減少加班的可能性，建議大家在做任何事情前，先把想法記錄下來，當想法轉為文字時，很多荒謬的設計就會消失了；如果可以，最好跟相關人員開個會，可以大幅減少考量不周導致的意外。</p>
+<hr>
+<h2 id="你認同自己現在做的事嗎">你認同自己現在做的事嗎？<a class="h-anchor" href="#%e4%bd%a0%e8%aa%8d%e5%90%8c%e8%87%aa%e5%b7%b1%e7%8f%be%e5%9c%a8%e5%81%9a%e7%9a%84%e4%ba%8b%e5%97%8e" aria-label="這個段落的連結"></a></h2>
+<p>當做的事情跟想的事情不同時，我們容易越走越偏，因為你無法說服自己那些是合理的。</p>
+<p>比如讓工程師學 10 年前的技術、設計師當老闆的聲控繪圖板，相信我，在這種環境中沒幾個人能獲得成就感。</p>
+<p>但請不要把自己現在的職場環境當成全部，這個世界很大，不是每間公司都是這個樣子。</p>
+<p>但有能力的人，才有選擇的權利。</p>
+<hr>
+<h2 id="搞清楚你要完成的是功能還是藝術">搞清楚你要完成的是功能還是藝術<a class="h-anchor" href="#%e6%90%9e%e6%b8%85%e6%a5%9a%e4%bd%a0%e8%a6%81%e5%ae%8c%e6%88%90%e7%9a%84%e6%98%af%e5%8a%9f%e8%83%bd%e9%82%84%e6%98%af%e8%97%9d%e8%a1%93" aria-label="這個段落的連結"></a></h2>
+<p>藝術是為了自我實現，而功能則是為了符合商業價值。</p>
+<p>沒有人會在作品被批評的一文不值、被改得面目全非後還會很快樂。</p>
+<p>大家都渴望獲得認同、掌聲與肯定；因為受到認可後，我們才會對自己的設計感到自信。</p>
+<p>獲得自信後，我們才有辦法不執著於那些掌聲與認同。</p>
+<p>在社會生存，我們要識時務者為俊傑；但請不要捨棄自己的風格，也許在未來的某一天會有人發現他的價值，只是我們不能期待現在做的這件事就立刻有價值。</p>
+<blockquote>
+<p>以上就是「設計思考全方位」第三單元的心得筆記，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202311/why-bad-design-is-everywhere/images/why-bad-design-is-everywhere-card-01_hu_2f5e71469595dcc1.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>學設計，未必是要成為一名設計師 ── 設計思考系列文</title>
+      <link>https://deanlin.net/blog/202311/learning-design-without-being-a-designer/</link>
+      <pubDate>Tue, 07 Nov 2023 13:10:27 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202311/learning-design-without-being-a-designer/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>我的本職是工程師，然後斜槓作家/講師/部落客。 我學設計的初衷並不是為了成為一名設計師，而是在培養自己對美的觀察力，以及與設計師溝通的能力。</description>
+      <content:encoded><![CDATA[<p>我的本職是工程師，然後斜槓作家/講師/部落客。</p>
+<p>我學設計的初衷並不是為了成為一名設計師，而是在培養自己對美的觀察力，以及與設計師溝通的能力。</p>
+<p>今天就來繼續分享「設計思考全方位」的心得筆記。</p>
+<p><img src="https://deanlin.net/blog/202311/learning-design-without-being-a-designer/images/learning-design-without-being-a-designer-01.webp" width="1087" height="611" alt="學設計，未必是要成為一名設計師 ── 設計思考系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="房東如何吸引到合適的租客">房東如何吸引到合適的租客<a class="h-anchor" href="#%e6%88%bf%e6%9d%b1%e5%a6%82%e4%bd%95%e5%90%b8%e5%bc%95%e5%88%b0%e5%90%88%e9%81%a9%e7%9a%84%e7%a7%9f%e5%ae%a2" aria-label="這個段落的連結"></a></h2>
+<p>在第二單元中，方序中老師提出了一個很棒的題目，大家不妨想想看：「如果你是一個房東，你會如何設計空間內的視覺、聽覺、味覺、觸覺？然後吸引到適合的房客。」</p>
+<p>很多人會抱怨遇不到好房東，但如果讓你扮演房東角色，你就會去思考怎樣的空間才能吸引到對的人。</p>
+<p>以這個題目來說，設計只是其中的一環，他是一個複合性的訓練；即便沒有受過設計的專業訓練，你還是有能力去思考空間呈現的方式。</p>
+<hr>
+<h2 id="掌握流行趨勢很重要但你要有自己的風格">掌握流行趨勢很重要，但你要有自己的風格<a class="h-anchor" href="#%e6%8e%8c%e6%8f%a1%e6%b5%81%e8%a1%8c%e8%b6%a8%e5%8b%a2%e5%be%88%e9%87%8d%e8%a6%81%e4%bd%86%e4%bd%a0%e8%a6%81%e6%9c%89%e8%87%aa%e5%b7%b1%e7%9a%84%e9%a2%a8%e6%a0%bc" aria-label="這個段落的連結"></a></h2>
+<p>我覺得這個概念可以套用在任何產業。</p>
+<p>像今年 AI 很流行，你只要分享 AI 相關應用就可以有流量；但分享的人這麼多，等熱潮過後，有多少人會記得你？</p>
+<p>跟著流行趨勢走，你有更高機率做出被大家鼓掌、歡迎的作品；但請定期反問自己，這些作品跟你是有連結的嗎？還是你只是做出一個跟大家都很像的作品。</p>
+<p>設計之所以有趣，是因為每個人的生活模式、價值觀都不一樣，所以不太可能會有一模一樣的設計產生。</p>
+<p>想讓作品有風格，先從認識自己開始。</p>
+<hr>
+<h2 id="不要追求正確解答但也不要忽略提示">不要追求「正確解答」，但也不要忽略「提示」<a class="h-anchor" href="#%e4%b8%8d%e8%a6%81%e8%bf%bd%e6%b1%82%e6%ad%a3%e7%a2%ba%e8%a7%a3%e7%ad%94%e4%bd%86%e4%b9%9f%e4%b8%8d%e8%a6%81%e5%bf%bd%e7%95%a5%e6%8f%90%e7%a4%ba" aria-label="這個段落的連結"></a></h2>
+<p>每個人都是獨立的個體，天賦、性格、背景、知識都有很大的差異。</p>
+<p>因此對 A 來說的「正確解答」，從 B 的角度來看很有可能是個累贅。</p>
+<p>所以當別人給你優化建議的時候，不要把它當成「解答」，而是當成「提示」；但如果發現有重複的「提示」反覆出現，也許就真的有調整的必要性。</p>
+<p>所謂的「正確解答」，往往要靠自己不斷去練習、學習、失敗，才會摸索出適合自己的線索。</p>
+<hr>
+<h2 id="培養自己的興趣與嗜好">培養自己的「興趣與嗜好」<a class="h-anchor" href="#%e5%9f%b9%e9%a4%8a%e8%87%aa%e5%b7%b1%e7%9a%84%e8%88%88%e8%b6%a3%e8%88%87%e5%97%9c%e5%a5%bd" aria-label="這個段落的連結"></a></h2>
+<p>當熱愛的事物變成工作時，你很難感受到真正的快樂。</p>
+<p>因為工作往往存在各種限制、阻礙，你無法完全按造自己的想法執行；有時甚至會做出不想承認那是自己成果的「作品」。</p>
+<p>如果你的生活只有工作，那工作不順時就會陷入低潮。</p>
+<p>但「興趣與嗜好」能讓你維持生活的熱情，讓你在工作之餘釋放和找到情緒的出口。</p>
+<hr>
+<h2 id="案子不順遂時去找一個停損點">案子不順遂時去找一個「停損點」<a class="h-anchor" href="#%e6%a1%88%e5%ad%90%e4%b8%8d%e9%a0%86%e9%81%82%e6%99%82%e5%8e%bb%e6%89%be%e4%b8%80%e5%80%8b%e5%81%9c%e6%90%8d%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<p>不可能所有案子都按造你的期待去走，你可能會遇到時程壓力、沒 Sense 的客戶、成果不如預期…</p>
+<p>如果在這種情境下依舊投入大量心力，你會非常的痛苦，然後走不出來。</p>
+<p>當案子不順遂時，我們需要去找一個停損點，這不是要你擺爛，你還是要圓滿地完成它。</p>
+<p>我只是要你停止從這個案子獲得成就感的想法，並將這份期待轉移到下一個案子上面。</p>
+<p>不過如果每個案子都不順遂，那可能要思考是公司還是自己要調整了。</p>
+<blockquote>
+<p>以上就是「設計思考全方位」第二單元的心得筆記，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202311/learning-design-without-being-a-designer/images/learning-design-without-being-a-designer-card-01_hu_2f5e71469595dcc1.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>從工程師到設計師？我怎麼看「設計思考」── 設計思考系列文</title>
+      <link>https://deanlin.net/blog/202311/design-thinking-engineer-perspective/</link>
+      <pubDate>Sun, 05 Nov 2023 12:25:52 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202311/design-thinking-engineer-perspective/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>為什麼一個工程師會深入研究設計思考？答案可能不像你想的那麼簡單。</description>
+      <content:encoded><![CDATA[<p>為什麼一個工程師會深入研究設計思考？答案可能不像你想的那麼簡單。</p>
+<p>在上完「設計思考全方位」的第一堂課後，我發現，設計的理念超越了技能和背景，它更像是一種生活方式。</p>
+<p><img src="https://deanlin.net/blog/202311/design-thinking-engineer-perspective/images/design-thinking-engineer-perspective-01.webp" width="1151" height="647" alt="從工程師到設計師？我怎麼看「設計思考」── 設計思考系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="設計思考解決問題的新策略">設計思考：解決問題的新策略<a class="h-anchor" href="#%e8%a8%ad%e8%a8%88%e6%80%9d%e8%80%83%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c%e7%9a%84%e6%96%b0%e7%ad%96%e7%95%a5" aria-label="這個段落的連結"></a></h2>
+<p>大部分的人都依賴直覺和經驗來應對生活和職場的挑戰，但設計思考提供了一種更加系統化、深入的策略。以一個日常例子來說，當家中的雞蛋用完，你如何計劃購買？</p>
+<p>➤<strong> 釐清需求</strong>：選擇雞蛋的類型 — 追求經濟還是品質？</p>
+<p>➤ <strong>定義問題</strong>：選擇購買地點和交通方式 — 市場還是超市？步行還是開車？</p>
+<p>➤ <strong>附加價值</strong>：除了雞蛋，還需要購買哪些食材或生活用品？</p>
+<p>🥹 如果沒有想清楚，你可能會把事情拆成好幾次來做，比如：</p>
+<p>➤ 在超市買完雞蛋後發現需要買肉，然後再跑一趟大賣場，隔天發現衛生紙用完了，需要再跑一趟超商。</p>
+<p>但上述任務是可以「一次性」解決的。透過「設計思考」，我們不僅能解決問題，還能進一步優化流程，讓日常生活更加合理。</p>
+<hr>
+<h2 id="用同理來平衡商業與創作">用「同理」來平衡商業與創作<a class="h-anchor" href="#%e7%94%a8%e5%90%8c%e7%90%86%e4%be%86%e5%b9%b3%e8%a1%a1%e5%95%86%e6%a5%ad%e8%88%87%e5%89%b5%e4%bd%9c" aria-label="這個段落的連結"></a></h2>
+<p>出社會後，你的創作不能只考慮到「自己」，還要考量到「客戶」與「消費者」。</p>
+<p>站在自我成長、自我實現的角度，你可能會想使用最新的技術、時下流行的設計；但可能會遇到題材不適合，或是想法太前衛客戶無法接受。</p>
+<p>為你設計買單的是「客戶」，帶來商業價值的是「消費者」，但這兩者的想法可能有很大的衝突。以電影的廣告來說，滿足導演期待的內容可能太過深奧、無聊，滿足消費者的又太沒氣質、商業。</p>
+<p>「自己 VS 客戶 VS 消費者」是一個商業與創作的三角，如果想做到「同理」，你就要跳出這個三角，從旁觀者去思考會更明白自己應該要去做的事，正所謂「當局者迷，旁觀者清」。</p>
+<hr>
+<h2 id="即使主題相同也都有各自的風格">即使主題相同，也都有各自的風格<a class="h-anchor" href="#%e5%8d%b3%e4%bd%bf%e4%b8%bb%e9%a1%8c%e7%9b%b8%e5%90%8c%e4%b9%9f%e9%83%bd%e6%9c%89%e5%90%84%e8%87%aa%e7%9a%84%e9%a2%a8%e6%a0%bc" aria-label="這個段落的連結"></a></h2>
+<p>像「憤怒」這個情緒，他在每個人身上呈現的方式是不同的。有些人使用暴力、有些人選擇沈默、有些人笑的讓你發慌。</p>
+<p>所以我們不妨思考一下，我的憤怒跟別人的憤怒差在哪裡？如果用顏色、線條來表現，會長什麼樣子？</p>
+<p>這個道理可以套用在不同的領域中，如果你常逛「購物網站」就會發現，儘管 PCHome、MOMO、蝦皮都是購物網站，但彼此的風格有很大的差異；因為 TA 的年齡層、性別、喜好都不一樣。</p>
+<p>在面對需求時，如果能快速判別出這些與競爭對手不同的點，就更有機會取得成果。</p>
+<hr>
+<h2 id="回答我覺得這樣比較好看很不專業">回答「我覺得這樣比較好看」很不專業<a class="h-anchor" href="#%e5%9b%9e%e7%ad%94%e6%88%91%e8%a6%ba%e5%be%97%e9%80%99%e6%a8%a3%e6%af%94%e8%bc%83%e5%a5%bd%e7%9c%8b%e5%be%88%e4%b8%8d%e5%b0%88%e6%a5%ad" aria-label="這個段落的連結"></a></h2>
+<p>如果問設計師為何這樣設計，而他只回你：「我覺得這樣比較好看。」</p>
+<p>如果繼續細問還是無法給出具體邏輯時，設計師可能根本沒搞清楚自己在做什麼東西。</p>
+<p>以網頁設計來說，每個元件的大小、顏色、間距、位置、層級，都有它背後代表的含義，而不會只是「我覺得這樣比較好看」。</p>
+<hr>
+<h2 id="如果遇到沒有-sense-的客戶">如果遇到沒有 Sense 的客戶<a class="h-anchor" href="#%e5%a6%82%e6%9e%9c%e9%81%87%e5%88%b0%e6%b2%92%e6%9c%89-sense-%e7%9a%84%e5%ae%a2%e6%88%b6" aria-label="這個段落的連結"></a></h2>
+<p>不要期待客戶擁有跟你一樣的專業，不會表達自己需求的客戶才是大多數。</p>
+<p>為了減少分歧，你要先了解客戶對作品的期待，而不是先入為主的認為這個主題應該要怎麼做。</p>
+<p>如果遇到意見衝突，可以從三個面向來嘗試溝通：</p>
+<ul>
+<li><strong>客戶對作品的期待</strong>：有些案子的時程比較長，客戶根本忘記當初自己說了些什麼，你可以把情境再來回來一次。</li>
+<li><strong>消費者的想法</strong>：嘗試讓客戶扮演消費者，用不同的角度來看規劃的合理性。</li>
+<li><strong>設計師本身的專業</strong>：說明自己設計的邏輯、理由，以及可以帶來的效果。</li>
+</ul>
+<p>有些客戶可能需求是：「我想要做獨一而二，沒有人做過的嘗試！」</p>
+<p>遇到願意讓自己隨意發揮的客戶很幸運，但站在設計師的角度來講，應該把他拉回來，畢竟產品是需要賣錢的（如果不在乎錢的客戶當我沒說）。</p>
+<p>而且設計也不要完全按造自己的喜好，以平面設計來說，假如要設計一個 Logo、圖案；在配色、線條上可能要思考它是可以在不同媒材上可以展現的嗎？</p>
+<p>因為活動、品牌時常會出一些周邊產品，他在毛巾、扇子、瓶子上面都是可以呈現的嗎？會有需要特殊印刷導致增加的成本嗎？</p>
+<blockquote>
+<p>如果到最後生產時才突然多出這些成本，是會 GG 的。</p>
+</blockquote>
+<hr>
+<h2 id="設計合約時先設想最差的狀況">設計合約時，先設想最差的狀況<a class="h-anchor" href="#%e8%a8%ad%e8%a8%88%e5%90%88%e7%b4%84%e6%99%82%e5%85%88%e8%a8%ad%e6%83%b3%e6%9c%80%e5%b7%ae%e7%9a%84%e7%8b%80%e6%b3%81" aria-label="這個段落的連結"></a></h2>
+<p>建議簽約時要有附加條款：「在產生初稿後，如果有巨大的修改，可以有 N 次修改的機會；若超過則會需要增加多少錢。」</p>
+<p>設計合約時，要先思考的不是這個專案會完美結案，要去思考最糟糕的狀況可以如何處理、自己犯錯的時候怎麼辦。把所有最壞的情境都考慮到後，我們更有可能完美的完成專案。</p>
+<blockquote>
+<p>PS. 如果特殊情境沒時間簽約，那請在 Email 留下紀錄，不要在 FB、LINE 這類可以移除訊息的軟體上溝通。</p>
+</blockquote>
+<hr>
+<h2 id="容許失敗面對失敗持續試錯">容許失敗、面對失敗、持續試錯<a class="h-anchor" href="#%e5%ae%b9%e8%a8%b1%e5%a4%b1%e6%95%97%e9%9d%a2%e5%b0%8d%e5%a4%b1%e6%95%97%e6%8c%81%e7%ba%8c%e8%a9%a6%e9%8c%af" aria-label="這個段落的連結"></a></h2>
+<p>為什麼研發會很貴？因為研發就是不斷地試錯！</p>
+<p>好的作品背後往往有無數次的失敗經驗，與其去研究成功作品有哪些元素，不如探討他背後經歷了哪些失敗。</p>
+<p>面對失敗的心態很重要，我們不需要自我否定。 先承認自己是一個人，而絕大多數人都是一般人，犯錯是難免的事，很少有發生一個失誤人生就直接完蛋的情境（除非按到核彈發射按鈕）。</p>
+<p>不要妄想去建立一個完美人設，不然遲早會翻車。不要想把每個作品都做到淋漓盡致，那只會逼死自己。</p>
+<blockquote>
+<p>以上就是「設計思考全方位」第一單元的心得筆記，如果覺得我的分享對你有幫助，歡迎 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我吸收更多知識。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/6c6883c6a3f2" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">設計實戰全方位</span>
+    <span class="lc-desc">課程心得筆記</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202311/design-thinking-engineer-perspective/images/design-thinking-engineer-perspective-card-01_hu_2f5e71469595dcc1.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>【設計實戰全方位】你的第一堂到最後一堂設計課</title>
+      <link>https://deanlin.net/blog/202308/hahow-design-course/</link>
+      <pubDate>Thu, 24 Aug 2023 12:08:59 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202308/hahow-design-course/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>別誤會，雖然我開過課、也講了很多場講座，但我還沒斜槓到設計領域😆 我是工程師×作家×講師，收到 Hahow 好學校 的邀約時，我愣了大概幾秒；因為這次是要推廣【設計實戰全方位】的課程。</description>
+      <content:encoded><![CDATA[<figure class="figure"><img src="https://deanlin.net/blog/202308/hahow-design-course/images/hahow-design-course-01.webp" width="1194" height="458" alt="https://go.hahow.in/LteOl/dean500" loading="lazy" decoding="async">
+  <figcaption><a href="https://go.hahow.in/LteOl/dean500">https://go.hahow.in/LteOl/dean500</a></figcaption>
+</figure>
+
+<p>別誤會，雖然我開過課、也講了很多場講座，但我還沒斜槓到設計領域😆</p>
+<p>我是工程師×作家×講師，今年收到的 Email 以講座邀請最為大宗，也有部份課程推廣的邀約，不過大多以 AI 或科技領域為主。</p>
+<p>但收到 <strong>Hahow 好學校 </strong>的邀約時，我愣了大概幾秒；因為這次是要推廣【設計實戰全方位】的課程。</p>
+<p>當下甚至懷疑是不是有哪位業界大佬跟我同名同姓🤔 畢竟我又不是設計領域的專家，怎麼會請我推廣呢😆</p>
+<p>不過等待 ChatGPT 撰寫婉拒信的過程中…</p>
+<p>我點開了課程網頁，一邊看課程介紹，一邊望向前幾天印刷出包的名片😅</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202308/hahow-design-course/images/hahow-design-course-02.webp" width="803" height="802" alt="因為我給的圖檔 1 邊是灰階，1 邊是 RGB；對…我就是這麼菜，連印刷要轉為 CMYK 都不知道" loading="lazy" decoding="async">
+  <figcaption>因為我給的圖檔 1 邊是灰階，1 邊是 RGB；對…我就是這麼菜，連印刷要轉為 CMYK 都不知道</figcaption>
+</figure>
+
+<p>然後再回到 FB 看看自己設計的廣告文宣，恩…雖然不想面對，但是時候提升自己對設計敏銳度了。</p>
+<p>接著看到師資陣容，雖然設計界的大師我一位也認不得😅</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202308/hahow-design-course/images/hahow-design-course-03.webp" width="1200" height="1200" alt="https://go.hahow.in/LteOl/dean500" loading="lazy" decoding="async">
+  <figcaption><a href="https://go.hahow.in/LteOl/dean500">https://go.hahow.in/LteOl/dean500</a></figcaption>
+</figure>
+
+<p>但 Google 後才發現這些講師都很有名氣（原諒小弟有眼不識泰山QQ）</p>
+<p>真佩服 <strong>二棲知學</strong> 能集結這麼多領域的大師，並讓他們願意在課程中分享自己多年的實戰經驗，帶領大家從金曲獎、美感教科書、台灣設計展、國慶…等知名專案中學習。</p>
+<p>雖然設計軟體不見得每個人都用得到，但設計思維卻是我所需要的；比起知道一個工具怎麼使用，了解什麼是「好」的設計更加重要！</p>
+<p>以往在學習的道路上，我們要跌跌撞撞的成長，而現在這堂課直接給你完整的學習地圖。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202308/hahow-design-course/images/hahow-design-course-04.webp" width="808" height="805" alt="https://go.hahow.in/LteOl/dean500" loading="lazy" decoding="async">
+  <figcaption><a href="https://go.hahow.in/LteOl/dean500">https://go.hahow.in/LteOl/dean500</a></figcaption>
+</figure>
+
+<p>讓【設計實戰全方位】成為你的第一堂，也是最後一堂線上設計課！</p>
+<p>投資理財有賺有賠，但投資自己絕對不虧💪</p>
+<h3 id="課程特色">🌟課程特色🌟<a class="h-anchor" href="#%e8%aa%b2%e7%a8%8b%e7%89%b9%e8%89%b2" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>20 位頂尖大師親自授課，寶貴經驗分享</li>
+<li>從基礎到進階，系統性學習一套就夠</li>
+<li>從美感培養，到提案技巧全方位攻略</li>
+<li>成為你的第一堂，也是最後一堂設計課</li>
+</ul>
+<h3 id="限時優惠">⏳限時優惠⏳<a class="h-anchor" href="#%e9%99%90%e6%99%82%e5%84%aa%e6%83%a0" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>課程募資優於 6 折，越早買贈品越豪華！</li>
+<li>使用專屬折扣碼「dean500」可享募資價再折 $500！</li>
+<li>折扣碼使用期間： 2023/8/15(二）～ 9/18(一） 23:59</li>
+</ul>
+<h3 id="課程連結">🔗課程連結🔗<a class="h-anchor" href="#%e8%aa%b2%e7%a8%8b%e9%80%a3%e7%b5%90" aria-label="這個段落的連結"></a></h3>
+<p><a href="https://go.hahow.in/LteOl/dean500">https://go.hahow.in/LteOl/dean500</a></p>
+<p>我已經等不及上課了🔥你呢？</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>你知道對專案來說，README.md 有多麼重要嗎？ ── 工程師血淚史</title>
+      <link>https://deanlin.net/blog/202208/why-readme-matters/</link>
+      <pubDate>Fri, 05 Aug 2022 11:33:37 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202208/why-readme-matters/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>如果公司的專案很多，README.md 又沒有寫好，那後續接手的人會非常痛苦；如果公司專案的規模很大，README.md 又缺乏維護，那這個專案已經半隻腳踏進棺材。</description>
+      <content:encoded><![CDATA[<p>如果公司的專案很多，README.md 又沒有寫好，那後續接手的人會非常痛苦；如果公司專案的規模很大，README.md 又缺乏維護，那這個專案已經半隻腳踏進棺材。</p>
+<p>身為工程師，我理解大部分的人都想把精力放在寫出更好的程式，但專案能否長期發展，其實是取決於「文件」；如果文件亂七八糟，或者甚至根本沒有制式文件，那這個專案的未來發展性堪憂。</p>
+<p>從管理的角度來說，我們要去思考：「如果負責專案的工程師明天就不在了，這個專案能否進行下去？」</p>
+<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-01.webp" width="1400" height="733" alt="你知道對專案來說，README.md 有多麼重要嗎？ ── 工程師血淚史（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+一、為什麼 README.md 很重要？
+二、有哪些是 README.md 一定要提供的資訊？
+ ➤ 專案介紹 — Description
+ ➤ 運行環境需求 — Requirement
+ ➤ 環境檔（.env）有哪些欄位要自己填寫 — .env Setting
+ ➤ 在 Local 端的安裝＆運行步驟 — Build Setup(Local)
+ ➤ 在 Server 端的安裝＆驗證步驟- Build Setup(Server)
+ ➤ 可提供支援的同仁 ── Support
+ ➤ 注意事項 — Warning
+三、如果 README.md 有這些資訊，會讓日後維運更加順利
+ ➤ 系統架構圖 — System architecture
+ ➤ 使用者操作手冊 — User Manual
+ ➤ Demo 影片 — Demo Video
+ ➤ UI/UX 設計稿 — UI/UX Design
+ ➤ Function map
+ ➤ 單元測試、整合測試 — Unit Testing、Integration Testing
+</code></pre><h2 id="一為什麼-readmemd-很重要">一、為什麼 README.md 很重要？<a class="h-anchor" href="#%e4%b8%80%e7%82%ba%e4%bb%80%e9%ba%bc-readmemd-%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
+<p>因為開發人員第一次接觸專案時，就是透過 README.md 來了解的。</p>
+<p>它就像是一張專案的地圖，如果破損、缺乏維護，那踏上旅途的人勢必會遇上迷航、陷阱。</p>
+<p>在沒有律定 README.md 該有什麼內容時，每個人都是自由發揮；除了內容可能有短缺外，每份專案的撰寫風格也不盡相同，因此想透過這篇文章律定基礎架構。</p>
+<blockquote>
+<p>這邊提醒讀者，本篇文章所建議的 README.md 內容是提供給「內部開發人員」看的；如果你的專案是對外開放，部分內容請自行斟酌。</p>
+</blockquote>
+<hr>
+<h2 id="二有哪些是-readmemd-一定要提供的資訊">二、有哪些是 README.md 一定要提供的資訊？<a class="h-anchor" href="#%e4%ba%8c%e6%9c%89%e5%93%aa%e4%ba%9b%e6%98%af-readmemd-%e4%b8%80%e5%ae%9a%e8%a6%81%e6%8f%90%e4%be%9b%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
+<p>下面列出的項目，是筆者認為對第一次接觸專案、準備維護專案的人有幫助的資訊。</p>
+<h3 id="-專案介紹--description">➤ 專案介紹 ── Description<a class="h-anchor" href="#-%e5%b0%88%e6%a1%88%e4%bb%8b%e7%b4%b9--description" aria-label="這個段落的連結"></a></h3>
+<p>簡述專案目標，讓第一次接觸的人也能在短時間初步了解專案（如果使用到少見的專有名詞，請附加說明）。</p>
+<blockquote>
+<p>如果是前後端分離的專案，請附上前端/後端的專案連結。</p>
+</blockquote>
+<h3 id="-運行環境需求--requirement">➤ 運行環境需求 ── Requirement<a class="h-anchor" href="#-%e9%81%8b%e8%a1%8c%e7%92%b0%e5%a2%83%e9%9c%80%e6%b1%82--requirement" aria-label="這個段落的連結"></a></h3>
+<p>描述這個專案運行所需要的環境，比如說：</p>
+<ul>
+<li><strong>前端（Frontend）</strong>：NVM、Yarn、Node.js</li>
+<li><strong>後端（Backend）</strong>：PHP、Composer、Laravel、MySQL</li>
+</ul>
+<blockquote>
+<p>隨著技術進步，各項工具的版本不斷更迭；因此建議要附上能讓專案順利運行的「版本」，因為許多工具並沒有向下相容。</p>
+</blockquote>
+<h3 id="-環境檔env有哪些欄位要自己填寫--env-setting">➤ 環境檔（.env）有哪些欄位要自己填寫 ── .env Setting<a class="h-anchor" href="#-%e7%92%b0%e5%a2%83%e6%aa%94env%e6%9c%89%e5%93%aa%e4%ba%9b%e6%ac%84%e4%bd%8d%e8%a6%81%e8%87%aa%e5%b7%b1%e5%a1%ab%e5%af%ab--env-setting" aria-label="這個段落的連結"></a></h3>
+<p>以後端來說，涉及機密、隱私、個人化的參數會需要自己填寫，比如：</p>
+<ol>
+<li>DB 帳號密碼、IP、Port</li>
+<li>JWT 有效期限</li>
+<li>Mail 相關參數</li>
+<li>Storage 路徑</li>
+</ol>
+<h3 id="-在-local-端的安裝運行步驟--build-setup-local">➤ 在 Local 端的安裝＆運行步驟 ── Build Setup (Local)<a class="h-anchor" href="#-%e5%9c%a8-local-%e7%ab%af%e7%9a%84%e5%ae%89%e8%a3%9d%e9%81%8b%e8%a1%8c%e6%ad%a5%e9%a9%9f--build-setup-local" aria-label="這個段落的連結"></a></h3>
+<p>是那種「複製貼上」就能夠順利安裝的步驟，可以放一些參考連結，但不要讓使用者需要去閱讀官方文檔才知道怎麼安裝。</p>
+<p>以後端舉例，指令需至少包含如下內容：</p>
+<ol>
+<li>專案安裝步驟</li>
+<li>DB Migration</li>
+<li>DB Seeder</li>
+<li>運行專案</li>
+</ol>
+<blockquote>
+<p>如果採前後端分離，可以附上 POSTMAN 的 collection 方便前端驗證。</p>
+</blockquote>
+<h3 id="-在-server-端的安裝驗證步驟--build-setup-server">➤ 在 Server 端的安裝＆驗證步驟 ── Build Setup (Server)<a class="h-anchor" href="#-%e5%9c%a8-server-%e7%ab%af%e7%9a%84%e5%ae%89%e8%a3%9d%e9%a9%97%e8%ad%89%e6%ad%a5%e9%a9%9f--build-setup-server" aria-label="這個段落的連結"></a></h3>
+<p>如果不是採取自動部署的策略，那筆者建議紀錄如下內容：</p>
+<ol>
+<li>專案運行所需套件，及其對應的指令</li>
+<li>伺服器端參數（ex：API 最長可執行時間、可上傳檔案容量限制、單個 IP 每分鐘存取次數）</li>
+<li>不同環境對應的 Server ip</li>
+<li>相關參數調整後，重啟使其生效的指令</li>
+<li>部署完成後，可以透過什麼方式（工具）驗證功能皆如預期運行</li>
+</ol>
+<h3 id="-可提供支援的同仁--support">➤ 可提供支援的同仁 ── Support<a class="h-anchor" href="#-%e5%8f%af%e6%8f%90%e4%be%9b%e6%94%af%e6%8f%b4%e7%9a%84%e5%90%8c%e4%bb%81--support" aria-label="這個段落的連結"></a></h3>
+<p>讓初次接觸專案的人知道遇到問題可以找誰詢問，建議在這個部分放上開發人員的聯絡方式（ex：座位、email）。</p>
+<p>有時問題可能有其歷史背景，所以可以用附註形式，放上了解這份專案歷史的同仁（ex：主管、負責的 PM）。</p>
+<h3 id="-注意事項--warning">➤ 注意事項 ── Warning<a class="h-anchor" href="#-%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85--warning" aria-label="這個段落的連結"></a></h3>
+<p>每個專案或多或少都會有一些特別的設計，時間拉長難免遺忘，建議把他們記錄下來，比如：</p>
+<ol>
+<li>如果 API 文檔是用指令產生的，請記得記錄下來</li>
+<li>如果有設計排程（Schedule），把觸發的時間點列出</li>
+<li>前端在不同環境的建立指令（Script）</li>
+<li>如果用到特別的套件，建議簡單說明在什麼時機應用，並放上官方文檔連結</li>
+<li>專案的授權條款（License）</li>
+</ol>
+<hr>
+<h2 id="三如果-readmemd-有這些資訊會讓日後維運更加順利">三、如果 README.md 有這些資訊，會讓日後維運更加順利<a class="h-anchor" href="#%e4%b8%89%e5%a6%82%e6%9e%9c-readmemd-%e6%9c%89%e9%80%99%e4%ba%9b%e8%b3%87%e8%a8%8a%e6%9c%83%e8%ae%93%e6%97%a5%e5%be%8c%e7%b6%ad%e9%81%8b%e6%9b%b4%e5%8a%a0%e9%a0%86%e5%88%a9" aria-label="這個段落的連結"></a></h2>
+<h3 id="-系統架構圖--system-architecture">➤ 系統架構圖 ── System architecture<a class="h-anchor" href="#-%e7%b3%bb%e7%b5%b1%e6%9e%b6%e6%a7%8b%e5%9c%96--system-architecture" aria-label="這個段落的連結"></a></h3>
+<p>如果專案結構複雜，或是需要串接多個系統，那建議放上系統架構圖，否則接手的工程師會需要花很多時間去研究他們之間的關聯性。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-02.webp" width="1044" height="904" alt="IMG from：https://commons.wikimedia.org/" loading="lazy" decoding="async">
+  <figcaption>IMG from：<a href="https://commons.wikimedia.org/">https://commons.wikimedia.org/</a></figcaption>
+</figure>
+
+<h3 id="-使用者操作手冊--user-manual">➤ 使用者操作手冊 ── User Manual<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8%e8%80%85%e6%93%8d%e4%bd%9c%e6%89%8b%e5%86%8a--user-manual" aria-label="這個段落的連結"></a></h3>
+<p>每份專案都一定要製作使用者操作手冊，否則 PM、工程師會不停被重複的問題打擾；有了這份手冊後，之後負責維運的工程師也能更快上手。</p>
+<blockquote>
+<p>形式可以是 Wiki、Word…等等，讓使用者方便閱讀為第一優先。</p>
+</blockquote>
+<h3 id="-demo-影片-demo-video">➤ Demo 影片── Demo Video<a class="h-anchor" href="#-demo-%e5%bd%b1%e7%89%87-demo-video" aria-label="這個段落的連結"></a></h3>
+<p>如果可以，建議在專案完成後錄製「簡單」的 Demo 影片；主要目的是讓工程師知曉專案「正常」的狀況下應該長什麼樣子。</p>
+<blockquote>
+<p><em>有時專案看似順利啟動了，但實際上部分功能是不完整的（ex：前端順利啟動了，但 WebSocket 異常）。</em></p>
+</blockquote>
+<h3 id="-uiux-設計稿--uiux-design">➤ UI/UX 設計稿 ── UI/UX Design<a class="h-anchor" href="#-uiux-%e8%a8%ad%e8%a8%88%e7%a8%bf--uiux-design" aria-label="這個段落的連結"></a></h3>
+<p>放上 Wireframe、Mockup、Prototype 等設計稿連結（如果有的話）</p>
+<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-03.webp" width="1000" height="667" alt="UI/UX 設計稿 ── UI/UX Design（圖 3）" loading="lazy" decoding="async"></p>
+<h3 id="-function-map">➤ Function map<a class="h-anchor" href="#-function-map" aria-label="這個段落的連結"></a></h3>
+<p>通常會以心智圖來呈現，PM 可以透過它讓工程師快速了解、評估初期的功能。</p>
+<p>在遇到需求要新增或變更時，有這張圖工程師能也更快回憶，並掌握重點。</p>
+<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-04.webp" width="1400" height="1566" alt="Function map（圖 4）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><a href="https://gitmind.com/">GitMind</a> 是個不錯的工具，推薦大家使用看看。</p>
+</blockquote>
+<h3 id="-單元測試整合測試--unit-testingintegration-testing">➤ 單元測試、整合測試 ── Unit Testing、Integration Testing<a class="h-anchor" href="#-%e5%96%ae%e5%85%83%e6%b8%ac%e8%a9%a6%e6%95%b4%e5%90%88%e6%b8%ac%e8%a9%a6--unit-testingintegration-testing" aria-label="這個段落的連結"></a></h3>
+<p>專案的穩定，是建立在有寫測試程式的前提下；否則系統很容易因為需求的新增、變更，而導致過去的功能毀損。</p>
+<p>在測試方面，除了「整體」的測試外，有時我們只需要測試「特定功能」；可以把常用的測試指令紀錄在這裡（ex：邏輯複雜、關聯廣泛的測試）。</p>
+<blockquote class="pullquote"><p>以上內容是筆者過去專案經驗的彙整，若有未盡之處，歡迎留言補充。</p>
+</blockquote>
+<hr>
+<pre tabindex="0"><code>工程師血淚史
+▋ 團隊在系統開發上遇到了哪些問題
+▋ 需求不斷變更，到底哪個環節出錯了
+▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
+▋ 如果沒有明確的開發流程，團隊將會無所適從
+▋ 你知道對專案來說，README.md 有多麼重要嗎？(本篇)
+</code></pre>]]></content:encoded>
+    </item>
+    <item>
+      <title>如果沒有明確的工作流程，團隊將會無所適從 — 工程師血淚史</title>
+      <link>https://deanlin.net/blog/202207/clear-workflow-for-teams/</link>
+      <pubDate>Fri, 29 Jul 2022 09:27:07 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202207/clear-workflow-for-teams/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>在流程不明確的狀態下，團隊成員只能憑藉自己的直覺做事；如果彼此對一件事的認知不同就容易造成誤會，甚至爆發不必要的衝突。</description>
+      <content:encoded><![CDATA[<p>在流程不明確的狀態下，團隊成員只能憑藉自己的直覺做事；如果彼此對一件事的認知不同就容易造成誤會，甚至爆發不必要的衝突。</p>
+<p>由於過去許多工作流程都是口頭制定，沒有明確的文字敘述，因此想透過這篇文章來整理流程，並在日後的實踐中不斷優化與完善。</p>
+<p><img src="https://deanlin.net/blog/202207/clear-workflow-for-teams/images/clear-workflow-for-teams-01.webp" width="1400" height="730" alt="如果沒有明確的工作流程，團隊將會無所適從 — 工程師血淚史（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+ㄧ、專案初始
+二、初始任務
+ ➤ 評估每個階段的時程
+ ➤ 撰寫 Ticket 的需求規格
+ ➤ 估計每個 Ticket 的時數
+ ➤ 確認 Ticket 的總時數是否在專案的截止日期內
+ ➤ Ticket 分配
+ ➤ 專案初始環境建置
+ ➤ Server 建置
+三、專案進行中
+ ➤ 進度回報
+ ➤ 工程師之間的合作
+ ➤ 工程師與 PM 的合作
+ ➤ 了解為什麼都要由 PM 來開 Ticket
+</code></pre><h2 id="ㄧ專案初始">ㄧ、專案初始<a class="h-anchor" href="#%e3%84%a7%e5%b0%88%e6%a1%88%e5%88%9d%e5%a7%8b" aria-label="這個段落的連結"></a></h2>
+<p>STEP 1：由 PM 與客戶討論具體需求。</p>
+<p>STEP 2：請 UI/UX 設計師依造需求初步完成 Wireframe。</p>
+<p>STEP 3：PM、UI/UX、Tech Lead 一起確認流程、功能的可行性，判斷是否有需要調整的部分。</p>
+<p>STEP 4：待客戶認可 Wireframe 後，請 UI/UX 設計師將其升級成 Mockup。</p>
+<p>STEP 5：由 Tech Lead 確認 Mockup 上需要注意的細節（ex：哪些欄位適合拿來搜尋、不同權限看到的畫面、有哪些元件可以設計為共用模組）。</p>
+<p>STEP 6：在 UI/UX 設計師調整為 Prototype 後，由 PM（或 UI/UX 設計師）向團隊成員說明系統的功能與流程，確保大家理解這個專案要完成的目標。</p>
+<p>STEP 7：由 Tech Lead 向工程師團隊說明各功能在設計上要注意的細節（ex：哪些欄位要設計 Auto-Complete、是否有特別的 Validation Rules、某些功能需要提前 Survey 避免卡關）。</p>
+<blockquote>
+<p>良心建議：專案初始的設計盡量從 Wireframe 開始，就算專案規模較小也不要直接畫 Mockup；因為客戶的需求在前期會時常變動，就算突然加大投資，小專案突然變成大專案也是很常見的，若使用 Mockup 會要花更多的時間在調整上面。</p>
+</blockquote>
+<hr>
+<h2 id="二初始任務">二、初始任務<a class="h-anchor" href="#%e4%ba%8c%e5%88%9d%e5%a7%8b%e4%bb%bb%e5%8b%99" aria-label="這個段落的連結"></a></h2>
+<h3 id="-評估每個階段的時程">➤ 評估每個階段的時程<a class="h-anchor" href="#-%e8%a9%95%e4%bc%b0%e6%af%8f%e5%80%8b%e9%9a%8e%e6%ae%b5%e7%9a%84%e6%99%82%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p>由 PM 將專案的需求拆分成不同的 Phase，這樣工程師比較能集中注意力在特定事物上，每個 Phase 都需要把如下的任務納入考量：</p>
+<ol>
+<li>要完成的功能（ex：前端、後端）</li>
+<li>撰寫測試程式的時程（ex：單元測試、壓力測試）</li>
+<li>QA 團隊測試的時程</li>
+<li>測試、正式環境部署的時程</li>
+</ol>
+<blockquote>
+<p>規劃時要保留「緩衝時間」，因為測試一次就過基本上是不可能發生的事情，往往需要預留 15~30% 的時間來修 Bug。</p>
+</blockquote>
+<h3 id="-撰寫-ticket-的需求規格">➤ 撰寫 Ticket 的需求規格<a class="h-anchor" href="#-%e6%92%b0%e5%af%ab-ticket-%e7%9a%84%e9%9c%80%e6%b1%82%e8%a6%8f%e6%a0%bc" aria-label="這個段落的連結"></a></h3>
+<p>由 PM 在專案管理系統上為每項任務建立 Ticket，建議需求規格的內容要包含：</p>
+<ol>
+<li>Prototype 截圖：讓工程師明白功能具體的位置在哪。</li>
+<li>需求描述：說明這個功能是用來做什麼的，它跟哪些功能有相依性。</li>
+<li>相關計算規則：以計算商品總價來說，就會有「產品搭配、折價卷、信用卡優惠…」等多種排列組合。</li>
+<li>使用的邏輯：搜尋欄位可以查詢的欄位有哪些？搜尋的邏輯是 And 還是 Or？</li>
+<li>關聯需求：像是後端做完 API 後交付給前端，就需要將兩個 Ticket 關聯。</li>
+</ol>
+<h3 id="-估計每個-ticket-的時數">➤ 估計每個 Ticket 的時數<a class="h-anchor" href="#-%e4%bc%b0%e8%a8%88%e6%af%8f%e5%80%8b-ticket-%e7%9a%84%e6%99%82%e6%95%b8" aria-label="這個段落的連結"></a></h3>
+<p>不同 Ticket 的難易度不同，這邊會由 Tech Lead 分別向 Frontend、Backend 工程師確認 Ticket 的估時。</p>
+<p>此時工程師千萬不要勉強自己，估出一個很難完成的時數，不然在卡關時，會影響到後續一系列的時程規劃。（但也不要估出不合理的時數）</p>
+<blockquote>
+<p>如果某個 Task 預估的時程超過 6 小時，建議要再做細分，否則很難衡量每天實作的進度。</p>
+</blockquote>
+<h3 id="-確認-ticket-的總時數是否在專案的截止日期內">➤ 確認 Ticket 的總時數是否在專案的截止日期內<a class="h-anchor" href="#-%e7%a2%ba%e8%aa%8d-ticket-%e7%9a%84%e7%b8%bd%e6%99%82%e6%95%b8%e6%98%af%e5%90%a6%e5%9c%a8%e5%b0%88%e6%a1%88%e7%9a%84%e6%88%aa%e6%ad%a2%e6%97%a5%e6%9c%9f%e5%85%a7" aria-label="這個段落的連結"></a></h3>
+<p>只要是專案就一定有截止日期，如果將每個預估的時數加總後，發現已經超過了專案的截止日期，那勢必要做一些調整，比如：</p>
+<ol>
+<li>簡化部分功能（ex：原本要用 Auto-Complete，現在改用一般的搜尋）。</li>
+<li>規劃 MVP 先交出去讓客戶使用（ex：原本要經過一系列複雜的流程才能建立的資料，先用 Seeder 代替，以此大幅減少工程師的開發時程）。</li>
+</ol>
+<blockquote>
+<p>這邊不建議堅持原計劃完成所有功能，因為快速開發所累積的技術債，於未來要花更多的時間處理。</p>
+</blockquote>
+<h3 id="-ticket-分配">➤ Ticket 分配<a class="h-anchor" href="#-ticket-%e5%88%86%e9%85%8d" aria-label="這個段落的連結"></a></h3>
+<p>由 PM 規劃在這個 Sprint 中要完成的 Ticket，然後在 Sprint Planning 時進行細節分工；假設一個 Sprint 為 2 週，建議每個人身上掛的 Task 時數不要超過 60 小時，因為：</p>
+<ol>
+<li>時常會有臨時的會議、需求、Bug…等意外事件，需要保留緩衝時間。</li>
+<li>在專案的初始階段，我們無法保證是否由遺漏的規劃、邏輯的錯誤，若把時間塞滿就很難有轉圜的餘地。</li>
+<li>舊的維護專案，有時會有緊急的狀況需要優先處理，這也會吃掉不少時間。</li>
+</ol>
+<h3 id="-專案初始環境建置">➤ 專案初始環境建置<a class="h-anchor" href="#-%e5%b0%88%e6%a1%88%e5%88%9d%e5%a7%8b%e7%92%b0%e5%a2%83%e5%bb%ba%e7%bd%ae" aria-label="這個段落的連結"></a></h3>
+<p>由 Tech Lead 或是 Senior Engineer 負責專案初始環境建置，初始化的專案需要在 README.md 中有以下說明：</p>
+<ol>
+<li>環境需求：Node.js 版本、PHP 版本、MySQL 版本…</li>
+<li>如何在 Local 端建立：安裝流程、環境變數…</li>
+</ol>
+<h3 id="-server-建置">➤ Server 建置<a class="h-anchor" href="#-server-%e5%bb%ba%e7%bd%ae" aria-label="這個段落的連結"></a></h3>
+<p>由 Tech Lead 開出專案系統所需的硬體配置（正式機、測試機）、DNS、要安裝的軟體/套件（ex：Ubuntu Server、MySQL、Node.js、PHP…各自的版本），並請 PM 填寫需求單讓 MIS 依照此規格進行建置。</p>
+<hr>
+<h2 id="三專案進行中">三、專案進行中<a class="h-anchor" href="#%e4%b8%89%e5%b0%88%e6%a1%88%e9%80%b2%e8%a1%8c%e4%b8%ad" aria-label="這個段落的連結"></a></h2>
+<h3 id="-進度回報">➤ 進度回報<a class="h-anchor" href="#-%e9%80%b2%e5%ba%a6%e5%9b%9e%e5%a0%b1" aria-label="這個段落的連結"></a></h3>
+<p>如果團隊有使用專案管理系統，為了日後方便追朔與釐清狀況，建議填寫的內容如下：</p>
+<ol>
+<li>如果實作的方向是討論出來的，請紀錄「與會人員」與「決議結果」。</li>
+<li>如果使用到特別的演算法、技術、套件，請特別附註。</li>
+<li>如果該 Ticket 完成後要由其他人接手處理（ex：後端完成 API 後交付給前端），請說明要執行哪些指令（ex：DB Migration、Seeder…），並提供相關的 API 文件。</li>
+<li>如果發現該 Ticket 完成所花時間與當初的估計有所不同，請與 PM 討論並調整。</li>
+</ol>
+<h3 id="-工程師之間的合作">➤ 工程師之間的合作<a class="h-anchor" href="#-%e5%b7%a5%e7%a8%8b%e5%b8%ab%e4%b9%8b%e9%96%93%e7%9a%84%e5%90%88%e4%bd%9c" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>Ticket 執行順序：一個 Sprint 中，每個工程師都會有很多的 Ticket，但有些 Ticket 會有所謂的「前置條件」，建議在開始作業前要先彼此商議，避免出現等待的空窗期。</li>
+<li>回報 API Bug：請說明是在「哪個系統」、「哪隻 API」、「什麼參數下」會發生。</li>
+<li>回報 Web Bug：請說明是在「哪個系統」、「哪個畫面（截圖）」、「什麼操作下」會發生。</li>
+<li>遇到自己無法解決的問題：請說明是在「哪個系統」、「哪個 Ticket」、「你做過哪些嘗試」、「你認為可能的解決方案」。</li>
+</ol>
+<h3 id="-工程師與-pm-的合作">➤ 工程師與 PM 的合作<a class="h-anchor" href="#-%e5%b7%a5%e7%a8%8b%e5%b8%ab%e8%88%87-pm-%e7%9a%84%e5%90%88%e4%bd%9c" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>PM 請工程師完成 Sprint 以外的需求時，請說明「任務優先度」、「為什麼會有這個需求」、「可以先將哪個 Ticket 排後面一點」。</li>
+<li>如果工程師在開發過程中收到其他團隊的需求，請將對話窗口轉移到 PM。</li>
+<li>如果工程師要請 PM 協助開 Ticket，需描述：「哪個系統」、「要處理的任務/Bug」、「預計要做的事項」、「預計完成所需時間」。</li>
+<li>若身上的 Ticket 數量爆炸多、任務分配不均，請及時反應。</li>
+</ol>
+<blockquote>
+<p>如果是同一個專案，我們可以輕鬆的排出任務的優先順序；但如果多個專案同時發起優先度高的任務，工程師在這種狀況下會不知所措，需要由 PM 協助排出優先順序。</p>
+</blockquote>
+<h3 id="-了解為什麼都要由-pm-來開-ticket">➤ 了解為什麼都要由 PM 來開 Ticket<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3%e7%82%ba%e4%bb%80%e9%ba%bc%e9%83%bd%e8%a6%81%e7%94%b1-pm-%e4%be%86%e9%96%8b-ticket" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>如果大家都自己開 Ticket，PM 會無法掌握每個人實際在做的任務，即使有 Tag 到 PM，PM 也未必有辦法看到每一則訊息。</li>
+<li>工程師心中的任務優先順序可能與 PM 不同，這會造成最後在核對完成的任務時，因為彼此的認知落差產生爭執。</li>
+<li>每個任務完成所需的時間成本不同，可能有些任務是可以不必做，又或者是能交給其他人去做的，讓 PM 從整體的角度去看較不會出現勞逸不均的狀況。</li>
+</ol>
+<hr>
+<blockquote class="pullquote"><p>制定大家願意共同遵守的工作流程，在了解彼此的權利＆義務後，相信團隊的運作會更為順利；文章的流程未必適用於每個團隊，僅為筆者過去經驗的彙整。</p>
+</blockquote>
+<hr>
+<pre tabindex="0"><code>工程師血淚史
+▋ 團隊在系統開發上遇到了哪些問題
+▋ 需求不斷變更，到底哪個環節出錯了
+▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
+▋ 如果沒有明確的開發流程，團隊將會無所適從(本篇)
+▋ 你知道對專案來說，README.md 有多麼重要嗎？
+</code></pre>]]></content:encoded>
+    </item>
+    <item>
+      <title>現在的 Daily Scrum 真的適合團隊嗎？── 下班有約系列文</title>
+      <link>https://deanlin.net/blog/202207/is-daily-scrum-working/</link>
+      <pubDate>Wed, 20 Jul 2022 22:13:08 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202207/is-daily-scrum-working/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>並不是導入一個新的管理方式，專案執行就能夠順風順水。</description>
+      <content:encoded><![CDATA[<p>並不是導入一個新的管理方式，專案執行就能夠順風順水。</p>
+<p>這幾年有越來越多的團隊導入「敏捷開發」，覺得只要跟上時代潮流，過去遇到的問題就能迎刃而解。</p>
+<p>前些日子跟朋友聚會時，發現大部分的公司都有導入「敏捷開發」；但相比於管理階層的推崇，更多工程師是抱著不情願的心態在參與。</p>
+<p>不過在這次的聚會中，有個朋友提出的 Daily Scrum 方案讓大家耳目一新，所以我就特別寫了這篇部落格來分享。</p>
+<p><img src="https://deanlin.net/blog/202207/is-daily-scrum-working/images/is-daily-scrum-working-01.webp" width="1400" height="736" alt="現在的 Daily Scrum 真的適合團隊嗎？── 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="一真的有-daily-scrum-的必要性嗎">一、真的有 Daily Scrum 的必要性嗎？<a class="h-anchor" href="#%e4%b8%80%e7%9c%9f%e7%9a%84%e6%9c%89-daily-scrum-%e7%9a%84%e5%bf%85%e8%a6%81%e6%80%a7%e5%97%8e" aria-label="這個段落的連結"></a></h2>
+<p>Daily Scrum 的目的，是讓團隊成員快速同步彼此的資訊。</p>
+<p>但理想很美好，現實很骨感；大部分的人只在意自己要報告的東西，換到其他人報告時，大腦往往處於待機狀態。</p>
+<p>當然也是有些人持反對意見，因為他們在 Daily Scrum 時討論的熱火朝天；但其他參與會議的人因為覺得議題跟他們無關，所以陷入休眠狀態。</p>
+<p>綜上所述，許多團隊的 Daily Scrum 實際上只是走個形式。</p>
+<blockquote>
+<p>雖然上面這段很殘酷，但可能更符合大多數工程師的心聲。</p>
+</blockquote>
+<hr>
+<h2 id="二daily-scrum-背後的時間成本與壓力">二、Daily Scrum 背後的時間成本與壓力<a class="h-anchor" href="#%e4%ba%8cdaily-scrum-%e8%83%8c%e5%be%8c%e7%9a%84%e6%99%82%e9%96%93%e6%88%90%e6%9c%ac%e8%88%87%e5%a3%93%e5%8a%9b" aria-label="這個段落的連結"></a></h2>
+<p>原則上每個人在 Daily Scrum 的報告時間都小於 3 分鐘。</p>
+<p>但為了這 3 分鐘，許多人要花 10 分鐘以上的時間整理資料，並在會議開始前順一下口條。</p>
+<p>我們期望 Daily Scrum 除了可以同步資訊外，還可以凝聚向心力；但對於個性內向的人來說，每次開會都是一場劫難。</p>
+<p>就拿筆者舉例，儘管我準備資料的時間通常都在 10 分鐘以內，但在會議開始前的 5~10 分鐘，我是無法做其他事情的，因為我害怕事情做到一半思緒中斷。</p>
+<blockquote>
+<p>也許 Daily Scrum 只花 8~15 分鐘，但對許多人而言可能要付出 30 分鐘以上的時間成本。</p>
+</blockquote>
+<hr>
+<h2 id="三把-daily-scrum-改為文字報告有什麼好處">三、把 Daily Scrum 改為文字報告有什麼好處？<a class="h-anchor" href="#%e4%b8%89%e6%8a%8a-daily-scrum-%e6%94%b9%e7%82%ba%e6%96%87%e5%ad%97%e5%a0%b1%e5%91%8a%e6%9c%89%e4%bb%80%e9%ba%bc%e5%a5%bd%e8%99%95" aria-label="這個段落的連結"></a></h2>
+<p>朋友表示為了改善上面的問題，團隊將 Daily Scrum 改為文字報告，幾個月下來發現大家的效率反而上升了，他說這麼做有以下優點：</p>
+<ol>
+<li>文字閱讀的速度遠高於口頭報告。</li>
+<li>口頭報告可能會含糊不清，但文字報告因為要附上 Ticket，所以很難打混。</li>
+<li>想要討論的人可以私下約，不會打擾到其他人的時間。</li>
+<li>除非對專案架構很了解，不然聽別人口頭報告常常有聽沒有懂，而文字就減少了這類情況。</li>
+<li>只要在規定的時間繳交文字報告即可，有更完整的時間段可以做事。</li>
+<li>對個性內向的人來說是一個福音。</li>
+</ol>
+<hr>
+<h2 id="四我的想法">四、我的想法<a class="h-anchor" href="#%e5%9b%9b%e6%88%91%e7%9a%84%e6%83%b3%e6%b3%95" aria-label="這個段落的連結"></a></h2>
+<p>我聽到這個方案的當下很興奮！因為真的解決了很多實務上的痛點！</p>
+<p>而且改成文字後，從管理的角度來看，的確更能了解每個人做了些什麼。</p>
+<p>但這個方案也未必適合每個團隊，畢竟文字報告跟實體會議的差異還是挺大的，多互動有助於釐清彼此的觀點；如果只把 Daily Scrum 當成進度報告，沒有後續的話就會失去原有的意義。</p>
+<p>不過如果 Daily Scrum 的成員時常處於待機模式，也許可以嘗試推行看看；適合 A 團隊的方案，未必適合 B 團隊；任何的變革的成敗，跟「人」的關係最大，也需要根據「環境」來調整，直接複製貼上容易水土不服。</p>
+<p>如果讀者有其他的想法也歡迎留言喔，你的經驗也許能幫助到更多的人。</p>
+<blockquote>
+<p><strong>2022.7.29 補充</strong></p>
+<p>有朋友看到文章後跟我分享，對他們團隊來說，早上的 Daily Scrum 更像是一種儀式，從嘴巴說出來要做的東西是一種承諾，會給人完成任務的動力。</p>
+</blockquote>
+<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202207/is-daily-scrum-working/images/is-daily-scrum-working-02.webp" width="1400" height="319" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<hr>
+<pre tabindex="0"><code>下班有約系列文
+▋ [前端]新手工程師容易卡住的問題
+▋ [前端＆後端]工程師常犯的錯誤
+▋ 讓開發團隊更好協作的方式
+▋ 談談 Pair Programing
+▋ 談談工程師的話語權
+▋ 出社會後，新鮮人要及早知道的 5 件事
+▋ 面試的性向測驗竟然準到讓人心裡發寒？
+▋ 反其道而行的任務分配
+▋ 現在的 Daily Scrum 真的適合團隊嗎？(本篇)
+▋ 用低成本也能請到好員工？資深 HR 不想告訴你的秘密！
+</code></pre>]]></content:encoded>
+    </item>
+    <item>
+      <title>當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？ — 工程師血淚史</title>
+      <link>https://deanlin.net/blog/202207/scrum-master-vs-pm/</link>
+      <pubDate>Tue, 12 Jul 2022 21:16:40 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202207/scrum-master-vs-pm/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>在過去的文章中有提到，為了提高團隊成員在 Scrum 的參與度，我們改成輪流擔任 Scrum Master 的機制，但這樣真的有效果嗎？而且 Scrum Master 跟 PM 的工作高度重疊，要如何區分兩者的權力與責任呢？</description>
+      <content:encoded><![CDATA[<p>在<a href="https://deanlin.net/blog/202205/team-development-problems/">過去的文章</a>中有提到，為了提高團隊成員在 Scrum 的參與度，我們改成輪流擔任 Scrum Master 的機制，但這樣真的有效果嗎？而且 Scrum Master 跟 PM 的工作高度重疊，要如何區分兩者的權力與責任呢？</p>
+<p>這篇文章將與您分享我們是如何調整，以及調整後發生哪些改變。</p>
+<p><img src="https://deanlin.net/blog/202207/scrum-master-vs-pm/images/scrum-master-vs-pm-01.webp" width="1400" height="730" alt="當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？ — 工程師血淚史（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>本文提及之專案、人物、事件純屬虛構，如有雷同，實屬巧合，請勿對號入座。</p>
+</blockquote>
+<pre tabindex="0"><code>大綱
+ㄧ、調整的目的是什麼？
+二、定義 Scrum Master 跟 PM 的權限
+  ➤ Scrum Master
+  ➤ PM
+三、調整後發生哪些改變
+  ➤ 成員對專案、團隊有更深刻的認知
+  ➤ Scrum 參與度提升
+  ➤ 回顧時發表更踴躍
+四、總結
+</code></pre><h2 id="ㄧ調整的目的是什麼">ㄧ、調整的目的是什麼？<a class="h-anchor" href="#%e3%84%a7%e8%aa%bf%e6%95%b4%e7%9a%84%e7%9b%ae%e7%9a%84%e6%98%af%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<p>明明跑的是 Scrum，卻沒有團隊合作的感覺。</p>
+<p>每間公司跑 Scrum 的方式與目的不同，有些 Scrum 跑起來更像是傳統的工作匯報；即使在身處在同一個會議中，卻只有主管跟 PM 關心每個人的工作內容。</p>
+<p>如果團隊成員不關心彼此的工作內容，單獨匯報或是用紙本報告其實更加省時；開 Scrum 的目的是希望大家了解彼此的任務，確認是否有需要調整的地方，避免任務的先後順序、優先度搞錯，導致專案進度延宕。</p>
+<p>但如果只是口頭上說希望大家積極參與，實際效果就跟老師要學生好好聽課一樣，因此想透過流程來進行改善。</p>
+<p>而我們選擇的方案是 — 讓團隊成員輪流擔任 Scrum Master。</p>
+<hr>
+<h2 id="二定義-scrum-master-跟-pm-的權限">二、定義 Scrum Master 跟 PM 的權限<a class="h-anchor" href="#%e4%ba%8c%e5%ae%9a%e7%be%a9-scrum-master-%e8%b7%9f-pm-%e7%9a%84%e6%ac%8a%e9%99%90" aria-label="這個段落的連結"></a></h2>
+<p><strong>我們希望在提升成員參與度的同時，盡可能不要增加負擔。</strong></p>
+<p>因為 Scrum Master 的工作內容與 PM 高度重疊，如果沒區分好彼此的界線，勢必會導致其他成員的困惑，比如：</p>
+<ol>
+<li>開單要找誰？</li>
+<li>Sprint Planning 的規劃由誰負責？</li>
+<li>需求規格由誰來寫？</li>
+</ol>
+<p>所以我們做了如下區分：</p>
+<h3 id="-scrum-master">➤ Scrum Master<a class="h-anchor" href="#-scrum-master" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><strong>主持 Daily Scrum Meeting</strong>：了解每個人工作的進度、預計要做的事、以及遇到的問題。</li>
+<li><strong>主持 Sprint Review、Retrospective 會議</strong>：讓大家報告在這個 Sprint 中做了什麼，有哪些好的可以繼續保持，有哪些壞的要進行調整。</li>
+<li><strong>參與 Sprint Planning 會議</strong>：了解下個 Sprint 要完成的事項。</li>
+</ol>
+<h3 id="-pm">➤ PM<a class="h-anchor" href="#-pm" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><strong>專案管理</strong>：追蹤成員的進度、討論需求、協調資源…原則上工作內容不變，只是部分工作交由 Scrum Master 主持。</li>
+<li><strong>輔助 Scrum Master</strong>：儘管已經簡化許多 Scrum Master 的工作，但因為部分成員並沒有接觸過敏捷開發，因此需要幫忙拾漏補遺。</li>
+<li><strong>規劃 Sprint Planning</strong>：無論是規劃要完成的工作，還是與每位工程師確認工時，都是需要花費不少心力的任務，因此主要還是由 PM 專職處理。</li>
+</ol>
+<blockquote>
+<p>之所以這樣設計，是希望成員在擔任 Scrum Master 的同時，儘可能不影響到他的本職工作，我們期待這樣的流程可以讓每位成員更融入專案，而不是取代 PM 的工作。</p>
+</blockquote>
+<hr>
+<h2 id="三調整後發生哪些改變">三、調整後發生哪些改變<a class="h-anchor" href="#%e4%b8%89%e8%aa%bf%e6%95%b4%e5%be%8c%e7%99%bc%e7%94%9f%e5%93%aa%e4%ba%9b%e6%94%b9%e8%ae%8a" aria-label="這個段落的連結"></a></h2>
+<p>目前實行了 3 個 Sprint，成員的接受度還算高（希望不是敢怒不敢言 😅）。</p>
+<h3 id="-成員對專案團隊有更深刻的認知">➤ 成員對專案、團隊有更深刻的認知<a class="h-anchor" href="#-%e6%88%90%e5%93%a1%e5%b0%8d%e5%b0%88%e6%a1%88%e5%9c%98%e9%9a%8a%e6%9c%89%e6%9b%b4%e6%b7%b1%e5%88%bb%e7%9a%84%e8%aa%8d%e7%9f%a5" aria-label="這個段落的連結"></a></h3>
+<p>不管是否願意，主持 Daily Scrum 時一定要了解每個人具體的狀況；原本專注在自己任務的人，也會因為主持 Sprint Review、Retrospective 而強迫了解整個專案，並更加認識團隊。</p>
+<h3 id="-scrum-參與度提升">➤ Scrum 參與度提升<a class="h-anchor" href="#-scrum-%e5%8f%83%e8%88%87%e5%ba%a6%e6%8f%90%e5%8d%87" aria-label="這個段落的連結"></a></h3>
+<p>因為 Scrum Master 是輪流的，如果我今天不給你面子好好聆聽跟報告，下次換我當 Scrum Master 時可能大家會不理我；同儕間的心理因素會讓參與度變得更高（但這個情形未必適用在每個團隊身上）。</p>
+<h3 id="-回顧時發表更踴躍">➤ 回顧時發表更踴躍<a class="h-anchor" href="#-%e5%9b%9e%e9%a1%a7%e6%99%82%e7%99%bc%e8%a1%a8%e6%9b%b4%e8%b8%b4%e8%ba%8d" aria-label="這個段落的連結"></a></h3>
+<p>由成員來做 Sprint Retrospective 時，大家相對來說更敢發表意見；這就跟同學分組討論時比較熱絡，但當老師問同學有沒有問題時，台下直接靜音的道理一樣。</p>
+<hr>
+<h2 id="四總結">四、總結<a class="h-anchor" href="#%e5%9b%9b%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<p><strong>花的時間越多，就會越認真投入。</strong></p>
+<p>其實並不是每位成員在剛開始的時候都願意跑 Scrum 的，因為他們覺得這是在浪費時間、單純走一個形式、對專案沒有幫助…</p>
+<p>因此初期更像是每天集合匯報工作，直到要輪流當 Scrum Master 時，因為無法拒絕，所以每位成員都一定要有所了解，而這個過程促使團隊往好的方向發展（應該 🤔）。</p>
+<p>當然還要更多時間來驗證，相信每次的 Sprint Retrospective 都能讓原本的流程更加完善。</p>
+<blockquote class="pullquote"><p>如果讀者有敏捷開發的經驗，歡迎留言分享，你的留言或許可以幫助到其他人。</p>
+</blockquote>
+<hr>
+<pre tabindex="0"><code>工程師血淚史
+▋ 團隊在系統開發上遇到了哪些問題
+▋ 需求不斷變更，到底哪個環節出錯了
+▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？(本篇)
+▋ 如果沒有明確的開發流程，團隊將會無所適從
+▋ 你知道對專案來說，README.md 有多麼重要嗎？
+</code></pre>]]></content:encoded>
+    </item>
+    <item>
+      <title>需求不斷變更，到底哪個環節出錯了 ── 工程師血淚史</title>
+      <link>https://deanlin.net/blog/202207/constantly-changing-requirements/</link>
+      <pubDate>Thu, 07 Jul 2022 21:42:20 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202207/constantly-changing-requirements/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>有些 PM 覺得跟工程師溝通很痛苦，甚至大腦會不時冒出這樣的想法：「明明只是修改一個小地方，為什麼總有各式各樣的理由拒絕跟拖延，就算答應修改，做起來也是一副心不甘情不願的樣子。」</description>
+      <content:encoded><![CDATA[<p>有些 PM 覺得跟工程師溝通很痛苦，甚至大腦會不時冒出這樣的想法：「明明只是修改一個小地方，為什麼總有各式各樣的理由拒絕跟拖延，就算答應修改，做起來也是一副心不甘情不願的樣子。」</p>
+<p>其實大部分的工程師都是可以理性溝通的，但我們無法接受一直做「白工」和「重工」，今天筆者想透過一個案例來跟大家分享「客戶、PM、工程師」之間思維的差異，並提出可以改善的方案。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202207/constantly-changing-requirements/images/constantly-changing-requirements-01.webp" width="1158" height="605" alt="圖片來自：123RF" loading="lazy" decoding="async">
+  <figcaption>圖片來自：123RF</figcaption>
+</figure>
+
+<blockquote>
+<p>本文提及之專案、人物、事件純屬虛構，如有雷同，實屬巧合，請勿對號入座。</p>
+</blockquote>
+<pre tabindex="0"><code>大綱
+一、工程師說 Loading 太重，可以請你幫忙分擔嗎？
+二、需求不斷變更，緩衝時間再多也不夠用！
+三、可是客戶態度很強硬啊！東西真的不符合他們需求
+四、整理不完的例外，變更不斷的需求
+五、從源頭解決問題，不是每個問題都要靠程式解決
+六、客戶未必具備工程背景，要協助他們表達需求
+七、我們要如何調整，讓未來的合作更加順利
+</code></pre><h2 id="一工程師說-loading-太重可以請你幫忙分擔嗎">一、工程師說 Loading 太重，可以請你幫忙分擔嗎？<a class="h-anchor" href="#%e4%b8%80%e5%b7%a5%e7%a8%8b%e5%b8%ab%e8%aa%aa-loading-%e5%a4%aa%e9%87%8d%e5%8f%af%e4%bb%a5%e8%ab%8b%e4%bd%a0%e5%b9%ab%e5%bf%99%e5%88%86%e6%93%94%e5%97%8e" aria-label="這個段落的連結"></a></h2>
+<p>PM 反饋這個問題後，我打開專案管理系統，看那位抱怨 Loading 太重的工程師手上有哪些 Ticket，是否需要做適當的調整。</p>
+<p>結果仔細一看才發現，儘管那位工程師在這個 Sprint 中只剩下 2 張 Ticket 尚未完成，但有一張「匯出 Excel 報表」的 Ticket 預估時程遠遠超過之前在 Sprint Planning 的預估（4➝15）。</p>
+<p>因為剩下的 2 個 Ticket 都是這次 Sprint 的核心功能，且距離結束只剩不到 2 個工作天，因此 PM 希望我可以接手那個估時已經到達 15 小時的 Ticket，讓工程師專注處理剩下的 Ticket。</p>
+<p>跟 PM 談到這裡的時候我覺得有點奇怪，之所以將匯出 Excel 報表的 Ticket 分配給那位工程師，就是因為他之前有實作的經驗，沒道理在這個地方卡這麼久。</p>
+<hr>
+<h2 id="二需求不斷變更緩衝時間再多也不夠用">二、需求不斷變更，緩衝時間再多也不夠用！<a class="h-anchor" href="#%e4%ba%8c%e9%9c%80%e6%b1%82%e4%b8%8d%e6%96%b7%e8%ae%8a%e6%9b%b4%e7%b7%a9%e8%a1%9d%e6%99%82%e9%96%93%e5%86%8d%e5%a4%9a%e4%b9%9f%e4%b8%8d%e5%a4%a0%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<p>為了釐清這個問題，我跟 PM、工程師開了一個臨時會議，去了解是什麼原因導致一個不困難的 Ticket 花了這麼多時間。</p>
+<p>此時我才從工程師那邊了解到另一個事實，其實對他而言，匯出 Excel 報表的功能並不複雜，<strong>Loading 太重的原因是客戶不斷變更需求，導致這個 Ticket 的估時不斷增加，但預計交付的日期並沒有延長，因此時間壓力會全部壓到工程師身上</strong>。</p>
+<p>我在詢問這個需求變更的頻率有多高時，工程師表示把新版交付出去後，可能再過 3、4 個小時就會收到新的需求變更；儘管每次修改都不會花太多時間，但架不住這麼頻繁的更動啊！</p>
+<blockquote>
+<p>當需求變更導致一直做白工、重工，就可能讓工程師工作效率下降，甚至可能在完成功能後故意拖一段時間再交付；畢竟提早交付沒好事，只是讓自己的工作量變更多而已。</p>
+</blockquote>
+<hr>
+<h2 id="三可是客戶態度很強硬啊東西真的不符合他們需求">三、可是客戶態度很強硬啊！東西真的不符合他們需求<a class="h-anchor" href="#%e4%b8%89%e5%8f%af%e6%98%af%e5%ae%a2%e6%88%b6%e6%85%8b%e5%ba%a6%e5%be%88%e5%bc%b7%e7%a1%ac%e5%95%8a%e6%9d%b1%e8%a5%bf%e7%9c%9f%e7%9a%84%e4%b8%8d%e7%ac%a6%e5%90%88%e4%bb%96%e5%80%91%e9%9c%80%e6%b1%82" aria-label="這個段落的連結"></a></h2>
+<p>客戶花錢請我們做系統，當然是希望做出符合他們實際業務需求的產品；站在客戶的立場上，他們當然會用最嚴格的標準在看待每一個功能。</p>
+<p>但站在我們的立場上，在人力資源固定的狀態下，每多一次需求變更，我們就需要花更多的時間與精力去完成，甚至導致部分同仁需要加班。</p>
+<p>為了解決這個問題，我請 PM 跟客戶約一個時間，一起了解需求不停變更的原因是什麼，不然這樣一直改下去其實是在浪費彼此的時間。</p>
+<hr>
+<h2 id="四整理不完的例外變更不斷的需求">四、整理不完的例外，變更不斷的需求<a class="h-anchor" href="#%e5%9b%9b%e6%95%b4%e7%90%86%e4%b8%8d%e5%ae%8c%e7%9a%84%e4%be%8b%e5%a4%96%e8%ae%8a%e6%9b%b4%e4%b8%8d%e6%96%b7%e7%9a%84%e9%9c%80%e6%b1%82" aria-label="這個段落的連結"></a></h2>
+<p>客戶是一個專門提供材料出貨的公司，在深入訪談後，才了解需求之所以會一直變更，是因為這個 Excel 報表始終沒有決定一個固定的版本，會這樣是因為過去客戶在填寫出貨單時沒有律定格式，同一個材料可能有 10 幾種表達方式。</p>
+<p>過去沒有遇到這個問題，是因為之前的出貨單都是 Case by Case，所以他們材料名稱儘管不統一，但依舊能夠看得懂；可是如果把好幾張出貨單放在一起看，就會因為資料很難整合而產生許多問題，這也是客戶找我們做系統化的原因。</p>
+<p>下面用手機來舉個例子，我們手機有前鏡頭，假使在出貨單上顯示：「前鏡頭、前置相機、front camera、Front Camera、frontCamera」我相信大家都看得懂這是指同一個東西；但如果管理階層想要知道公司這個月到底賣了多少個「前鏡頭」，下屬就需要畫很多時間做比對跟整合。</p>
+<p>除了相機的案例外，這邊再舉一個螢幕的例子，每個手機螢幕的尺寸大小不同，因此出貨單上有各自的命名；當管理階層想了解這個月總共賣了多少個「螢幕」，下屬會因為出貨單的材料沒有階層的概念而整理到崩潰。</p>
+<p>在了解客戶的痛點後，我們就知道這是因為過去「命名不統一、材料缺乏階層概念」導致的問題。</p>
+<p>PM 一開始也是從這個方向去處理問題的，他先請客戶將期望的命名、材料的階層整理出來，然後請工程師依照規格去統整；儘管這個方案看似沒有問題，但因為客戶當時在填寫出貨單時，命名太過狂野，因此有非常多的例外需要處理，而每發現一個例外就要請工程師調整程式。</p>
+<hr>
+<h2 id="五從源頭解決問題不是每個問題都要靠程式解決">五、從源頭解決問題，不是每個問題都要靠程式解決<a class="h-anchor" href="#%e4%ba%94%e5%be%9e%e6%ba%90%e9%a0%ad%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c%e4%b8%8d%e6%98%af%e6%af%8f%e5%80%8b%e5%95%8f%e9%a1%8c%e9%83%bd%e8%a6%81%e9%9d%a0%e7%a8%8b%e5%bc%8f%e8%a7%a3%e6%b1%ba" aria-label="這個段落的連結"></a></h2>
+<p>了解來龍去脈後，我想也許我們都把問題搞複雜了，既然我們都知道問題是在出貨單上，為什麼不要從源頭來解決這個問題呢？</p>
+<p>如果出貨單的格式沒有律定，在未來同樣的問題還是會發生；因為出貨單上每天都可能會誕生新的名詞，而新的名詞會無法自動歸類，可以料想到就算現在符合客戶的需求，在未來還是會有許多衍生問題。</p>
+<p>當然過去的歷史業障很難要求客戶調整，「統一名詞、確定階層」還是一個必要的工作；但也許我們可以先用過去的出貨單模擬客戶期望的 Excel，而不是不斷請工程師修改程式。</p>
+<blockquote>
+<p>若發現有缺少、錯誤的材料先記錄下來，累積到一定的量後再請工程師修正，不然他會改到瘋。</p>
+</blockquote>
+<p>同時為了讓錯誤的歷史在這個階段就停下，我們需要請客戶與填寫出貨單的部門溝通，律定「出貨單」填寫的格式。</p>
+<p>如果涉及到客戶公司內部，盡可能讓他們「自行協調」，我們做好「引導的角色」就夠了，如果由我們向客戶的其他部門提出需求，那破局的機率非常高。</p>
+<hr>
+<h2 id="六客戶未必具備工程背景我們要協助他們表達需求">六、客戶未必具備工程背景，我們要協助他們表達需求<a class="h-anchor" href="#%e5%85%ad%e5%ae%a2%e6%88%b6%e6%9c%aa%e5%bf%85%e5%85%b7%e5%82%99%e5%b7%a5%e7%a8%8b%e8%83%8c%e6%99%af%e6%88%91%e5%80%91%e8%a6%81%e5%8d%94%e5%8a%a9%e4%bb%96%e5%80%91%e8%a1%a8%e9%81%94%e9%9c%80%e6%b1%82" aria-label="這個段落的連結"></a></h2>
+<p>其實就算是公司內部的溝通也是不容易的，起初填寫出貨單的部門對律定格式這件事反彈極大，因為他們原本都做得好好的，現在變得要依規範行事。</p>
+<p>在了解到客戶推行的困難點後，我們製作了一張高達數百個欄位的 Excel，並請客戶向填寫出貨單的部門展示，讓他們體會到混亂的格式造成什麼後果。</p>
+<p>在這之後他們才理解為什麼格式需要律定了，也了解公司導入這個系統就是希望把流程標準化，減少報表製作的時間，不是想要刁難他們。</p>
+<hr>
+<h2 id="七我們要如何調整讓未來的合作更加順利">七、我們要如何調整，讓未來的合作更加順利<a class="h-anchor" href="#%e4%b8%83%e6%88%91%e5%80%91%e8%a6%81%e5%a6%82%e4%bd%95%e8%aa%bf%e6%95%b4%e8%ae%93%e6%9c%aa%e4%be%86%e7%9a%84%e5%90%88%e4%bd%9c%e6%9b%b4%e5%8a%a0%e9%a0%86%e5%88%a9" aria-label="這個段落的連結"></a></h2>
+<p>儘管這個問題最後在多方的協作下圓滿解決，但其實中間有許多摩擦是可以在初期避免的。</p>
+<h3 id="-tech-lead">➤ Tech Lead<a class="h-anchor" href="#-tech-lead" aria-label="這個段落的連結"></a></h3>
+<p>若發現某個 Ticket 的估時逐漸增加，要主動向工程師詢問實際狀況，因為有些細節在 Scrum Meeting 並不會提及。</p>
+<p>若發現工程師在做重工、白工，要先釐清問題來源；不是每個問題都要靠程式解決，我們可以先嘗試跟客戶溝通。</p>
+<h3 id="-pm">➤ PM<a class="h-anchor" href="#-pm" aria-label="這個段落的連結"></a></h3>
+<p>如果客戶提出的需求變更太過零碎、頻繁，可以先記錄下來，等累積到一定的量，或是明確需求後再交給工程師處理。</p>
+<p>如果發現需求能用模擬的就先用模擬的，盡可能不要讓工程師把時間耗在有高機率做白工的需求變更上。</p>
+<h3 id="-工程師">➤ 工程師<a class="h-anchor" href="#-%e5%b7%a5%e7%a8%8b%e5%b8%ab" aria-label="這個段落的連結"></a></h3>
+<p>如果發現需求變更的內容不合理、次數太多，可以即時與 Tech Lead 反應，而不是用加班默默把需求的吃下來。</p>
+<blockquote class="pullquote"><p>希望這個案例對讀者日後執行專案時有幫助，如果還有其他建議也歡迎留言分享喔～</p>
+</blockquote>
+<hr>
+<pre tabindex="0"><code>工程師血淚史
+▋ 團隊在系統開發上遇到了哪些問題
+▋ 需求不斷變更，到底哪個環節出錯了(本篇)
+▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
+▋ 如果沒有明確的開發流程，團隊將會無所適從
+▋ 你知道對專案來說，README.md 有多麼重要嗎？
+</code></pre>]]></content:encoded>
+    </item>
+    <item>
+      <title>團隊在系統開發上遇到了哪些問題 — 工程師血淚史</title>
+      <link>https://deanlin.net/blog/202205/team-development-problems/</link>
+      <pubDate>Fri, 27 May 2022 11:59:03 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202205/team-development-problems/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>「我們學了很多方法，但在實務上卻各種出包。」我想這應該是很多開發團隊的心裡話，儘管大家都能看見問題，也嘗試導入各種方法試圖解決；但很多時候別說進步，有時甚至還會走回頭路，筆者剛好透過這個主題整理團隊過往遇到的問題；不過解決方案是否有效、會不會衍生新的問題，就看之後的連載了😅</description>
+      <content:encoded><![CDATA[<p>「我們學了很多方法，但在實務上卻各種出包。」我想這應該是很多開發團隊的心裡話，儘管大家都能看見問題，也嘗試導入各種方法試圖解決；但很多時候別說進步，有時甚至還會走回頭路，筆者剛好透過這個主題整理團隊過往遇到的問題；不過解決方案是否有效、會不會衍生新的問題，就看之後的連載了😅</p>
+<p><img src="https://deanlin.net/blog/202205/team-development-problems/images/team-development-problems-01.webp" width="1219" height="671" alt="團隊在系統開發上遇到了哪些問題 — 工程師血淚史（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>本文提及之專案、人物、事件純屬虛構，如有雷同，實屬巧合，請勿對號入座。</p>
+</blockquote>
+<pre tabindex="0"><code>大綱
+ㄧ、客戶、專案經理、開發人員，3 者沒有共同語言
+二、Scrum 淪為形式
+三、專案到最後時刻才發現一堆 Bug
+四、Tech Lead 沒辦法發揮應有的作用
+五、團隊失去成長動能
+六、不是每個成員都按照流程走
+七、血淚小結
+</code></pre><h2 id="ㄧ客戶專案經理開發人員3-者沒有共同語言">ㄧ、客戶、專案經理、開發人員，3 者沒有共同語言<a class="h-anchor" href="#%e3%84%a7%e5%ae%a2%e6%88%b6%e5%b0%88%e6%a1%88%e7%b6%93%e7%90%86%e9%96%8b%e7%99%bc%e4%ba%ba%e5%93%a13-%e8%80%85%e6%b2%92%e6%9c%89%e5%85%b1%e5%90%8c%e8%aa%9e%e8%a8%80" aria-label="這個段落的連結"></a></h2>
+<p>為了讓每個角色各司其職，在溝通需求時，都是由專案經理跟客戶溝通，得到結論後再跟開發人員說明。</p>
+<p>儘管看起來很合理，但在實務上容易遇到以下問題：</p>
+<ol>
+<li><strong>名詞定義</strong>：同一個名詞，大家的定義都不一樣；這導致 3 者在溝通上雞同鴨講，彼此以為對方懂了，但根本在說不一樣的東西。</li>
+<li><strong>專案經理與開發人員都不具備專案的背景知識</strong>：如果碰上大型專案，在開發團隊沒有相關背景知識的狀態下，光是架構的設計就很容易出問題；又因為沒有相關背景，所以根本沒有共同語言。</li>
+<li><strong>規格書不明確</strong>：開發人員按照規格書來開發，但如果規格書很模糊，工程師在開發時會浪費很多時間在額外的溝通。（最悲慘的狀況是工程師放棄溝通，選擇按照直覺來開發）</li>
+</ol>
+<p>上面的問題，想嘗試透過以下方法解決：</p>
+<ol>
+<li><strong>專案經理與開發人員以「英文」來溝通欄位</strong>：資料庫都是英文欄位，如果規格書上的欄位都以中文表達，就不能怪工程師在開發上直接選擇「感覺」意思最接近的欄位。</li>
+<li><strong>由專案經理建立一套「中英文名詞定義對照表」</strong>：內部可以用英文律定欄位，但跟客戶溝通時，大多情況還是使用中文；所以需要建立一份對照表，避免彼此的誤解。</li>
+<li><strong>需求規格參數明確</strong>：對客戶來說好像差不多，但對工程師來說，差一個欄位就好似差了一個宇宙。</li>
+</ol>
+<hr>
+<h2 id="二scrum-淪為形式">二、Scrum 淪為形式<a class="h-anchor" href="#%e4%ba%8cscrum-%e6%b7%aa%e7%82%ba%e5%bd%a2%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>我們期待導入「Agile(敏捷)」開發後，可以提升團隊的生產力、向心力，但實際上會遇到以下問題：</p>
+<ol>
+<li><strong>只在意自己要講什麼</strong>：跑 Scrum 的原意是希望大家瞭解彼此工作的進度，透過資訊透明讓專案更加順利；但很多時候我們只在意自己今天要講什麼，這種狀況在 Scrum Master 為固定人選時更為明顯。</li>
+<li><strong>規格不明確導致需求時常變更</strong>：在 Sprint Plan 時，我們會先估點來計算每個人工作需要的時間；但在開發階段若發現規格有問題，專案經理就要再跟客戶溝通，這一來一往與程式調整的時間，將會完全破壞這個 Sprint 預計要完成的項目。</li>
+<li><strong>安排額外的任務</strong>：如果臨時安排不在這個 Sprint 的任務給工程師，又沒有明確告知任務優先度，當這種狀況頻繁發生時，Scrum 就變成單純的個人報告，工作內容逐漸與 Sprint Plan 脫鉤。</li>
+</ol>
+<p>上面的問題，想嘗試透過以下方法解決：</p>
+<ol>
+<li><strong>讓每個人輪流當 Scrum Master</strong>：在這個位置上，就算不願意，你還是得知道每個人的進度、卡住的問題、要做的事。</li>
+<li><strong>指派任務前，充分確認客戶需求</strong>：如果在商談時就定下明確的需求規格，那工程師就有開發的依據，發現邏輯問題時也能第一時間提出，不至於自由發揮到一半才發現問題。</li>
+<li><strong>盡量不要讓突發狀況影響現在的 Sprint Plan</strong>：工程師也是人，臨時安排的工作勢必會影響到現在的專案，如果可以，突發的狀況盡量安排到下個 Sprint。</li>
+</ol>
+<hr>
+<h2 id="三專案到最後時刻才發現一堆-bug">三、專案到最後時刻才發現一堆 Bug<a class="h-anchor" href="#%e4%b8%89%e5%b0%88%e6%a1%88%e5%88%b0%e6%9c%80%e5%be%8c%e6%99%82%e5%88%bb%e6%89%8d%e7%99%bc%e7%8f%be%e4%b8%80%e5%a0%86-bug" aria-label="這個段落的連結"></a></h2>
+<p>我們花 20% 的時間完成 80% 的功能，卻在最後 20% 的功能上花了 80% 的時間。</p>
+<p>如果問題發生不只一次，那肯定要想辦法解決；通常會有這樣的狀況是因為：</p>
+<ol>
+<li><strong>架構規劃不良</strong>：專案啟動後，一開始大家都是摸著石頭過河，無法確定自己現在的方向是否正確；往往到後期，才發現當初的規劃有某些後遺症。</li>
+<li><strong>前期進度按照時程走很安心</strong>：因為前期每個 Check point 都很準時，所以產生接下來也會繼續準時的心理預期。</li>
+<li><strong>想要一次交卷</strong>：有時我們會想等作品完成到某個程度後再給客戶看，但…有時客戶看過後會發現許多與他們理念不合的設計。</li>
+<li><strong>新舊系統功能不吻合</strong>：就算功能都是 Copy＆Paste，但程式底層的運作邏輯往往不同，部分欄位可能也存在誤會；你以為執行得很順利，殊不知早已偏離方向。</li>
+</ol>
+<p>上面的問題，想嘗試透過以下方法解決：</p>
+<ol>
+<li><strong>別管架構，先交出 MVP</strong>：我們規劃了太多功能，卻沒有一個 MVP，在一切都不明朗的狀態下，能規劃出好架構根本是靠運氣；與其在前期完成那麼多功能，還不如先交一個勉強能動的 MVP，以此向客戶確認是否符合需求。</li>
+<li><strong>在一開始規劃時，就把容錯時程拉長</strong>：過往的經驗告訴我，意外通常在最後一刻才發生；因為在後期，我們才有辦法用整體的思維去看專案。（如果團隊有經驗非常豐富的架構師，那有機會規避這些問題，筆者目前還不具備這個實力）</li>
+<li><strong>開發階段頻繁更新系統</strong>：讓客戶隨時體驗最新的功能，如果與預想不合也可以盡快作出調整；避免工程師要砍一堆程式，做無意義的重工。</li>
+<li><strong>如果要改寫舊系統，就需要對方提供可以驗證的資訊</strong>：通常舊系統程式的參考價值不高，我們只能從操作流程來推估資料間的關聯性，但這些「都是靠想像」的，如果客戶沒有提供足夠的舊系統操作案例給工程師來驗證，就很可能開發出無法與舊系統銜接的系統。</li>
+</ol>
+<hr>
+<h2 id="四tech-lead-沒辦法發揮應有的作用">四、Tech Lead 沒辦法發揮應有的作用<a class="h-anchor" href="#%e5%9b%9btech-lead-%e6%b2%92%e8%be%a6%e6%b3%95%e7%99%bc%e6%8f%ae%e6%87%89%e6%9c%89%e7%9a%84%e4%bd%9c%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<p>我們期待 Tech Lead 可以照顧到整個團隊的技術，但如果開發時程太趕，在 Tech Lead 也投入大量時間在開發時，會衍生以下問題：</p>
+<ol>
+<li><strong>Code Review 淪為形式</strong>：連自己的任務都快做不完了，Code Review 時頂多看一下 Coding Style，沒辦法從整體的架構去判斷他的演算法、邏輯是否合適。</li>
+<li><strong>專案程式碼品質下降</strong>：因為 Code Review 不確實，很多功能只是為了解決當下的問題，這種時候很容易創造出一堆耦合性高的程式。</li>
+<li><strong>沒辦法顧及所有人的進度</strong>：如果專案經理與 Tech Lead 配合不夠默契，那很容易發生 Tech Lead 埋頭開發，沒有從整體的視角來看專案的進度。</li>
+</ol>
+<p>上面的問題，想嘗試透過以下方法解決：</p>
+<ol>
+<li><strong>分配給 Tech Lead 的開發任務，不要超過他 60% 的工作時間</strong>：如果把 Tech Lead 當單純的 Developer 來使用，那團隊程式碼的品質就無法保證；為了避免日後要花更多的時間解決後遺症，建議多給 Tech Lead 一些靈活運用的時間。</li>
+<li><strong>專案經理與 Tech Lead 訊息流暢</strong>：就算有專案管理系統輔助，但每個任務進度的細節、時程還是專案經理最清楚；如果能在發現進度 Delay 前期就做適當的調整與釐清，也許不會走到時程緊繃這一步。</li>
+<li><strong>律定專案管理系統操作方式</strong>：開發人員 Commit 的內容也需要附註在 Ticket 上面（盡量白話），這樣更方便專案經理掌握實際進度；若該 Ticket 有相依性（後端完成後交付給前端），那開發人員也要將相關的 API doc 附在上面。</li>
+</ol>
+<hr>
+<h2 id="五團隊失去成長動能">五、團隊失去成長動能<a class="h-anchor" href="#%e4%ba%94%e5%9c%98%e9%9a%8a%e5%a4%b1%e5%8e%bb%e6%88%90%e9%95%b7%e5%8b%95%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>我們期待團隊裡的每個人都能夠隨著專案持續成長，但在管理出現問題時，團隊會慢慢轉變為 80/20 法則的模式，也就是 20% 的人完成了 80% 的任務，下面是筆者個人推估的原因：</p>
+<ol>
+<li><strong>到 Deadline 時，總有人能幫忙解決問題</strong>：如果團隊成員發現沒做完的東西，在接近 Deadline 時就會有其他人來拯救，那很可能就會養成依賴性，喪失自己解決問題的能力。</li>
+<li><strong>獎懲機制不夠透明</strong>：如果大家發現拼死拼活的結果跟躺平耍廢一樣，那我們為什麼不躺平？</li>
+<li><strong>連坐制度</strong>：Deadline 就壓在那裡，你幫了，他無法成長；你不幫，專案就爆掉，自己也跟著倒霉，這種狀況到底要幫還是不幫？</li>
+</ol>
+<p>上面的問題，想嘗試透過以下方法解決：</p>
+<ol>
+<li><strong>幫忙時只給方向</strong>：可以提供一些關鍵字、網頁、參考資料、過去的程式碼，但不要直接解決問題。</li>
+<li><strong>如果必須親自解決問題，先確認對方已經發揮所有潛能</strong>：儘管我們都希望給方向就能解決問題，但每個人的背景知識不同，如果給方向還是無法解決；在親自解決問題前，要先請對方說出自己過去所做出的研究，確保他已經盡力，任務難度真的超過了他的能力範圍。</li>
+<li><strong>不影響健康的壓力</strong>：如果發現成員的能力有提升的空間，那或許可以提醒他，適度犧牲下班後與放假的時間持續鑽研是必須的，唯有做足功課，在上班時才能更快地趕上大家的腳步。</li>
+<li><strong>律定獎懲機制</strong>：我們希望每個人都有想成長的自覺，但如果有必要，賞罰機制還是要存在的。</li>
+</ol>
+<hr>
+<h2 id="六不是每個成員都按照流程走">六、不是每個成員都按照流程走<a class="h-anchor" href="#%e5%85%ad%e4%b8%8d%e6%98%af%e6%af%8f%e5%80%8b%e6%88%90%e5%93%a1%e9%83%bd%e6%8c%89%e7%85%a7%e6%b5%81%e7%a8%8b%e8%b5%b0" aria-label="這個段落的連結"></a></h2>
+<p>我們秉持互信的原則來合作，就算有些人沒按照流程走，只要不出包，也可以睜一隻眼閉一隻眼；但如果這些行為產出的結果不符預期，甚至導致團隊損失，那勢必要做出改善。</p>
+<p>這邊就以程式碼 Commit＆Push 舉例，原則上我們期待每位開發人員一天至少 Push 一版程式，且裡面 Commit 都有詳細紀錄更動的部分。</p>
+<p>會有這個要求是因為專案是「協作」的，如果有人憋了一個禮拜才 Push 一大包，會衍生以下問題：</p>
+<ol>
+<li><strong>Tech Lead 很難 Code Review</strong>：因為內容太多、太雜，釐清功能所需的時間反而更多。</li>
+<li><strong>如果架構有問題，改善成本太高</strong>：如果在 Code Review 時才發現程式的結構問題，那又需要浪費很多時間改寫。</li>
+<li><strong>如果把所有更新的內容塞到一個 Commit 裡面，很難對應功能與程式</strong>：因為程式往往散落在多個檔案，如果 Commit 內容太多，就很難知道彼此的對應關係。</li>
+<li><strong>萬一發生狀況，接手的人會崩潰</strong>：如果做完的功能沒有 Push 上去，接手的人等於要重寫。</li>
+</ol>
+<p>上面的問題，想嘗試透過以下方法解決：</p>
+<ol>
+<li><strong>向開發人員說明定時 Commit＆Push 的重要性</strong>：開發人員可能不知道自己這麼做會影響到其他人，需要講清楚問題嚴重性。</li>
+<li><strong>如果任務太複雜，盡量做功能上的切分</strong>：有時被分配到的任務涉及面太廣，導致遲遲不敢 Push 上去；面對這種情況，可以依據開發的進度來 Commit＆Push，反正有 Git 這種程式碼版控系統，不會影響到主分支。</li>
+</ol>
+<hr>
+<h2 id="七血淚小結">七、血淚小結<a class="h-anchor" href="#%e4%b8%83%e8%a1%80%e6%b7%9a%e5%b0%8f%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>問題是長期沒改善積累而成的，想解決肯定會遇到不少阻力。</li>
+<li>只有被攤在陽光下的問題，才有機會被解決。</li>
+<li>許多問題互為因果，如果不解決，問題會像病毒般不斷變種。</li>
+<li>每個人都在適應自己的角色，專案經理不知道需求規格怎麼寫才能讓開發人員理解，開發人員不清楚遇到問題時要如何解決，Tech Lead 不確定怎麼帶人才是最合適的。</li>
+<li>規則律定出來就要執行，如果沒有執行；那其他乖乖遵守規則的人，也遲早會學壞。</li>
+</ol>
+<hr>
+<pre tabindex="0"><code>工程師血淚史
+▋ 團隊在系統開發上遇到了哪些問題(本篇)
+▋ 需求不斷變更，到底哪個環節出錯了
+▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
+▋ 如果沒有明確的開發流程，團隊將會無所適從
+▋ 你知道對專案來說，README.md 有多麼重要嗎？
+</code></pre>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

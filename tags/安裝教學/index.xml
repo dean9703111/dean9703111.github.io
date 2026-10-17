@@ -1,0 +1,951 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>安裝教學｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/%E5%AE%89%E8%A3%9D%E6%95%99%E5%AD%B8/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 23 Dec 2021 13:35:37 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/%E5%AE%89%E8%A3%9D%E6%95%99%E5%AD%B8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>帶你認識＆安裝「File Browser」這個超棒的雲端文件管理工具</title>
+      <link>https://deanlin.net/blog/202112/file-browser-cloud-file-manager/</link>
+      <pubDate>Thu, 23 Dec 2021 13:35:37 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202112/file-browser-cloud-file-manager/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>因為專案剛好有遠端文件管理的需求，原本是使用 samba 作為解決方案；但在 chrome 瀏覽器要「跳轉顯示檔案總管」時遇到了瓶頸，只能跳出唯獨顯示文檔的頁面。因此轉而去尋找其他合適的工具，最好是操作簡單、一鍵安裝的那種，因而發現這款好用的工具來跟大家分享。</description>
+      <content:encoded><![CDATA[<p>因為專案剛好有遠端文件管理的需求，原本是使用 <strong>samba </strong>作為解決方案；但在 chrome 瀏覽器要「跳轉顯示檔案總管」時遇到了瓶頸，只能跳出唯獨顯示文檔的頁面。因此轉而去尋找其他合適的工具，最好是操作簡單、一鍵安裝的那種，最後發現這款好用的工具來跟大家分享。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-01.webp" width="1400" height="786" alt="File Browser：官網" loading="lazy" decoding="async">
+  <figcaption>File Browser：<a href="https://filebrowser.org/">官網</a></figcaption>
+</figure>
+
+<pre tabindex="0"><code>一、工具簡介
+  ➤ 熟悉的目錄文件結構
+  ➤ 簡易文件編輯
+  ➤ 分享檔案/資料夾
+  ➤ 個人資訊設定
+  ➤ 使用者帳號管理
+二、安裝＆設定
+  ➤ STEP 1：安裝 docker 並建立目錄
+  ➤ STEP 2：抓取官方最新 Docker image
+  ➤ STEP 3：建立 docker-compose.yml，啟動 File Browser
+  ➤ Bonus：增加 docker 安全性、SSL、設定資料儲存目錄
+  ➤ 查看 Docker log
+</code></pre><hr>
+<h2 id="一工具簡介">一、工具簡介<a class="h-anchor" href="#%e4%b8%80%e5%b7%a5%e5%85%b7%e7%b0%a1%e4%bb%8b" aria-label="這個段落的連結"></a></h2>
+<p>基本上筆者就是把它當成一個公司內部存放檔案的管理工具，下面重點介紹我覺得有用的 Feaure。</p>
+<h3 id="-熟悉的目錄文件結構">➤ 熟悉的目錄文件結構<a class="h-anchor" href="#-%e7%86%9f%e6%82%89%e7%9a%84%e7%9b%ae%e9%8c%84%e6%96%87%e4%bb%b6%e7%b5%90%e6%a7%8b" aria-label="這個段落的連結"></a></h3>
+<p>可以像 Google Drive、Dropbox 一樣拖拉操作，使用直覺；如果要說缺點應該就是不能用滑鼠右鍵來操作新增、刪除這類的操作，但以一款免費工具而言已經非常好用了。</p>
+<p><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-02.webp" width="1336" height="662" alt="熟悉的目錄文件結構（圖 2）" loading="lazy" decoding="async"></p>
+<h3 id="-簡易文件編輯">➤ 簡易文件編輯<a class="h-anchor" href="#-%e7%b0%a1%e6%98%93%e6%96%87%e4%bb%b6%e7%b7%a8%e8%bc%af" aria-label="這個段落的連結"></a></h3>
+<p>如果你新增/上傳的是文件類型（ex：txt/html/md）的檔案，他也可以直接在線上編輯喔！</p>
+<p><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-03.webp" width="1336" height="662" alt="簡易文件編輯（圖 3）" loading="lazy" decoding="async"></p>
+<h3 id="-分享檔案資料夾">➤ 分享檔案/資料夾<a class="h-anchor" href="#-%e5%88%86%e4%ba%ab%e6%aa%94%e6%a1%88%e8%b3%87%e6%96%99%e5%a4%be" aria-label="這個段落的連結"></a></h3>
+<p>其實裡面讓我覺得最有趣的是這個功能，他可以設定分享檔案的「時效、密碼」，當然你也可以都不設定直接分享啦 XD</p>
+<p><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-04.webp" width="1336" height="662" alt="分享檔案/資料夾（圖 4）" loading="lazy" decoding="async"></p>
+<p>收到連結的人，打開會長這個畫面</p>
+<p><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-05.webp" width="1362" height="864" alt="分享檔案/資料夾（圖 5）" loading="lazy" decoding="async"></p>
+<h3 id="-個人資訊設定">➤ 個人資訊設定<a class="h-anchor" href="#-%e5%80%8b%e4%ba%ba%e8%b3%87%e8%a8%8a%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<p>他支援多國語言體系、使用者可以自行改變帳號密碼的系統喔～</p>
+<p><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-06.webp" width="1332" height="545" alt="個人資訊設定（圖 6）" loading="lazy" decoding="async"></p>
+<h3 id="-使用者帳號管理">➤ 使用者帳號管理<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8%e8%80%85%e5%b8%b3%e8%99%9f%e7%ae%a1%e7%90%86" aria-label="這個段落的連結"></a></h3>
+<p>如果你的權限是 Administrator，那你就可以新增/刪除帳號，並且設定該帳號的存取權限。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-07.webp" width="1332" height="704" alt="新增帳號" loading="lazy" decoding="async">
+  <figcaption>新增帳號</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-08.webp" width="1332" height="704" alt="帳號列表" loading="lazy" decoding="async">
+  <figcaption>帳號列表</figcaption>
+</figure>
+
+<p>其實還有很多功能，但因為大多數使用者都不會用到，這裡便不再贅述，有興趣的朋友可以參考<a href="https://filebrowser.org/">官網</a>。</p>
+<hr>
+<h2 id="二安裝設定">二、安裝＆設定<a class="h-anchor" href="#%e4%ba%8c%e5%ae%89%e8%a3%9d%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>下面指令適用於 Linux 的 Ubuntu 系統</p>
+</blockquote>
+<h3 id="-step-1安裝-docker-並建立目錄">➤ STEP 1：安裝 docker 並建立目錄<a class="h-anchor" href="#-step-1%e5%ae%89%e8%a3%9d-docker-%e4%b8%a6%e5%bb%ba%e7%ab%8b%e7%9b%ae%e9%8c%84" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝 Docker</span>
+</span></span><span style="display:flex;"><span>apt update <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> apt install docker docker-compose
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立資料夾</span>
+</span></span><span style="display:flex;"><span>mkdir /apps
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 前往資料夾</span>
+</span></span><span style="display:flex;"><span>cd /apps
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/dc5d38dce42b62e44f3892ba1a3ac653" rel="noopener">file_browser.sh</a>（GitHub Gist）</p>
+<h3 id="-step-2抓取官方最新-docker-image">➤ STEP 2：抓取官方最新 Docker image<a class="h-anchor" href="#-step-2%e6%8a%93%e5%8f%96%e5%ae%98%e6%96%b9%e6%9c%80%e6%96%b0-docker-image" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 抓取官方最新 docker image</span>
+</span></span><span style="display:flex;"><span>docker pull filebrowser/filebrowser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 確認抓取的 docker images</span>
+</span></span><span style="display:flex;"><span>docker images
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/e2c910b28e824d26e5f94498031f3f73" rel="noopener">file_browser_pull.sh</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-09.webp" width="1300" height="470" alt="STEP 2：抓取官方最新 Docker image（圖 9）" loading="lazy" decoding="async"></p>
+<h3 id="-step-3建立-docker-composeyml啟動-file-browser">➤ STEP 3：建立 docker-compose.yml，啟動 File Browser<a class="h-anchor" href="#-step-3%e5%bb%ba%e7%ab%8b-docker-composeyml%e5%95%9f%e5%8b%95-file-browser" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立執行的資料夾</span>
+</span></span><span style="display:flex;"><span>mkdir filebrowser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 docker-compose.yml</span>
+</span></span><span style="display:flex;"><span>vi docker-compose.yml
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/86377e4a2825bc6671bc54ac05491643" rel="noopener">file_browser_folder.sh</a>（GitHub Gist）</p>
+<p>完成上述步驟後，貼上如下設定：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ff7b72">---</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;3&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">services</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">file-browser</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">filebrowser/filebrowser</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">container_name</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">file-browser</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">80</span>:<span style="color:#a5d6ff">80</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">restart</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">unless-stopped</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/652b821d3f743c7f345540a0e74ce9ed" rel="noopener">docker-compose.yml</a>（GitHub Gist）</p>
+<p>docker 相關指令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 依照 docker-compose.yml 設定啟動服務</span>
+</span></span><span style="display:flex;"><span>docker-compose up -d
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 關閉 docker 服務</span>
+</span></span><span style="display:flex;"><span>docker-compose down
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/eddfd5bcf83f9259d058647ab48976d9" rel="noopener">docker_command.sh</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-10.webp" width="1108" height="150" alt="STEP 3：建立 docker-compose.yml，啟動 File Browser（圖 10）" loading="lazy" decoding="async"></p>
+<p>如果啟動順利的話，這個 File Browser 系統就啟動嚕～</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-11.webp" width="1021" height="623" alt="預設的帳號/密碼：admin/admin" loading="lazy" decoding="async">
+  <figcaption>預設的帳號/密碼：admin/admin</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-12.webp" width="1021" height="588" alt="感覺在空空的 File Browser 上面新增檔案吧～" loading="lazy" decoding="async">
+  <figcaption>感覺在空空的 File Browser 上面新增檔案吧～</figcaption>
+</figure>
+
+<h3 id="-bonus增加-docker-安全性ssl設定資料儲存目錄">➤ Bonus：增加 docker 安全性、SSL、設定資料儲存目錄<a class="h-anchor" href="#-bonus%e5%a2%9e%e5%8a%a0-docker-%e5%ae%89%e5%85%a8%e6%80%a7ssl%e8%a8%ad%e5%ae%9a%e8%b3%87%e6%96%99%e5%84%b2%e5%ad%98%e7%9b%ae%e9%8c%84" aria-label="這個段落的連結"></a></h3>
+<p>目前只是讓這個服務啟動而已，但是他並不安全；像是缺少 https 設定，如果 Docker 重啟後檔案、使用者都會消失，因此建議先做如下調整：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立外儲存 DB 的檔案</span>
+</span></span><span style="display:flex;"><span>vi docker-compose.yml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立外部儲存檔案的資料夾</span>
+</span></span><span style="display:flex;"><span>mkdir srv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 調整外部儲存檔案的資料夾權限</span>
+</span></span><span style="display:flex;"><span>chmod <span style="color:#a5d6ff">777</span> srv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立存放 SSL 的資料夾（對應的 .crt、.key 請自己放進去）</span>
+</span></span><span style="display:flex;"><span>mkdir ssl
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/adf246d9eb1d06a31d0f80e7818ccd69" rel="noopener">option_config.sh</a>（GitHub Gist）</p>
+<p>同時對 docker-compose.yml 進行如下修改：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ff7b72">---</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;3&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">services</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">file-browser</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">filebrowser/filebrowser</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">container_name</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">file-browser</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">user</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">1000</span>:<span style="color:#a5d6ff">1000</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">443</span>:<span style="color:#a5d6ff">80</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">/apps/filebrowser/srv:/srv</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">/apps/filebrowser/filebrowser.db:/database.db</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">/apps/filebrowser/ssl:/ssl</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">restart</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">unless-stopped</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">security_opt</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#79c0ff">no</span>-<span style="color:#a5d6ff">new-privileges:true</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/e66e85ba0fe5558cbd08eefec1e0a48d" rel="noopener">new-docker-compose.yml</a>（GitHub Gist）</p>
+<p>完成上述設定後，就可以重新啟動，確認設定是否生效嚕～</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202112/file-browser-cloud-file-manager/images/file-browser-cloud-file-manager-13.webp" width="1400" height="216" alt="docker ps 可以顯示運行中的 docker" loading="lazy" decoding="async">
+  <figcaption>docker ps 可以顯示運行中的 docker</figcaption>
+</figure>
+
+<blockquote class="pullquote"><p>以上就是 File Browser 的簡介以及安裝說明，原則上依照步驟就可以順利安裝及使用嚕～</p>
+</blockquote>
+<h3 id="-查看-docker-log">➤ 查看 Docker log<a class="h-anchor" href="#-%e6%9f%a5%e7%9c%8b-docker-log" aria-label="這個段落的連結"></a></h3>
+<p>因為不久前有同仁使用時遇到錯誤，所以我這邊也把查看 log 的步驟記錄下來。</p>
+<p><strong>STEP 1</strong>：先用 <code>docker ps</code> 列出 docker，確認 File Browser 是否還在運行中。</p>
+<p><strong>STEP 2</strong>：透過在「docker-compose.yml」設定的「container_name」來查找 log： <code>docker logs [container_name]</code> ，以這個範例來說指令是 <code>docker logs file-browser</code> 。</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>用 sysbench 測試 MySQL 性能 — 在 mac &amp; ubuntu 上的安裝與使用</title>
+      <link>https://deanlin.net/blog/202103/mysql-benchmark-sysbench/</link>
+      <pubDate>Mon, 29 Mar 2021 14:43:32 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202103/mysql-benchmark-sysbench/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>sysbench 是我目前使用上最順手的一個測試工具，安裝、使用都非常容易，除了資料庫的測試外他還能對 CPU、Memory…做測試，本篇會詳細說明如何使用它來做 MySQL 性能測試，其他的功能可以參考文末附的連結。</description>
+      <content:encoded><![CDATA[<p>sysbench 是我目前使用上最順手的一個測試工具，安裝、使用都非常容易，除了資料庫的測試外他還能對 CPU、Memory…做測試，本篇會詳細說明如何使用它來做 MySQL 性能測試，其他的功能可以參考文末附的連結。</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-01.webp" width="1400" height="785" alt="用 sysbench 測試 MySQL 性能 — 在 mac &amp; ubuntu 上的安裝與使用（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="一在-mac-上操作-sysbench">一、在 Mac 上操作 sysbench<a class="h-anchor" href="#%e4%b8%80%e5%9c%a8-mac-%e4%b8%8a%e6%93%8d%e4%bd%9c-sysbench" aria-label="這個段落的連結"></a></h2>
+<h3 id="-安裝-sysbench">➤ 安裝 sysbench<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-sysbench" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>如果還沒安裝過 brew 請<a href="https://brew.sh/index_zh-tw">參考官網</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install sysbench
+</span></span></code></pre></div><p>安裝完成後輸入指令確認安裝完成</p>
+<pre tabindex="0"><code>sysbench — version
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-02.webp" width="880" height="92" alt="安裝 sysbench（圖 2）" loading="lazy" decoding="async"></p>
+<p>我安裝的版本為 <code>1.0.20</code> 這個會跟下面的指令路徑有關，如果你安裝的是其他版本要自行修改這個版本路徑</p>
+<h3 id="-測試-mysql-性能">➤ 測試 MySQL 性能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6-mysql-%e6%80%a7%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>mac 的範例是本地端的測試，針對 read 這塊</p>
+</blockquote>
+<p><strong>STEP 1</strong>：先建立好測試用的 DB</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">create</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">database</span><span style="color:#6e7681"> </span>test;<span style="color:#6e7681">
+</span></span></span></code></pre></div><p><strong>STEP 2</strong>：建立測試資料</p>
+<ul>
+<li><strong>mysql-user、mysql-password</strong>：改成自己 MySQL 的使用者</li>
+<li><strong>mysql-db</strong>：測試的資料庫</li>
+<li><strong>range_size、table_size、tables</strong>：測試的規模</li>
+<li><strong>prepare</strong>：建立測資的意思</li>
+</ul>
+<pre tabindex="0"><code>sysbench /usr/local/Cellar/sysbench/1.0.20/share/sysbench/oltp_read_only.lua \
+--db-driver=mysql \
+--mysql-user=user_name \
+--mysql-password=user_password \
+--mysql-db=test \
+--range_size=100 \
+--table_size=10000 \
+--tables=2 \
+--threads=1 \
+--events=0 \
+--time=60 \
+--rand-type=uniform \
+prepare
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d26df5b62cc8b790085ef4d6ee468883" rel="noopener">sysbench_prepare.cmd</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-03.webp" width="1032" height="334" alt="測試 MySQL 性能（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：進行測試</p>
+<blockquote>
+<p>只是把指令最後面改成 run</p>
+</blockquote>
+<pre tabindex="0"><code>sysbench /usr/local/Cellar/sysbench/1.0.20/share/sysbench/oltp_read_only.lua \
+--db-driver=mysql \
+--mysql-user=user_name \
+--mysql-password=user_password \
+--mysql-db=test \
+--range_size=100 \
+--table_size=10000 \
+--tables=2 \
+--threads=1 \
+--events=0 \
+--time=60 \
+--rand-type=uniform \
+run
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/a3093daa95c2b7cae4dd327fcae4d9ba" rel="noopener">sysbench_run.cmd</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-04.webp" width="1330" height="1378" alt="測試 MySQL 性能（圖 4）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 4</strong>：清除測試數據</p>
+<blockquote>
+<p>只是把指令最後面改成 cleanup</p>
+</blockquote>
+<pre tabindex="0"><code>sysbench /usr/local/Cellar/sysbench/1.0.20/share/sysbench/oltp_read_only.lua \
+--db-driver=mysql \
+--mysql-user=user_name \
+--mysql-password=user_password \
+--mysql-db=test \
+--range_size=100 \
+--table_size=10000 \
+--tables=2 \
+--threads=1 \
+--events=0 \
+--time=60 \
+--rand-type=uniform \
+cleanup
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/24b62f7153920bd3fb4773d64f461945" rel="noopener">sysbench_cleanup.cmd</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-05.webp" width="992" height="152" alt="測試 MySQL 性能（圖 5）" loading="lazy" decoding="async"></p>
+<h2 id="一在-ubuntu-上操作-sysbench">一、在 Ubuntu 上操作 sysbench<a class="h-anchor" href="#%e4%b8%80%e5%9c%a8-ubuntu-%e4%b8%8a%e6%93%8d%e4%bd%9c-sysbench" aria-label="這個段落的連結"></a></h2>
+<h3 id="-安裝-sysbench-1">➤ 安裝 sysbench<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-sysbench-1" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install sysbench -y
+</span></span></code></pre></div><p>安裝完成後輸入指令確認安裝完成</p>
+<pre tabindex="0"><code>sysbench — version
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-06.webp" width="696" height="82" alt="安裝 sysbench（圖 6）" loading="lazy" decoding="async"></p>
+<h3 id="-測試-mysql-性能-1">➤ 測試 MySQL 性能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6-mysql-%e6%80%a7%e8%83%bd-1" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>ubuntu 的範例是遠端的測試，針對 write這塊</p>
+</blockquote>
+<p><strong>STEP 1</strong>：先建立好測試用的 DB</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">create</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">database</span><span style="color:#6e7681"> </span>test;<span style="color:#6e7681">
+</span></span></span></code></pre></div><p><strong>STEP 2</strong>：建立測試資料</p>
+<p>如果你的設定跟我的範例一樣可能要稍微等一下，因為範例的測資比較大筆</p>
+<ul>
+<li><strong>mysql-host</strong>：目標測試的 ip 或是 host name</li>
+<li><strong>mysql-port</strong>：目標測試的 MySQL port</li>
+<li><strong>mysql-user、mysql-password</strong>：改成自己 MySQL 的使用者</li>
+<li><strong>mysql-db</strong>：測試的資料庫</li>
+<li><strong>range_size、table_size、tables</strong>：測試的規模</li>
+<li><strong>prepare</strong>：建立測資的意思</li>
+</ul>
+<pre tabindex="0"><code>sysbench /usr/share/sysbench/oltp_write_only.lua \
+--mysql-host=127.0.0.1 \
+--mysql-port=3306 \
+--mysql-user=user_name \
+--mysql-password=user_password \
+--mysql-db=test \
+--db-driver=mysql \
+--tables=10 \
+--table_size=10000 \
+--report-interval=10 \
+--threads=128 \
+--time=120 \
+prepare
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/4adca32bb1877a41e51c23ff3ff127bf" rel="noopener">ubuntu_sysbench_prepare.cmd</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-07.webp" width="1026" height="1340" alt="測試 MySQL 性能（圖 7）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：進行測試</p>
+<blockquote>
+<p>只是把指令最後面改成 run</p>
+</blockquote>
+<pre tabindex="0"><code>sysbench /usr/share/sysbench/oltp_write_only.lua \
+--mysql-host=127.0.0.1 \
+--mysql-port=3306 \
+--mysql-user=user_name \
+--mysql-password=user_password \
+--mysql-db=test \
+--db-driver=mysql \
+--tables=10 \
+--table_size=10000 \
+--report-interval=10 \
+--threads=128 \
+--time=120 \
+run
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/24b504d1f2056b6645b63a55ac2856c4" rel="noopener">ubuntu_sysbench_run.cmd</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-08.webp" width="1104" height="895" alt="測試 MySQL 性能（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 4</strong>：清除測試數據</p>
+<blockquote>
+<p>只是把指令最後面改成 cleanup</p>
+</blockquote>
+<pre tabindex="0"><code>sysbench /usr/share/sysbench/oltp_write_only.lua \
+--mysql-host=127.0.0.1 \
+--mysql-port=3306 \
+--mysql-user=user_name \
+--mysql-password=user_password \
+--mysql-db=test \
+--db-driver=mysql \
+--tables=10 \
+--table_size=10000 \
+--report-interval=10 \
+--threads=128 \
+--time=120 \
+cleanup
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/957b162ca5a0bbe57a86e7c792e2a085" rel="noopener">ubuntu_sysbench_cleanup.cmd</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-09.webp" width="458" height="226" alt="測試 MySQL 性能（圖 9）" loading="lazy" decoding="async"></p>
+<hr>
+<blockquote class="pullquote"><p>以上是今天的分享，想了解更多功能請參考<a href="https://github.com/akopytov/sysbench">官方的 github</a></p>
+</blockquote>
+<p><strong>參考資源</strong>：<a href="https://www.itread01.com/content/1549085775.html">Ubuntu 16.04中進行Sysbench環境搭建</a>、<a href="https://blog.51cto.com/13990437/2400940">sysbench安装和使用</a></p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>禪道 Zentao 安裝教學 &amp; 重要系統設定，建議公司導入的專案管理系統</title>
+      <link>https://deanlin.net/blog/202103/zentao-installation-guide/</link>
+      <pubDate>Wed, 10 Mar 2021 15:12:42 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202103/zentao-installation-guide/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>過去安裝一些內部使用的 Server ，像 Gitlab、Redmine 都讓人在安裝的過程中遇到許多的挫折；直到最近同事向我推薦一款專案管理系統 — 禪道，聽到這詭異的名字讓我對他深表懷疑，抱著嘗試的心態安裝與試用了一下，讓我頓時非常後悔當初為什麼要研究…</description>
+      <content:encoded><![CDATA[<p>過去安裝一些內部使用的 Server ，像 Gitlab、Redmine 都讓人在安裝的過程中遇到許多的挫折；直到最近同事向我推薦一款專案管理系統 — <strong>禪道(Zentao)</strong>，聽到這詭異的名字讓我對他深表懷疑，抱著嘗試的心態安裝與試用了一下，讓我頓時非常後悔當初為什麼要研究 Redmine😭😭😭，這套專案管理系統的安裝過程讓我理解了何謂『選擇比努力更重要😳』</p>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-01.webp" width="1400" height="789" alt="禪道 Zentao 安裝教學 &amp; 重要系統設定，建議公司導入的專案管理系統（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>一、Server 安裝環境
+二、安裝步驟
+STEP 1：下載官網壓縮檔
+STEP 2：解壓縮安裝檔並啟用系統
+STEP 3：輸入網址開始暢遊～
+三、自選設定
+➤ HTTPS 設定
+➤ 系統 email 通知
+➤ 修改預設入口頁面路徑
+➤ 移除url中的『zentao』路徑
+</code></pre><h2 id="一server-安裝環境">一、Server 安裝環境<a class="h-anchor" href="#%e4%b8%80server-%e5%ae%89%e8%a3%9d%e7%92%b0%e5%a2%83" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>Processor：使用 VMWARE 的虛擬單核心</li>
+<li>RAM：2G</li>
+<li>ROM：300G</li>
+<li>OS：ubuntu 20.04</li>
+<li>Zentao：12.5.3</li>
+</ul>
+<h2 id="二安裝步驟">二、安裝步驟<a class="h-anchor" href="#%e4%ba%8c%e5%ae%89%e8%a3%9d%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>建議使用英文版本的官網，中文版本的官網瀏覽速度極慢</p>
+</blockquote>
+<h3 id="step-1下載官網壓縮檔">STEP 1：下載官網壓縮檔<a class="h-anchor" href="#step-1%e4%b8%8b%e8%bc%89%e5%ae%98%e7%b6%b2%e5%a3%93%e7%b8%ae%e6%aa%94" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>請在 <a href="https://www.zentao.pm/download.html"><strong>官網</strong></a> 找最新版的開源版本下載到 server</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-02.webp" width="1400" height="700" alt="STEP 1：下載官網壓縮檔（圖 2）" loading="lazy" decoding="async"></p>
+<ul>
+<li>官網有提供不同環境的安裝檔，請依據自己的環境選擇</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-03.webp" width="1400" height="948" alt="STEP 1：下載官網壓縮檔（圖 3）" loading="lazy" decoding="async"></p>
+<ul>
+<li>複製下載連結，下載安裝檔到 server 上</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo wget https://dl.cnezsoft.com/zentao/12.5.3/ZenTaoALM.12.5.3.int.zbox_64.tar.gz
+</span></span></code></pre></div><h3 id="step-2解壓縮安裝檔並啟用系統">STEP 2：解壓縮安裝檔並啟用系統<a class="h-anchor" href="#step-2%e8%a7%a3%e5%a3%93%e7%b8%ae%e5%ae%89%e8%a3%9d%e6%aa%94%e4%b8%a6%e5%95%9f%e7%94%a8%e7%b3%bb%e7%b5%b1" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>將安裝檔解壓縮 opt 資料夾</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo tar -zxvf ZenTaoALM.12.5.3.int.zbox_64.tar.gz -C /opt
+</span></span></code></pre></div><ul>
+<li>啟動 Apache 和 MySQL</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo  /opt/zbox/zbox start
+</span></span></code></pre></div><h3 id="step-3輸入網址開始暢遊">STEP 3：輸入網址開始暢遊～<a class="h-anchor" href="#step-3%e8%bc%b8%e5%85%a5%e7%b6%b2%e5%9d%80%e9%96%8b%e5%a7%8b%e6%9a%a2%e9%81%8a" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>在網址輸入你 server 的網址就能夠使用嚕！</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-04.webp" width="1400" height="694" alt="STEP 3：輸入網址開始暢遊～（圖 4）" loading="lazy" decoding="async"></p>
+<ul>
+<li>第一次登入請使用默認的帳號(admin)、密碼(123456)做登入，確認操作是否都正常</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-05.webp" width="1240" height="792" alt="STEP 3：輸入網址開始暢遊～（圖 5）" loading="lazy" decoding="async"></p>
+<ul>
+<li>登入成功後會先請你修改帳號密碼</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-06.webp" width="1400" height="553" alt="STEP 3：輸入網址開始暢遊～（圖 6）" loading="lazy" decoding="async"></p>
+<ul>
+<li>大功告成！接下來就是開心的使用嚕！</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-07.webp" width="1400" height="939" alt="STEP 3：輸入網址開始暢遊～（圖 7）" loading="lazy" decoding="async"></p>
+<h2 id="三自選設定">三、自選設定<a class="h-anchor" href="#%e4%b8%89%e8%87%aa%e9%81%b8%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>稍微使用一下後覺得有些設定還是說明一下</p>
+</blockquote>
+<h3 id="-https-設定">➤ HTTPS 設定<a class="h-anchor" href="#-https-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>先進入 apache 的設定檔</li>
+</ul>
+<pre tabindex="0"><code>vi /opt/zbox/etc/apache/httpd.conf
+</code></pre><ul>
+<li>在裡面貼上如下資訊</li>
+</ul>
+<blockquote>
+<p>記得 ServerName、SSLCertificateFile、SSLCertificateKeyFile 要自己調整喔！</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#ff7b72">&lt;VirtualHost</span> <span style="color:#a5d6ff">*:443&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a5d6ff">ServerAdmin</span> <span style="color:#a5d6ff">zentao@local.net</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a5d6ff">DocumentRoot</span> <span style="color:#a5d6ff">&#34;/opt/zbox/app/zentaoep/www/&#34;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a5d6ff">ServerName</span> <span style="color:#a5d6ff">your_ip_or_domain_name</span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#  ServerAlias  *.xxx.com
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a5d6ff">SSLEngine</span> <span style="color:#a5d6ff">On</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a5d6ff">SSLCertificateFile</span> <span style="color:#a5d6ff">/opt/zbox/etc/apache/ssl/your.crt</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a5d6ff">SSLCertificateKeyFile</span> <span style="color:#a5d6ff">/opt/zbox/etc/apache/ssl/your.key</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a5d6ff">&lt;Directory</span> <span style="color:#a5d6ff">&#34;/opt/zbox/app/zentaoep/www&#34;&gt;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#a5d6ff">AllowOverride</span> <span style="color:#a5d6ff">all</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#a5d6ff">Require</span> <span style="color:#a5d6ff">all</span> <span style="color:#a5d6ff">granted</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a5d6ff">&lt;/Directory&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a5d6ff">ErrorLog</span> <span style="color:#a5d6ff">&#34;/opt/zbox/logs/apache_error_log&#34;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#a5d6ff">CustomLog</span> <span style="color:#a5d6ff">&#34;/opt/zbox/logs/apache_access_log&#34;</span> <span style="color:#a5d6ff">combind</span>
+</span></span><span style="display:flex;"><span> <span style="color:#a5d6ff">&lt;/VirtualHost&gt;</span>
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/5eaf1f305175df1a41f4e6941069bc1b" rel="noopener">httpd.conf</a>（GitHub Gist）</p>
+<ul>
+<li>重啟 zentao ~</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /opt/zbox/zbox restart
+</span></span></code></pre></div><figure class="figure"><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-08.webp" width="1400" height="745" alt="順利的話就可以看到左上角的鎖頭，成功建立安全連線嚕～" loading="lazy" decoding="async">
+  <figcaption>順利的話就可以看到<strong>左上角的鎖頭</strong>，成功建立安全連線嚕～</figcaption>
+</figure>
+
+<h3 id="-系統-email-通知">➤ 系統 email 通知<a class="h-anchor" href="#-%e7%b3%bb%e7%b5%b1-email-%e9%80%9a%e7%9f%a5" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>以下為 Gmail 信箱的設置</p>
+</blockquote>
+<ul>
+<li><strong>發送信箱</strong>：你的 Gmail</li>
+<li><strong>發信人</strong>：你想要的寄件者名字</li>
+<li><strong>smtp 帳號</strong>：你的 Gmail，但後面去掉@gmail.com</li>
+<li><strong>smtp 密碼</strong>：你的 Gmail 密碼</li>
+</ul>
+<figure class="figure"><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-09.webp" width="1400" height="818" alt="建立後可以用測試發信喔！" loading="lazy" decoding="async">
+  <figcaption>建立後可以用<strong>測試發信</strong>喔！</figcaption>
+</figure>
+
+<h3 id="-修改預設入口頁面路徑">➤ 修改預設入口頁面路徑<a class="h-anchor" href="#-%e4%bf%ae%e6%94%b9%e9%a0%90%e8%a8%ad%e5%85%a5%e5%8f%a3%e9%a0%81%e9%9d%a2%e8%b7%af%e5%be%91" aria-label="這個段落的連結"></a></h3>
+<p>系統預設的路徑會讓首頁導向到下面這個畫面：</p>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-10.webp" width="1400" height="754" alt="修改預設入口頁面路徑（圖 10）" loading="lazy" decoding="async"></p>
+<p>其中『ZenTao Pro』、『ZenTao Ent』對使用開源版本的我們來說其實是多餘的，我們可以藉由以下設定改變預設路徑</p>
+<p><strong>STEP 1</strong>：前往 Zentao 安裝的目錄下，將『zentaoep』、『zentaopro』的資料夾註解或是移除，完成這個步驟後回到網頁點擊『ZenTao Pro』、『ZenTao Ent』會發現網頁回報 404 錯誤。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-11.webp" width="1028" height="406" alt="可以用 mv(重新命名) 或是 rm(移除) 的指令" loading="lazy" decoding="async">
+  <figcaption>可以用 mv(重新命名) 或是 rm(移除) 的指令</figcaption>
+</figure>
+
+<p><strong>STEP 2</strong>：調整 apache 的 config 檔案</p>
+<pre tabindex="0"><code>vi /opt/zbox/etc/apache/httpd.conf
+</code></pre><p>將 <code>DocumentRoot &ldquo;/opt/zbox/app/htdocs&rdquo;</code> 註解改成 zentao 的路徑 <code>DocumentRoot &ldquo;/opt/zbox/app/zentao/www/&quot;</code></p>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-12.webp" width="1048" height="498" alt="修改預設入口頁面路徑（圖 12）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：重新啟動 Apache 和 MySQL</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /opt/zbox/zbox restart
+</span></span></code></pre></div><p><strong>STEP 4</strong>：重新輸入網址就會發現入口頁面變成禪道的登入頁面嚕～</p>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-13.webp" width="1400" height="1056" alt="修改預設入口頁面路徑（圖 13）" loading="lazy" decoding="async"></p>
+<h3 id="-移除url中的zentao路徑">➤ 移除url中的『zentao』路徑<a class="h-anchor" href="#-%e7%a7%bb%e9%99%a4url%e4%b8%ad%e7%9a%84zentao%e8%b7%af%e5%be%91" aria-label="這個段落的連結"></a></h3>
+<p>我們明明已經在zentao底下了，還有一個 <code>zentao</code> 的路徑真的多此一舉，移除他其實很簡單（官方給的教學基本上無效…搞了我好久）</p>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-14.webp" width="816" height="76" alt="移除url中的『zentao』路徑（圖 14）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 1</strong>：打開 zentao 的設定檔</p>
+<pre tabindex="0"><code>vi /opt/zbox/app/zentao/config/my.php
+</code></pre><p><strong>STEP 2</strong>：調整網路的路徑，將原本 <code>$config-&gt;webRoot</code> 的那行註解，貼上 <code>$config-&gt;webRoot = &lsquo;/&rsquo;;</code> 後儲存離開</p>
+<p><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-15.webp" width="956" height="630" alt="移除url中的『zentao』路徑（圖 15）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：重新登入 Zentao 的管理系統後會發現多餘的路徑通通不見嚕～</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202103/zentao-installation-guide/images/zentao-installation-guide-16.webp" width="1400" height="556" alt="『zentao』真的消失惹呢！" loading="lazy" decoding="async">
+  <figcaption>『zentao』真的消失惹呢！</figcaption>
+</figure>
+
+<h3 id="-備份方式">➤ 備份方式<a class="h-anchor" href="#-%e5%82%99%e4%bb%bd%e6%96%b9%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>備份完整資料夾</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /opt/zbox/zbox stop    <span style="color:#8b949e;font-style:italic">#停止zbox服务</span>
+</span></span><span style="display:flex;"><span>sudo cp -prf /opt/zbox /opt/zbox_bak    <span style="color:#8b949e;font-style:italic">#備份整个zbox目錄</span>
+</span></span></code></pre></div><p>2. 其實系統內建凌晨 00:30 分會備份，路徑在</p>
+<pre tabindex="0"><code>/opt/zbox/app/zentao/tmp/backup/
+</code></pre><hr>
+<blockquote class="pullquote"><p>相比之前安裝遇到各種挫折的 Redmine、Gitlab，Zentao 真的是完勝，目前榮登我這輩子安裝最順暢的管理系統！</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04</title>
+      <link>https://deanlin.net/blog/202102/redmine-installation-ubuntu/</link>
+      <pubDate>Thu, 18 Feb 2021 15:00:45 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202102/redmine-installation-ubuntu/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>專案管理的工具非常之多，但是 jira、notion、clickup、trello 這類的專案管理都需要付錢，目前公司採用 Teams 的 planner、Lists 又不符合實際使用情境；之前有短暫的導入 testlink，不過那個 20 年前的 UI…</description>
+      <content:encoded><![CDATA[<p>專案管理的工具非常之多，但是 jira、notion、clickup、trello 這類的專案管理都需要付錢，目前公司採用 Teams 的 planner、Lists 又不符合實際使用情境；之前有短暫的導入 testlink，不過那個 20 年前的 UI 設計很快就勸退大家。基於上述原因決定嘗試使用 Redmine 這個專案管理工具，本篇文章會詳細說明安裝的步驟即遭遇過的問題，文章大綱如下：</p>
+<pre tabindex="0"><code>一、安裝環境
+二、安裝順序
+  STEP 1：安裝 MySQL
+  STEP 2：建立 Redmine 使用者帳號
+  STEP 3：安裝 RVM
+  STEP 4：安裝 Ruby
+  STEP 5：安裝 Passenger and Nginx
+  STEP 6：設定 Nginx
+  STEP 7：在 MySQL 增加 redmine 的使用者
+  STEP 8：安裝 Redmine
+  STEP 9：安裝 Redmine 外掛
+  STEP 10：設定 Redmine 寄信功能
+三、備註
+</code></pre><p><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-01.webp" width="1400" height="784" alt="Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="一安裝環境">一、安裝環境<a class="h-anchor" href="#%e4%b8%80%e5%ae%89%e8%a3%9d%e7%92%b0%e5%a2%83" aria-label="這個段落的連結"></a></h2>
+<p>官方沒有建議的硬體規格，但是看到有 <a href="https://www.redmineup.com/pages/blog/self-hosted-on-in-the-cloud-how-to-choose-infrastructure-and-hardware-configuration-for-redmine">文章分享</a> 最低硬體配置如下：</p>
+<ul>
+<li>Processor: Intel Celeron (min 300 MHz)</li>
+<li>RAM: 1–2 GB RAM</li>
+<li>HDD: 30–40 GB</li>
+</ul>
+<p>但通常使用最低硬體配置得到的結果就是容易卡，很多人同時上線使用時會讓卡到讓你懷疑人生，下面是我安裝時的配置目前使用起來算是流暢給大家參考用：</p>
+<ul>
+<li>Processor: 使用 VMWARE 的虛擬單核心</li>
+<li>RAM: 8GB RAM</li>
+<li>HDD: 500 GB</li>
+<li>OS: ubuntu 16.04</li>
+</ul>
+<h2 id="二安裝順序">二、安裝順序<a class="h-anchor" href="#%e4%ba%8c%e5%ae%89%e8%a3%9d%e9%a0%86%e5%ba%8f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>操作時請注意角色權限(root、redmine)，否則安裝到一半會卡住</p>
+</blockquote>
+<h2 id="step-1安裝-mysql">STEP 1：安裝 MySQL<a class="h-anchor" href="#step-1%e5%ae%89%e8%a3%9d-mysql" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： root</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 安裝 MySQL 套件
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt install build-essential mysql-server libmysqlclient-dev imagemagick libmagickwand-dev
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 安裝後驗證 MySQL Version
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    mysql -u root -p
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/b38188a5ef4141b93c01b319a80b371b" rel="noopener">mysql_install.md</a>（GitHub Gist）</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-02.webp" width="1258" height="514" alt="看到類似上方的 MySQL 資訊就代表你安裝成功嚕！" loading="lazy" decoding="async">
+  <figcaption>看到類似上方的 MySQL 資訊就代表你安裝成功嚕！</figcaption>
+</figure>
+
+<h2 id="step-2建立-redmine-使用者帳號">STEP 2：建立 Redmine 使用者帳號<a class="h-anchor" href="#step-2%e5%bb%ba%e7%ab%8b-redmine-%e4%bd%bf%e7%94%a8%e8%80%85%e5%b8%b3%e8%99%9f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： root</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 建立 Redmine 使用者，資料放在 <span style="color:#a5d6ff">`/data/redmine`</span>
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    adduser --system \
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        --shell /bin/bash \
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        --gecos &#39;Redmine Administrator&#39; \
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        --group \
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        --home /data/redmine redmine;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 建立 rvm group
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    groupadd rvm
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 允許 redmine 可以 sudo
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    adduser redmine sudo
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 設定 redmine 密碼
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    passwd redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 將 redmine 使用者加入 rvm 群組
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    usermod -a -G rvm redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/7443c1b56e1f7a585472834ea2ec65b0" rel="noopener">add_redmine_user.md</a>（GitHub Gist）</p>
+<h2 id="step-3安裝-rvm">STEP 3：安裝 RVM<a class="h-anchor" href="#step-3%e5%ae%89%e8%a3%9d-rvm" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： redmine</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 安裝gnupg2
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    sudo apt install gnupg2
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 安裝 GPG keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 安裝 RVM
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    \curl -sSL https://get.rvm.io | bash -s stable
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 讓 rvm 指令生效
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    source /data/redmine/.rvm/scripts/rvm
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 確認安裝的RVM版本
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rvm --version
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/c05ee64e18057de7a430df6b474ebd9e" rel="noopener">install_RVM.md</a>（GitHub Gist）</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-03.webp" width="1400" height="74" alt="看到類似上方的 RVM 資訊就代表你安裝成功嚕！" loading="lazy" decoding="async">
+  <figcaption>看到類似上方的 RVM 資訊就代表你安裝成功嚕！</figcaption>
+</figure>
+
+<h2 id="step-4安裝-ruby">STEP 4：安裝 Ruby<a class="h-anchor" href="#step-4%e5%ae%89%e8%a3%9d-ruby" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： redmine</p>
+</blockquote>
+<p>作者的 <strong>RUBY_VERSION 為 2.3.8</strong>，這裡安裝的版本請<a href="https://www.redmine.org/projects/redmine/wiki/redmineinstall#Ruby-interpreter">參考 Redmine 的官方建議</a>，如果安裝其他的版本後續安裝 Redmine 時會發生錯誤</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 檢查 rvm 必要的套件
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rvm requirements
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 安裝指定的 ruby version
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rvm install ${RUBY_VERSION}
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 將此版本設定為預設
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rvm use ${RUBY_VERSION} --default
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 確認安裝的 Ruby 版本
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ruby --version
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/26719eedd99c32afc8f8d5820e058078" rel="noopener">intsall_ruby.md</a>（GitHub Gist）</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-04.webp" width="1400" height="74" alt="看到類似上方的 ruby 資訊就代表你安裝成功嚕！" loading="lazy" decoding="async">
+  <figcaption>看到類似上方的 ruby 資訊就代表你安裝成功嚕！</figcaption>
+</figure>
+
+<h2 id="step-5安裝-passenger-and-nginx">STEP 5：安裝 Passenger and Nginx<a class="h-anchor" href="#step-5%e5%ae%89%e8%a3%9d-passenger-and-nginx" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： root</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 安裝 Passenger PGP key 和 HTTPS support for package manager
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt install -y dirmngr gnupg
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7 
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt install -y apt-transport-https ca-certificates
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. Add passenger APT repository
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    sh -c &#39;echo deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main &gt; /etc/apt/sources.list.d/passenger.list&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt update
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 安裝 Passenger and NGINX
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt install -y nginx-extras passenger
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/b44c3fa2e4c3a95b133182431af9da3c" rel="noopener">install_Passenger_Nginx.md</a>（GitHub Gist）</p>
+<h2 id="step-6設定-nginx">STEP 6：設定 Nginx<a class="h-anchor" href="#step-6%e8%a8%ad%e5%ae%9a-nginx" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： root</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 編輯 Nginx 設定檔案
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    vi /etc/nginx/nginx.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 移除此行註解#：`</span>include /etc/nginx/passenger.conf;<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`conf
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ...
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ##
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    # Phusion Passenger config
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ##
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    # Uncomment it if you installed passenger or passenger-enterprise
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ##
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    include /etc/nginx/passenger.conf;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 接下來要調整 Nginx 的網站設定，所以建議先備份原本的設定
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.orig
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 編輯 Nginx 的網站設定
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    vi /etc/nginx/sites-available/default
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">6. 調整網站的根目錄位置以及 Passenger 設定
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    #root /var/www/html; #將原本的註解或是移除
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    root /data/redmine/current/public;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    passenger_enabled on;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    client_max_body_size 10m;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">7. 把 location 段落註解
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    #location / {
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">            # First attempt to serve request as file, then
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">            # as directory, then fall back to displaying a 404.
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    #       try_files $uri $uri/ =404;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    #}
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/dc2d42e3059a7beff2912bbd34be52ea" rel="noopener">set_nginx.md</a>（GitHub Gist）</p>
+<p>完成上述步驟後再做以下驗證：</p>
+<ol>
+<li>更改目錄權限： <code>chown -R www-data /var/www</code></li>
+<li>重啟 Nginx： <code>systemctl restart nginx</code></li>
+<li>驗證 Passenger and NGINX: <code>/usr/bin/passenger-config validate-install</code></li>
+</ol>
+<p><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-05.webp" width="1030" height="426" alt="STEP 6：設定 Nginx（圖 5）" loading="lazy" decoding="async"></p>
+<p>4. 檢查 Ngninx 狀態與 Passenger process: <code>/usr/sbin/passenger-memory-stats</code></p>
+<p><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-06.webp" width="1400" height="498" alt="STEP 6：設定 Nginx（圖 6）" loading="lazy" decoding="async"></p>
+<h2 id="step-7在-mysql-增加-redmine-的使用者">STEP 7：在 MySQL 增加 redmine 的使用者<a class="h-anchor" href="#step-7%e5%9c%a8-mysql-%e5%a2%9e%e5%8a%a0-redmine-%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： root</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 登入 MySQL
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    mysql -u root -p
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 創建 redmine 資料庫
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    CREATE DATABASE redmine CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 創建 redmine 使用者，密碼記得自行調整
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    CREATE USER &#39;redmine&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;password&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 給予使用者權限
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    GRANT ALL PRIVILEGES ON redmine.* TO &#39;redmine&#39;@&#39;localhost&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">6. 使權限生效
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    FLUSH PRIVILEGES;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">7. 離開 MySQL
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    quit;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/f0d6fa77b683a40cec8d44e5be51e36c" rel="noopener">mysql_add_redmine_user.md</a>（GitHub Gist）</p>
+<h2 id="step-8安裝-redmine">STEP 8：安裝 Redmine<a class="h-anchor" href="#step-8%e5%ae%89%e8%a3%9d-redmine" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： redmine</p>
+</blockquote>
+<h3 id="-下載官方-image">➤ 下載官方 image<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89%e5%ae%98%e6%96%b9-image" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 到[<span style="color:#7ee787">官方網站</span>](https://www.redmine.org/projects/redmine/wiki/Download)了解最新的stable版本（筆者安裝版本為 4.1.1）
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">2.</span> 前往放置 redmine image 的目錄
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cd /data/redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 下載官方 image 並解壓縮
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    wget https://www.redmine.org/releases/redmine-4.1.1.tar.gz
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    tar zxvf redmine-4.1.1.tar.gz
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 建立連結資料夾 current
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ln -s redmine-4.1.1 current
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 前往連結資料夾
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cd current
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/523ff799ed15fd78787e5664bcd589e3" rel="noopener">redmine_download.md</a>（GitHub Gist）</p>
+<h3 id="-調整-redmine-裡面的資料庫設定">➤ 調整 redmine 裡面的資料庫設定<a class="h-anchor" href="#-%e8%aa%bf%e6%95%b4-redmine-%e8%a3%a1%e9%9d%a2%e7%9a%84%e8%b3%87%e6%96%99%e5%ba%ab%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 將 redmine 的資料庫範例設定檔複製一份
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cp -pR config/database.yml.example config/database.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 編輯資料庫設定檔案
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    vi config/database.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`  
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3.  調整 production 的資訊即可，內容填上 STEP7 建立的使用者資訊即可
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`yml
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    production:
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      adapter: mysql2
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      database: redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      host: localhost
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      username: redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      password: &#34;your password&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      # Use &#34;utf8&#34; instead of &#34;utfmb4&#34; for MySQL prior to 5.7.7
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      encoding: utf8mb4
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/9cb24f48fd8b8fa969c4138a12186a76" rel="noopener">redmine_database_config.md</a>（GitHub Gist）</p>
+<h3 id="-下載相關套件">➤ 下載相關套件<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89%e7%9b%b8%e9%97%9c%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 先確認當前資料夾為 <span style="color:#a5d6ff">`/data/redmine/current`</span>
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    pwd
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 執行 gem, bundle 安裝依賴套件
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    gem install bundler
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    bundle install --without development test
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    &gt; 如果安裝過程中遇到錯誤可能是因為沒有安裝到 ruby 的套件  
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    &gt; 1. 先安裝 `</span>sudo apt-get install ruby-dev<span style="color:#a5d6ff">`  
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    &gt; 2. 再執行一次 `</span>bundle install --without development test` 確認有無報錯
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/540d8de42ff10326664acdb6f29c08d4" rel="noopener">redmine_install_package.md</a>（GitHub Gist）</p>
+<h3 id="-初始化-redmine">➤ 初始化 redmine<a class="h-anchor" href="#-%e5%88%9d%e5%a7%8b%e5%8c%96-redmine" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 先確認當前資料夾為 /data/redmine/current
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    pwd
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 用 Rake 啟動 redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    bundle exec rake generate_secret_token
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. Migrate Database Schema(初始化資料庫)
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    RAILS_ENV=production bundle exec rake db:migrate
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. Load Initial Data(下面會請你選擇語言，預設為英文，語言後續都能再做調整)
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    RAILS_ENV=production bundle exec rake redmine:load_default_data
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 用 Nginx 重啟 Redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    sudo systemctl restart nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/79b903f7c4f1f22821aa91bbb21dca06" rel="noopener">redmine_init.md</a>（GitHub Gist）</p>
+<p>接下來你可以瀏覽 <code>http:&lt;server_ip&gt;</code> ，如果順利的話可以看到 Redmine 登入畫面如下：</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-07.webp" width="1148" height="565" alt="預設 admin/admin 登入" loading="lazy" decoding="async">
+  <figcaption>預設 <code>admin/admin</code> 登入</figcaption>
+</figure>
+
+<h2 id="step-9安裝-redmine-外掛">STEP 9：安裝 Redmine 外掛<a class="h-anchor" href="#step-9%e5%ae%89%e8%a3%9d-redmine-%e5%a4%96%e6%8e%9b" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： redmine</p>
+</blockquote>
+<p>Plugin 安裝方式雷同，下面以 <code>Redmine Dashboard 2</code>為範例安裝</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 先進入 redmine 的 plugin 資料夾
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cd /current/plugins
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 下載 plugin，最新的 release 請參考[官方](https://github.com/jgraichen/redmine_dashboard)
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    wget https://github.com/jgraichen/redmine_dashboard/archive/v2.9.0.tar.gz
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 解壓縮檔案
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    tar zxvf v2.9.0.tar.gz
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 移除壓縮檔
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rm v2.9.0.tar.gz
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">6.  安裝相關套件
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    bundle install
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">7. 將套件相關 DB 進行 migrate 到 production
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rake db:migrate RAILS_ENV=production
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">8. 將套件安裝至 production
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">9. 安裝完畢後重啟讓設定生效
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    sudo systemctl restart nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d625c9f43d9667e086f3eb73328becb6" rel="noopener">redmine_plugin.md</a>（GitHub Gist）</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-08.webp" width="1148" height="529" alt="安裝成功後的外掛程式會直接出現喔～" loading="lazy" decoding="async">
+  <figcaption>安裝成功後的外掛程式會直接出現喔～</figcaption>
+</figure>
+
+<h2 id="step-10設定-redmine-寄信功能">STEP 10：設定 Redmine 寄信功能<a class="h-anchor" href="#step-10%e8%a8%ad%e5%ae%9a-redmine-%e5%af%84%e4%bf%a1%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： redmine</p>
+</blockquote>
+<p>如果沒做這個步驟是寄不出信的，需要做下面的調整即可</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-09.webp" width="1400" height="125" alt="設定前在：網站管理&gt;設定&gt;電子郵件提醒選項。會出現的畫面" loading="lazy" decoding="async">
+  <figcaption>設定前在：網站管理&gt;設定&gt;電子郵件提醒選項。會出現的畫面</figcaption>
+</figure>
+
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 進入 redmine 設定的資料夾
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cd /current/config
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 將 redmine 的設定範例設定檔複製一份
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cp -pR configuration.yml.example configuration.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 編輯 redmine 設定檔案
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    vi configuration.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 調整 production 的資訊即可，下面用 Gmail 作為範例
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    production:
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      delivery_method: :smtp
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      smtp_settings:
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        enable_starttls_auto: true
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        address: &#34;smtp.gmail.com&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        port: 587
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        domain: &#34;smtp.gmail.com&#34; # &#39;your.domain.com&#39; for GoogleApps
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        authentication: :plain
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        user_name: &#34;email&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        password: &#34;email pw&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">     `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 設定完畢後重啟生效
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    sudo systemctl restart nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/120f7f2368b770899f5cacdc8344e61a" rel="noopener">redmine_email.md</a>（GitHub Gist）</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-10.webp" width="1147" height="488" alt="網站管理&gt;設定&gt;電子郵件提醒選項的右下角會有“寄送測試郵件的按鈕”提供測試喔" loading="lazy" decoding="async">
+  <figcaption>網站管理&gt;設定&gt;電子郵件提醒選項的右下角會有“寄送測試郵件的按鈕”提供測試喔</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-11.webp" width="1262" height="484" alt="收到的測試郵件會長這個樣子" loading="lazy" decoding="async">
+  <figcaption>收到的測試郵件會長這個樣子</figcaption>
+</figure>
+
+<h2 id="三備註">三、備註<a class="h-anchor" href="#%e4%b8%89%e5%82%99%e8%a8%bb" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>如果進入網頁時畫面沒有顯示應該是因為防火牆問題，可以用下面指令嘗試：<code>sudo ufw allow http</code> 、<code>sudo ufw allow https</code></li>
+<li>參考資源：<a href="https://rickhw.github.io/2019/05/11/Redmine/Install-Redmine40x-on-Ubuntu1604/">Redmine 安裝篇：Redmine 4.0.x on Ubuntu 16.04</a>、<a href="https://rickhw.github.io/2017/03/18/Redmine/Redmine-Plugins/">Redmine Plugins and Themes</a>、<a href="https://www.redmine.org/projects/redmine/wiki/HowTo_Install_Redmine_on_Ubuntu_step_by_step">HowTo Install Redmine on Ubuntu step by step</a></li>
+</ol>
+<hr>
+<pre tabindex="0"><code>安裝完後如果想進一步了解如何使用 Redmine，可以參考以下文章：
+👍 如何用 Redmine 做專案管理＆體驗心得
+👍 Redmine Plugins &amp; Themes 介紹：那些我成功擴充的外掛
+👍 用 Redmine 做專案管理 — 管理者不可不知的設定
+👍 用 Redmine 做專案管理 — 一般用戶不可不知的基礎功能
+👍 Redmine 教育訓練 — 依角色權限說明
+</code></pre><hr>
+<h3 id="-讀完這篇文章後">🙂 讀完這篇文章後<a class="h-anchor" href="#-%e8%ae%80%e5%ae%8c%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0%e5%be%8c" aria-label="這個段落的連結"></a></h3>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Google Sheets｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/google-sheets/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 10 Aug 2022 13:56:49 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/google-sheets/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>免費！提交 Google 表單後，系統自動寄送客製化 email，宣傳效果 Up！</title>
+      <link>https://deanlin.net/blog/202208/google-forms-auto-email/</link>
+      <pubDate>Wed, 10 Aug 2022 13:56:49 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202208/google-forms-auto-email/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>有時我們希望使用者提交 Google 表單後，可以提供給他更多資訊（ex：活動詳細內容、宣傳廣告、友站連結…）；但 Google 表單只有在「設定 → 簡報 → 確認訊息」給你用純文字的方式表達，除了傳送內容受限制外，許多使用者在提交表單後會下意識的關閉網頁…</description>
+      <content:encoded><![CDATA[<p>有時我們希望使用者提交 Google 表單後，可以提供給他更多資訊（ex：活動詳細內容、宣傳廣告、友站連結…）；但 Google 表單只有在「設定 → 簡報 → 確認訊息」給你用純文字的方式表達，除了傳送內容受限制外，許多使用者在提交表單後會下意識的關閉網頁，根本沒注意到裡面寫了些什麼。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-01.webp" width="1400" height="731" alt="免費！提交 Google 表單後，系統自動寄送客製化 email，宣傳效果 Up！（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="前言需求來自於實務">前言：需求來自於實務<a class="h-anchor" href="#%e5%89%8d%e8%a8%80%e9%9c%80%e6%b1%82%e4%be%86%e8%87%aa%e6%96%bc%e5%af%a6%e5%8b%99" aria-label="這個段落的連結"></a></h2>
+<p>其實會想做這個功能，是因為不久前<a href="https://www.tenlong.com.tw/products/9786263331525">出版書籍</a>後，陸續有人填寫 Google 表單回傳自己的心得。</p>
+<p>而我這次有給填寫表單的讀者「30 分鐘免費諮詢」的回饋，但因為把諮詢的報名連結放在 Google 表單「確認訊息」的位置，導致有些讀者根本沒注意到它的存在，因此便想透過自動寄送 email，來解決這個囧境。</p>
+<blockquote>
+<p>你也可以先<a href="https://forms.gle/ADvarze9bKrwyUGV6">體驗看看筆者完成的 Demo</a>，只要填寫電子郵件，並在「是否願意收到電子報」的欄位選擇「是」，提交後便會收到自動發送的郵件嚕！</p>
+</blockquote>
+<hr>
+<h2 id="step-1-產生-html-email">STEP 1 ：產生 HTML email<a class="h-anchor" href="#step-1-%e7%94%a2%e7%94%9f-html-email" aria-label="這個段落的連結"></a></h2>
+<p>其實這個步驟並非必需，但為了讓寄送的 email 有基礎的質感，筆者還是決定製作一個 HTML email。</p>
+<p>看到 HTML 先別慌，現在網路上有非常多的資源，只要拖拉點選，一行程式碼都不用寫就能產生出來，這邊筆者是使用 <a href="https://beefree.io/">Beefree</a> 這個網站提供的服務，在這裡有擁有豐富的版型供你選擇（雖然筆者還是選用空白模板）。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-02.webp" width="1400" height="736" alt="STEP 1 ：產生 HTML email（圖 2）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-03.webp" width="1400" height="697" alt="STEP 1 ：產生 HTML email（圖 3）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<p>它的使用非常方便，你甚至可以在不註冊的狀態下製作自己的 HTML email；<strong>不過如果你擔心自己會失手關閉網頁，還是建議註冊登入。</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-04.webp" width="1400" height="998" alt="這個是 Beefree 的 UI 操作畫面" loading="lazy" decoding="async">
+  <figcaption>這個是 Beefree 的 UI 操作畫面</figcaption>
+</figure>
+
+<p>在完成 HTML email 後，點擊右上角的 Download 會獲得一個壓縮檔，解壓縮後你會看到裡面的「beefree-xxx.html」檔，筆者建議重新命名成「email-content.html」方便辨識（這個 HTML 在後面的步驟會用到，請妥善保存）。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-05.webp" width="1400" height="927" alt="STEP 1 ：產生 HTML email（圖 5）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>備註：</strong></p>
+<p>1. 免費版在最下面會有 Beefree 的 Logo，它可以在下載後透過編輯 HTML 來刪除。</p>
+<p>2. 如果有使用到圖片，建議先上傳到 Imgur，再把產生連結貼回來（ex：https://i.imgur.com/Oonq5Gy.jpg），詳細流程這邊不再贅述。</p>
+</blockquote>
+<hr>
+<h2 id="setp-2建立-google-表單">SETP 2：建立 Google 表單<a class="h-anchor" href="#setp-2%e5%bb%ba%e7%ab%8b-google-%e8%a1%a8%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<p>建立表單的步驟我就不再示範了，需要注意的是「電子郵件（email）」這個欄位需要設定為必填，不然你也沒有寄信的對象啊！</p>
+<p>為了驗證 Google 表單的參數可以作為邏輯判斷使用，我這邊再新增一個「是否願意收到電子報」的問題，依照回答的「是/否」來決定要不要寄送 email。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-06.webp" width="1400" height="975" alt="SETP 2：建立 Google 表單（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="setp-3從-google-表單產生-google-試算表">SETP 3：從 Google 表單產生 Google 試算表<a class="h-anchor" href="#setp-3%e5%be%9e-google-%e8%a1%a8%e5%96%ae%e7%94%a2%e7%94%9f-google-%e8%a9%a6%e7%ae%97%e8%a1%a8" aria-label="這個段落的連結"></a></h2>
+<p>在「回覆」的 Tab 中，點擊「Google 試算表」的 icon 便會跳出建立 Google 試算表的詢問視窗。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-07.webp" width="1400" height="461" alt="SETP 3：從 Google 表單產生 Google 試算表（圖 7）" loading="lazy" decoding="async"></p>
+<p>下面是自動產生的 Google 試算表。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-08.webp" width="1400" height="774" alt="SETP 3：從 Google 表單產生 Google 試算表（圖 8）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-4從-google-試算表建立-apps-script">STEP 4：從 Google 試算表建立 Apps Script<a class="h-anchor" href="#step-4%e5%be%9e-google-%e8%a9%a6%e7%ae%97%e8%a1%a8%e5%bb%ba%e7%ab%8b-apps-script" aria-label="這個段落的連結"></a></h2>
+<p>點擊工具列的「擴充功能」，再點擊「Apps Script」便會產生嚕！</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-09.webp" width="1400" height="329" alt="STEP 4：從 Google 試算表建立 Apps Script（圖 9）" loading="lazy" decoding="async"></p>
+<p>在 Apps Script 裡面用「新增檔案」建立一個 HTML，並將 STEP 1 產生的 HTML 程式碼貼回去。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-10.webp" width="1232" height="666" alt="STEP 4：從 Google 試算表建立 Apps Script（圖 10）" loading="lazy" decoding="async"></p>
+<p>接著要撰寫 Apps Script 裡面的程式邏輯（程式碼.gs）。</p>
+<p>我們要先抓取 Google Form 裡面提交的值，如果「是否願意收到電子報」的值為「否」，我們就跳出函式；若為「是」，我們便將 HTML email 寄出（相關注意事項請看備註描述）。</p>
+<pre tabindex="0"><code>function onSubmit(datas) {
+  
+  // 取得提交的值（你的欄位名稱可能與我不同）
+  var data = datas.namedValues;
+  var replyEmail = data[&#39;電子郵件地址&#39;][0];
+  var isReceiveEDM = data[&#39;是否願意收到電子報&#39;][0];
+
+  if (isReceiveEDM === &#39;否&#39;){
+    // 如果拒絕收到電子報就直接結束
+    return;
+  }
+
+  // 取得上傳的 HTML 檔
+  var edmHTML = HtmlService.createTemplateFromFile(&#39;email-content&#39;);
+  
+  // 設定HTML裡的變數
+  edmHTML.data = data;
+  
+  // 產出成要發送的 HTML
+  var output = edmHTML.evaluate().getContent();
+
+  // 發送信件
+  MailApp.sendEmail({
+    to: replyEmail,
+    subject: &#34;[系統發送] 感謝您填寫「Dean Lin 的回饋表單」&#34;,
+    htmlBody: output
+  });
+}
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/36e9cb9e237c53936ed751d5fb986fae" rel="noopener">email-response.gs</a>（GitHub Gist）</p>
+<hr>
+<h2 id="step-5設定觸發條件">STEP 5：設定觸發條件<a class="h-anchor" href="#step-5%e8%a8%ad%e5%ae%9a%e8%a7%b8%e7%99%bc%e6%a2%9d%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>在上面的步驟完成後，我們要將 Google 表單的事件與剛剛撰寫的程式綁定；因此我們要到左側的功能列，點擊「觸發條件」。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-11.webp" width="777" height="286" alt="STEP 5：設定觸發條件（圖 11）" loading="lazy" decoding="async"></p>
+<p>接著點擊右下角的「新增觸發條件」。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-12.webp" width="1400" height="892" alt="STEP 5：設定觸發條件（圖 12）" loading="lazy" decoding="async"></p>
+<p>觸發條件可以參考筆者在紅框的選擇，完成後按右下角的「儲存即可」。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-13.webp" width="1400" height="1076" alt="STEP 5：設定觸發條件（圖 13）" loading="lazy" decoding="async"></p>
+<p>接下來 Google 會跳出一堆需要你授權的彈窗，順序大概是「選擇帳戶 → 驗證 app → 允許 app 權限」。</p>
+<div class="gallery-row cols-3">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-14.webp" width="584" height="497" alt="STEP 5：設定觸發條件（圖 14）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-15.webp" width="584" height="591" alt="STEP 5：設定觸發條件（圖 15）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-16.webp" width="584" height="617" alt="STEP 5：設定觸發條件（圖 16）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<hr>
+<h2 id="final測試發信">Final：測試發信<a class="h-anchor" href="#final%e6%b8%ac%e8%a9%a6%e7%99%bc%e4%bf%a1" aria-label="這個段落的連結"></a></h2>
+<p>終於走到最後一步惹 🤣</p>
+<p>我們來<a href="https://forms.gle/ADvarze9bKrwyUGV6">填寫 Google 表單</a>，確認是否會順利自動寄信。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-17.webp" width="748" height="766" alt="如果選擇「否」就不會收到郵件喔！" loading="lazy" decoding="async">
+  <figcaption>如果選擇「否」就不會收到郵件喔！</figcaption>
+</figure>
+
+<p>如果收到 email，就大功告成嚕！</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-18.webp" width="1400" height="1132" alt="Final：測試發信（圖 18）" loading="lazy" decoding="async"></p>
+<p>教學到這邊就結束啦～希望大家按照步驟都能順利完成，提供更多的資訊給目標 TA，讓宣傳效果 Up Up！</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>讓Line機器人變成你的小秘書</title>
+      <link>https://deanlin.net/blog/202006/line-bot-personal-assistant/</link>
+      <pubDate>Wed, 10 Jun 2020 12:13:46 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/line-bot-personal-assistant/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>機器人的秘書還不夠誘惑嗎ＸＤ</description>
+      <content:encoded><![CDATA[<blockquote>
+<p>為什麼撰寫這篇文章</p>
+</blockquote>
+<p>在<a href="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/">上一篇</a>文章已經介紹了Google App Script如何串接Line Message Api的應用，在這裡我將延續之前的議題，讓Line機器人變成你的小秘書</p>
+<blockquote>
+<p>文章目標</p>
+</blockquote>
+<ol>
+<li>使用Google Sheet裡面Script的功能</li>
+<li>使用簡單的SQL語法抓出Google Sheet中你需要的資訊</li>
+</ol>
+<blockquote>
+<p>本文章使用到的技術：</p>
+</blockquote>
+<ol>
+<li>Google App Script : 這次著重在執行SQL語法</li>
+<li>Google Sheet : 會把它當成讀取/寫入的資料庫</li>
+</ol>
+<h2 id="step-1-結合google-sheet的衍生應用">STEP 1: 結合Google Sheet的衍生應用<a class="h-anchor" href="#step-1-%e7%b5%90%e5%90%88google-sheet%e7%9a%84%e8%a1%8d%e7%94%9f%e6%87%89%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>Google App Script功能很多，但能做到什麼地步就看個人的想像能力，接下來我提供的只是一條思路，如果大家想到有趣的應用歡迎下方留言</p>
+</blockquote>
+<p>如果大家平常有使用Google sheet當成工作記錄習慣的話，你可以嘗試看看這個應用</p>
+<p>這裡我先創建一個Google Sheet，裡面建立一些清單(<a href="https://docs.google.com/spreadsheets/d/1ZdmsEkS27VWR6HF42_aka5rrtgu31saZoUupOD8Xx6s/edit?usp=sharing">你可以直接複製我的</a>)：</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-01.webp" width="1400" height="591" alt="STEP 1: 結合Google Sheet的衍生應用（圖 1）" loading="lazy" decoding="async"></p>
+<p>接著建立Google Sheet的Script</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-02.webp" width="1400" height="811" alt="STEP 1: 結合Google Sheet的衍生應用（圖 2）" loading="lazy" decoding="async"></p>
+<p>將以下程式複製貼上，如果您願意可以自由更改，記得將<a href="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/">上一篇</a>取得的line token放上去喔</p>
+<pre tabindex="0"><code>var ss = SpreadsheetApp.getActiveSpreadsheet()//抓取這張excel
+function doPost (e) {
+    var msg = JSON.parse(e.postData.contents);
+    // 取出 replayToken 和發送的訊息文字
+    var replyToken = msg.events[0].replyToken;
+    var userMessage = msg.events[0].message.text;
+
+    if (userMessage.indexOf(&#34;未完成&#34;) &gt; -1) {//分析傳遞字串確認是否有“未完成”
+        // QUERY(目標文件及範圍,SQL語法)
+        // 尋找sheet1範圍A2到C100裡面A跟B欄位的資料且C欄位為FALSE
+        var formulaToUse = &#39;=QUERY(Sheet1!A2:C100,&#34;SELECT A,B WHERE C = FALSE&#34;)&#39;
+        var result = query(formulaToUse)
+
+        var userMessage = &#39;未完成文件如下：\n&#39;;//單純的文字組成
+        result.forEach(row =&gt; {
+            userMessage = userMessage + row[0] + &#39;:&#39; + row[1] + &#39;\n&#39;
+        })
+        return sendLineMsg(userMessage, replyToken);
+    }
+    if (userMessage.indexOf(&#34;已完成&#34;) &gt; -1) {//分析傳遞字串確認是否有“已完成”
+        var formulaToUse = &#39;=QUERY(Sheet1!A2:C100,&#34;SELECT A,B WHERE C = TRUE&#34;)&#39;
+        var result = query(formulaToUse)
+        var userMessage = &#39;已完成文件如下：\n&#39;;
+        result.forEach(row =&gt; {
+            userMessage = userMessage + row[0] + &#39;:&#39; + row[1] + &#39;\n&#39;
+        })
+        return sendLineMsg(userMessage, replyToken);
+    }
+    if (userMessage.indexOf(&#34;功能&#34;) &gt; -1) {//這是列出你有提供功能的列表
+        return sendLineMsg(&#39;朕不給的你不能搶ㄎㄎ\n• 未完成 ：列出excel未完成清單\n• 已完成 ：列出excel已完成清單&#39;, replyToken);
+    }
+}
+function query (request) { //執行SQL語法的地方
+    var sheet = ss.insertSheet(); //先插入一張新的sheet(也許有更好的做法，如果有請告訴我ＱＱ)
+    sheet.getActiveRange().setFormula(request); //執行SQL
+    var result = sheet.getDataRange().getValues(); //把整張表抓下來
+    ss.deleteSheet(sheet); //把sheet刪除
+    Logger.log(result);//可透過log來看輸出的資訊(上方的View Logs)
+    return result; //回傳結果
+}
+function sendLineMsg (Message, replyToken) {
+    var CHANNEL_ACCESS_TOKEN = &#39;你的 Channel access token&#39;;
+
+    var url = &#39;https://api.line.me/v2/bot/message/reply&#39;;
+    UrlFetchApp.fetch(url, {
+        &#39;headers&#39;: {
+            &#39;Content-Type&#39;: &#39;application/json; charset=UTF-8&#39;,
+            &#39;Authorization&#39;: &#39;Bearer &#39; + CHANNEL_ACCESS_TOKEN,
+        },
+        &#39;method&#39;: &#39;post&#39;,
+        &#39;payload&#39;: JSON.stringify({
+            &#39;replyToken&#39;: replyToken,
+            &#39;messages&#39;: [{
+                &#39;type&#39;: &#39;text&#39;,
+                &#39;text&#39;: Message,
+            }],
+        }),
+    });
+}
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/8f6d1e06b079ae3061d450d459cedc2c" rel="noopener">line_secretary.gs</a>（GitHub Gist）</p>
+<p>接下來要將這個程式發布（如果有授權相關問題必須都接受才會通過）</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-03.webp" width="998" height="408" alt="STEP 1: 結合Google Sheet的衍生應用（圖 3）" loading="lazy" decoding="async"></p>
+<p>Project version記得每次都要選擇New(否則不會更新)，並且要允許任何人可以存取這隻app，不然你的程式無法被line機器人執行</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-04.webp" width="892" height="804" alt="STEP 1: 結合Google Sheet的衍生應用（圖 4）" loading="lazy" decoding="async"></p>
+<p>接下來複製你這串web app URL給LINE Message Api使用</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-05.webp" width="892" height="534" alt="STEP 1: 結合Google Sheet的衍生應用（圖 5）" loading="lazy" decoding="async"></p>
+<p>貼到webhook URL上面後按下Save</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-06.webp" width="1400" height="698" alt="STEP 1: 結合Google Sheet的衍生應用（圖 6）" loading="lazy" decoding="async"></p>
+<h2 id="step-2--驗證串接成功">STEP 2 : 驗證串接成功<a class="h-anchor" href="#step-2--%e9%a9%97%e8%ad%89%e4%b8%b2%e6%8e%a5%e6%88%90%e5%8a%9f" aria-label="這個段落的連結"></a></h2>
+<p>打開你的LINE就可以輸入下面三種文字，機器人就會做相對應的回覆喔！</p>
+<ol>
+<li>功能</li>
+<li>未完成</li>
+<li>已完成</li>
+</ol>
+<p><img src="https://deanlin.net/blog/202006/line-bot-personal-assistant/images/line-bot-personal-assistant-07.webp" width="748" height="1140" alt="STEP 2 : 驗證串接成功（圖 7）" loading="lazy" decoding="async"></p>
+<p>希望大家喜歡這篇文章的應用～</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>用Google App Script打造打造自己的lINE機器人</title>
+      <link>https://deanlin.net/blog/202006/line-bot-with-google-apps-script/</link>
+      <pubDate>Wed, 10 Jun 2020 12:12:04 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/line-bot-with-google-apps-script/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>來打造一個回聲狗吧～</description>
+      <content:encoded><![CDATA[<blockquote>
+<p>為什麼撰寫這篇文章</p>
+</blockquote>
+<p>Google App Script在以前我就非常的喜愛，也曾用他來當我專案後台登入的api來使用，搭配上Google Sheet，你簡直獲得了免費資料庫(不過他執行的速度就…反正就免費的速度XD)</p>
+<p>但為了讓技術經過這段日子獲得更多提升，我想在原先資料庫的應用上加點料，比如說串接機器人，讓機器人對你定期提醒</p>
+<p>本文章僅僅是示範最簡單的應用層面，實際上應該有非常多的應用等待大家去發掘</p>
+<blockquote>
+<p>文章目標</p>
+</blockquote>
+<ol>
+<li>了解Google App Script，可撰寫簡單api並附帶參數</li>
+<li>Google App Script串接Line機器人，讓你可以自由決定使用功能</li>
+</ol>
+<blockquote>
+<p>本文章使用到的技術：</p>
+</blockquote>
+<ol>
+<li>Google App Script : 撰寫你想要執行的邏輯</li>
+<li>LINE developers : 打造自己的lINE機器人</li>
+</ol>
+<h2 id="setp-1-建立-line-messaging-api">SETP 1: 建立 LINE Messaging API<a class="h-anchor" href="#setp-1-%e5%bb%ba%e7%ab%8b-line-messaging-api" aria-label="這個段落的連結"></a></h2>
+<p>我們要先在<a href="https://developers.line.biz/zh-hant/">這裡申請到line</a>發送訊息所需要的token</p>
+<p>除了Channel type要寫Messaging API外其他就自由發揮，反正你填錯或是漏填LINE會逼著你填完</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-01.webp" width="1400" height="682" alt="SETP 1: 建立 LINE Messaging API（圖 1）" loading="lazy" decoding="async"></p>
+<p>新增完成後在Messaging Api裡面的basic id就是這個機器人在line的id</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-02.webp" width="1400" height="905" alt="SETP 1: 建立 LINE Messaging API（圖 2）" loading="lazy" decoding="async"></p>
+<p>你就能在line裡面透過id找到他惹</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-03.webp" width="624" height="810" alt="SETP 1: 建立 LINE Messaging API（圖 3）" loading="lazy" decoding="async"></p>
+<p>除了id之外最重要的就是token，這個也是在Messaging Api裡面的Channel access token</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-04.webp" width="1400" height="668" alt="SETP 1: 建立 LINE Messaging API（圖 4）" loading="lazy" decoding="async"></p>
+<p>另外我們不需要Greeting message、Auto response的功能</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-05.webp" width="1400" height="890" alt="SETP 1: 建立 LINE Messaging API（圖 5）" loading="lazy" decoding="async"></p>
+<h2 id="step-2--建立-google-apps-script-接收-line-訊息">STEP 2 : 建立 Google Apps Script 接收 LINE 訊息<a class="h-anchor" href="#step-2--%e5%bb%ba%e7%ab%8b-google-apps-script-%e6%8e%a5%e6%94%b6-line-%e8%a8%8a%e6%81%af" aria-label="這個段落的連結"></a></h2>
+<p>你可以在<a href="https://www.google.com/script/start/">這裡開始你的Google App Script</a>的故事 ，點擊Start Scripting，開啟一個Google App Script的專案吧</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-06.webp" width="1400" height="944" alt="STEP 2 : 建立 Google Apps Script 接收 LINE 訊息（圖 6）" loading="lazy" decoding="async"></p>
+<p>將以下程式複製貼上，如果您願意可以自由更改，記得將剛剛取得的line token放上去喔</p>
+<pre tabindex="0"><code>function doPost (e) { //凡事使用post method皆要通過這個function 
+
+  var CHANNEL_ACCESS_TOKEN = &#39;你的 Channel access token&#39;;
+  var msg = JSON.parse(e.postData.contents);
+
+  // 取出 replayToken 和發送的訊息文字
+  var replyToken = msg.events[0].replyToken;
+  var userMessage = msg.events[0].message.text;
+
+  if (typeof replyToken === &#39;undefined&#39;) {
+    return;
+  }
+
+  var url = &#39;https://api.line.me/v2/bot/message/reply&#39;;
+  UrlFetchApp.fetch(url, {
+    &#39;headers&#39;: {
+      &#39;Content-Type&#39;: &#39;application/json; charset=UTF-8&#39;,
+      &#39;Authorization&#39;: &#39;Bearer &#39; + CHANNEL_ACCESS_TOKEN,
+    },
+    &#39;method&#39;: &#39;post&#39;,
+    &#39;payload&#39;: JSON.stringify({
+      &#39;replyToken&#39;: replyToken,
+      &#39;messages&#39;: [{
+        &#39;type&#39;: &#39;text&#39;, // 格式為文字，line可以傳送多種個格式(carousel、image)，有興趣的可以自己研究
+        &#39;text&#39;: userMessage, //你目標傳遞的訊息
+      }],
+    }),
+  });
+}
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/7b90f26418375ed32aec1370a9673059" rel="noopener">code.gs</a>（GitHub Gist）</p>
+<p>接下來要將這個程式發布（如果有授權相關問題必須都接受才會通過）</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-07.webp" width="1014" height="396" alt="STEP 2 : 建立 Google Apps Script 接收 LINE 訊息（圖 7）" loading="lazy" decoding="async"></p>
+<p>Project version記得每次都要選擇New(否則不會更新)，並且要允許任何人可以存取這隻app，不然你的程式無法被line機器人執行</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-08.webp" width="892" height="804" alt="STEP 2 : 建立 Google Apps Script 接收 LINE 訊息（圖 8）" loading="lazy" decoding="async"></p>
+<p>接下來複製你這串web app URL給LINE Message Api使用</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-09.webp" width="892" height="534" alt="STEP 2 : 建立 Google Apps Script 接收 LINE 訊息（圖 9）" loading="lazy" decoding="async"></p>
+<p>貼到webhook URL上面後按下Save</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-10.webp" width="1400" height="698" alt="STEP 2 : 建立 Google Apps Script 接收 LINE 訊息（圖 10）" loading="lazy" decoding="async"></p>
+<h2 id="step-3-驗證串接成功">STEP 3: 驗證串接成功<a class="h-anchor" href="#step-3-%e9%a9%97%e8%ad%89%e4%b8%b2%e6%8e%a5%e6%88%90%e5%8a%9f" aria-label="這個段落的連結"></a></h2>
+<p>打開你的LINE就可以測試功能是否正常嚕～如果你是按照我的程式碼複製貼上，那他現在應該是回聲狗的功能XD</p>
+<p><img src="https://deanlin.net/blog/202006/line-bot-with-google-apps-script/images/line-bot-with-google-apps-script-11.webp" width="748" height="886" alt="STEP 3: 驗證串接成功（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>今天的教學就到這裡了～串接Google Sheet的部分我會放到<a href="https://deanlin.net/blog/202006/line-bot-personal-assistant/">下一篇文章</a>，歡迎有興趣的人來觀看喔！</strong></p>
+<p>參考資源：<a href="https://www.oxxostudio.tw/articles/201805/backend-apps-script.html">簡易後端實作 ( Google Apps Script )</a></p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>嫌Google Form太醜？那就把他當後台吧XD</title>
+      <link>https://deanlin.net/blog/202006/google-form-as-backend/</link>
+      <pubDate>Fri, 05 Jun 2020 16:03:36 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/google-form-as-backend/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>Google Form &   Google sheet & HTML & github 結合應用</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-01.webp" width="1400" height="714" alt="嫌Google Form太醜？那就把他當後台吧XD（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>為什麼撰寫這篇文章</p>
+</blockquote>
+<p>常常使用Google Form當問卷的你是否覺得Google Form有點太過制式化，或者說讓人覺得用Google Form有點誠意不足</p>
+<p>但自己撰寫網頁問卷還要花錢買(租)一台Server放網頁跟建立資料庫，才能讓大家進來這個網頁填寫問卷，我覺得這樣一點都不划算，因為我只是想要讓這個問卷看起來有質感，不是Google Form而已XD</p>
+<h2 id="於是我就誕生一個想法">於是我就誕生一個想法<a class="h-anchor" href="#%e6%96%bc%e6%98%af%e6%88%91%e5%b0%b1%e8%aa%95%e7%94%9f%e4%b8%80%e5%80%8b%e6%83%b3%e6%b3%95" aria-label="這個段落的連結"></a></h2>
+<p>為什麼不要讓Google Form乖乖當後台就好，我放一個靜態網頁到Github上面就能省去過去在Server上面的花費</p>
+<blockquote>
+<p>文章目標</p>
+</blockquote>
+<ol>
+<li>如何把Google Form的功能抽出來在一般靜態網頁使用</li>
+<li>可全客製化自己心目中漂亮的表單(內文使用Bootstrap 4為範例)</li>
+<li>讓你了解撰寫網頁會遇到的問題(謹以本範例為說明)</li>
+</ol>
+<blockquote>
+<p><strong><em>本文章使用到的技術：</em></strong></p>
+</blockquote>
+<ol>
+<li>前端:static web(Bootstrap 4)</li>
+<li>後端:Google Form</li>
+<li>資料庫:Google Sheets</li>
+</ol>
+<blockquote>
+<p>Demo區讓你搶先體驗</p>
+</blockquote>
+<p><a href="https://dean9703111.github.io/customer_feedback_form/index.html">DEMO網頁</a> (看完文章後你可以自己客製化一個)</p>
+<p><a href="https://docs.google.com/forms/d/e/1FAIpQLSeijRuLDQE62gbapDYgd_3pbmg7GyWY1CWPVeaEK-TiLDKzPw/viewform">Google Form</a> (他其實才是執行動作的本體)</p>
+<p><a href="https://docs.google.com/spreadsheets/d/1aZyvHnajaVjdNBaUT1Md-Y9nYW8O_rdPnMmN5WFrdO4/edit?usp=sharing">Google Sheets</a> (資料最終儲存的地方)</p>
+<blockquote>
+<p>專案原始碼</p>
+</blockquote>
+<p><a href="https://github.com/dean9703111/customer_feedback_form">Github Source code</a> (如果實作上遇到問題可以參考)</p>
+<h2 id="step-1--7-建立google-form表單">STEP 1 / 7: 建立Google Form表單<a class="h-anchor" href="#step-1--7-%e5%bb%ba%e7%ab%8bgoogle-form%e8%a1%a8%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<p>先建立一個<a href="https://www.google.com.tw/intl/zh-TW/forms/about/">Google Form</a>，選取個人的即可：</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-02.webp" width="1400" height="741" alt="STEP 1 / 7: 建立Google Form表單（圖 2）" loading="lazy" decoding="async"></p>
+<p>您可以按造自己的需求建立一個簡單的表單：</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-03.webp" width="1400" height="1132" alt="STEP 1 / 7: 建立Google Form表單（圖 3）" loading="lazy" decoding="async"></p>
+<h2 id="step-2--7-抽出google-form表單裡面的元素">STEP 2 / 7: 抽出Google Form表單裡面的元素<a class="h-anchor" href="#step-2--7-%e6%8a%bd%e5%87%bagoogle-form%e8%a1%a8%e5%96%ae%e8%a3%a1%e9%9d%a2%e7%9a%84%e5%85%83%e7%b4%a0" aria-label="這個段落的連結"></a></h2>
+<p>建立好表單後進入預覽模式</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-04.webp" width="1400" height="151" alt="STEP 2 / 7: 抽出Google Form表單裡面的元素（圖 4）" loading="lazy" decoding="async"></p>
+<p>接下來進入網頁的開發者模式(按下F12)，選擇Elements檢視網頁元素，然後搜尋”entry”，這些name的標籤是之後會使用的參數欄位，請把他們複製起來</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-05.webp" width="1400" height="734" alt="STEP 2 / 7: 抽出Google Form表單裡面的元素（圖 5）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>2021/2/26 更新，朋友提醒新版的 ”entry” 已經轉移到了 &lt;input type=”hidden” name=”entry.xxx&quot; value=””&gt; 的位置，大家操作時注意一下</p>
+</blockquote>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-06.webp" width="1400" height="739" alt="位置轉移惹" loading="lazy" decoding="async">
+  <figcaption>位置轉移惹</figcaption>
+</figure>
+
+<p>輸入必填欄位資料按下送出(submit)按鈕後複製上面的網址，這個網址是之後網頁用來發送訊息的url</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-07.webp" width="1400" height="192" alt="網址會長的像:https://docs.google.com/forms/這些是你自己的網址/formResponse" loading="lazy" decoding="async">
+  <figcaption>網址會長的像:<a href="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeijRuLDQE62gbapDYgd_3pbmg7GyWY1CWPVeaEK-TiLDKzPw/formResponse">https://docs.google.com/forms/這些是你自己的網址/formResponse</a></figcaption>
+</figure>
+
+<h2 id="step-3--7-選一個你喜歡的表單模板">STEP 3 / 7: 選一個你喜歡的表單模板<a class="h-anchor" href="#step-3--7-%e9%81%b8%e4%b8%80%e5%80%8b%e4%bd%a0%e5%96%9c%e6%ad%a1%e7%9a%84%e8%a1%a8%e5%96%ae%e6%a8%a1%e6%9d%bf" aria-label="這個段落的連結"></a></h2>
+<p>在這裡我提供一些大家可以直接使用的<a href="https://www.mockplus.com/blog/post/bootstrap-form-template">表單模板</a>，大家可以去找自己喜歡的，接下來我直接說明細節，完整的程式碼可以在<a href="https://github.com/dean9703111/customer_feedback_form">這裡下載</a></p>
+<p>因為我設計的這份問卷裡面需要填寫：姓名、email、評分、您的建議，並且需要要以form表單傳送，所以會有html結構如下(您的結構可能跟我有些許不同)：</p>
+<pre tabindex="0"><code>&lt;form id=&#34;google-form&#34; class=&#34;contact100-form validate-form&#34;&gt;
+        &lt;span class=&#34;contact100-form-title&#34;&gt;
+          餐後回饋
+        &lt;/span&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;first-name&#34;&gt;姓名 *&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100 validate-input&#34; data-validate=&#34;姓名為必填&#34;&gt;
+          &lt;input id=&#34;name&#34; class=&#34;input100&#34; type=&#34;text&#34; placeholder=&#34;王大明&#34;&gt;
+          &lt;span class=&#34;focus-input100&#34;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;email&#34;&gt;email&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100&#34;&gt;
+          &lt;input id=&#34;email&#34; class=&#34;input100&#34; type=&#34;text&#34; placeholder=&#34;Eg. example@email.com&#34;&gt;
+          &lt;span class=&#34;focus-input100&#34;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;email&#34;&gt;評分(最高五分) *&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100 validate-input&#34; data-validate=&#34;煩請評分&#34;&gt;
+          &lt;select class=&#34;form-control&#34; id=&#34;score&#34; style=&#34;border: 0px;&#34;&gt;
+            &lt;option&gt;1&lt;/option&gt;
+            &lt;option&gt;2&lt;/option&gt;
+            &lt;option&gt;3&lt;/option&gt;
+            &lt;option&gt;4&lt;/option&gt;
+            &lt;option&gt;5&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;message&#34;&gt;您的建議&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100&#34; data-validate=&#34;Message is required&#34;&gt;
+          &lt;textarea id=&#34;message&#34; class=&#34;input100&#34; placeholder=&#34;Write us a message&#34;&gt;&lt;/textarea&gt;
+          &lt;span class=&#34;focus-input100&#34;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&#34;container-contact100-form-btn&#34;&gt;
+          &lt;button class=&#34;contact100-form-btn&#34;&gt;
+            送出
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/form&gt;
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/fe560b714307b9f4e52df4114ebd270c" rel="noopener">form_elements</a>（GitHub Gist）</p>
+<p>但請記得在&lt;form&gt;、&lt;input&gt;、&lt;select&gt;這些tag裡面設定id，這樣後續在jquery裡面才能抓到相應的元素</p>
+<h2 id="step-4--7-將google-form表單裡抽出的元素放進去html網頁">STEP 4 / 7: 將Google Form表單裡抽出的元素放進去HTML網頁<a class="h-anchor" href="#step-4--7-%e5%b0%87google-form%e8%a1%a8%e5%96%ae%e8%a3%a1%e6%8a%bd%e5%87%ba%e7%9a%84%e5%85%83%e7%b4%a0%e6%94%be%e9%80%b2%e5%8e%bbhtml%e7%b6%b2%e9%a0%81" aria-label="這個段落的連結"></a></h2>
+<p>Google Form建立好了，網頁元素也都建立完成後就是將兩者bind在一起，以下是用jquery抓取html元素，並使用ajax將這個訊息送出，程式細節情看註解</p>
+<blockquote>
+<p>記得在要 把 jquery 引入&lt;script&gt;裡面，我朋友卡在這個問題很久 XD</p>
+</blockquote>
+<pre tabindex="0"><code>&lt;script&gt;
+    $(&#39;#google-form&#39;).submit(function (e) {
+      //在這裡我們要先擋掉form默認事件
+      e.preventDefault();
+
+      if ($(&#39;#name&#39;).val() &amp;&amp; $(&#39;#score&#39;).val()) {//需要先確認必填欄位是否填寫
+        $.ajax({
+          // url為Google Form按下submit的aciotn
+          url: &#34;https://docs.google.com/forms/d/e/1FAIpQLSeijRuLDQE62gbapDYgd_3pbmg7GyWY1CWPVeaEK-TiLDKzPw/formResponse&#34;,
+          crossDomain: true,//解決跨網域CORS的問題
+          data: {// entry.xxxxx 這些需要填寫您表單裡面的值，與其相互對應
+            &#34;entry.2040133429&#34;: $(&#39;#name&#39;).val(),
+            &#34;entry.304089069&#34;: $(&#39;#email&#39;).val(),
+            &#34;entry.207113062&#34;: $(&#39;#score&#39;).val(),
+            &#34;entry.1310220291&#34;: $(&#39;#message&#39;).val()
+          },
+          type: &#34;POST&#34;, //因為是要進行insert的動作，故事用POST
+          dataType: &#34;JSONP&#34;,
+          complete: function () {
+            //完成後把這些欄位清空
+            $(&#39;#name&#39;).val(&#39;&#39;)
+            $(&#39;#email&#39;).val(&#39;&#39;)
+            $(&#39;#score&#39;).val(&#39;&#39;)
+            $(&#39;#message&#39;).val(&#39;&#39;)
+            //最後跳轉到感謝的頁面
+            window.location.replace(&#34;thank.html&#34;);
+          }
+        });
+      }
+    });
+  &lt;/script&gt;
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/726895bb8b6902f16b26e8254b954e03" rel="noopener">bind-html-googeForm</a>（GitHub Gist）</p>
+<h2 id="step-5--7測試是否正常運作">STEP 5 / 7:測試是否正常運作<a class="h-anchor" href="#step-5--7%e6%b8%ac%e8%a9%a6%e6%98%af%e5%90%a6%e6%ad%a3%e5%b8%b8%e9%81%8b%e4%bd%9c" aria-label="這個段落的連結"></a></h2>
+<p>你可以直接開啟html檔(點擊兩下就會跳出網頁了)，輸入數值後按下送出(如果你使用我的程式會看到如下成果)</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-08.webp" width="1400" height="1280" alt="STEP 5 / 7:測試是否正常運作（圖 8）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-09.webp" width="1400" height="734" alt="STEP 5 / 7:測試是否正常運作（圖 9）" loading="lazy" decoding="async"></p>
+<p>接下來去Google Form的Responses區域看看是否資訊正常進入</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-10.webp" width="1400" height="1131" alt="STEP 5 / 7:測試是否正常運作（圖 10）" loading="lazy" decoding="async"></p>
+<p>到這裡就能確認你的程式正常運作了(撒花～)</p>
+<h2 id="step-6--7登入github帳戶並上傳你的專案">STEP 6 / 7:登入github帳戶，並上傳你的專案<a class="h-anchor" href="#step-6--7%e7%99%bb%e5%85%a5github%e5%b8%b3%e6%88%b6%e4%b8%a6%e4%b8%8a%e5%82%b3%e4%bd%a0%e7%9a%84%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>github帳戶的創建應該很多地方都有教學，這裡我就簡化這個步驟，說明最簡單上傳的方式</p>
+<p>登入帳號後選擇Repositories，在按下New新增一個</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-11.webp" width="1400" height="227" alt="STEP 6 / 7:登入github帳戶，並上傳你的專案（圖 11）" loading="lazy" decoding="async"></p>
+<p>填寫一些基礎資訊，這裡需要特別注意的是你必須要選擇Public，不然你這個專案是無法讓大家在網路上觀看的</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-12.webp" width="1400" height="1083" alt="STEP 6 / 7:登入github帳戶，並上傳你的專案（圖 12）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-13.webp" width="1400" height="401" alt="選擇上傳存在的檔案" loading="lazy" decoding="async">
+  <figcaption>選擇上傳存在的檔案</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-14.webp" width="1400" height="696" alt="直接把整個資料夾拖拉進去就好了" loading="lazy" decoding="async">
+  <figcaption>直接把整個資料夾拖拉進去就好了</figcaption>
+</figure>
+
+<h2 id="step-7--7將專案開放給大家連線">STEP 7 / 7:將專案開放給大家連線<a class="h-anchor" href="#step-7--7%e5%b0%87%e5%b0%88%e6%a1%88%e9%96%8b%e6%94%be%e7%b5%a6%e5%a4%a7%e5%ae%b6%e9%80%a3%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
+<p>接下來要對這個專案做一些設定，先點擊最右側的Settings</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-15.webp" width="1400" height="173" alt="STEP 7 / 7:將專案開放給大家連線（圖 15）" loading="lazy" decoding="async"></p>
+<p>找到Source的位置，選擇master branch後，上方就會出現連結了</p>
+<p>不過要注意這個連結是這個專案的根目錄，如果要導向到你的網頁需要設定路徑喔：</p>
+<p>EX:</p>
+<p>根目錄 <a href="https://dean9703111.github.io/test/">https://dean9703111.github.io/test/</a></p>
+<p>實體檔案位置 <a href="https://dean9703111.github.io/test/">https://dean9703111.github.io/test/</a><strong><em>index.html</em></strong></p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-16.webp" width="1400" height="739" alt="STEP 7 / 7:將專案開放給大家連線（圖 16）" loading="lazy" decoding="async"></p>
+<p>做到這裡順利的話就能分享連結給朋友炫耀自己的表單啦～</p>
+<p>如果在實作的過程中遇到任何問題歡迎在下方留言</p>
+<p><strong>參考資源</strong>：<a href="https://colorlib.com/wp/template/contact-form-v17/">Bootstrap form templete</a>、<a href="https://codepen.io/JacobLett/pen/vyegPV">Bootstrap thank you page</a>、</p>
+<p><a href="https://hackernoon.com/create-websites-using-google-forms-49a19cc8beb8">Create websites using Google Forms</a></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

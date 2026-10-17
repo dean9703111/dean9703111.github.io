@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Code Comments｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/code-comments/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 25 Jan 2023 22:01:46 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/code-comments/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ChatGPT Code Review、Refactoring、Comments 的能力如何？</title>
+      <link>https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/</link>
+      <pubDate>Wed, 25 Jan 2023 22:01:46 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>ChatGPT 的 Code Review 能力如何？能幫我們解釋（Explain）、重構（Refactoring）、加註解（Comments）嗎？ 這邊我們就使用上一篇 Side Project 完成的 Code，來看看 ChatGPT 的表現。</description>
+      <content:encoded><![CDATA[<p>雖然之前<a href="https://deanlin.net/blog/202301/chatgpt-line-bot-side-project-part-2/">讓 ChatGPT 寫 Side Project</a> 時遇到一些狀況，不過這很可能是因為 ChatGPT 的資料截止於 2021 年所造成的。</p>
+<p>所以今天想來試試看，如果是「已知」的 Code，ChatGPT 的 Code Review 能力如何？能幫我們解釋（Explain）、重構（Refactoring）、加註解（Comments）嗎？</p>
+<p>這邊我們就使用<a href="https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/index.js">上一篇 Side Project 完成的 Code</a>，來看看 ChatGPT 的表現。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-01.webp" width="1260" height="689" alt="ChatGPT Code Review、Refactoring、Comments 的能力如何？（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+▋ 直接把程式碼丟進 ChatGPT 會發生什麼事？
+▋ 讓 ChatGPT 用中文解釋程式（Review and explain）
+▋ 用 ChatGPT 重構程式（Refactoring）
+▋ 用 ChatGPT 幫程式碼加上註解（Comments）
+▋ 結論：用對地方就是好幫手！
+</code></pre><h2 id="直接把程式碼丟進-chatgpt-會發生什麼事">直接把程式碼丟進 ChatGPT 會發生什麼事？<a class="h-anchor" href="#%e7%9b%b4%e6%8e%a5%e6%8a%8a%e7%a8%8b%e5%bc%8f%e7%a2%bc%e4%b8%9f%e9%80%b2-chatgpt-%e6%9c%83%e7%99%bc%e7%94%9f%e4%bb%80%e9%ba%bc%e4%ba%8b" aria-label="這個段落的連結"></a></h2>
+<p>這邊我把先前的「註解」都拿掉，直接丟到 ChatGPT 看看會發生什麼事。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> line <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@line/bot-sdk&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Configuration, OpenAIApi } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;openai&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> configuration <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Configuration({
+</span></span><span style="display:flex;"><span>  apiKey<span style="color:#ff7b72;font-weight:bold">:</span> process.env.OPENAI_API_KEY,
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> openai <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> OpenAIApi(configuration);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> config <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client(config);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware(config), (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  Promise
+</span></span><span style="display:flex;"><span>    .all(req.body.events.map(handleEvent))
+</span></span><span style="display:flex;"><span>    .then((result) =&gt; res.json(result))
+</span></span><span style="display:flex;"><span>    .<span style="color:#ff7b72">catch</span>((err) =&gt; {
+</span></span><span style="display:flex;"><span>      console.error(err);
+</span></span><span style="display:flex;"><span>      res.status(<span style="color:#a5d6ff">500</span>).end();
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> handleEvent (event) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (event.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;message&#39;</span> <span style="color:#ff7b72;font-weight:bold">||</span> event.message.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;text&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> Promise.resolve(<span style="color:#79c0ff">null</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> openai.createCompletion({
+</span></span><span style="display:flex;"><span>    prompt<span style="color:#ff7b72;font-weight:bold">:</span> event.message.text,
+</span></span><span style="display:flex;"><span>    model<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;text-davinci-003&#34;</span>,
+</span></span><span style="display:flex;"><span>    max_tokens<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1000</span>
+</span></span><span style="display:flex;"><span>  }).then((completions) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span> completions.data.choices[<span style="color:#a5d6ff">0</span>].text.trim();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> client.replyMessage(event.replyToken, {
+</span></span><span style="display:flex;"><span>      type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;text&#39;</span>,
+</span></span><span style="display:flex;"><span>      text<span style="color:#ff7b72;font-weight:bold">:</span> message
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#39;Linebot is running on 3000 port&#39;</span>);
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-02.webp" width="1084" height="362" alt="直接把程式碼丟進 ChatGPT 會發生什麼事？（圖 2）" loading="lazy" decoding="async"></p>
+<p>從 ChatGPT 的回覆中，我認爲他對程式的理解非常正確；當你接手一份程式碼，而前人完全沒有寫註解時， ChatGPT 能幫你加快理解這份程式。</p>
+<hr>
+<h2 id="讓-chatgpt-用中文解釋程式review-and-explain">讓 ChatGPT 用中文解釋程式（Review and explain）<a class="h-anchor" href="#%e8%ae%93-chatgpt-%e7%94%a8%e4%b8%ad%e6%96%87%e8%a7%a3%e9%87%8b%e7%a8%8b%e5%bc%8freview-and-explain" aria-label="這個段落的連結"></a></h2>
+<p>不過有時英文讀起來有點吃力，我們可以透過下面這段 prompt，讓他改成用「中文列點」來解釋。</p>
+<pre tabindex="0"><code>Review code and explain in traditional Chinese [List of points]
+</code></pre><p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-03.webp" width="1085" height="470" alt="讓 ChatGPT 用中文解釋程式（Review and explain）（圖 3）" loading="lazy" decoding="async"></p>
+<p>ChatGPT 的解釋挺讓我驚豔的，清晰明瞭的說明每個「套件的職責」，以及程式的「功能」。</p>
+<hr>
+<h2 id="用-chatgpt-重構程式refactoring">用 ChatGPT 重構程式（Refactoring）<a class="h-anchor" href="#%e7%94%a8-chatgpt-%e9%87%8d%e6%a7%8b%e7%a8%8b%e5%bc%8frefactoring" aria-label="這個段落的連結"></a></h2>
+<p>這邊我們再用下面這段 prompt，來實驗他重構程式，以及解釋重構理念的能力如何。</p>
+<pre tabindex="0"><code>Refactoring the code and explain in traditional Chinese
+</code></pre><p>下面是 ChatGPT 重構後的程式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> line <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@line/bot-sdk&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Configuration, OpenAIApi } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;openai&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client({
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> openai <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> OpenAIApi(<span style="color:#ff7b72">new</span> Configuration({
+</span></span><span style="display:flex;"><span>  apiKey<span style="color:#ff7b72;font-weight:bold">:</span> process.env.OPENAI_API_KEY,
+</span></span><span style="display:flex;"><span>}));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware({
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>}), <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> Promise.all(req.body.events.map(handleEvent));
+</span></span><span style="display:flex;"><span>    res.json(results);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    console.error(err);
+</span></span><span style="display:flex;"><span>    res.status(<span style="color:#a5d6ff">500</span>).end();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> handleEvent <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> (event) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (event.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;message&#39;</span> <span style="color:#ff7b72;font-weight:bold">||</span> event.message.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;text&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">null</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> { data<span style="color:#ff7b72;font-weight:bold">:</span> { choices } } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> openai.createCompletion({
+</span></span><span style="display:flex;"><span>    prompt<span style="color:#ff7b72;font-weight:bold">:</span> event.message.text,
+</span></span><span style="display:flex;"><span>    model<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;text-davinci-003&#34;</span>,
+</span></span><span style="display:flex;"><span>    max_tokens<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1000</span> 
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span> choices[<span style="color:#a5d6ff">0</span>].text.trim();
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> client.replyMessage(event.replyToken, {
+</span></span><span style="display:flex;"><span>    type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;text&#39;</span>,
+</span></span><span style="display:flex;"><span>    text<span style="color:#ff7b72;font-weight:bold">:</span> message
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#39;Linebot is running on 3000 port&#39;</span>);
+</span></span></code></pre></div><p>於結尾 ChatGPT 有說明自己的重構理念：</p>
+<ol>
+<li>使用 async/await 處理 promise 鏈，使程式碼更具可讀性。</li>
+<li>把 client 和 openai 的實例化移到最上層，使程式碼更整潔。</li>
+<li>使用解構賦值提取 openai 回應中的 choices，使程式碼更簡潔。</li>
+<li>把 handleEvent 函式移到最上層，使其更易於測試。</li>
+<li>使用箭頭函式語法使程式碼更一致。</li>
+<li>使用縮寫屬性名稱使程式碼更簡潔。</li>
+</ol>
+<p>這邊我得給他拍拍手，就算筆者認真重構都很難考慮的這麼完善。</p>
+<blockquote>
+<p><strong>這次 ChatGPT 重構完的程式是可以正常運行的，這點超重要！</strong></p>
+<p>因為實務上最怕重構後功能就壞掉，不過還是建議讀者將 ChatGPT 重構完的程式測試一遍，不要百分百相信。</p>
+</blockquote>
+<p>如果你對他的說明不理解，也可以再進一步詢問他（像是我對第 6 點就看不太懂）。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-04.webp" width="1091" height="583" alt="用 ChatGPT 重構程式（Refactoring）（圖 4）" loading="lazy" decoding="async"></p>
+<p>看完 ChatGPT 的解釋後，我回頭看了一下程式碼還是覺得怪怪的，所以我再次詢問。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-05.webp" width="1073" height="268" alt="用 ChatGPT 重構程式（Refactoring）（圖 5）" loading="lazy" decoding="async"></p>
+<p>對&hellip; <strong>ChatGPT 的解釋有時不完全正確，如果發現問題可以跟進一步他討論</strong>。</p>
+<p>另外我跟他討論後，又把 line 設定 config 的部分調整回來，因為 config 應該要集中設定，而不應該分散在多個位置。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> config <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client(config);
+</span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware(config), <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// code..
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 id="用-chatgpt-幫程式碼加上註解comments">用 ChatGPT 幫程式碼加上註解（Comments）<a class="h-anchor" href="#%e7%94%a8-chatgpt-%e5%b9%ab%e7%a8%8b%e5%bc%8f%e7%a2%bc%e5%8a%a0%e4%b8%8a%e8%a8%bb%e8%a7%a3comments" aria-label="這個段落的連結"></a></h2>
+<p>寫程式總是懶得寫註解？用下面這段 prompt 就能讓 ChatGPT 幫你完成這些瑣事！</p>
+<pre tabindex="0"><code>add code comments
+</code></pre><p>下面是 ChatGPT 加上註解後的程式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> line <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@line/bot-sdk&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Configuration, OpenAIApi } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;openai&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Initialize express app
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Get config values from environment variables
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> config <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Initialize line client
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client(config);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Initialize openai api
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> openai <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> OpenAIApi(<span style="color:#ff7b72">new</span> Configuration({
+</span></span><span style="display:flex;"><span>  apiKey<span style="color:#ff7b72;font-weight:bold">:</span> process.env.OPENAI_API_KEY,
+</span></span><span style="display:flex;"><span>}));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Handle post requests to /webhook
+</span></span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware(config), <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Map handleEvent function over all events and wait for all promises to resolve
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> Promise.all(req.body.events.map(handleEvent));
+</span></span><span style="display:flex;"><span>    res.json(results);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    console.error(err);
+</span></span><span style="display:flex;"><span>    res.status(<span style="color:#a5d6ff">500</span>).end();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Handle a single event
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> handleEvent <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> (event) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// Only handle message events of type text
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (event.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;message&#39;</span> <span style="color:#ff7b72;font-weight:bold">||</span> event.message.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;text&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">null</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// Get choices from openai response
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> { data<span style="color:#ff7b72;font-weight:bold">:</span> { choices } } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> openai.createCompletion({
+</span></span><span style="display:flex;"><span>    prompt<span style="color:#ff7b72;font-weight:bold">:</span> event.message.text,
+</span></span><span style="display:flex;"><span>    model<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;text-davinci-003&#34;</span>,
+</span></span><span style="display:flex;"><span>    max_tokens<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1000</span>
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// Send the first choice as a message reply
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span> choices[<span style="color:#a5d6ff">0</span>].text.trim;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> client.replyMessage(event.replyToken, { type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;text&#39;</span>, text<span style="color:#ff7b72;font-weight:bold">:</span> message });
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Start listening on port 3000 
+</span></span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#39;Linebot is running on 3000 port&#39;</span>);
+</span></span></code></pre></div><p>以筆者的角度來看，有些註解顯得多餘，但我覺得這些註解對新手理解程式很有幫助；實務上要保留、調整、移除，就看讀者的個人需求了。</p>
+<blockquote>
+<p>如果想要移除所有註解，輸入 <code>remove code comments</code> 即可。</p>
+</blockquote>
+<hr>
+<h2 id="結論用對地方就是好幫手">結論：用對地方就是好幫手！<a class="h-anchor" href="#%e7%b5%90%e8%ab%96%e7%94%a8%e5%b0%8d%e5%9c%b0%e6%96%b9%e5%b0%b1%e6%98%af%e5%a5%bd%e5%b9%ab%e6%89%8b" aria-label="這個段落的連結"></a></h2>
+<p>由於過去請 ChatGPT 寫 Side Project 時遇到各種挫折，讓我一度懷疑 ChatGPT 的戰力，但這篇文章總算是幫他板回一城。</p>
+<p>因為目前 ChatGPT 的資料截止於 2021 年，所以面對較新的技術、工具時，他的表現有點差強人意；但在面對「已知」的事物時，他所展現的功力並不輸一名訓練有素的資深工程師，確實能增加工作效率。</p>
+<blockquote>
+<p>其實我還有請他幫我將 JavaScript 重構成 TypeScript，但他最終只轉出一份很像可以跑的程式；but&hellip;實際上跑不動，還需要自己去微調許多細節，這邊我就不放上來了，期待日後會推出更完善的版本。</p>
+</blockquote>
+<p>未來筆者會出一系列使用 ChatGPT、openAI 的文章，如果你對這個議題感興趣，可以持續關注我的文章！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-06.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+<p><strong>參考資料</strong>：</p>
+<ol>
+<li>ChatGPT Refactor 後的程式：<a href="https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/refactor-index.js">Github</a></li>
+<li>ChatGPT Refactor 並加上註解的程式：<a href="https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/commets-index.js">Github</a></li>
+</ol>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>GPT SoVITS｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/gpt-sovits/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Fri, 09 Feb 2024 11:18:24 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/gpt-sovits/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[GPT-SoVITS]用 AI 快速複製你的聲音，搭配 Colab 免費入門</title>
+      <link>https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/</link>
+      <pubDate>Fri, 09 Feb 2024 11:18:24 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>用過 GPT-SoVITS 後，我感覺到善良真的是一種選擇。 在這之前，筆者嘗試過 clone-voice、MockingBird 等複製聲音的 AI 工具。但他們英文的表現尚可，中文的結果真的慘不忍睹。儘管 GPT-SoVITS 在中文領域尚有進步空間，但已經足夠驚艷了。</description>
+      <content:encoded><![CDATA[<blockquote>
+<p><strong>注意：本專案因這兩年相依套件改版太多，故無法順利啟用，有興趣與時間的朋友們，建議<a href="https://github.com/RVC-Boss/GPT-SoVITS">參考官方文件</a>，目前 Colab 執行會遇到許多特殊狀況，如果有順利解決的朋友，歡迎留言分享您的經驗，相信會給更多人帶來幫助，感謝大家。</strong></p>
+</blockquote>
+<p>用過 GPT-SoVITS 後，我感覺到善良真的是一種選擇。</p>
+<p>在這之前，筆者嘗試過 clone-voice、MockingBird 等複製聲音的 AI 工具。但他們英文的表現尚可，中文的結果真的慘不忍睹。</p>
+<p>儘管 GPT-SoVITS 在中文領域尚有進步空間，但已經足夠驚艷了（而且開源免費，上手難度低）。</p>
+<p><strong>【免責聲明】：教學只是示範一種思路，沒有任何不良引導，請勿未經許可使用他人音訊資源用於個人學習外其他目的，使用軟體需遵守軟體相關條款協議。</strong></p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-01.webp" width="1007" height="565" alt="\[GPT-SoVITS\]用 AI 快速複製你的聲音，搭配 Colab 免費入門（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>小提醒：本篇文章的操作時間約 30 分鐘，若對這個主題感興趣，建議先保存下來，或 <a href="https://dean-lin.medium.com/subscribe">Follow</a> 我的部落格。</p>
+</blockquote>
+<pre tabindex="0"><code>文章大綱
+
+STEP 1: 安裝 GPT-SoVITS
+STEP 2: 提供訓練的聲音素材
+STEP 3: 檢查語音識別是否準確
+STEP 4: 將訓練的資料格式化
+STEP 5: 微調訓練
+STEP 6: 推理，輸入文字讓 AI 生成聲音
+▋ 結語
+</code></pre><h2 id="step-1-安裝-gpt-sovits">STEP 1: 安裝 GPT-SoVITS<a class="h-anchor" href="#step-1-%e5%ae%89%e8%a3%9d-gpt-sovits" aria-label="這個段落的連結"></a></h2>
+<p>考量到讀者所使用的作業系統不同，本篇文章會使用 Colab 來做示範，讓大家透過 Google 雲端資源輕鬆入門。</p>
+<p>但如果你還是想要在自己的電腦安裝：</p>
+<ul>
+<li><strong>Windows</strong>: 可以直接下載<a href="https://huggingface.co/lj1995/GPT-SoVITS-windows-package/resolve/main/GPT-SoVITS-beta.7z?download=true">官方整合包</a>，解壓縮後點擊 go-webui.bat 即可啟動。</li>
+<li><strong>Mac</strong>: 儘管官網文件中有 Mac 版本的教學，但坑多到讓人懷疑人生，就算改用 Docker 還是會遇到一堆問題，因此建議你直接使用 Colab 操作。</li>
+</ul>
+<p>下面連結是筆者調整後，實測可直接運行的版本： <a href="https://colab.research.google.com/drive/1Yff7mRQgKeqXJ4oB8DyT_onigVIBo48l?usp=sharing">https://colab.research.google.com/drive/1Yff7mRQgKeqXJ4oB8DyT_onigVIBo48l?usp=sharing</a></p>
+<blockquote>
+<p>2025.01.09 更新：</p>
+<p>筆者 Github 的 GPT-SoVITS 部分套件已經被 Python 視為過舊，因此有附上官方最新版本的 Github 連結：git clone <a href="https://github.com/RVC-Boss/GPT-SoVITS">https://github.com/RVC-Boss/GPT-SoVITS</a> ，但他們更新頻率高，實際能否跑需要一些運氣（囧）</p>
+</blockquote>
+<figure class="figure"><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-02.webp" width="1400" height="687" alt="小提醒：Colab 需要有 Google 帳號才能使用，並且每天有用量限制，如果用量到極限的話，可以考慮付費升級（或換一個 Google 帳號操作）。" loading="lazy" decoding="async">
+  <figcaption>小提醒：Colab 需要有 Google 帳號才能使用，並且每天有用量限制，如果用量到極限的話，可以考慮付費升級（或換一個 Google 帳號操作）。</figcaption>
+</figure>
+
+<p>如果順利看到上圖畫面，點擊「執行階段 → 全部執行」就會開始下載、安裝程式。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-03.webp" width="971" height="644" alt="STEP 1: 安裝 GPT-SoVITS（圖 3）" loading="lazy" decoding="async"></p>
+<p>過程中會跳出各種警告、授權的警示窗，大家可以自行評估風險；不過原則上要全部允許才能執行，不然根本無法與 Google Drive 溝通。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-04.webp" width="971" height="398" alt="STEP 1: 安裝 GPT-SoVITS（圖 4）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-05.webp" width="971" height="398" alt="STEP 1: 安裝 GPT-SoVITS（圖 5）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<p>等資源下載完後，將「啟動程式」的面板展開，你會在下方看到「Running on public URL: xxx」的網址，點擊後就會進入網頁的操作畫面。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-06.webp" width="1400" height="639" alt="STEP 1: 安裝 GPT-SoVITS（圖 6）" loading="lazy" decoding="async"></p>
+<p>如果能看到下面的網頁，恭喜你！安裝成功了！</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-07.webp" width="1400" height="807" alt="STEP 1: 安裝 GPT-SoVITS（圖 7）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-2-提供訓練的聲音素材">STEP 2: 提供訓練的聲音素材<a class="h-anchor" href="#step-2-%e6%8f%90%e4%be%9b%e8%a8%93%e7%b7%b4%e7%9a%84%e8%81%b2%e9%9f%b3%e7%b4%a0%e6%9d%90" aria-label="這個段落的連結"></a></h2>
+<p>我們需要準備一段聲音素材給 AI 訓練，建議符合以下規格：</p>
+<ol>
+<li>1~2 分鐘的聲音素材（多一些更好）</li>
+<li>目前僅支援「中文」訓練</li>
+<li>僅接受「.wav」檔</li>
+<li>盡可能提供無背景噪音的聲音</li>
+</ol>
+<p>準備好對應的素材後，我們把視角拉回 Colab，在左側的工作區點擊「drive → MyDrive」，在自己的雲端硬碟新增一個「voice_files」的資料夾，並在下面建立兩個資料夾：</p>
+<ol>
+<li>raw: 原始聲音</li>
+<li>slicer: 分割後的聲音</li>
+</ol>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-08.webp" width="874" height="441" alt="STEP 2: 提供訓練的聲音素材（圖 8）" loading="lazy" decoding="async"></p>
+<p>然後我們就可以把準備好的聲音檔拖拉到「raw」這個資料夾底下。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-09.webp" width="510" height="473" alt="STEP 2: 提供訓練的聲音素材（圖 9）" loading="lazy" decoding="async"></p>
+<p>接著我們複製聲音檔 &amp; 分割聲音的資料夾路徑</p>
+<ul>
+<li>/content/drive/MyDrive/voice_files/raw</li>
+<li>/content/drive/MyDrive/voice_files/slicer</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-10.webp" width="1055" height="711" alt="STEP 2: 提供訓練的聲音素材（圖 10）" loading="lazy" decoding="async"></p>
+<p>把路徑貼到 GPT-SoVITS 網頁上後，點擊「Start audio slicer」，等待「Audio slicer output log」出現「切割结束」</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-11.webp" width="1400" height="579" alt="STEP 2: 提供訓練的聲音素材（圖 11）" loading="lazy" decoding="async"></p>
+<p>切割完成的文件就會在「slicer」資料夾下。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-12.webp" width="512" height="697" alt="STEP 2: 提供訓練的聲音素材（圖 12）" loading="lazy" decoding="async"></p>
+<p>完成後把分割聲音的資料夾路徑(/content/drive/MyDrive/voice_files/slicer)貼到 GPT-SoVITS 的「Batch ASR (Chinese only) input folder」下。接著點擊「Start batch ASR」，等「ASR output log」出現「ASR任务完成」即可（需要一段時間）。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-13.webp" width="1400" height="616" alt="STEP 2: 提供訓練的聲音素材（圖 13）" loading="lazy" decoding="async"></p>
+<p>完成的檔案在「GPT-SoVITS」的「output/asr_opt」資料夾下。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-14.webp" width="510" height="561" alt="STEP 2: 提供訓練的聲音素材（圖 14）" loading="lazy" decoding="async"></p>
+<p>我們把他移動到 voice_files 路徑下方便後續操作。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-15.webp" width="510" height="500" alt="STEP 2: 提供訓練的聲音素材（圖 15）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-3-檢查語音識別是否準確">STEP 3: 檢查語音識別是否準確<a class="h-anchor" href="#step-3-%e6%aa%a2%e6%9f%a5%e8%aa%9e%e9%9f%b3%e8%ad%98%e5%88%a5%e6%98%af%e5%90%a6%e6%ba%96%e7%a2%ba" aria-label="這個段落的連結"></a></h2>
+<p>複製 slicer_list 的路徑（/content/drive/MyDrive/voice_files/asr_opt/slicer.list）貼到「.list annotation file path」，並勾選「Open labelling WebUI」。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-16.webp" width="1400" height="287" alt="STEP 3: 檢查語音識別是否準確（圖 16）" loading="lazy" decoding="async"></p>
+<p>我們接下來要為語音識別好的文件打上標記，回到 Colab，打開新的 Public 連結（原本 GPT_SoVITS 的畫面不要關掉）。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-17.webp" width="1400" height="661" alt="STEP 3: 檢查語音識別是否準確（圖 17）" loading="lazy" decoding="async"></p>
+<p>在這個界面中，你可以檢查語音識別是否正確，並對其優化。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-18.webp" width="1400" height="627" alt="STEP 3: 檢查語音識別是否準確（圖 18）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-4-將訓練的資料格式化">STEP 4: 將訓練的資料格式化<a class="h-anchor" href="#step-4-%e5%b0%87%e8%a8%93%e7%b7%b4%e7%9a%84%e8%b3%87%e6%96%99%e6%a0%bc%e5%bc%8f%e5%8c%96" aria-label="這個段落的連結"></a></h2>
+<p>回到一開始的 GPT-SoVITS 網頁，點擊「1-GPT-SoVITS-TTS」填上 Model 名稱。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-19.webp" width="1400" height="375" alt="STEP 4: 將訓練的資料格式化（圖 19）" loading="lazy" decoding="async"></p>
+<p>接著在「Text labelling file」放上打標檔案的路徑（/content/drive/MyDrive/voice_files/asr_opt/slicer.list），並於「Audio dataset folder」放上音頻切割後的資料夾路徑（/content/drive/MyDrive/voice_files/slicer）。</p>
+<p>點擊「Start one-click formatting」，等待右側出現「一键三连进程结束」訊息。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-20.webp" width="1400" height="805" alt="STEP 4: 將訓練的資料格式化（圖 20）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-5-微調訓練">STEP 5: 微調訓練<a class="h-anchor" href="#step-5-%e5%be%ae%e8%aa%bf%e8%a8%93%e7%b7%b4" aria-label="這個段落的連結"></a></h2>
+<p>點擊「1B-Fine-tuned traning」，依序點擊「Start SoVITS training」、「Start GPT traing」，這個階段也需要耐心等待。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-21.webp" width="1400" height="737" alt="STEP 5: 微調訓練（圖 21）" loading="lazy" decoding="async"></p>
+<p>完成的當案會出現在「GPT_weights」和「SoVITS_weights」資料夾，建議下載一份，畢竟走到這一步很累啊（目前儲存的資料夾再重新連結後會刷新消失，如果無法在時間內下載完，下次連線時從 STEP 5 開始就好）。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-22.webp" width="511" height="532" alt="STEP 5: 微調訓練（圖 22）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-6-推理輸入文字讓-ai-生成聲音">STEP 6: 推理，輸入文字讓 AI 生成聲音<a class="h-anchor" href="#step-6-%e6%8e%a8%e7%90%86%e8%bc%b8%e5%85%a5%e6%96%87%e5%ad%97%e8%ae%93-ai-%e7%94%9f%e6%88%90%e8%81%b2%e9%9f%b3" aria-label="這個段落的連結"></a></h2>
+<p>終於到最後一步了，進入「1C-inference」分頁，點擊「refreshing model paths」後，就會看到剛剛訓練好的模型。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-23.webp" width="1400" height="449" alt="STEP 6: 推理，輸入文字讓 AI 生成聲音（圖 23）" loading="lazy" decoding="async"></p>
+<p>接著點擊「Open TTS inference WEBUI」。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-24.webp" width="1400" height="449" alt="STEP 6: 推理，輸入文字讓 AI 生成聲音（圖 24）" loading="lazy" decoding="async"></p>
+<p>回到 Colab 點擊 public 連結。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-25.webp" width="1383" height="760" alt="STEP 6: 推理，輸入文字讓 AI 生成聲音（圖 25）" loading="lazy" decoding="async"></p>
+<p>就可以透過網頁輸入文字讓 AI 生成聲音了，下圖是對介面的簡易說明。</p>
+<p><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-26.webp" width="1400" height="786" alt="STEP 6: 推理，輸入文字讓 AI 生成聲音（圖 26）" loading="lazy" decoding="async"></p>
+<p>生成好的音頻可以直接下載，大家可以點擊試聽看跟我原本的聲音有幾成相似。</p>
+<div class="yt" data-yt="V9CoMR94q_I" data-title="AI複製自己的聲音">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=V9CoMR94q_I" target="_blank" rel="noopener" aria-label="播放影片：AI複製自己的聲音">
+    <img src="https://i.ytimg.com/vi/V9CoMR94q_I/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">AI複製自己的聲音</span>
+  </a>
+</div>
+
+<p>下面放上我真實的聲音來比對，我個人覺得音色非常接近。</p>
+<div class="yt" data-yt="_QutJpFlV7w" data-title="自己的聲音">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=_QutJpFlV7w" target="_blank" rel="noopener" aria-label="播放影片：自己的聲音">
+    <img src="https://i.ytimg.com/vi/_QutJpFlV7w/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">自己的聲音</span>
+  </a>
+</div>
+
+<hr>
+<h2 id="-結語">結語<a class="h-anchor" href="#-%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>如果有人能跟著我的文章做一遍，那你真的是一個狠人，因為這篇教學連我自己都寫到快崩潰了。</p>
+<p>其實我一直猶豫是否要發布這篇教學文，因為過去曾有詐騙集團靠 AI 複製聲音來語音詐騙。</p>
+<p>但後來想了想，只要有心，這項技術並沒有那麼難；讓更多人知道這項技術的存在，也許還能減少大家被詐騙的可能性。</p>
+<p>技術本身沒有善惡之分，存粹看用的人如何操作；像這個工具對有錄影片需求的朋友來說就是一大福音，只要準備好文字稿，就能請 AI 用我們的聲音來表達。</p>
+<p>如果你跟筆者一樣容易講話卡螺絲，但又有錄不露臉教學影片的需求，相信善用工具能大幅提升你的工作效率。</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202402/gpt-sovits-voice-cloning/images/gpt-sovits-voice-cloning-27.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="現在使用者對網站的要求越來越高，即使你的內容做得很棒，但如果頁面載入時間超過 3 秒，使用者可能在被你的內容吸引前就離開了網站。如果你做的是電子商務系統，這個「痛點」會更為明顯，一但讓客戶等太久，公司就會流失大筆訂單…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202210/nodejs-redis-api-cache/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間">
+  <meta property="og:description" content="現在使用者對網站的要求越來越高，即使你的內容做得很棒，但如果頁面載入時間超過 3 秒，使用者可能在被你的內容吸引前就離開了網站。如果你做的是電子商務系統，這個「痛點」會更為明顯，一但讓客戶等太久，公司就會流失大筆訂單…">
+  <meta property="og:url" content="https://deanlin.net/blog/202210/nodejs-redis-api-cache/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2022-10-19T12:29:58&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T21:55:52&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Redis">
+  <meta property="article:tag" content="Node.js">
+  <meta property="article:tag" content="Performance">
+  <meta property="article:tag" content="Cache API">
+  <meta property="article:tag" content="Koa.js">
+  <meta property="og:image" content="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="627">
+  <meta property="og:image:alt" content="在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-og.jpg">
+  <meta name="twitter:title" content="在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間">
+  <meta name="twitter:description" content="現在使用者對網站的要求越來越高，即使你的內容做得很棒，但如果頁面載入時間超過 3 秒，使用者可能在被你的內容吸引前就離開了網站。如果你做的是電子商務系統，這個「痛點」會更為明顯，一但讓客戶等太久，公司就會流失大筆訂單…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202210/nodejs-redis-api-cache/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T21:55:52+08:00","datePublished":"2022-10-19T12:29:58+08:00","description":"現在使用者對網站的要求越來越高，即使你的內容做得很棒，但如果頁面載入時間超過 3 秒，使用者可能在被你的內容吸引前就離開了網站。如果你做的是電子商務系統，這個「痛點」會更為明顯，一但讓客戶等太久，公司就會流失大筆訂單…","headline":"在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間","image":{"@type":"ImageObject","height":627,"url":"https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Redis, Node.js, Performance, Cache API, Koa.js","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202210/nodejs-redis-api-cache/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E5%9C%A8-node-js-%E4%BD%BF%E7%94%A8-redis-%E4%BE%86-cache-api-%E7%9A%84%E5%9B%9E%E5%82%B3%E8%B3%87%E6%96%99-%E4%BB%A5%E6%B8%9B%E5%B0%91%E6%9F%A5%E8%A9%A2%E8%B3%87%E6%96%99%E7%9A%84%E5%9B%9E%E5%82%B3%E6%99%82%E9%96%93-4eeeb677b81e"],"timeRequired":"PT4M","url":"https://deanlin.net/blog/202210/nodejs-redis-api-cache/","wordCount":1712},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202210/nodejs-redis-api-cache/","name":"在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2022-10-19">2022.10.19</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 4 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e6%87%89%e7%94%a8%e5%a0%b4%e6%99%af%e8%aa%aa%e6%98%8e">應用場景說明</a></li><li><a href="#%e5%b0%88%e6%a1%88%e7%92%b0%e5%a2%83%e8%a8%ad%e7%bd%ae">專案環境設置</a></li><li><a href="#%e6%89%be%e5%80%8b%e6%96%b9%e4%be%bf%e4%bd%bf%e7%94%a8%e7%9a%84%e7%ac%ac%e4%b8%89%e6%96%b9-api">找個方便使用的第三方 API</a></li><li><a href="#%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f">專案程式</a></li><li><a href="#%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f%e7%a2%ba%e8%aa%8d%e7%b5%90%e6%9e%9c%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f">測試程式，確認結果是否符合預期</a></li><li><a href="#%e7%b5%90%e8%aa%9e">結語</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>現在使用者對網站的要求越來越高，即使你的內容做得很棒，但如果頁面載入時間超過 3 秒，使用者可能在被你的內容吸引前就離開了網站。</p>
+<p>如果你做的是電子商務系統，這個「痛點」會更為明顯，一但讓客戶等太久，公司就會流失大筆訂單。</p>
+<p>為了解決這個問題，我們可以將資料設計成「快取」，這樣不但能大幅減少查詢資料的回傳時間（毫秒級別），還能有效降低後端資料庫的存取壓力。</p>
+<p><img src="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-01.webp" srcset="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-01_hu_5b1e4248a223ac86.webp 720w, /blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="732" alt="在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>本篇文章將以：「Node.js X Koa X Redis」作為範例解說；如果你完全沒接觸過 Redis，可以先參考<a href="/blog/202108/install-redis-on-macos/">這篇文章</a>安裝環境。</p>
+</blockquote>
+<h2 id="應用場景說明">應用場景說明<a class="h-anchor" href="#%e6%87%89%e7%94%a8%e5%a0%b4%e6%99%af%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
+<p>如果今天要設計一款「等公車」的服務，那你勢必要串接「第三方 API」來獲取即時訊息。</p>
+<p>但有時第三方 API 的回傳時間並不理想，甚至有存取次數的限制；如果我們想降低第三方 API 存取次數，並減少使用者等待的回傳時間，我們可以針對資料做「快取（Cache）」設計。</p>
+<p>等公車這個服務有幾個特點：</p>
+<ol>
+<li>「公車到站時間」對所有使用者來說都是一樣的。</li>
+<li>公車即將抵達的時間以「分鐘」來顯示，所以我們存取的第三方 API 的頻率不用太高。</li>
+<li>公車的線路非常多，但不會每條線路都有剛好使用者在查。</li>
+</ol>
+<p>我們可以根據特點來設計資料更新的方案：</p>
+<ol>
+<li>我們並不需要輪詢所有的路線，因為很多資料我們就算取得，也沒有使用者會需要。</li>
+<li>因為即將抵達的時間以「分鐘」顯示，所以我們只要把更新的頻率設計在 1 分鐘以下即可（ex：5 秒鐘）。</li>
+<li>更新的策略可以採取「若 Redis 有資料就直接採用，若無則呼叫第三方 API 獲取資料」。</li>
+</ol>
+<blockquote>
+<p>筆者之前有分享過用 Redis 解決「商品秒殺」的應用，有興趣的讀者可以參考<a href="/blog/202108/nodejs-redis-flash-sale-concurrency/">這篇文章</a>。</p>
+</blockquote>
+<hr>
+<h2 id="專案環境設置">專案環境設置<a class="h-anchor" href="#%e5%b0%88%e6%a1%88%e7%92%b0%e5%a2%83%e8%a8%ad%e7%bd%ae" aria-label="這個段落的連結"></a></h2>
+<p>這個小專案我們會使用到如下套件：</p>
+<ul>
+<li>koa：可以理解為 Express.js 的精簡版後端框架。</li>
+<li>@koa/router：路由器設定用的，看起來會比較直觀。</li>
+<li>ioredis：與 Redis 連線、溝通的套件。</li>
+<li>axios：HTTP 請求工具，我們透過它來 Call API。</li>
+</ul>
+<p>使用如下指令便可「建立專案資料夾＆初始化專案＆安裝套件」：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir redis-cache-example
+</span></span><span style="display:flex;"><span>cd redis-cache-example
+</span></span><span style="display:flex;"><span>npm init -y
+</span></span><span style="display:flex;"><span>npm install --save koa @koa/router ioredis axios
+</span></span></code></pre></div><hr>
+<h2 id="找個方便使用的第三方-api">找個方便使用的第三方 API<a class="h-anchor" href="#%e6%89%be%e5%80%8b%e6%96%b9%e4%be%bf%e4%bd%bf%e7%94%a8%e7%9a%84%e7%ac%ac%e4%b8%89%e6%96%b9-api" aria-label="這個段落的連結"></a></h2>
+<p>本專案的主要目的，是讓大家理解如何將 API 回傳的資料快取。</p>
+<p>所以這邊筆者選擇<a href="https://jsonplaceholder.typicode.com/">JSONPlaceholder</a>的服務，他有提供虛擬的 RESTful API（重點是不用申請 Key 方便很多）。</p>
+<figure class="figure"><img src="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-02.webp" srcset="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-02_hu_8fe48a33a68942e8.webp 720w, /blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1027" alt="https://jsonplaceholder.typicode.com/todos" loading="lazy" decoding="async">
+  <figcaption><a href="https://jsonplaceholder.typicode.com/todos">https://jsonplaceholder.typicode.com/todos</a></figcaption>
+</figure>
+
+<p>上圖是 API 的回傳格式，大家可以看到，每個物件都有「id」的欄位，我們的程式會使用到這個參數來做 Demo（最多只有到 200，超過會回傳錯誤訊息）。</p>
+<hr>
+<h2 id="專案程式">專案程式<a class="h-anchor" href="#%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>本篇文章的目的是讓讀者理解 Redis 對效能有多大的提升，因此程式架構超級簡單，大概分成三個部分：</p>
+<ol>
+<li>將相關套件引入（koa、@koa/router、ioredis、axios）</li>
+<li>Redis 資料庫連線</li>
+<li>Get Method 的 RESTful API</li>
+</ol>
+<p>而在 Get Method 存取 Redis 資料庫的邏輯為：</p>
+<ol>
+<li>先去 Redis 確認是否有快取，如果有就直接回傳。</li>
+<li>如果 Redis 沒資料，就要 Call API，並將第一次獲得的資料儲存到 Redis 裡面（資料過期時間設定為 5 秒鐘）。</li>
+</ol>
+<p>為了方便讀者實作，筆者下面直接提供完整程式，你只要在專案資料夾下新增 <code>index.js</code>，然後複製貼上程式即可：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Koa <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;koa&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Router <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@koa/router&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Redis <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;ioredis&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> axios <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;axios&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Koa();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> router <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Router();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> redis <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Redis({
+</span></span><span style="display:flex;"><span>  host<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;127.0.0.1&#39;</span>,
+</span></span><span style="display:flex;"><span>  port<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">6379</span>,
+</span></span><span style="display:flex;"><span>  password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>redis.on(<span style="color:#a5d6ff">&#34;error&#34;</span>, <span style="color:#ff7b72">function</span> (error) {
+</span></span><span style="display:flex;"><span>  console.error(error);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>router.get(<span style="color:#a5d6ff">&#39;/todos/:id&#39;</span>, <span style="color:#ff7b72">async</span> ctx =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> cacheTodos <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> redis.get(<span style="color:#a5d6ff">`todos:</span><span style="color:#a5d6ff">${</span>ctx.params.id<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (cacheTodos) {
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#a5d6ff">&#34;從 Redis 獲得資料&#34;</span>);
+</span></span><span style="display:flex;"><span>      ctx.body <span style="color:#ff7b72;font-weight:bold">=</span> JSON.parse(cacheTodos);
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 呼叫 API
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> response <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> axios.get(<span style="color:#a5d6ff">`https://jsonplaceholder.typicode.com/todos/</span><span style="color:#a5d6ff">${</span>ctx.params.id<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>);
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#34;將第一次獲得的資料儲存到 Redis&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 把 API 回傳結果放入 Redis，並設定 5 秒的過期時間（Expire Time）
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> redis.set(<span style="color:#a5d6ff">`todos:</span><span style="color:#a5d6ff">${</span>ctx.params.id<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>, JSON.stringify(response.data), <span style="color:#a5d6ff">&#34;EX&#34;</span>, <span style="color:#a5d6ff">5</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ctx.body <span style="color:#ff7b72;font-weight:bold">=</span> response.data;
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    ctx.body <span style="color:#ff7b72;font-weight:bold">=</span> err;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.use(router.routes());
+</span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/c3cc905908e578703631d482641106cc" rel="noopener">redis-cache.js</a>（GitHub Gist）</p>
+<hr>
+<h2 id="測試程式確認結果是否符合預期">測試程式，確認結果是否符合預期<a class="h-anchor" href="#%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f%e7%a2%ba%e8%aa%8d%e7%b5%90%e6%9e%9c%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f" aria-label="這個段落的連結"></a></h2>
+<p>STEP 1：先在終端機輸入 <code>redis-server</code>，啟動 Redis Server。</p>
+<p><img src="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-03.webp" srcset="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-03_hu_c7089a53ef2db94c.webp 720w, /blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-03.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1098" alt="測試程式，確認結果是否符合預期（圖 3）" loading="lazy" decoding="async"></p>
+<p>STEP 2：輸入 <code>node index.js</code> 運行專案。</p>
+<p>STEP 3：打開 POSTMAN，實際體驗有了 Redis Cache API 的資料後，減少了多少回傳時間。</p>
+<figure class="figure"><img src="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-04.webp" srcset="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-04_hu_9821a1d97da8c277.webp 720w, /blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-04.webp 1246w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1246" height="631" alt="第一次存取 API，需要等待「626ms」才會回傳。" loading="lazy" decoding="async">
+  <figcaption>第一次存取 API，需要等待「626ms」才會回傳。</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-05.webp" srcset="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-05_hu_da231ba39828e3c4.webp 720w, /blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-05.webp 1246w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1246" height="631" alt="第二次因為資料已經儲存到 Redis，我們等待的時間縮減為「4ms」，是毫秒級的回傳！" loading="lazy" decoding="async">
+  <figcaption>第二次因為資料已經儲存到 Redis，我們等待的時間縮減為「4ms」，是毫秒級的回傳！</figcaption>
+</figure>
+
+<p>如果想感受差異，可以看看下面筆者錄製的 Gif，裡面也有呈現過 5 秒就要重新抓取資料的邏輯。</p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-06.webp" width="960" height="317" aria-label="測試程式，確認結果是否符合預期（圖 6）" data-gifv>
+    <source src="/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-06.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<hr>
+<h2 id="結語">結語<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>本篇文章的重點在於「Cache 的思路」，Redis 只是協助我們達成目標的工具，即使改用 Memcached 也能達到相同目的。</p>
+<p>希望這個簡單的範例讓大家對 Redis 的應用有更近一步的認識，也歡迎大家留言分享自己的應用喔！</p>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2022.10.19）</span><a href="https://medium.com/dean-lin/%E5%9C%A8-node-js-%E4%BD%BF%E7%94%A8-redis-%E4%BE%86-cache-api-%E7%9A%84%E5%9B%9E%E5%82%B3%E8%B3%87%E6%96%99-%E4%BB%A5%E6%B8%9B%E5%B0%91%E6%9F%A5%E8%A9%A2%E8%B3%87%E6%96%99%E7%9A%84%E5%9B%9E%E5%82%B3%E6%99%82%E9%96%93-4eeeb677b81e" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/redis/">Redis</a>
+            <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
+            <a class="chip chip-hash" href="/tags/performance/">Performance</a>
+            <a class="chip chip-hash" href="/tags/cache-api/">Cache API</a>
+            <a class="chip chip-hash" href="/tags/koa.js/">Koa.js</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202210%2Fnodejs-redis-api-cache%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202210%2Fnodejs-redis-api-cache%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202210/nodejs-redis-api-cache/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202210/nodejs-redis-api-cache/" data-title="在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202209/foreach-vs-for-loop/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈</span></a>
+          <a class="next" href="/blog/202210/nodejs-worker-threads/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">Node.js &#43; worker_threads 多執行緒實戰範例</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e6%87%89%e7%94%a8%e5%a0%b4%e6%99%af%e8%aa%aa%e6%98%8e">應用場景說明</a></li><li><a href="#%e5%b0%88%e6%a1%88%e7%92%b0%e5%a2%83%e8%a8%ad%e7%bd%ae">專案環境設置</a></li><li><a href="#%e6%89%be%e5%80%8b%e6%96%b9%e4%be%bf%e4%bd%bf%e7%94%a8%e7%9a%84%e7%ac%ac%e4%b8%89%e6%96%b9-api">找個方便使用的第三方 API</a></li><li><a href="#%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f">專案程式</a></li><li><a href="#%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f%e7%a2%ba%e8%aa%8d%e7%b5%90%e6%9e%9c%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f">測試程式，確認結果是否符合預期</a></li><li><a href="#%e7%b5%90%e8%aa%9e">結語</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202210%2Fnodejs-redis-api-cache%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202210%2Fnodejs-redis-api-cache%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202210/nodejs-redis-api-cache/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202210/nodejs-redis-api-cache/" data-title="在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202108/nodejs-redis-flash-sale-concurrency/images/nodejs-redis-flash-sale-concurrency-01_hu_4016cfb97d07f859.webp" srcset="/blog/202108/nodejs-redis-flash-sale-concurrency/images/nodejs-redis-flash-sale-concurrency-01_hu_b18ce585b9dde0d1.webp 240w, /blog/202108/nodejs-redis-flash-sale-concurrency/images/nodejs-redis-flash-sale-concurrency-01_hu_682e4e1e1da9425.webp 480w, /blog/202108/nodejs-redis-flash-sale-concurrency/images/nodejs-redis-flash-sale-concurrency-01_hu_a73b2bc969a08575.webp 800w, /blog/202108/nodejs-redis-flash-sale-concurrency/images/nodejs-redis-flash-sale-concurrency-01_hu_4016cfb97d07f859.webp 1087w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1087" height="611" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202108/nodejs-redis-flash-sale-concurrency/">用 Node.js &#43; Redis 解決高併發秒殺問題</a></h3>
+    <p class="card-desc">商城在高併發環境下除了要考量到使用者體驗外，還要處理「超賣」的問題；Redis 是一種記憶體資料庫，它有高讀寫效率的特性、能承受高 qps，而這篇文章則是運用它獨特的「鎖」解決超賣問題。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-08-18">2021.08.18</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01_hu_850f88c656b6eebf.webp" srcset="/blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01_hu_5e5133c54c72c0e.webp 240w, /blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01_hu_f2b27e9aa6845c0f.webp 480w, /blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01_hu_f47f4ee13f5ad70e.webp 800w, /blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01_hu_850f88c656b6eebf.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202405/mongodb-vs-mysql-index-performance/">MongoDB 與 MySQL 建立 Index 對 Read/Write 的效能影響</a></h3>
+    <p class="card-desc">儘管網路上有許多資料顯示 MongoDB 建立 Index 後的效能比 MySQL 好，但這篇文章我想要透過程式來驗證兩者的寫入、讀取、資料大小差異。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2024-05-25">2024.05.25</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>8 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_bf1adbce5bb8fbcc.webp" srcset="/blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_77a7ba93efa6226a.webp 240w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_dca6240ff135eca5.webp 480w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_e6a4a09b25bf8902.webp 800w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_bf1adbce5bb8fbcc.webp 1144w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1144" height="644" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/after-office/">工程師下班有約</a></div>
+
+    <h3 class="card-title"><a href="/blog/202405/database-bottlenecks/">當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文</a></h3>
+    <p class="card-desc">除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。 今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2024-05-22">2024.05.22</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202210/nodejs-redis-api-cache/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

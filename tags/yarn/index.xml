@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Yarn｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/yarn/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Fri, 15 Jan 2021 11:21:18 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/yarn/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>工程師的開發環境大補帖：Node.js、NVM、git、yarn、VSCode</title>
+      <link>https://deanlin.net/blog/202101/developer-environment-setup/</link>
+      <pubDate>Fri, 15 Jan 2021 11:21:18 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202101/developer-environment-setup/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>工欲善其事，必先利其器</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202101/developer-environment-setup/images/developer-environment-setup-01.webp" width="1400" height="694" alt="工程師的開發環境大補帖：Node.js、NVM、git、yarn、VSCode（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><em>工欲善其事，必先利其器</em></p>
+</blockquote>
+<h2 id="為什麼寫這篇文章">為什麼寫這篇文章？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0" aria-label="這個段落的連結"></a></h2>
+<p>因為我自己在<code>剛接觸程式時最痛恨的就是環境設定</code><br>不知道是我跟電腦不合還是怎樣，每次我學新東西的時候總是在環境設定這個環節卡的不要不要的<br>為了避免讀者在之後實戰的文章中一邊看一邊心理罵:「<strong>為什麼我們程式一模一樣但我的就是會錯?</strong>」這樣的憾事發生，所以我決定詳細的說明這個專案所需安裝的一切環境，並附上我本機安裝的工具版本，讓大家在日後的文章中可以順利操作與學習</p>
+<blockquote>
+<p><em>你們實際操作時通常都有新的版本了，如果最新版本有問題可以切換到筆者的版本來操作</em></p>
+</blockquote>
+<h2 id="需要安裝哪些工具">需要安裝哪些工具<a class="h-anchor" href="#%e9%9c%80%e8%a6%81%e5%ae%89%e8%a3%9d%e5%93%aa%e4%ba%9b%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p><code>說明包含 windows/mac 兩個系統的設定</code></p>
+</blockquote>
+<ol>
+<li><a href="https://deanlin.net/blog/202101/developer-environment-setup/#e634">Node.js</a></li>
+<li><a href="https://deanlin.net/blog/202101/developer-environment-setup/#8082">NVM</a></li>
+<li><a href="https://deanlin.net/blog/202101/developer-environment-setup/#6dcd">git</a></li>
+<li><a href="https://deanlin.net/blog/202101/developer-environment-setup/#bf69">yarn</a></li>
+<li><a href="https://deanlin.net/blog/202101/developer-environment-setup/#d582">VSCode</a></li>
+</ol>
+<h2 id="開發環境介紹--設定">開發環境介紹 &amp; 設定<a class="h-anchor" href="#%e9%96%8b%e7%99%bc%e7%92%b0%e5%a2%83%e4%bb%8b%e7%b4%b9--%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<h2 id="1-nodejs-官網">1. Node.js <a href="https://nodejs.org/en/about/">官網</a><a class="h-anchor" href="#1-nodejs-%e5%ae%98%e7%b6%b2" aria-label="這個段落的連結"></a></h2>
+<p><img src="https://deanlin.net/blog/202101/developer-environment-setup/images/developer-environment-setup-02.webp" width="119" height="73" alt="1. Node.js 官網（圖 2）" loading="lazy" decoding="async"></p>
+<p>能夠在 server 端運行 JavaScript 的開放原始碼、跨平台 JavaScript 的執行環境。前端工程師的福音</p>
+<blockquote>
+<p><em>筆者安裝的版本：v16.19.1 (使用nvm安裝，後面會介紹)</em></p>
+</blockquote>
+<hr>
+<h2 id="2-nvm-官網">2. nvm <a href="https://github.com/nvm-sh/nvm">官網</a><a class="h-anchor" href="#2-nvm-%e5%ae%98%e7%b6%b2" aria-label="這個段落的連結"></a></h2>
+<p>由於 Node.js 更新速度是非常快的，而許多套件有 Node.js 版本的相依性，透過NVM你可以輕鬆切換 Node.js 版本來符合不同專案的使用環境</p>
+<h3 id="-windows-安裝步驟">➤ windows 安裝步驟<a class="h-anchor" href="#-windows-%e5%ae%89%e8%a3%9d%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>先進入<a href="https://github.com/coreybutler/nvm-windows/releases">windows下載頁面</a></li>
+<li>選擇最新版本的下載 <strong>nvm-setup.zip</strong>(筆者版本為1.1.7，你看到這篇文章時可能有提供更新的版本)</li>
+</ol>
+<p><img src="https://deanlin.net/blog/202101/developer-environment-setup/images/developer-environment-setup-03.webp" width="1400" height="841" alt="windows 安裝步驟（圖 3）" loading="lazy" decoding="async"></p>
+<p>3. 下載後一路瘋狂下一步即可</p>
+<p>4. 安裝後開啟命令提示字元(CMD)</p>
+<p>5. 在 CMD 輸入指令確認 nvm 是否安裝成功</p>
+<p><img src="https://deanlin.net/blog/202101/developer-environment-setup/images/developer-environment-setup-04.webp" width="1200" height="591" alt="windows 安裝步驟（圖 4）" loading="lazy" decoding="async"></p>
+<h3 id="-mac-安裝步驟">➤ mac 安裝步驟<a class="h-anchor" href="#-mac-%e5%ae%89%e8%a3%9d%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>打開終端機(Terminal)，以下步驟皆在終端機操作</li>
+<li>mac 建議先下載 Homebrew</li>
+</ol>
+<pre tabindex="0"><code>/bin/bash -c &#34;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)&#34;
+</code></pre><p>3. 下載後安裝 nvm</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install nvm
+</span></span></code></pre></div><p>4. 在終端機輸入指令確認 nvm 是否安裝成功</p>
+<p><img src="https://deanlin.net/blog/202101/developer-environment-setup/images/developer-environment-setup-05.webp" width="1400" height="553" alt="mac 安裝步驟（圖 5）" loading="lazy" decoding="async"></p>
+<h3 id="-用-nvm-安裝-nodejs">➤ 用 NVM 安裝 node.js<a class="h-anchor" href="#-%e7%94%a8-nvm-%e5%ae%89%e8%a3%9d-nodejs" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><code>指令：nvm install [version]</code></li>
+<li>請切記要安裝一個 Node.js 版本(請選用<a href="https://nodejs.org/en/">LTS版本</a>)，不然你寫的程式會沒有可以運行的環境</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nvm install 16.19.1
+</span></span></code></pre></div><blockquote>
+<p>筆者nvm安裝版本：0.39.3</p>
+</blockquote>
+<hr>
+<h2 id="3-git-官網">3. git <a href="https://git-scm.com/">官網</a><a class="h-anchor" href="#3-git-%e5%ae%98%e7%b6%b2" aria-label="這個段落的連結"></a></h2>
+<p><img src="https://deanlin.net/blog/202101/developer-environment-setup/images/developer-environment-setup-06.webp" width="200" height="84" alt="3. git 官網（圖 6）" loading="lazy" decoding="async"></p>
+<p>這是對於程式版本控制的工具，透過他你可以輕鬆回到過去，並且在多人協作時也能有效管控<br><a href="https://git-scm.com/download/win">windows下載頁面</a>、<a href="https://git-scm.com/download/mac">mac下載頁面</a></p>
+<blockquote>
+<p><em>我有朋友使用 windows 怎麼樣都無法正常安裝 git，如果你也遇到了這個不幸，你還是有<a href="https://desktop.github.com/">Git桌面板</a>可以選擇的</em></p>
+</blockquote>
+<h3 id="常用指令">常用指令<a class="h-anchor" href="#%e5%b8%b8%e7%94%a8%e6%8c%87%e4%bb%a4" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>抓取遠端數據庫(僅確認有什麼更新，不合併)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git fetch
+</span></span></code></pre></div><ul>
+<li>抓取遠端數據庫更新</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git pull
+</span></span></code></pre></div><ul>
+<li>更新遠端數據庫</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git push
+</span></span></code></pre></div><blockquote>
+<p><em>筆者windows git安裝版本：2.27.0.windows.1</em></p>
+</blockquote>
+<hr>
+<h2 id="4-yarn">4. yarn<a class="h-anchor" href="#4-yarn" aria-label="這個段落的連結"></a></h2>
+<p><img src="https://deanlin.net/blog/202101/developer-environment-setup/images/developer-environment-setup-07.webp" width="160" height="84" alt="4. yarn（圖 7）" loading="lazy" decoding="async"></p>
+<p>這是專門安裝套件的軟體，站在巨人的肩膀上你才能看得更遠，妥善運用別人提供的套件，程式的路能走得更遠<br><a href="https://classic.yarnpkg.com/lang/en/">下載頁面</a></p>
+<h3 id="常用指令-1">常用指令<a class="h-anchor" href="#%e5%b8%b8%e7%94%a8%e6%8c%87%e4%bb%a4-1" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>依據 package.json 安裝所有套件</li>
+</ul>
+<pre tabindex="0"><code>yarn
+</code></pre><ul>
+<li>安裝到 dependencies</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn add <span style="color:#ff7b72;font-weight:bold">[</span>package<span style="color:#ff7b72;font-weight:bold">]</span>
+</span></span></code></pre></div><ul>
+<li>安裝到 devDependencies</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn add <span style="color:#ff7b72;font-weight:bold">[</span>package<span style="color:#ff7b72;font-weight:bold">]</span> –save-dev
+</span></span></code></pre></div><ul>
+<li>全域安裝套件(使該套件可在電腦任何位置被呼叫)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn global add <span style="color:#ff7b72;font-weight:bold">[</span>package<span style="color:#ff7b72;font-weight:bold">]</span>
+</span></span></code></pre></div><blockquote>
+<p><em>筆者yarn安裝版本：1.19.2</em></p>
+</blockquote>
+<hr>
+<h2 id="5-vscode-官網">5. VScode <a href="https://code.visualstudio.com/">官網</a><a class="h-anchor" href="#5-vscode-%e5%ae%98%e7%b6%b2" aria-label="這個段落的連結"></a></h2>
+<p><img src="https://deanlin.net/blog/202101/developer-environment-setup/images/developer-environment-setup-08.webp" width="80" height="80" alt="5. VScode 官網（圖 8）" loading="lazy" decoding="async"></p>
+<p>現在已經過了用記事本在打程式的年代了，透過 IDE(整合開發環境)可以大幅增加你撰寫程式的速度<br><a href="https://code.visualstudio.com/">VScode下載頁面</a></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

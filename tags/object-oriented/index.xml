@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Object Oriented｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/object-oriented/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Tue, 23 Aug 2022 08:36:53 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/object-oriented/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向</title>
+      <link>https://deanlin.net/blog/202208/typescript-oop-encapsulation/</link>
+      <pubDate>Tue, 23 Aug 2022 08:36:53 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202208/typescript-oop-encapsulation/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>市面上很多文章、影片分享了物件導向要如何應用。 卻很少人分享這些概念是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。 因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做…</description>
+      <content:encoded><![CDATA[<p>市面上很多文章、影片分享了物件導向要如何應用。</p>
+<p>卻很少人分享<strong>這些概念是為了解決什麼問題</strong>，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。</p>
+<p>因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做 Refactoring，提升程式未來的擴充性、維護性。</p>
+<p><img src="https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-01.webp" width="1400" height="731" alt="封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+一、設計考卷
+二、如果考卷的 Class 也被其他工程師使用
+三、我們希望在「設定答案」時通知其他老師
+四、老闆…我改不動了，打算用封裝進行重構
+五、所以「封裝(Encapsulation)」這個概念幫我們解決了什麼問題？
+</code></pre><h2 id="一設計考卷">一、設計考卷<a class="h-anchor" href="#%e4%b8%80%e8%a8%ad%e8%a8%88%e8%80%83%e5%8d%b7" aria-label="這個段落的連結"></a></h2>
+<p>假使我們今天要製作一個線上考試的系統，相信「考卷」是考試的必要元素之一，今天我們就用它來舉例，說明「封裝」的重要性。</p>
+<p>這邊我們先簡單定義「考卷（ExaminationPaper）」該有的屬性，像是「試卷名稱（name）、題目（questions）、答案（answers）」。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">class</span> ExaminationPaper {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">public</span> name : <span style="color:#ff7b72">string</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">public</span> questions : <span style="color:#ff7b72">Array</span>&lt;<span style="color:#7ee787">string</span>&gt;;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">public</span> answers : <span style="color:#ff7b72">Array</span>&lt;<span style="color:#7ee787">string</span>&gt;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">constructor</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.questions <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.answers <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/2eaaaace2654968f412a9f45f22ebff8" rel="noopener">examinationPaper.ts</a>（GitHub Gist）</p>
+<p>如果我們想要使用裡面的屬性，只要透過 new 將它實體化，接著用「.」就能夠存取使用，像是下面的範例中我們新增了一份「數學」考卷。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> examinationPaper <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> ExaminationPaper();
+</span></span><span style="display:flex;"><span>examinationPaper.name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;數學&#34;</span>;
+</span></span><span style="display:flex;"><span>examinationPaper.questions <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;1 + 1 = ?&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;7 x 8 = ?&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;123 - 321 = ?&#34;</span>
+</span></span><span style="display:flex;"><span>];
+</span></span><span style="display:flex;"><span>examinationPaper.answers <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;2&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;56&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;-198&#34;</span>
+</span></span><span style="display:flex;"><span>];
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/8a594ddcd3cfbf63de41783a13cd565e" rel="noopener">mathExaminationPaper.ts</a>（GitHub Gist）</p>
+<hr>
+<h2 id="二如果考卷的-class-也被其他工程師使用">二、如果考卷的 Class 也被其他工程師使用<a class="h-anchor" href="#%e4%ba%8c%e5%a6%82%e6%9e%9c%e8%80%83%e5%8d%b7%e7%9a%84-class-%e4%b9%9f%e8%a2%ab%e5%85%b6%e4%bb%96%e5%b7%a5%e7%a8%8b%e5%b8%ab%e4%bd%bf%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<p>上面直接給考卷「試卷名稱、題目、解答」的方式看起來是不是很清爽？</p>
+<p>但如果今天這個系統除了你之外，還有其他的工程師也使用了這個考卷的 Class，在其他檔案去新增諸如「英文、國文、歷史…」的考卷，你覺得未來可能會發生什麼問題呢？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { ExaminationPaper } <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#34;./encapsulation&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 檔案 A.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> englishExaminationPaper <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> ExaminationPaper();
+</span></span><span style="display:flex;"><span>englishExaminationPaper.name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;英文&#34;</span>;
+</span></span><span style="display:flex;"><span>englishExaminationPaper.questions <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;xxx&#39;</span>,<span style="color:#a5d6ff">&#39;xxx&#39;</span>,<span style="color:#a5d6ff">&#39;xxx&#39;</span>];
+</span></span><span style="display:flex;"><span>englishExaminationPaper.answers <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;yy&#39;</span>,<span style="color:#a5d6ff">&#39;yy&#39;</span>,<span style="color:#a5d6ff">&#39;yy&#39;</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 檔案 B.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> chineseExaminationPaper <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> ExaminationPaper();
+</span></span><span style="display:flex;"><span>chineseExaminationPaper.name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;國文&#34;</span>;
+</span></span><span style="display:flex;"><span>chineseExaminationPaper.questions <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;xxx&#39;</span>,<span style="color:#a5d6ff">&#39;xxx&#39;</span>,<span style="color:#a5d6ff">&#39;xxx&#39;</span>];
+</span></span><span style="display:flex;"><span>chineseExaminationPaper.answers <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;yy&#39;</span>,<span style="color:#a5d6ff">&#39;yy&#39;</span>,<span style="color:#a5d6ff">&#39;yy&#39;</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 檔案 C.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> historyExaminationPaper <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> ExaminationPaper();
+</span></span><span style="display:flex;"><span>historyExaminationPaper.name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;歷史&#34;</span>;
+</span></span><span style="display:flex;"><span>historyExaminationPaper.questions <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;xxx&#39;</span>,<span style="color:#a5d6ff">&#39;xxx&#39;</span>,<span style="color:#a5d6ff">&#39;xxx&#39;</span>];
+</span></span><span style="display:flex;"><span>historyExaminationPaper.answers <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;yy&#39;</span>,<span style="color:#a5d6ff">&#39;yy&#39;</span>,<span style="color:#a5d6ff">&#39;yy&#39;</span>];
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/53bed35a586faf21034eb689787717a1" rel="noopener">mutiUseExaminationPaper.ts</a>（GitHub Gist）</p>
+<hr>
+<h2 id="三我們希望在設定答案時通知其他老師">三、我們希望在「設定答案」時通知其他老師<a class="h-anchor" href="#%e4%b8%89%e6%88%91%e5%80%91%e5%b8%8c%e6%9c%9b%e5%9c%a8%e8%a8%ad%e5%ae%9a%e7%ad%94%e6%a1%88%e6%99%82%e9%80%9a%e7%9f%a5%e5%85%b6%e4%bb%96%e8%80%81%e5%b8%ab" aria-label="這個段落的連結"></a></h2>
+<p>今天設想一個情境，老師可能在出完考卷後發現提供的答案寫錯了，因此需要修改試卷答案；而校方為了確保試卷答案的正確性，希望系統可以在「設定答案」時發信通知其他老師，讓大家確認答案是否正確。</p>
+<p>好的，此時身為工程師的你會怎麼做？</p>
+<p>去搜尋所有「examinationPaper.answers」的程式，然後在後面加上「sendEmail」的函式嗎？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> examinationPaper <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> ExaminationPaper();
+</span></span><span style="display:flex;"><span>examinationPaper.name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;歷史&#34;</span>;
+</span></span><span style="display:flex;"><span>examinationPaper.questions <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;xxx&#39;</span>,<span style="color:#a5d6ff">&#39;xxx&#39;</span>,<span style="color:#a5d6ff">&#39;xxx&#39;</span>];
+</span></span><span style="display:flex;"><span>examinationPaper.answers <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;yy&#39;</span>,<span style="color:#a5d6ff">&#39;yy&#39;</span>,<span style="color:#a5d6ff">&#39;yy&#39;</span>];
+</span></span><span style="display:flex;"><span>sendEmail(); <span style="color:#8b949e;font-style:italic">// 有多少個地方使用到 ExaminationPaper 的 Class，就有多少個地方需要增加這個函式
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/a5433b355990769b298ce4570144e4c3" rel="noopener">addSendEmail.ts</a>（GitHub Gist）</p>
+<p>如果你真的採用上面的做法，假使這個試卷的 Class 被引用 100 次，那就需要在那 100 個地方新增「sendEmail」的函式；這個做法不但會增加日後程式維護的困難度，要是不久後校方要求「設定答案時，需要先經過審核」，那你就會改到想死吧？</p>
+<blockquote>
+<p>系統在設計時，就需要考慮到未來的擴充性；否則在需求變更時會死得很慘。</p>
+</blockquote>
+<hr>
+<h2 id="四老闆我改不動了打算用封裝進行重構">四、老闆…我改不動了，打算用封裝進行重構<a class="h-anchor" href="#%e5%9b%9b%e8%80%81%e9%97%86%e6%88%91%e6%94%b9%e4%b8%8d%e5%8b%95%e4%ba%86%e6%89%93%e7%ae%97%e7%94%a8%e5%b0%81%e8%a3%9d%e9%80%b2%e8%a1%8c%e9%87%8d%e6%a7%8b" aria-label="這個段落的連結"></a></h2>
+<p>過去我們把「name、questions、answers」都設定為 public 可以直接存取，但就如同上面的範例，正因為可以「直接存取」而導致未來程式擴充性的問題。</p>
+<p>因此在重構上，我們將「name、questions、answers」改為 private，如果想要存取則要透過 Getters、Setters 的函式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">class</span> ExaminationPaper {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">private</span> _name: <span style="color:#ff7b72">string</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">private</span> _questions: <span style="color:#ff7b72">Array</span>&lt;<span style="color:#7ee787">string</span>&gt;;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">private</span> _answers: <span style="color:#ff7b72">Array</span>&lt;<span style="color:#7ee787">string</span>&gt;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">constructor</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>._name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>._questions <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>._answers <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">public</span> <span style="color:#ff7b72">get</span> name() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#ff7b72">this</span>._name;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">public</span> <span style="color:#ff7b72">set</span> name(theName: <span style="color:#ff7b72">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>._name <span style="color:#ff7b72;font-weight:bold">=</span> theName;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">public</span> <span style="color:#ff7b72">get</span> questions() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#ff7b72">this</span>._questions;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">public</span> <span style="color:#ff7b72">set</span> questions(theQuestions: <span style="color:#ff7b72">Array</span>&lt;<span style="color:#7ee787">string</span>&gt;) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>._questions <span style="color:#ff7b72;font-weight:bold">=</span> theQuestions;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">public</span> <span style="color:#ff7b72">get</span> answers() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#ff7b72">this</span>._answers;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">public</span> <span style="color:#ff7b72">set</span> answers(theAnswers: <span style="color:#ff7b72">Array</span>&lt;<span style="color:#7ee787">string</span>&gt;) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>._answers <span style="color:#ff7b72;font-weight:bold">=</span> theAnswers;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.sendEmail(); <span style="color:#8b949e;font-style:italic">// 如果改成使用封裝，我們就只需要在這個地方新增一行就搞定了！
+</span></span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">private</span> sendEmail() {
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#34;Send email to teachers.&#34;</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/e5b9be948c30d74ebdf7b3bb9bcbb4e4" rel="noopener">refactoringExaminationPaper.ts</a>（GitHub Gist）</p>
+<p>重構後，儘管我們 ExaminationPaper 的 Class 變得更長，但是日後有其他需求新增時，我們可以更靈活的變更，維護性、可讀性、擴充性都增加不少。</p>
+<p>以今天重構後的 Class 舉例，如果日後使用到設定答案：</p>
+<pre tabindex="0"><code>examinationPaper.answers = [...];
+</code></pre><p>就會觸發到 <code>sendEmail</code> 的函式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> examinationPaper <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> ExaminationPaper();
+</span></span><span style="display:flex;"><span>examinationPaper.name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;歷史&#34;</span>;
+</span></span><span style="display:flex;"><span>examinationPaper.questions <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#34;xxx&#34;</span>, <span style="color:#a5d6ff">&#34;xxx&#34;</span>, <span style="color:#a5d6ff">&#34;xxx&#34;</span>];
+</span></span><span style="display:flex;"><span>examinationPaper.answers <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#34;yy&#34;</span>, <span style="color:#a5d6ff">&#34;yy&#34;</span>, <span style="color:#a5d6ff">&#34;yy&#34;</span>]; <span style="color:#8b949e;font-style:italic">// 會因為設定試卷答案而觸發 sendEmail 函式
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/31bb0337836de4616252ef23b66bdbb6" rel="noopener">triggerSendEmail.ts</a>（GitHub Gist）</p>
+<hr>
+<h2 id="五所以封裝encapsulation這個概念幫我們解決了什麼問題">五、所以「封裝(Encapsulation)」這個概念幫我們解決了什麼問題？<a class="h-anchor" href="#%e4%ba%94%e6%89%80%e4%bb%a5%e5%b0%81%e8%a3%9dencapsulation%e9%80%99%e5%80%8b%e6%a6%82%e5%bf%b5%e5%b9%ab%e6%88%91%e5%80%91%e8%a7%a3%e6%b1%ba%e4%ba%86%e4%bb%80%e9%ba%bc%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>透過封裝，我們可以保護 Class 屬性，不讓人隨意修改。</li>
+<li>資料讀取、變更，透過 Getters、Setters 統一處理。</li>
+<li>因為把方法封裝，所以在需求變更時，只要修改一個地方，不需要在每個用到的地方都修改。</li>
+</ol>
+<pre tabindex="0"><code>▶︎ 用 TypeScript 學物件導向
+▋ 封裝(Encapsulation)能解決什麼問題？(本篇)
+▋ 多型(Polymorphism)＆繼承(Inheritance)能解決什麼問題？
+</code></pre>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

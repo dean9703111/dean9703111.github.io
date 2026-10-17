@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>JSON Schema｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/json-schema/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 22 Apr 2021 09:20:01 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/json-schema/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>拒當前端黑鍋俠！用「jsonschema」來驗證後端回傳的 json 資料結構</title>
+      <link>https://deanlin.net/blog/202104/validate-json-with-jsonschema/</link>
+      <pubDate>Thu, 22 Apr 2021 09:20:01 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202104/validate-json-with-jsonschema/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>開發網頁前端時，會需要用到後端回傳的 api 數據來渲染頁面，如果雙方依照需求規格書好好實作會天下太平；但在現實生活中總是會有例外發生，如果後端傳給前端時的資料格式不夠穩定，前端在渲染的時候就可能會出錯。遇到這種狀況時，「jsonschema」套件就是你的救星！</description>
+      <content:encoded><![CDATA[<p>開發網頁前端時，會需要用到後端回傳的 api 數據來渲染頁面，如果雙方依照需求規格書好好實作會天下太平；但在現實生活中總是會有例外發生，如果後端傳給前端時的資料格式不夠穩定，前端在渲染的時候就可能會出錯。遇到這種狀況時，「jsonschema」套件就是你的救星！</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202104/validate-json-with-jsonschema/images/validate-json-with-jsonschema-01.webp" width="1400" height="787" alt="圖片來源：寶寶不說貼圖" loading="lazy" decoding="async">
+  <figcaption>圖片來源：寶寶不說貼圖</figcaption>
+</figure>
+
+<pre tabindex="0"><code>一、「jsonschema」是什麼？
+二、「jsonschema」有哪些優點？
+三、「jsonschema」驗證範例
+  ➤ 簡單範例
+  ➤ 複雜點的範例
+  ➤ 常見的陣列範例
+四、「jsonschema」其他功能
+</code></pre><h2 id="一jsonschema是什麼">一、「jsonschema」是什麼？<a class="h-anchor" href="#%e4%b8%80jsonschema%e6%98%af%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<p>如果你常常被後端回傳的 json 資料整，那這個套件你一定要學習；他是一個專們用來驗證 json 格式是否符合預期的套件。</p>
+<h3 id="可透過下面指令安裝">可透過下面指令安裝：<a class="h-anchor" href="#%e5%8f%af%e9%80%8f%e9%81%8e%e4%b8%8b%e9%9d%a2%e6%8c%87%e4%bb%a4%e5%ae%89%e8%a3%9d" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm i jsonschema
+</span></span></code></pre></div><h2 id="二jsonschema有哪些優點">二、「jsonschema」有哪些優點？<a class="h-anchor" href="#%e4%ba%8cjsonschema%e6%9c%89%e5%93%aa%e4%ba%9b%e5%84%aa%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>可以詳細定義要驗證的 json 格式，包含內部所有參數的型態（string/number/array/object）</li>
+<li>驗證結果會用 true/false 回傳</li>
+<li>發生 error 時，會很明確的指出是在哪個位置出錯</li>
+<li>可以客製化回傳錯誤的訊息</li>
+<li>學習及使用非常直覺</li>
+</ol>
+<h2 id="三jsonschema驗證範例">三、「jsonschema」驗證範例<a class="h-anchor" href="#%e4%b8%89jsonschema%e9%a9%97%e8%ad%89%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h2>
+<h3 id="-簡單範例">➤ 簡單範例：<a class="h-anchor" href="#-%e7%b0%a1%e5%96%ae%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h3>
+<p>我們要驗證 「4」 這個 instance 的 type 是否為 number。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">var</span> Validator <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;jsonschema&#39;</span>).Validator;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> v <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Validator();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> instance <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">4</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> schema <span style="color:#ff7b72;font-weight:bold">=</span> {<span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;number&#34;</span>};
+</span></span><span style="display:flex;"><span>console.log(v.validate(instance, schema));
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/a737c451c2ea22850643d6d04feaa5c0" rel="noopener">jsonschema_simple.js</a>（GitHub Gist）</p>
+<p>程式執行結果為：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>ValidatorResult {
+</span></span><span style="display:flex;"><span>  instance<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">4</span>,
+</span></span><span style="display:flex;"><span>  schema<span style="color:#ff7b72;font-weight:bold">:</span> { type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;number&#39;</span> },
+</span></span><span style="display:flex;"><span>  options<span style="color:#ff7b72;font-weight:bold">:</span> {},
+</span></span><span style="display:flex;"><span>  path<span style="color:#ff7b72;font-weight:bold">:</span> [],
+</span></span><span style="display:flex;"><span>  propertyPath<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance&#39;</span>,
+</span></span><span style="display:flex;"><span>  errors<span style="color:#ff7b72;font-weight:bold">:</span> [],
+</span></span><span style="display:flex;"><span>  throwError<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  throwFirst<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  throwAll<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  disableFormat<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">false</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/54d8b767461ed7e5ff5e7d1e6a90efa7" rel="noopener">jsonschema_simple_result.js</a>（GitHub Gist）</p>
+<p><strong>解說</strong>：因為 「4」的確是「number」的type，所以在「errors」參數的結果為 empty array。</p>
+<h3 id="-複雜點的範例">➤ 複雜點的範例：<a class="h-anchor" href="#-%e8%a4%87%e9%9b%9c%e9%bb%9e%e7%9a%84%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>建立「驗證地址格式」的「addressSchema」</li>
+<li>建立「驗證個人格式」的「schema」，並且讓個人格式的「address」關聯到「addressSchema」</li>
+<li>建立一個人的物件（p），填入個人訊息</li>
+<li>使用「jsonschem」提供的「Validator」 function 來驗證物件(p)是否符合個人格式(addressSchema)</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">var</span> Validator <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;jsonschema&#39;</span>).Validator;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> v <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Validator();
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Address, to be embedded on Person
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> addressSchema <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;id&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;/SimpleAddress&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;object&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;properties&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;lines&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;array&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a5d6ff">&#34;items&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;string&#34;</span>}
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;zip&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;string&#34;</span>},
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;city&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;string&#34;</span>},
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;country&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;string&#34;</span>}
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;required&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> [<span style="color:#a5d6ff">&#34;country&#34;</span>]
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Person
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> schema <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;id&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;/SimplePerson&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;object&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;properties&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;name&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;string&#34;</span>},
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;address&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#a5d6ff">&#34;$ref&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;/SimpleAddress&#34;</span>},
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;votes&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;integer&#34;</span>, <span style="color:#a5d6ff">&#34;minimum&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>}
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> p <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;name&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;Barack Obama&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;address&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;lines&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> [ <span style="color:#a5d6ff">&#34;1600 Pennsylvania Avenue Northwest&#34;</span> ],
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;zip&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;DC 20500&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;city&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;Washington&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;country&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;USA&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;votes&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;lots&#34;</span>
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>v.addSchema(addressSchema, <span style="color:#a5d6ff">&#39;/SimpleAddress&#39;</span>);
+</span></span><span style="display:flex;"><span>console.log(v.validate(p, schema));
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/4bfc92a7558f690594a6545a565aed62" rel="noopener">jsonschema_complex.js</a>（GitHub Gist）</p>
+<p>程式執行結果為：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>ValidatorResult {
+</span></span><span style="display:flex;"><span>  instance<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>    name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;Barack Obama&#39;</span>,
+</span></span><span style="display:flex;"><span>    address<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>      lines<span style="color:#ff7b72;font-weight:bold">:</span> [Array],
+</span></span><span style="display:flex;"><span>      zip<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;DC 20500&#39;</span>,
+</span></span><span style="display:flex;"><span>      city<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;Washington&#39;</span>,
+</span></span><span style="display:flex;"><span>      country<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;USA&#39;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    votes<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;lots&#39;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  schema<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>    id<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;/SimplePerson&#39;</span>,
+</span></span><span style="display:flex;"><span>    type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;object&#39;</span>,
+</span></span><span style="display:flex;"><span>    properties<span style="color:#ff7b72;font-weight:bold">:</span> { name<span style="color:#ff7b72;font-weight:bold">:</span> [Object], address<span style="color:#ff7b72;font-weight:bold">:</span> [Object], votes<span style="color:#ff7b72;font-weight:bold">:</span> [Object] }
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  options<span style="color:#ff7b72;font-weight:bold">:</span> {},
+</span></span><span style="display:flex;"><span>  path<span style="color:#ff7b72;font-weight:bold">:</span> [],
+</span></span><span style="display:flex;"><span>  propertyPath<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance&#39;</span>,
+</span></span><span style="display:flex;"><span>  errors<span style="color:#ff7b72;font-weight:bold">:</span> [
+</span></span><span style="display:flex;"><span>    ValidationError {
+</span></span><span style="display:flex;"><span>      path<span style="color:#ff7b72;font-weight:bold">:</span> [Array],
+</span></span><span style="display:flex;"><span>      property<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance.votes&#39;</span>,
+</span></span><span style="display:flex;"><span>      message<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;is not of a type(s) integer&#39;</span>,
+</span></span><span style="display:flex;"><span>      schema<span style="color:#ff7b72;font-weight:bold">:</span> [Object],
+</span></span><span style="display:flex;"><span>      instance<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;lots&#39;</span>,
+</span></span><span style="display:flex;"><span>      name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;type&#39;</span>,
+</span></span><span style="display:flex;"><span>      argument<span style="color:#ff7b72;font-weight:bold">:</span> [Array],
+</span></span><span style="display:flex;"><span>      stack<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance.votes is not of a type(s) integer&#39;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>  throwError<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  throwFirst<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  throwAll<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  disableFormat<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">false</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/e0e385f07219d2e57b52cc69b47e3bce" rel="noopener">jsonschema_complex_result.js</a>（GitHub Gist）</p>
+<p><strong>解說</strong>：因為我們在「shemca」這個變數下設定「vote」需要為「integer」的type；但是我們傳入的「vote」內容為「lots」的字串，所以「errors」會回傳一個「is not of a type(s) integer」的錯誤訊息。</p>
+<h3 id="-常見的陣列範例">➤ 常見的陣列範例：<a class="h-anchor" href="#-%e5%b8%b8%e8%a6%8b%e7%9a%84%e9%99%a3%e5%88%97%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h3>
+<p>後端 api 其實很常回傳這類陣列的資訊，但因為各種歷史業障；在版本更新時，舊資料在新欄位的資料往往是空的，這時驗證回傳資料的動作就很重要了！</p>
+<p>下面是模擬後端回傳「名字」的陣列，用「arraySchema」做格式驗證：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">var</span> Validator <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;jsonschema&#39;</span>).Validator;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> v <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Validator();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> arraySchema <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;array&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;items&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;properties&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;name&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> { <span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;string&#34;</span> },
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;lastname&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> { <span style="color:#a5d6ff">&#34;type&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;string&#34;</span> }
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;required&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> [<span style="color:#a5d6ff">&#34;name&#34;</span>, <span style="color:#a5d6ff">&#34;lastname&#34;</span>]
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> arrayName <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;name&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;寶寶&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;lastname&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;不說&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;name&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;鹿尼&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;lastname&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">123</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;name&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;lastname&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;好想兔&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;name&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;鹿尼&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>console.log(v.validate(arrayName, arraySchema));
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/b3e35d49abd28fc3032695abfb36aa7d" rel="noopener">jsonschema_array.js</a>（GitHub Gist）</p>
+<p>程式執行結果為：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>ValidatorResult {
+</span></span><span style="display:flex;"><span>  instance<span style="color:#ff7b72;font-weight:bold">:</span> [
+</span></span><span style="display:flex;"><span>    { name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;寶寶&#39;</span>, lastname<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;不說&#39;</span> },
+</span></span><span style="display:flex;"><span>    { name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;鹿尼&#39;</span>, lastname<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">123</span> },
+</span></span><span style="display:flex;"><span>    { name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span>, lastname<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;好想兔&#39;</span> },
+</span></span><span style="display:flex;"><span>    { name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;鹿尼&#39;</span> }
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>  schema<span style="color:#ff7b72;font-weight:bold">:</span> { type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;array&#39;</span>, items<span style="color:#ff7b72;font-weight:bold">:</span> { properties<span style="color:#ff7b72;font-weight:bold">:</span> [Object], required<span style="color:#ff7b72;font-weight:bold">:</span> [Array] } },
+</span></span><span style="display:flex;"><span>  options<span style="color:#ff7b72;font-weight:bold">:</span> {},
+</span></span><span style="display:flex;"><span>  path<span style="color:#ff7b72;font-weight:bold">:</span> [],
+</span></span><span style="display:flex;"><span>  propertyPath<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance&#39;</span>,
+</span></span><span style="display:flex;"><span>  errors<span style="color:#ff7b72;font-weight:bold">:</span> [
+</span></span><span style="display:flex;"><span>    ValidationError {
+</span></span><span style="display:flex;"><span>      path<span style="color:#ff7b72;font-weight:bold">:</span> [Array],
+</span></span><span style="display:flex;"><span>      property<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance[1].lastname&#39;</span>,
+</span></span><span style="display:flex;"><span>      message<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;is not of a type(s) string&#39;</span>,
+</span></span><span style="display:flex;"><span>      schema<span style="color:#ff7b72;font-weight:bold">:</span> [Object],
+</span></span><span style="display:flex;"><span>      instance<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">123</span>,
+</span></span><span style="display:flex;"><span>      name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;type&#39;</span>,
+</span></span><span style="display:flex;"><span>      argument<span style="color:#ff7b72;font-weight:bold">:</span> [Array],
+</span></span><span style="display:flex;"><span>      stack<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance[1].lastname is not of a type(s) string&#39;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    ValidationError {
+</span></span><span style="display:flex;"><span>      path<span style="color:#ff7b72;font-weight:bold">:</span> [Array],
+</span></span><span style="display:flex;"><span>      property<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance[2].name&#39;</span>,
+</span></span><span style="display:flex;"><span>      message<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;is not of a type(s) string&#39;</span>,
+</span></span><span style="display:flex;"><span>      schema<span style="color:#ff7b72;font-weight:bold">:</span> [Object],
+</span></span><span style="display:flex;"><span>      instance<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span>,
+</span></span><span style="display:flex;"><span>      name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;type&#39;</span>,
+</span></span><span style="display:flex;"><span>      argument<span style="color:#ff7b72;font-weight:bold">:</span> [Array],
+</span></span><span style="display:flex;"><span>      stack<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance[2].name is not of a type(s) string&#39;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    ValidationError {
+</span></span><span style="display:flex;"><span>      path<span style="color:#ff7b72;font-weight:bold">:</span> [Array],
+</span></span><span style="display:flex;"><span>      property<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance[3]&#39;</span>,
+</span></span><span style="display:flex;"><span>      message<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;requires property &#34;lastname&#34;&#39;</span>,
+</span></span><span style="display:flex;"><span>      schema<span style="color:#ff7b72;font-weight:bold">:</span> [Object],
+</span></span><span style="display:flex;"><span>      instance<span style="color:#ff7b72;font-weight:bold">:</span> [Object],
+</span></span><span style="display:flex;"><span>      name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;required&#39;</span>,
+</span></span><span style="display:flex;"><span>      argument<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;lastname&#39;</span>,
+</span></span><span style="display:flex;"><span>      stack<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;instance[3] requires property &#34;lastname&#34;&#39;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>  throwError<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  throwFirst<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  throwAll<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  disableFormat<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">false</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/a3483a7f6a847be55cba539975461c89" rel="noopener">jsonschema_array_result.js</a>（GitHub Gist）</p>
+<p><strong>解說</strong>：除了第一個「寶寶不說」外，我們每個 instance 其實都故意給他錯誤的資訊，來確認這個格式驗證是否生效，錯誤結果在「errors」裡面呈現的很完美。</p>
+<h2 id="四jsonschema其他功能">四、「jsonschema」其他功能<a class="h-anchor" href="#%e5%9b%9bjsonschema%e5%85%b6%e4%bb%96%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>請參考<a href="https://www.npmjs.com/package/jsonschema">官方網站</a>，上面提供更多詳實的範例。</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

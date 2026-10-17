@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>API Documentation｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/api-documentation/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 25 Feb 2021 13:45:49 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/api-documentation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>讓你的 Postman 更專業 — Mock Server &amp; Environments &amp; Publish API doc</title>
+      <link>https://deanlin.net/blog/202102/postman-mock-server-environments/</link>
+      <pubDate>Thu, 25 Feb 2021 13:45:49 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202102/postman-mock-server-environments/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>Postman 除了 api 的基礎驗證外，還有許多加速工作效率的功能，這篇文章你將學會建立 Mock Server，從此不再苦苦等待後端 api；如果你曾經為了測試正式機/測試機/本機而開了一大堆只有網址不同的 request，了解如何設定 Environments…</description>
+      <content:encoded><![CDATA[<p>Postman 除了 api 的基礎驗證外，還有許多加速工作效率的功能，這篇文章你將學會建立 Mock Server，從此不再苦苦等待後端 api；如果你曾經為了測試正式機/測試機/本機而開了一大堆只有網址不同的 request，了解如何設定 Environments 將大幅精簡 Postman 的 request 數量；常常被夥伴抱怨 api 參數問題嗎？Postman 內建的 API doc 讓合作夥伴獲得跟你一樣的環境來使用這些 api！</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-01.webp" width="1400" height="785" alt="讓你的 Postman 更專業 — Mock Server &amp; Environments &amp; Publish API doc（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>一、建立 Mock Servers
+  🤔 為什麼需要學習這個技術？
+  STEP 1：建立 Mock Server
+  STEP 2：設計 Mock Server response
+二、設定 Environments
+  🤔 如果不了解怎麼設定會發生什麼蠢事？
+  STEP 1：新增 Environments
+  STEP 2：設定常用的 Environments variable
+  STEP 3：在 request 使用 Environments variable
+三、匯出 API documentation
+  🤔 為什麼同事常常說我正確的api有問題？
+  STEP 1：view documentation
+  STEP 2：publish documentation
+四、補充說明
+  🤫 讓 Mock server 變成私有的
+</code></pre><h2 id="一建立-mock-server">一、建立 Mock Server<a class="h-anchor" href="#%e4%b8%80%e5%bb%ba%e7%ab%8b-mock-server" aria-label="這個段落的連結"></a></h2>
+<h3 id="-為什麼需要學習這個技術">🤔 為什麼需要學習這個技術？<a class="h-anchor" href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81%e5%ad%b8%e7%bf%92%e9%80%99%e5%80%8b%e6%8a%80%e8%a1%93" aria-label="這個段落的連結"></a></h3>
+<p>過去在前後端分離的架構下，在 api 規格開出來後前端需等待後端完成 api 後才能做後續的開發；<strong>為了不讓前端在這段時間偷懶</strong>😏<strong>，Mock server 應運而生！</strong>他能回傳假資料供前端使用，等後端完成 api 後他只需要切換 end point 就能使用真實資料。</p>
+<p>除了上面的原因外，如果你開發環境的 api sever 不太穩定常常因不明原因工作異常，<strong>Mock server 也能保證你的工作效率不受影響</strong>，畢竟不可能每次都等到 Server 修好後在工作吧？</p>
+<h3 id="step-1建立-mock-server">STEP 1：建立 Mock Server<a class="h-anchor" href="#step-1%e5%bb%ba%e7%ab%8b-mock-server" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>Postman 改版非常快速，你看到的畫面可能跟我有些許不同</p>
+</blockquote>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-02.webp" width="1400" height="766" alt="New &gt; Mock Server" loading="lazy" decoding="async">
+  <figcaption>New &gt; Mock Server</figcaption>
+</figure>
+
+<p>如果不是選擇已經存在的 api Collection ，需要至少填寫一個 <em><strong>Request URL</strong> 讓</em>Collections 有初始化的 api Request</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-03.webp" width="1400" height="932" alt="Create a new Collection &gt; input url &gt; Next" loading="lazy" decoding="async">
+  <figcaption>Create a new Collection &gt; input url &gt; Next</figcaption>
+</figure>
+
+<p>給 Mock server 取個名字，並建議你勾選儲存 Mock server URL 到環境變數的選項。</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-04.webp" width="1400" height="914" alt="STEP 1：建立 Mock Server（圖 4）" loading="lazy" decoding="async"></p>
+<p>建立成功後便可以在『Mock Servers』的分頁中看到剛剛建立的 Server，點進去後能看到這個 Sever 的網址</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-05.webp" width="1400" height="621" alt="STEP 1：建立 Mock Server（圖 5）" loading="lazy" decoding="async"></p>
+<p>因為剛剛有儲存 Mock server URL 到環境變數，我們到『Environments』的分頁做個確認</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-06.webp" width="1400" height="502" alt="STEP 1：建立 Mock Server（圖 6）" loading="lazy" decoding="async"></p>
+<h3 id="step-2設計-mock-server-response">STEP 2：設計 Mock Server response<a class="h-anchor" href="#step-2%e8%a8%ad%e8%a8%88-mock-server-response" aria-label="這個段落的連結"></a></h3>
+<p>在『Collections』的分頁我們能找到剛剛初始化的 request， <code>{{url}}</code> 會帶入環境變數所以右上角請選擇剛剛建立的『Mock_User』，按下『Send』後你會發現下面的 response 一片空白，這是因為我們還沒設定 Mock Server response。</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-07.webp" width="1400" height="655" alt="STEP 2：設計 Mock Server response（圖 7）" loading="lazy" decoding="async"></p>
+<p>你可以看到 request 下面有一個『Default』，他就是用來填寫假資料的 example，下面我們用 JSON 格式寫個簡單的 response 範例後按『Save』</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-08.webp" width="1358" height="754" alt="STEP 2：設計 Mock Server response（圖 8）" loading="lazy" decoding="async"></p>
+<p>再回到剛剛的 request 按下『Send』就發現會回應剛剛寫的 response 呢！</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-09.webp" width="1358" height="754" alt="STEP 2：設計 Mock Server response（圖 9）" loading="lazy" decoding="async"></p>
+<p>除了自動產生的 Default 外，我們還可以<strong>自己新增其他的 example</strong></p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-10.webp" width="1358" height="754" alt="STEP 2：設計 Mock Server response（圖 10）" loading="lazy" decoding="async"></p>
+<p>可以透過加入 Params 讓這個 request 有不同的 response，這裡我們新增『error』、『correct』這兩個來做示範</p>
+<blockquote>
+<p>在 Params 填寫的 DESCRIPTION 日後會顯示在 api 文件上，如果可以也請盡量寫清楚</p>
+</blockquote>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-11.webp" width="1358" height="754" alt="STEP 2：設計 Mock Server response（圖 11）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-12.webp" width="1358" height="754" alt="STEP 2：設計 Mock Server response（圖 12）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<p>回到剛剛的 request ，我們將 control_res 加入『Params』，依據 VALUE 的不同按下『Send』就會看到對應的 response 嚕～</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-13.webp" width="1358" height="754" alt="STEP 2：設計 Mock Server response（圖 13）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-14.webp" width="1358" height="754" alt="STEP 2：設計 Mock Server response（圖 14）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<h2 id="二設定-environments">二、設定 Environments<a class="h-anchor" href="#%e4%ba%8c%e8%a8%ad%e5%ae%9a-environments" aria-label="這個段落的連結"></a></h2>
+<h3 id="-如果不了解怎麼設定會發生什麼蠢事">🤔 如果不了解怎麼設定會發生什麼蠢事？<a class="h-anchor" href="#-%e5%a6%82%e6%9e%9c%e4%b8%8d%e4%ba%86%e8%a7%a3%e6%80%8e%e9%ba%bc%e8%a8%ad%e5%ae%9a%e6%9c%83%e7%99%bc%e7%94%9f%e4%bb%80%e9%ba%bc%e8%a0%a2%e4%ba%8b" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-15.webp" width="547" height="421" alt="🤔 如果不了解怎麼設定會發生什麼蠢事？（圖 15）" loading="lazy" decoding="async"></p>
+<p>有沒有覺得上面這張圖片看起來很蠢😅，在了解 Environments 怎麼設定前，我的 Collections 就是這麼的複雜😇，因為寫程式時通常環境會有：『本機、開發機、測試機、正式機』，如果每新增一個環境你就複製一份，到最後你會無法進行妥善管理；更何況大多數的 api 其實只有網址的差異而已。</p>
+<h3 id="step-1新增-environments">STEP 1：新增 Environments<a class="h-anchor" href="#step-1%e6%96%b0%e5%a2%9e-environments" aria-label="這個段落的連結"></a></h3>
+<p>之前在建立 Mock Server 時其實就已經用到了 Environments，這裡我在詳細的跟大家說這個東西的好處</p>
+<p>到『Environments』的分頁按下『＋』的按鈕，接著輸入環境的名稱即可(我用 local_server 做示範)</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-16.webp" width="1356" height="528" alt="STEP 1：新增 Environments（圖 16）" loading="lazy" decoding="async"></p>
+<h3 id="step-2設定常用的-environments-variable">STEP 2：設定常用的 Environments variable<a class="h-anchor" href="#step-2%e8%a8%ad%e5%ae%9a%e5%b8%b8%e7%94%a8%e7%9a%84-environments-variable" aria-label="這個段落的連結"></a></h3>
+<p><strong>url</strong>：這個是最實用的環境變數，讓你只需要調整 request 的 Environment 就快速切換網址做測試</p>
+<p><strong>login_user、login_password</strong>：每個環境的使用者登入資訊通常略有不同，且大部分的 api 都需要透過登入取得 token 才能使用，把他們加入環境變數可以加速你的測試。</p>
+<p>P.S <code>不建議把正式機的 password 加入環境變數，且測試機的 password 不要用平常自己會用的密碼</code>，不然資安很危險的，都已經可以偷懶用 Environments，密碼自己去產生一組吧。</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-17.webp" width="1355" height="491" alt="STEP 2：設定常用的 Environments variable（圖 17）" loading="lazy" decoding="async"></p>
+<h3 id="step-3在-request-使用-environments-variable">STEP 3：在 request 使用 Environments variable<a class="h-anchor" href="#step-3%e5%9c%a8-request-%e4%bd%bf%e7%94%a8-environments-variable" aria-label="這個段落的連結"></a></h3>
+<p>想在 request 中使用 Environments variable 只需要用 <code>{{your_env_var}}</code> 包起來就好，另外右上角記得要切換到正確的 Environments 才會帶入相應的資料喔！</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-18.webp" width="1356" height="502" alt="STEP 3：在 request 使用 Environments variable（圖 18）" loading="lazy" decoding="async"></p>
+<h2 id="三匯出-api-documentation">三、匯出 API documentation<a class="h-anchor" href="#%e4%b8%89%e5%8c%af%e5%87%ba-api-documentation" aria-label="這個段落的連結"></a></h2>
+<h3 id="-為什麼同事常常說我正確的api有問題">🤔 為什麼同事常常說我正確的api有問題？<a class="h-anchor" href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e5%90%8c%e4%ba%8b%e5%b8%b8%e5%b8%b8%e8%aa%aa%e6%88%91%e6%ad%a3%e7%a2%ba%e7%9a%84api%e6%9c%89%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>相信後端工程師有一個共同經驗，無論你的 API 文件寫得再清楚功能執行的再穩定；到了同事手中卻常常被說不能 work，緊張的你檢查很多遍也找不出問題，百思不得其解的抵達同事座位才發現他原來漏了某個參數。</p>
+<p>如果你有這樣的經驗，Postman 內建的 API documentation 能拯救你，讓你在 publish 文件後可以跟同事幸福快樂的生活。</p>
+<h3 id="step-1view-documentation">STEP 1：view documentation<a class="h-anchor" href="#step-1view-documentation" aria-label="這個段落的連結"></a></h3>
+<p>選擇想要產生文檔的 Collection，按下『view documentation』就會顯示在右側，同時你可以透過切換右上角的環境變數來檢視文檔。</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-19.webp" width="1355" height="911" alt="STEP 1：view documentation（圖 19）" loading="lazy" decoding="async"></p>
+<h3 id="step-2publish-documentation">STEP 2：publish documentation<a class="h-anchor" href="#step-2publish-documentation" aria-label="這個段落的連結"></a></h3>
+<p>當你確定文檔內容都沒問題後按『Publish』</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-20.webp" width="1355" height="310" alt="STEP 2：publish documentation（圖 20）" loading="lazy" decoding="async"></p>
+<p>接著會跳出一個網頁讓你調整一些參數，調整完後建議先用左側的『Preview Documentation』自己確認看看是否符合</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-21.webp" width="1400" height="1053" alt="STEP 2：publish documentation（圖 21）" loading="lazy" decoding="async"></p>
+<p>確認一切都沒問題後按下『Publish Collection』就發布出去嚕～</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-22.webp" width="1400" height="615" alt="STEP 2：publish documentation（圖 22）" loading="lazy" decoding="async"></p>
+<p>你可以將 URL 複製起來分享給你的合作夥伴，如果你想把這份文檔下架，按『Unpublish』即可</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-23.webp" width="1400" height="712" alt="STEP 2：publish documentation（圖 23）" loading="lazy" decoding="async"></p>
+<h2 id="四補充說明">四、補充說明<a class="h-anchor" href="#%e5%9b%9b%e8%a3%9c%e5%85%85%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
+<h3 id="-讓-mock-server-變成私有的">🤫 讓 Mock server 變成私有的<a class="h-anchor" href="#-%e8%ae%93-mock-server-%e8%ae%8a%e6%88%90%e7%a7%81%e6%9c%89%e7%9a%84" aria-label="這個段落的連結"></a></h3>
+<p>在前面 Mock Server 時不知道有沒有人注意到有『Make mock server private』的選項，這做這個設定前這個 mock server 的 url 都是公開的，如果你想為自己的 mock server 多一層防護可以這樣做</p>
+<h3 id="step-1--編輯-mock-server">STEP 1 : 編輯 Mock server<a class="h-anchor" href="#step-1--%e7%b7%a8%e8%bc%af-mock-server" aria-label="這個段落的連結"></a></h3>
+<p>從『Mock Servers』分頁打開之前創建的 Server，按下『Edit』做設定</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-24.webp" width="1355" height="511" alt="STEP 1 : 編輯 Mock server（圖 24）" loading="lazy" decoding="async"></p>
+<p>將『Make mock server private』打勾並按下『Save changes』</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-25.webp" width="1355" height="898" alt="STEP 1 : 編輯 Mock server（圖 25）" loading="lazy" decoding="async"></p>
+<p>回到之前的 Request，你會發現按下 Send 後會回傳錯誤訊息，這是因為現在 Mock server 都需要添加 api key 到 request 的 header 才能使用</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-26.webp" width="1355" height="691" alt="STEP 1 : 編輯 Mock server（圖 26）" loading="lazy" decoding="async"></p>
+<h3 id="step-2--產生-postman-api-key">STEP 2 : 產生 Postman API key<a class="h-anchor" href="#step-2--%e7%94%a2%e7%94%9f-postman-api-key" aria-label="這個段落的連結"></a></h3>
+<p>進去這個<strong> <a href="https://go.postman.co/settings/me/api-keys">網址</a> ，</strong>點擊『Generate API key』</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-27.webp" width="1058" height="439" alt="STEP 2 : 產生 Postman API key（圖 27）" loading="lazy" decoding="async"></p>
+<p>填上用來識別這個 API key 的名稱後按下『Generate API key』</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-28.webp" width="1058" height="472" alt="STEP 2 : 產生 Postman API key（圖 28）" loading="lazy" decoding="async"></p>
+<p>接著請複製這個 API key，上面已經警告你這是你唯一見到他的機會了</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-29.webp" width="1058" height="498" alt="STEP 2 : 產生 Postman API key（圖 29）" loading="lazy" decoding="async"></p>
+<h3 id="step-3將-api-key-加入-environment">STEP 3：將 API key 加入 Environment<a class="h-anchor" href="#step-3%e5%b0%87-api-key-%e5%8a%a0%e5%85%a5-environment" aria-label="這個段落的連結"></a></h3>
+<p>因為日後 Mock server 的所有 request 都需要這個 API key，所以我們把他加入 Environment，變數名稱為『x-api-key』</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-30.webp" width="1354" height="521" alt="STEP 3：將 API key 加入 Environment（圖 30）" loading="lazy" decoding="async"></p>
+<h3 id="step-4request-的-header-加上-x-api-key">STEP 4：request 的 header 加上 x-api-key<a class="h-anchor" href="#step-4request-%e7%9a%84-header-%e5%8a%a0%e4%b8%8a-x-api-key" aria-label="這個段落的連結"></a></h3>
+<p>最後回到 request，在 Headers 的分頁下加入『x-api-key』這個參數並將環境變數 <code>{{x-api-key}}</code> 作為值後按下『Send』就看到正確的 response 回傳嚕！</p>
+<p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-31.webp" width="1354" height="603" alt="STEP 4：request 的 header 加上 x-api-key（圖 31）" loading="lazy" decoding="async"></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

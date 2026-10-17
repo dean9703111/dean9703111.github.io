@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Ping｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/ping/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 15 Jun 2020 15:06:39 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/ping/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>網路環境檢查</title>
+      <link>https://deanlin.net/blog/202006/network-diagnostics-commands/</link>
+      <pubDate>Mon, 15 Jun 2020 15:06:39 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/network-diagnostics-commands/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>在這裡會說明幾個我常使用的檢查方式</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202006/network-diagnostics-commands/images/network-diagnostics-commands-01.webp" width="960" height="640" alt="網路環境檢查（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>以下指令皆在Terminal(終端機)操作</p>
+</blockquote>
+<h2 id="ping-xxxxxxxxxxxx-最基礎的一種">Ping xxx.xxx.xxx.xxx 最基礎的一種<a class="h-anchor" href="#ping-xxxxxxxxxxxx-%e6%9c%80%e5%9f%ba%e7%a4%8e%e7%9a%84%e4%b8%80%e7%a8%ae" aria-label="這個段落的連結"></a></h2>
+<p>這是檢察網路環境最方便的指令，無論windows、mac還是linux都可以在不用安裝任何套件的狀態下使用他</p>
+<p><strong>主要功能是拿來測試主機是否有連通內網外網，或是開通特定主機的通道</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/network-diagnostics-commands/images/network-diagnostics-commands-02.webp" width="920" height="332" alt="你可以直接ping某個Domain name" loading="lazy" decoding="async">
+  <figcaption>你可以直接ping某個Domain name</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202006/network-diagnostics-commands/images/network-diagnostics-commands-03.webp" width="920" height="296" alt="或是ping特定的ip" loading="lazy" decoding="async">
+  <figcaption>或是ping特定的ip</figcaption>
+</figure>
+
+<p>個人比較常用的是加上ping次數的限定</p>
+<pre tabindex="0"><code>基礎指令如下：
+-c n
+n為要ping的次數
+ex: ping -c 10 192.168.120.206
+</code></pre><figure class="figure"><img src="https://deanlin.net/blog/202006/network-diagnostics-commands/images/network-diagnostics-commands-04.webp" width="920" height="230" alt="這是只跑一次的範例" loading="lazy" decoding="async">
+  <figcaption>這是只跑一次的範例</figcaption>
+</figure>
+
+<h2 id="nmap-常用來確認防火牆以及哪些port有打開">Nmap 常用來確認防火牆以及哪些port有打開<a class="h-anchor" href="#nmap-%e5%b8%b8%e7%94%a8%e4%be%86%e7%a2%ba%e8%aa%8d%e9%98%b2%e7%81%ab%e7%89%86%e4%bb%a5%e5%8f%8a%e5%93%aa%e4%ba%9bport%e6%9c%89%e6%89%93%e9%96%8b" aria-label="這個段落的連結"></a></h2>
+<p>這是一個非常棒的網路診斷工具，如果你的系統尚未安裝可下指令如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install nmap
+</span></span></code></pre></div><p>下面介紹我常用的指令：</p>
+<ol>
+<li>掃描主機是否有開機，並且開啟哪些port</li>
+</ol>
+<pre tabindex="0"><code>nmap www.hinet.net
+</code></pre><p><img src="https://deanlin.net/blog/202006/network-diagnostics-commands/images/network-diagnostics-commands-05.webp" width="1080" height="450" alt="Nmap 常用來確認防火牆以及哪些port有打開（圖 5）" loading="lazy" decoding="async"></p>
+<p>2. 如果你要得到該主機更詳細的資訊可加上參數 -v</p>
+<pre tabindex="0"><code>nmap -v www.hinet.net
+</code></pre><p><img src="https://deanlin.net/blog/202006/network-diagnostics-commands/images/network-diagnostics-commands-06.webp" width="1030" height="836" alt="Nmap 常用來確認防火牆以及哪些port有打開（圖 6）" loading="lazy" decoding="async"></p>
+<p>3. 確認防火牆開啟的狀況(這個指令需要進入sudo高級權限)</p>
+<pre tabindex="0"><code>nmap -sA scanme.nmap.org
+</code></pre><p><img src="https://deanlin.net/blog/202006/network-diagnostics-commands/images/network-diagnostics-commands-07.webp" width="1030" height="296" alt="Nmap 常用來確認防火牆以及哪些port有打開（圖 7）" loading="lazy" decoding="async"></p>
+<p>4. 常用到的應該是確認該port是否開啟</p>
+<pre tabindex="0"><code>nmap -p 80 google.com
+</code></pre><p><img src="https://deanlin.net/blog/202006/network-diagnostics-commands/images/network-diagnostics-commands-08.webp" width="924" height="324" alt="Nmap 常用來確認防火牆以及哪些port有打開（圖 8）" loading="lazy" decoding="async"></p>
+<h2 id="traceroute-主要是為了用來追蹤路徑">traceroute 主要是為了用來追蹤路徑<a class="h-anchor" href="#traceroute-%e4%b8%bb%e8%a6%81%e6%98%af%e7%82%ba%e4%ba%86%e7%94%a8%e4%be%86%e8%bf%bd%e8%b9%a4%e8%b7%af%e5%be%91" aria-label="這個段落的連結"></a></h2>
+<p>你可以理解為這個指令就是列出從你電腦到目標網段所走過的路，主要是為了檢查在哪個環節斷掉</p>
+<pre tabindex="0"><code>traceroute google.com
+</code></pre><p><img src="https://deanlin.net/blog/202006/network-diagnostics-commands/images/network-diagnostics-commands-09.webp" width="1238" height="644" alt="traceroute 主要是為了用來追蹤路徑（圖 9）" loading="lazy" decoding="async"></p>
+<p>下面的幾個參數有興趣的可以自己嘗試看看喔</p>
+<pre tabindex="0"><code>traceroute -p 6888 google.com
+探測包使用的基本UDP埠設置6888
+traceroute -r google.com
+繞過正常的路由表，直接發送到網路相連的主機
+</code></pre><blockquote class="pullquote"><p>希望這篇文章提供的方法，可以幫助你在查找問題時更加順利～</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

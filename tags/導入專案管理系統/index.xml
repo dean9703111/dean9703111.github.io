@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>導入專案管理系統｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/%E5%B0%8E%E5%85%A5%E5%B0%88%E6%A1%88%E7%AE%A1%E7%90%86%E7%B3%BB%E7%B5%B1/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Tue, 23 Feb 2021 11:31:14 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/%E5%B0%8E%E5%85%A5%E5%B0%88%E6%A1%88%E7%AE%A1%E7%90%86%E7%B3%BB%E7%B5%B1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何用 Redmine 做專案管理＆體驗心得</title>
+      <link>https://deanlin.net/blog/202102/redmine-project-management-review/</link>
+      <pubDate>Tue, 23 Feb 2021 11:31:14 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202102/redmine-project-management-review/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>在 UI 上如果沒有嚴苛要求的話，Redmine 算是一套非常棒的專案管理系統了，即使跟 Jira 相比也沒有差得太多(因為很多高階功能根本用不太到😅)，這篇文章會分成三大主題說明：管理者在專案創建前的準備、專案管理的實際應用、個人使用心得。</description>
+      <content:encoded><![CDATA[<p>在 UI 上如果沒有嚴苛要求的話，Redmine 算是一套非常棒的專案管理系統了，即使跟 Jira 相比也沒有差得太多(因為很多高階功能根本用不太到😅)，這篇文章會分成三大主題說明：管理者在專案創建前的準備、專案管理的實際應用、個人使用心得。</p>
+<pre tabindex="0"><code>一、管理者在專案創建前的準備
+  ➤ 角色與權限
+  ➤ 議題狀態清單
+  ➤ 追蹤標籤清單
+  ➤ 設定
+二、專案管理的實際應用
+  STEP 1：建立新專案
+  STEP 2：分配議題(issue)
+  STEP 3：組員收到議題的分配通知，根據需求細分子議題
+  STEP 4：UIUX 完成設計，PM 分配後續工作給前端工程師
+  STEP 5：前端工程師細分子議題，並開 api 需求給後端工程師
+  STEP 6：後端工程師回復議題
+  STEP 7：PM 規劃測試流程
+  STEP 8：SIT 測試新系統功能
+  🤔 流程總結
+三、個人使用心得
+</code></pre><p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-01.webp" width="1400" height="785" alt="如何用 Redmine 做專案管理＆體驗心得（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="一管理者在專案創建前的準備">一、管理者在專案創建前的準備<a class="h-anchor" href="#%e4%b8%80%e7%ae%a1%e7%90%86%e8%80%85%e5%9c%a8%e5%b0%88%e6%a1%88%e5%89%b5%e5%bb%ba%e5%89%8d%e7%9a%84%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>以下操作皆在『網站管理』分頁，僅列出重要功能，其他請自行摸索</p>
+</blockquote>
+<h3 id="-角色與權限">➤ 角色與權限<a class="h-anchor" href="#-%e8%a7%92%e8%89%b2%e8%88%87%e6%ac%8a%e9%99%90" aria-label="這個段落的連結"></a></h3>
+<p>系統僅會提供如下角色，但專案管理的流程中通常還會有『測試人員』、『UI/UX 人員』等角色，這裡就按造公司需求新增及分配權限即可</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-02.webp" width="1400" height="497" alt="角色與權限（圖 2）" loading="lazy" decoding="async"></p>
+<p>新增角色後會要定義他的工作流程，畢竟每個角色要做的任務不同</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-03.webp" width="1400" height="497" alt="角色與權限（圖 3）" loading="lazy" decoding="async"></p>
+<p>以<strong>測試人員</strong>來說，他們通常是要驗證已解決的議題是否處理完成，所以我會賦予的權限如下圖</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-04.webp" width="1400" height="687" alt="角色與權限（圖 4）" loading="lazy" decoding="async"></p>
+<h3 id="-議題狀態清單">➤ 議題狀態清單<a class="h-anchor" href="#-%e8%ad%b0%e9%a1%8c%e7%8b%80%e6%85%8b%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<p>如果你在剛剛操作角色權限設定時覺得狀態不敷使用可以在這裡增加</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-05.webp" width="1400" height="543" alt="議題狀態清單（圖 5）" loading="lazy" decoding="async"></p>
+<p>像測試人員就可能有『測試不符合預期』之類的狀態，新增後記得套用到對應的角色身上</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-06.webp" width="1400" height="768" alt="議題狀態清單（圖 6）" loading="lazy" decoding="async"></p>
+<h3 id="-追蹤標籤清單">➤ 追蹤標籤清單<a class="h-anchor" href="#-%e8%bf%bd%e8%b9%a4%e6%a8%99%e7%b1%a4%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<p>這些標籤可以幫助你在尋找、歸納議題時的速度</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-07.webp" width="1400" height="244" alt="追蹤標籤清單（圖 7）" loading="lazy" decoding="async"></p>
+<h3 id="-設定">➤ 設定<a class="h-anchor" href="#-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<p>在『顯示』的地方可以調整語言</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-08.webp" width="1400" height="840" alt="設定（圖 8）" loading="lazy" decoding="async"></p>
+<p>在『驗證』頁面參考調整以下選項：</p>
+<ul>
+<li><strong>需要驗證(是)</strong>：如果你沒改又忘記調整專案為不公開會讓一般民眾都可以瀏覽喔！</li>
+<li><strong>註冊選項(關閉)</strong>：如果開放註冊可能會被有心人士狂註冊，多了一堆垃圾帳號造成日後管理困難</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-09.webp" width="1400" height="622" alt="設定（圖 9）" loading="lazy" decoding="async"></p>
+<h2 id="二專案管理的實際應用">二、專案管理的實際應用<a class="h-anchor" href="#%e4%ba%8c%e5%b0%88%e6%a1%88%e7%ae%a1%e7%90%86%e7%9a%84%e5%af%a6%e9%9a%9b%e6%87%89%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>以下用實際專案流程模擬操作，模擬公司實際職位如下</p>
+</blockquote>
+<ul>
+<li>PM(管理人員) — 開 issue 並且分配 issue</li>
+<li>UI/UX(開發人員) — 網頁設計相關任務</li>
+<li>frontend(開發人員) — 依據 UI/UX 設計完成前端</li>
+<li>backend(開發人員) — 配合前端需求給予資料</li>
+<li>SIT(測試人員) — 測試開發人員完成的功能並給予回饋</li>
+</ul>
+<h3 id="step-1-建立新專案">STEP 1 ：建立新專案<a class="h-anchor" href="#step-1-%e5%bb%ba%e7%ab%8b%e6%96%b0%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>了解客戶需求後，由 PM 建立新專案</p>
+<p>職位/角色：PM/管理人員</p>
+</blockquote>
+<p>由 PM 建立一個新的專案並設定裡面的參數</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-10.webp" width="1400" height="240" alt="STEP 1 ：建立新專案（圖 10）" loading="lazy" decoding="async"></p>
+<p>建立專案時請注意：</p>
+<ul>
+<li>名稱請填寫大家都看得懂的，如果專案有英文縮寫請放在代碼</li>
+<li><strong>『代碼』這個欄位儲存後無法修改</strong>，請謹慎</li>
+<li>如果專案沒有要公開，請記得把<strong>公開的選項拿掉</strong>，避免無關人士看到</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-11.webp" width="1400" height="661" alt="STEP 1 ：建立新專案（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>分配角色權限：</strong>建立專案後要加入成員並給予對應的角色權限</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-12.webp" width="1400" height="784" alt="STEP 1 ：建立新專案（圖 12）" loading="lazy" decoding="async"></p>
+<p>完成權限分配後的畫面如下，<strong>一個用戶可以有多重角色</strong></p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-13.webp" width="1400" height="294" alt="STEP 1 ：建立新專案（圖 13）" loading="lazy" decoding="async"></p>
+<p><strong>建立專案版本</strong>：專案一定會有版本的更迭，每項議題如果都有對應的版本在<strong>管理及追蹤上可以容易釐清責任</strong></p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-14.webp" width="1400" height="296" alt="STEP 1 ：建立新專案（圖 14）" loading="lazy" decoding="async"></p>
+<p><strong>建立議題分類</strong>：新人剛加入團隊時可能對成員的職權並不是很了解，如果在這裡建立分類的防可以<strong>快速幫助不熟悉團隊的人了解每個人的職權分配</strong></p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-15.webp" width="1400" height="245" alt="STEP 1 ：建立新專案（圖 15）" loading="lazy" decoding="async"></p>
+<h3 id="step-2分配議題issue">STEP 2：分配議題(issue)<a class="h-anchor" href="#step-2%e5%88%86%e9%85%8d%e8%ad%b0%e9%a1%8cissue" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>專案基礎配置完成後開始分配每個成員的任務，這裡先從 UI/UX 的設計圖開始</p>
+<p>職位/角色：PM/管理人員</p>
+</blockquote>
+<p>在建立議題的時候有幾點提醒一下：</p>
+<ul>
+<li><strong>概述</strong>：圖片可以用複製貼上，但上面只會顯示『!xxx.png!』，需要去<strong>『預覽』</strong>才能看到實際的結果</li>
+<li><strong>分類</strong>：如果選擇分類就會自動帶出被分派者</li>
+<li><strong>狀態</strong>：他的選項會跟之前<strong>賦予的角色權限</strong>有關，如果發現需要新的流程可以後續再做調整</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-16.webp" width="1400" height="741" alt="STEP 2：分配議題(issue)（圖 16）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-17.webp" width="1400" height="741" alt="這個是預覽的畫面，建議儲存議題前先看看預覽畫面確保跟你希望的內容是一致的" loading="lazy" decoding="async">
+  <figcaption>這個是預覽的畫面，建議儲存議題前先看看預覽畫面確保跟你希望的內容是一致的</figcaption>
+</figure>
+
+<h3 id="step-3組員收到議題的分配通知根據需求細分子議題">STEP 3：組員收到議題的分配通知，根據需求細分子議題<a class="h-anchor" href="#step-3%e7%b5%84%e5%93%a1%e6%94%b6%e5%88%b0%e8%ad%b0%e9%a1%8c%e7%9a%84%e5%88%86%e9%85%8d%e9%80%9a%e7%9f%a5%e6%a0%b9%e6%93%9a%e9%9c%80%e6%b1%82%e7%b4%b0%e5%88%86%e5%ad%90%e8%ad%b0%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>PM 給予議題的大方向任務，組員再依據自己的專業將工作項目細分，這樣更方便追蹤議題的作業進度並評估個人績效</p>
+<p>職位/角色：UIUX/開發人員</p>
+</blockquote>
+<p>如果有設定郵件通知的話會收到跟下面類似的信件</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-18.webp" width="1168" height="966" alt="這封信件只是舉例" loading="lazy" decoding="async">
+  <figcaption>這封信件只是舉例</figcaption>
+</figure>
+
+<p>閱讀完議題的需求後再依據自己實際的工作項目去細分子議題，操作方式非常直覺就不在多做介紹</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-19.webp" width="1400" height="179" alt="STEP 3：組員收到議題的分配通知，根據需求細分子議題（圖 19）" loading="lazy" decoding="async"></p>
+<p><strong>議題清單</strong>：在這個頁面可以瀏覽所有議題，依據自己的工作完成進度去編輯『任務完成百分比』、『狀態』、『紀錄時間』，方便PM了解實際的工作狀況</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-20.webp" width="1400" height="471" alt="STEP 3：組員收到議題的分配通知，根據需求細分子議題（圖 20）" loading="lazy" decoding="async"></p>
+<h3 id="step-4uiux-完成設計pm-分配後續工作給前端工程師">STEP 4：UIUX 完成設計，PM 分配後續工作給前端工程師<a class="h-anchor" href="#step-4uiux-%e5%ae%8c%e6%88%90%e8%a8%ad%e8%a8%88pm-%e5%88%86%e9%85%8d%e5%be%8c%e7%ba%8c%e5%b7%a5%e4%bd%9c%e7%b5%a6%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>PM 在議題狀態轉換時也會收到 email 通知，這時他可以做後續的議題分配</p>
+<p>職位/角色：PM/管理人員</p>
+</blockquote>
+<p><strong>相關的議題清單</strong>：PM 新增議題的方式不再贅述，但這個議題因為需要參考 UI 設計的草圖，所以要在『<strong>相關的議題清單</strong>』與 UI 設計的議題作關聯</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-21.webp" width="991" height="122" alt="STEP 4：UIUX 完成設計，PM 分配後續工作給前端工程師（圖 21）" loading="lazy" decoding="async"></p>
+<h3 id="step-5前端工程師細分子議題並開-api-需求給後端工程師">STEP 5：前端工程師細分子議題，並開 api 需求給後端工程師<a class="h-anchor" href="#step-5%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e7%b4%b0%e5%88%86%e5%ad%90%e8%ad%b0%e9%a1%8c%e4%b8%a6%e9%96%8b-api-%e9%9c%80%e6%b1%82%e7%b5%a6%e5%be%8c%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>前端工程師在設計前端頁面的同時也會開 api 的需求給後端工程師，兩者間配合才能完善網頁</p>
+<p>職位/角色：前端工程師/開發人員</p>
+</blockquote>
+<p>這塊比較不一樣的是前端工程師應該要更細節具體的描述每個 api 所需要的內容，所以除了『後端 api 需求』這個父議題外，也需要增加細部需求的子議題。</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-22.webp" width="1400" height="459" alt="STEP 5：前端工程師細分子議題，並開 api 需求給後端工程師（圖 22）" loading="lazy" decoding="async"></p>
+<h3 id="step-6後端工程師回復議題">STEP 6：後端工程師回復議題<a class="h-anchor" href="#step-6%e5%be%8c%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e5%9b%9e%e5%be%a9%e8%ad%b0%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>後端工程師在依據前端工程師的需求完善後用回應的方式說明 api 的格式讓前端工程師完成最後的串接</p>
+<p>職位/角色：後端工程師/開發人員</p>
+</blockquote>
+<p>後端 api 不是完成就好，要附上相關說明文件才能節省雙方溝通時間並留存紀錄。</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-23.webp" width="1400" height="637" alt="STEP 6：後端工程師回復議題（圖 23）" loading="lazy" decoding="async"></p>
+<h3 id="step-7pm-規劃測試流程">STEP 7：PM 規劃測試流程<a class="h-anchor" href="#step-7pm-%e8%a6%8f%e5%8a%83%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>在前端工程師與後端工程師串接完成，也確定基礎的操作都穩定後就可以請 SIT 人員做測試了，相關的測試項目及流程一般會由 PM 做後續安排</p>
+<p>職位/角色：PM/管理人員</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-24.webp" width="1333" height="764" alt="STEP 7：PM 規劃測試流程（圖 24）" loading="lazy" decoding="async"></p>
+<h3 id="step-8sit-測試新系統功能">STEP 8：SIT 測試新系統功能<a class="h-anchor" href="#step-8sit-%e6%b8%ac%e8%a9%a6%e6%96%b0%e7%b3%bb%e7%b5%b1%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>SIT 依照 PM 分配的測試流程進行測試，如果正式成功就能把該議題狀態改為『已解決』</p>
+<p>職位/角色：SIT/測試人員</p>
+</blockquote>
+<p>SIT 測試過程中如果發現問題除了把議題狀態改為『測試不符合預期』以及回覆哪裡錯誤外；額外發現的問題也可以新增子任務詳細說明問題，並將子任務都先指派給 PM 讓 PM 再分配給相關人員做處理</p>
+<p><img src="https://deanlin.net/blog/202102/redmine-project-management-review/images/redmine-project-management-review-25.webp" width="1400" height="755" alt="STEP 8：SIT 測試新系統功能（圖 25）" loading="lazy" decoding="async"></p>
+<h3 id="-流程總結">🤔 流程總結<a class="h-anchor" href="#-%e6%b5%81%e7%a8%8b%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h3>
+<p>基本上就是測試到這個專案版本沒有任何問題後會再開新的專案版本，依據新的功能需求去實作；上面所敘述的流程僅供參考，實際的步驟還是需要公司內部有足夠共識才能真正讓這個專案管理工具發揮作用。</p>
+<h2 id="三個人使用心得">三、個人使用心得<a class="h-anchor" href="#%e4%b8%89%e5%80%8b%e4%ba%ba%e4%bd%bf%e7%94%a8%e5%bf%83%e5%be%97" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>相比之前文章介紹的 <a href="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/">Microsoft List、Planner</a> ，這套系統我個人認為是完勝的，各種功能都非常完善，如果想要更多的功能也能透過 plugin 去做擴充，而且還是免費的XD</li>
+<li>但如果跟 Jira 相比，他功能就少了一點，比如：缺少 Sprint 的概念、沒辦法於文章中用@來tag相關人員、一個議題只能有一種追蹤標籤。但基本上功能已經夠用了，也許上面的功能都能透過 plugin 處理，這些就要後續再做研究了。</li>
+<li>功能擴充自由度相當高，公司如果想要導入這個專案管理系統建議要有工程師與 PM 一起配合研究，因為一些資訊的顯示還有流程要自己手動修改才能符合真實的需求。</li>
+</ol>
+<hr>
+<pre tabindex="0"><code>想要導入 Redmine 可以參考我之前分享的文章：
+👍 Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04
+👍 Redmine Plugins &amp; Themes 介紹：那些我成功擴充的外掛
+👍 用 Redmine 做專案管理 — 管理者不可不知的設定
+👍 用 Redmine 做專案管理 — 一般用戶不可不知的基礎功能
+👍 Redmine 教育訓練 — 依角色權限說明
+</code></pre><hr>
+<h3 id="-讀完這篇文章後">🙂 讀完這篇文章後<a class="h-anchor" href="#-%e8%ae%80%e5%ae%8c%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0%e5%be%8c" aria-label="這個段落的連結"></a></h3>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

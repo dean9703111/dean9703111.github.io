@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Redis｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/redis/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 22 May 2024 16:17:09 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文</title>
+      <link>https://deanlin.net/blog/202405/database-bottlenecks/</link>
+      <pubDate>Wed, 22 May 2024 16:17:09 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202405/database-bottlenecks/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。 今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。</description>
+      <content:encoded><![CDATA[<p>除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。</p>
+<p>今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。</p>
+<p>過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）。</p>
+<p>但隨著商品種類日漸增加（種類高達數萬），Redis 這類用記憶體（RAM）儲存資料的系統開始遇到了瓶頸。</p>
+<p>過去還可以用課金增加記憶體的方式來解決，但最新的需求是將資料保存的時限拉長到一年（統計圖表時間搜尋範圍）。</p>
+<p>而每天的資料量大約有 250MB，30 天還好說，變成 365 天成本就真的太可怕了。</p>
+<p>於是團隊就開始討論合適的遷移方案。</p>
+<p><img src="https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-01.webp" width="1144" height="642" alt="當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="方案一redis-僅保留-1-個月的資料量過期的轉移到其他資料庫">方案一：Redis 僅保留 1 個月的資料量，過期的轉移到其他資料庫<a class="h-anchor" href="#%e6%96%b9%e6%a1%88%e4%b8%80redis-%e5%83%85%e4%bf%9d%e7%95%99-1-%e5%80%8b%e6%9c%88%e7%9a%84%e8%b3%87%e6%96%99%e9%87%8f%e9%81%8e%e6%9c%9f%e7%9a%84%e8%bd%89%e7%a7%bb%e5%88%b0%e5%85%b6%e4%bb%96%e8%b3%87%e6%96%99%e5%ba%ab" aria-label="這個段落的連結"></a></h2>
+<p>最初的方案是增加一個排程腳本，每天定時將快過期的資料寫到其他資料庫保存。</p>
+<p>之所以讓 Redis 保留一個月的資料量，因為系統默認顯示當前一個月的統計資料，存取次數較高。</p>
+<p>但這麼做有許多缺點，比如：</p>
+<ul>
+<li>如果使用者搜尋的時間點跨月，那後端的程式邏輯就會比較複雜。</li>
+<li>需要同時維護兩套程式碼與資料庫，可能會造成未來隱憂（ex：版本升級、錯誤釐清）。</li>
+<li>對團隊成員的技術水平有更高的要求，可能會提升招募的難度。</li>
+</ul>
+<p>所以這個方案提出後當下就否決了。</p>
+<hr>
+<h2 id="方案二將資料遷移到關連式資料庫">方案二：將資料遷移到關連式資料庫<a class="h-anchor" href="#%e6%96%b9%e6%a1%88%e4%ba%8c%e5%b0%87%e8%b3%87%e6%96%99%e9%81%b7%e7%a7%bb%e5%88%b0%e9%97%9c%e9%80%a3%e5%bc%8f%e8%b3%87%e6%96%99%e5%ba%ab" aria-label="這個段落的連結"></a></h2>
+<p>因為大部分的團隊成員都比較熟悉關聯式資料庫（ex: MySQL）。</p>
+<p>所以大家想說要不就遷移到關聯式資料庫吧，這樣改版要花的時間成本較低。</p>
+<p>但研究了一下發現可行性較低，因為：</p>
+<ul>
+<li>如果不設計索引（index），搜尋效率會低到可怕。</li>
+<li>但設計索引（index）後，因為每分鐘要寫入大量資料，所以會影響到寫入效能。</li>
+<li>考量到未來統計報告可能需要更多資料，關聯式資料庫並不適合動態擴充欄位。</li>
+</ul>
+<hr>
+<h2 id="方案三將資料遷移到非關連式資料庫nosql">方案三：將資料遷移到非關連式資料庫（NoSQL）<a class="h-anchor" href="#%e6%96%b9%e6%a1%88%e4%b8%89%e5%b0%87%e8%b3%87%e6%96%99%e9%81%b7%e7%a7%bb%e5%88%b0%e9%9d%9e%e9%97%9c%e9%80%a3%e5%bc%8f%e8%b3%87%e6%96%99%e5%ba%abnosql" aria-label="這個段落的連結"></a></h2>
+<p>幾經考慮後，最終的方案是選擇 MongoDB 這個 NoSQL。</p>
+<p>主要原因是 MongoDB 無論在讀取、寫入，還是動態擴充欄位方面都能滿足需求。</p>
+<p>在決定使用 MongoDB 後，接下來對資料結構做了一下調整。</p>
+<p>在 Redis 中，原本將統計資料儲存在 Sorted Set 中，並使用 Hash 結構來存儲每個 timestamp 下的商品統計資料。結構如下：</p>
+<pre tabindex="0"><code>Sorted Set: timestamps
+Member: timestamp (e.g., 1620000000)
+Hash: hash:timestamp (e.g., hash:1620000000) 
+{
+    &#34;商品名稱1&#34;: &#34;統計資料1&#34;,
+    &#34;商品名稱2&#34;: &#34;統計資料2&#34;,
+    ...
+}
+</code></pre><p>然而，這樣的設計有些問題。因為實際頁面通常只顯示最多 20 筆商品的統計資料；但為了達成這個目標，我們需要先抓取區間內的 timestamp，然後再找到對應的 Key（商品名稱）。</p>
+<p>在 Redis 這麼做還 Ok，但如果轉換到 MongoDB，效率可能會不理想。</p>
+<p>因此，在遷移到 MongoDB 時重新設計了資料結構，將商品作為 collection 的主要文件，timestamp 與統計資料作為內嵌文件。</p>
+<p>新的 MongoDB 設計如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;商品名稱&#34;</span>: <span style="color:#a5d6ff">&#34;商品名稱1&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;統計資料&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;timestamp&#34;</span>: <span style="color:#a5d6ff">&#34;1620000000&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;data&#34;</span>: <span style="color:#a5d6ff">&#34;統計資料1&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;timestamp&#34;</span>: <span style="color:#a5d6ff">&#34;16200000100&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;data&#34;</span>: <span style="color:#a5d6ff">&#34;統計資料2&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在這個設計中，我們將商品名稱設為 index，以提高查詢特定商品統計資料的效率。</p>
+<blockquote>
+<p>小提醒：經過實驗後，這個資料結構並不是最理想的，詳情參考這篇文章（<a href="https://deanlin.net/blog/202405/mongodb-vs-mysql-index-performance/">MongoDB 與 MySQL 建立 Index 對 Read/Write 的效能影響</a>）</p>
+</blockquote>
+<p>另外考量到時間搜尋範圍可能很大（ex: 4 個月的趨勢），面對大範圍的資料顯示，會以小時的統計資料呈現。</p>
+<p>以上就是朋友跟我分享的資料庫遷移案例，希望對大家有幫助，如果有更好的方案，也歡迎留言分享。</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/8207e2016ac8" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Database 資料庫</span>
+    <span class="lc-desc">Edit description</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-card-01_hu_4d712f34f20c7567.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間</title>
+      <link>https://deanlin.net/blog/202210/nodejs-redis-api-cache/</link>
+      <pubDate>Wed, 19 Oct 2022 12:29:58 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202210/nodejs-redis-api-cache/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>現在使用者對網站的要求越來越高，即使你的內容做得很棒，但如果頁面載入時間超過 3 秒，使用者可能在被你的內容吸引前就離開了網站。如果你做的是電子商務系統，這個「痛點」會更為明顯，一但讓客戶等太久，公司就會流失大筆訂單…</description>
+      <content:encoded><![CDATA[<p>現在使用者對網站的要求越來越高，即使你的內容做得很棒，但如果頁面載入時間超過 3 秒，使用者可能在被你的內容吸引前就離開了網站。</p>
+<p>如果你做的是電子商務系統，這個「痛點」會更為明顯，一但讓客戶等太久，公司就會流失大筆訂單。</p>
+<p>為了解決這個問題，我們可以將資料設計成「快取」，這樣不但能大幅減少查詢資料的回傳時間（毫秒級別），還能有效降低後端資料庫的存取壓力。</p>
+<p><img src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-01.webp" width="1400" height="732" alt="在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>本篇文章將以：「Node.js X Koa X Redis」作為範例解說；如果你完全沒接觸過 Redis，可以先參考<a href="https://deanlin.net/blog/202108/install-redis-on-macos/">這篇文章</a>安裝環境。</p>
+</blockquote>
+<h2 id="應用場景說明">應用場景說明<a class="h-anchor" href="#%e6%87%89%e7%94%a8%e5%a0%b4%e6%99%af%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
+<p>如果今天要設計一款「等公車」的服務，那你勢必要串接「第三方 API」來獲取即時訊息。</p>
+<p>但有時第三方 API 的回傳時間並不理想，甚至有存取次數的限制；如果我們想降低第三方 API 存取次數，並減少使用者等待的回傳時間，我們可以針對資料做「快取（Cache）」設計。</p>
+<p>等公車這個服務有幾個特點：</p>
+<ol>
+<li>「公車到站時間」對所有使用者來說都是一樣的。</li>
+<li>公車即將抵達的時間以「分鐘」來顯示，所以我們存取的第三方 API 的頻率不用太高。</li>
+<li>公車的線路非常多，但不會每條線路都有剛好使用者在查。</li>
+</ol>
+<p>我們可以根據特點來設計資料更新的方案：</p>
+<ol>
+<li>我們並不需要輪詢所有的路線，因為很多資料我們就算取得，也沒有使用者會需要。</li>
+<li>因為即將抵達的時間以「分鐘」顯示，所以我們只要把更新的頻率設計在 1 分鐘以下即可（ex：5 秒鐘）。</li>
+<li>更新的策略可以採取「若 Redis 有資料就直接採用，若無則呼叫第三方 API 獲取資料」。</li>
+</ol>
+<blockquote>
+<p>筆者之前有分享過用 Redis 解決「商品秒殺」的應用，有興趣的讀者可以參考<a href="https://deanlin.net/blog/202108/nodejs-redis-flash-sale-concurrency/">這篇文章</a>。</p>
+</blockquote>
+<hr>
+<h2 id="專案環境設置">專案環境設置<a class="h-anchor" href="#%e5%b0%88%e6%a1%88%e7%92%b0%e5%a2%83%e8%a8%ad%e7%bd%ae" aria-label="這個段落的連結"></a></h2>
+<p>這個小專案我們會使用到如下套件：</p>
+<ul>
+<li>koa：可以理解為 Express.js 的精簡版後端框架。</li>
+<li>@koa/router：路由器設定用的，看起來會比較直觀。</li>
+<li>ioredis：與 Redis 連線、溝通的套件。</li>
+<li>axios：HTTP 請求工具，我們透過它來 Call API。</li>
+</ul>
+<p>使用如下指令便可「建立專案資料夾＆初始化專案＆安裝套件」：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir redis-cache-example
+</span></span><span style="display:flex;"><span>cd redis-cache-example
+</span></span><span style="display:flex;"><span>npm init -y
+</span></span><span style="display:flex;"><span>npm install --save koa @koa/router ioredis axios
+</span></span></code></pre></div><hr>
+<h2 id="找個方便使用的第三方-api">找個方便使用的第三方 API<a class="h-anchor" href="#%e6%89%be%e5%80%8b%e6%96%b9%e4%be%bf%e4%bd%bf%e7%94%a8%e7%9a%84%e7%ac%ac%e4%b8%89%e6%96%b9-api" aria-label="這個段落的連結"></a></h2>
+<p>本專案的主要目的，是讓大家理解如何將 API 回傳的資料快取。</p>
+<p>所以這邊筆者選擇<a href="https://jsonplaceholder.typicode.com/">JSONPlaceholder</a>的服務，他有提供虛擬的 RESTful API（重點是不用申請 Key 方便很多）。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-02.webp" width="1400" height="1027" alt="https://jsonplaceholder.typicode.com/todos" loading="lazy" decoding="async">
+  <figcaption><a href="https://jsonplaceholder.typicode.com/todos">https://jsonplaceholder.typicode.com/todos</a></figcaption>
+</figure>
+
+<p>上圖是 API 的回傳格式，大家可以看到，每個物件都有「id」的欄位，我們的程式會使用到這個參數來做 Demo（最多只有到 200，超過會回傳錯誤訊息）。</p>
+<hr>
+<h2 id="專案程式">專案程式<a class="h-anchor" href="#%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>本篇文章的目的是讓讀者理解 Redis 對效能有多大的提升，因此程式架構超級簡單，大概分成三個部分：</p>
+<ol>
+<li>將相關套件引入（koa、@koa/router、ioredis、axios）</li>
+<li>Redis 資料庫連線</li>
+<li>Get Method 的 RESTful API</li>
+</ol>
+<p>而在 Get Method 存取 Redis 資料庫的邏輯為：</p>
+<ol>
+<li>先去 Redis 確認是否有快取，如果有就直接回傳。</li>
+<li>如果 Redis 沒資料，就要 Call API，並將第一次獲得的資料儲存到 Redis 裡面（資料過期時間設定為 5 秒鐘）。</li>
+</ol>
+<p>為了方便讀者實作，筆者下面直接提供完整程式，你只要在專案資料夾下新增 <code>index.js</code>，然後複製貼上程式即可：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Koa <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;koa&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Router <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@koa/router&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Redis <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;ioredis&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> axios <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;axios&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Koa();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> router <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Router();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> redis <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Redis({
+</span></span><span style="display:flex;"><span>  host<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;127.0.0.1&#39;</span>,
+</span></span><span style="display:flex;"><span>  port<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">6379</span>,
+</span></span><span style="display:flex;"><span>  password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>redis.on(<span style="color:#a5d6ff">&#34;error&#34;</span>, <span style="color:#ff7b72">function</span> (error) {
+</span></span><span style="display:flex;"><span>  console.error(error);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>router.get(<span style="color:#a5d6ff">&#39;/todos/:id&#39;</span>, <span style="color:#ff7b72">async</span> ctx =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> cacheTodos <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> redis.get(<span style="color:#a5d6ff">`todos:</span><span style="color:#a5d6ff">${</span>ctx.params.id<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (cacheTodos) {
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#a5d6ff">&#34;從 Redis 獲得資料&#34;</span>);
+</span></span><span style="display:flex;"><span>      ctx.body <span style="color:#ff7b72;font-weight:bold">=</span> JSON.parse(cacheTodos);
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 呼叫 API
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> response <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> axios.get(<span style="color:#a5d6ff">`https://jsonplaceholder.typicode.com/todos/</span><span style="color:#a5d6ff">${</span>ctx.params.id<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>);
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#34;將第一次獲得的資料儲存到 Redis&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 把 API 回傳結果放入 Redis，並設定 5 秒的過期時間（Expire Time）
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> redis.set(<span style="color:#a5d6ff">`todos:</span><span style="color:#a5d6ff">${</span>ctx.params.id<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>, JSON.stringify(response.data), <span style="color:#a5d6ff">&#34;EX&#34;</span>, <span style="color:#a5d6ff">5</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ctx.body <span style="color:#ff7b72;font-weight:bold">=</span> response.data;
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    ctx.body <span style="color:#ff7b72;font-weight:bold">=</span> err;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.use(router.routes());
+</span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/c3cc905908e578703631d482641106cc" rel="noopener">redis-cache.js</a>（GitHub Gist）</p>
+<hr>
+<h2 id="測試程式確認結果是否符合預期">測試程式，確認結果是否符合預期<a class="h-anchor" href="#%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f%e7%a2%ba%e8%aa%8d%e7%b5%90%e6%9e%9c%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f" aria-label="這個段落的連結"></a></h2>
+<p>STEP 1：先在終端機輸入 <code>redis-server</code>，啟動 Redis Server。</p>
+<p><img src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-03.webp" width="1400" height="1098" alt="測試程式，確認結果是否符合預期（圖 3）" loading="lazy" decoding="async"></p>
+<p>STEP 2：輸入 <code>node index.js</code> 運行專案。</p>
+<p>STEP 3：打開 POSTMAN，實際體驗有了 Redis Cache API 的資料後，減少了多少回傳時間。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-04.webp" width="1246" height="631" alt="第一次存取 API，需要等待「626ms」才會回傳。" loading="lazy" decoding="async">
+  <figcaption>第一次存取 API，需要等待「626ms」才會回傳。</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-05.webp" width="1246" height="631" alt="第二次因為資料已經儲存到 Redis，我們等待的時間縮減為「4ms」，是毫秒級的回傳！" loading="lazy" decoding="async">
+  <figcaption>第二次因為資料已經儲存到 Redis，我們等待的時間縮減為「4ms」，是毫秒級的回傳！</figcaption>
+</figure>
+
+<p>如果想感受差異，可以看看下面筆者錄製的 Gif，裡面也有呈現過 5 秒就要重新抓取資料的邏輯。</p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-06.webp" width="960" height="317" aria-label="測試程式，確認結果是否符合預期（圖 6）" data-gifv>
+    <source src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-06.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<hr>
+<h2 id="結語">結語<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>本篇文章的重點在於「Cache 的思路」，Redis 只是協助我們達成目標的工具，即使改用 Memcached 也能達到相同目的。</p>
+<p>希望這個簡單的範例讓大家對 Redis 的應用有更近一步的認識，也歡迎大家留言分享自己的應用喔！</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>用 Node.js &#43; Redis 解決高併發秒殺問題</title>
+      <link>https://deanlin.net/blog/202108/nodejs-redis-flash-sale-concurrency/</link>
+      <pubDate>Wed, 18 Aug 2021 20:06:42 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202108/nodejs-redis-flash-sale-concurrency/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>商城在高併發環境下除了要考量到使用者體驗外，還要處理「超賣」的問題；Redis 是一種記憶體資料庫，它有高讀寫效率的特性、能承受高 qps，而這篇文章則是運用它獨特的「鎖」解決超賣問題。</description>
+      <content:encoded><![CDATA[<p>商城在高併發環境下除了要考量到使用者體驗外，還要處理「超賣」的問題；Redis 是一種記憶體資料庫，它有高讀寫效率的特性、能承受高 qps，而這篇文章則是運用它獨特的「鎖」解決超賣問題。</p>
+<p><img src="https://deanlin.net/blog/202108/nodejs-redis-flash-sale-concurrency/images/nodejs-redis-flash-sale-concurrency-01.webp" width="1087" height="608" alt="用 Node.js &#43; Redis 解決高併發秒殺問題（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+一、文章目標
+二、使用技術
+  ➤ Redis
+  ➤ Lua
+三、程式架構
+  ➤ 主程式：redisSecKill.js
+  ➤ Lua腳本：secKill.lua
+四、執行結果
+五、補充
+</code></pre><h2 id="一文章目標">一、文章目標<a class="h-anchor" href="#%e4%b8%80%e6%96%87%e7%ab%a0%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>產生秒殺商品基礎資訊(商品名稱、庫存)</li>
+<li>模擬秒殺情境，確認是否會超賣</li>
+<li>確認有保存購買人資訊</li>
+</ol>
+<hr>
+<h2 id="二使用技術">二、使用技術<a class="h-anchor" href="#%e4%ba%8c%e4%bd%bf%e7%94%a8%e6%8a%80%e8%a1%93" aria-label="這個段落的連結"></a></h2>
+<h3 id="-redis">➤ Redis<a class="h-anchor" href="#-redis" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>如果完全沒有相關基礎，建議先參考<a href="https://deanlin.net/blog/202108/install-redis-on-macos/">這篇文章</a>來安裝 Redis 以及他的 GUI 工具</li>
+<li>本篇文章使用 Redis 的 Hash、List type 來儲存資訊</li>
+</ol>
+<h3 id="-lua">➤ Lua<a class="h-anchor" href="#-lua" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>為了避免超賣，這裡採用 Lua 腳本</li>
+<li>在 Redis Server 執行 EVAL 指令時，在結果回傳前只會執行當下 Lua 腳本的邏輯，其他 Client 端的命令須等待直到 EVAL 執行完為止。</li>
+</ol>
+<blockquote>
+<p>Lua 腳本的邏輯應盡量簡單以保證執行效率，否則會影響 Client 端的體驗</p>
+</blockquote>
+<hr>
+<h2 id="三程式架構">三、程式架構<a class="h-anchor" href="#%e4%b8%89%e7%a8%8b%e5%bc%8f%e6%9e%b6%e6%a7%8b" aria-label="這個段落的連結"></a></h2>
+<h3 id="-主程式redisseckilljs">➤ 主程式：redisSecKill.js<a class="h-anchor" href="#-%e4%b8%bb%e7%a8%8b%e5%bc%8fredisseckilljs" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>先啟用 Redis Client 端（如未安裝相關套件，請在專案資料夾下輸入 <code>yarn add ioredis</code>）</li>
+<li>用 <strong>prepare</strong> 函式，以 Hash type 建立參加秒殺的產品庫存</li>
+<li>用 <strong>secKill</strong> 函式模擬使用者購買行為，緩存並執行 Lua 腳本</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fs <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;fs&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Redis <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;ioredis&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> redis <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Redis({
+</span></span><span style="display:flex;"><span>    host<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;127.0.0.1&#39;</span>,
+</span></span><span style="display:flex;"><span>    port<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">6379</span>,
+</span></span><span style="display:flex;"><span>    password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>redis.on(<span style="color:#a5d6ff">&#34;error&#34;</span>, <span style="color:#ff7b72">function</span> (error) {
+</span></span><span style="display:flex;"><span>    console.error(error);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> prepare (item_name) {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 參加秒殺活動的商品庫存
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> redis.hmset(item_name, <span style="color:#a5d6ff">&#34;Total&#34;</span>, <span style="color:#a5d6ff">100</span>, <span style="color:#a5d6ff">&#34;Booked&#34;</span>, <span style="color:#a5d6ff">0</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> secKillScript <span style="color:#ff7b72;font-weight:bold">=</span> fs.readFileSync(<span style="color:#a5d6ff">&#39;./secKill.lua&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> secKill (item_name, user_name) {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 1. 緩存腳本取得 sha1 值
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> sha1 <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> redis.script(<span style="color:#a5d6ff">&#34;load&#34;</span>, secKillScript);
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// console.log(sha1);
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 2. 透過 evalsha 執行腳本
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// redis Evalsha 命令基本語法如下
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// EVALSHA sha1 numkeys key [key ...] arg [arg ...] 
+</span></span></span><span style="display:flex;"><span>    redis.evalsha(sha1, <span style="color:#a5d6ff">1</span>, item_name, <span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">&#34;order_list&#34;</span>, user_name);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> main () {
+</span></span><span style="display:flex;"><span>    console.time(<span style="color:#a5d6ff">&#39;secKill&#39;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> item_name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;item_name&#34;</span>
+</span></span><span style="display:flex;"><span>    prepare(item_name)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">var</span> i <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">1</span>; i <span style="color:#ff7b72;font-weight:bold">&lt;</span> <span style="color:#a5d6ff">10000</span>; i<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> user_name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;baobao&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> i
+</span></span><span style="display:flex;"><span>        secKill(item_name, user_name)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    console.timeEnd(<span style="color:#a5d6ff">&#39;secKill&#39;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>main()
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/64cfadcce24bc32d5fabbafd07da98a6" rel="noopener">redisSecKill.js</a>（GitHub Gist）</p>
+<h3 id="-lua-腳本seckilllua">➤ Lua 腳本：secKill.lua<a class="h-anchor" href="#-lua-%e8%85%b3%e6%9c%acseckilllua" aria-label="這個段落的連結"></a></h3>
+<p>在 Lua 腳本執行「取得商品庫存」➜「如果庫存足夠就-1」➜「儲存購買者資訊(List type)」</p>
+<pre tabindex="0"><code>local n = tonumber(ARGV[1])
+local order_name = ARGV[2]
+if not n  or n == 0 then
+    return 0       
+end                
+local vals = redis.call(&#34;HMGET&#34;, KEYS[1], &#34;Total&#34;, &#34;Booked&#34;);
+local total = tonumber(vals[1])
+local blocked = tonumber(vals[2])
+if not total or not blocked then
+    return 0       
+end                
+if blocked + n &lt;= total then
+    redis.call(&#34;HINCRBY&#34;, KEYS[1], &#34;Booked&#34;, n)
+    redis.call(&#34;LPUSH&#34;, order_name,ARGV[3])                                   
+    return n;   
+end                
+return 0
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d5981082cc8c93f1c51fb785a3895f99" rel="noopener">secKill.lua</a>（GitHub Gist）</p>
+<hr>
+<h2 id="四執行結果">四、執行結果<a class="h-anchor" href="#%e5%9b%9b%e5%9f%b7%e8%a1%8c%e7%b5%90%e6%9e%9c" aria-label="這個段落的連結"></a></h2>
+<p><strong>SETP 1</strong>：在專案資料夾下輸入 <code>node redisSecKill.js</code> 模擬秒殺</p>
+<p><img src="https://deanlin.net/blog/202108/nodejs-redis-flash-sale-concurrency/images/nodejs-redis-flash-sale-concurrency-02.webp" width="1019" height="73" alt="四、執行結果（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 2</strong>：待執行完後，用 Redis GUI 程式確認商品沒有超賣</p>
+<p><img src="https://deanlin.net/blog/202108/nodejs-redis-flash-sale-concurrency/images/nodejs-redis-flash-sale-concurrency-03.webp" width="1400" height="563" alt="四、執行結果（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 3</strong>：確認訂單都有對應的買家</p>
+<p><img src="https://deanlin.net/blog/202108/nodejs-redis-flash-sale-concurrency/images/nodejs-redis-flash-sale-concurrency-04.webp" width="1400" height="1004" alt="四、執行結果（圖 4）" loading="lazy" decoding="async"></p>
+<h2 id="五補充">五、補充<a class="h-anchor" href="#%e4%ba%94%e8%a3%9c%e5%85%85" aria-label="這個段落的連結"></a></h2>
+<p>上面程式只是 MVP，現實狀況還有很多要討論的：</p>
+<ol>
+<li>哪些商品被列為秒殺，如何紀錄</li>
+<li>設定秒殺開始時間、結束時間</li>
+<li>存在 Redis 的資料怎麼存入關連式資料庫中</li>
+</ol>
+<pre tabindex="0"><code>如果你對 Redis 感興趣，筆者這邊也整理了很多相關資源：
+1. 一文讓你徹底瞭解 Redis(進階)，史上最全,不看後悔！！！【建議收藏】
+2. 【总结】瞬时高并发（秒杀/活动）Redis 方案
+3. redis 之 sorted sets 类型及操作
+4. node.js 中对 redis 的安装和基本操作
+5. Node.js 中实践 Redis Lua 脚本
+6. 使用 Redis 搭建电商秒杀系统
+</code></pre><blockquote class="pullquote"><p>筆者也是剛學習 Redis 的新人，如果描述有誤，或是有更好的解決方式，再麻煩大神們不吝賜教，感謝～</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>手把手帶你在 MacOS 安裝 Redis ＆Another Redis Desktop Manager</title>
+      <link>https://deanlin.net/blog/202108/install-redis-on-macos/</link>
+      <pubDate>Wed, 11 Aug 2021 22:45:09 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202108/install-redis-on-macos/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>本篇文章除了帶你安裝 Redis，更分享一個超好用的 Redis GUI 神器；整個操作流程不超過 10 分鐘，想入門 Redis 看這篇文章就對啦！</description>
+      <content:encoded><![CDATA[<p>本篇文章除了帶你安裝 Redis，更分享一個超好用的 Redis GUI 神器；整個操作流程不超過 10 分鐘，想入門 Redis 看這篇文章就對啦！</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-01.webp" width="1400" height="787" alt="手把手帶你在 MacOS 安裝 Redis ＆Another Redis Desktop Manager（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="一安裝並啟動-redis">一、安裝並啟動 Redis<a class="h-anchor" href="#%e4%b8%80%e5%ae%89%e8%a3%9d%e4%b8%a6%e5%95%9f%e5%8b%95-redis" aria-label="這個段落的連結"></a></h2>
+<p><strong>SETP 1</strong>：打開終端機輸入下面指令安裝 Homebrew（若安裝過請忽略）</p>
+<pre tabindex="0"><code>/bin/bash -c &#34;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)&#34;
+</code></pre><p><strong>SETP 2</strong>：使用 Homebrew 安裝 Redis</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install redis
+</span></span></code></pre></div><p><strong>SETP 3</strong>：啟動 Redis</p>
+<p>啟動 Server 終端機執行指令 <code>redis-server</code></p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-02.webp" width="1400" height="1045" alt="一、安裝並啟動 Redis（圖 2）" loading="lazy" decoding="async"></p>
+<p>開一個 Terminal 啟動 Client 終端機執行指令 <code>redis-cli</code> （如果沒開新的 Terminal 直接做是不行的喔！）</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-03.webp" width="572" height="144" alt="一、安裝並啟動 Redis（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 3</strong>：測試 Redis 基礎功能</p>
+<pre tabindex="0"><code>ping
+set foo bar
+get foo
+</code></pre><p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-04.webp" width="710" height="368" alt="一、安裝並啟動 Redis（圖 4）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>如果操作結果跟上圖一樣就恭喜你安裝成功嚕～</p>
+</blockquote>
+<hr>
+<h2 id="二安裝及使用-another-redis-desktop-manager">二、安裝及使用 Another Redis Desktop Manager<a class="h-anchor" href="#%e4%ba%8c%e5%ae%89%e8%a3%9d%e5%8f%8a%e4%bd%bf%e7%94%a8-another-redis-desktop-manager" aria-label="這個段落的連結"></a></h2>
+<p><strong>SETP 1</strong>：使用 Homebrew 安裝</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install --cask another-redis-desktop-manager
+</span></span></code></pre></div><p><strong>SETP 2</strong>：安裝後可以在應用程式列表看到他，但如果你的作業系統是 MacOS 10.15 以上，打開程式時會遇到如下錯誤</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-05.webp" width="836" height="370" alt="二、安裝及使用 Another Redis Desktop Manager（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 3</strong>：看到錯誤別慌張，打開「系統偏好設定」，選擇「安全性與隱私權」</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-06.webp" width="1334" height="1118" alt="二、安裝及使用 Another Redis Desktop Manager（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 4</strong>：在「一般」的分頁下，「強制打開」這個 APP</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-07.webp" width="1334" height="1138" alt="二、安裝及使用 Another Redis Desktop Manager（圖 7）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 5</strong>：在系統的警告下，鼓氣勇氣「打開」他吧！</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-08.webp" width="830" height="414" alt="二、安裝及使用 Another Redis Desktop Manager（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 6</strong>：打開後迎面而來的是簡潔有力的畫面，點擊左上角「New Connection」建立新連線</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-09.webp" width="1400" height="927" alt="二、安裝及使用 Another Redis Desktop Manager（圖 9）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 7</strong>：直接使用默認的設定即可，按下「OK」</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-10.webp" width="1400" height="927" alt="二、安裝及使用 Another Redis Desktop Manager（圖 10）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 8</strong>：最後進入 DB 確認剛剛建立的 key-value(foo-bar) 是否存在</p>
+<blockquote>
+<p>如果 redis 沒有選擇 DB，預設都是 0</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-11.webp" width="1099" height="727" alt="二、安裝及使用 Another Redis Desktop Manager（圖 11）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>大功告成嚕！恭喜大家踏出學習 Redis 的第一步～</p>
+</blockquote>
+<p><strong>參考資源：</strong></p>
+<ol>
+<li><a href="https://www.ioa.tw/macOS/Redis.html">macOS 上安裝 Redis</a></li>
+<li><a href="https://github.com/qishibo/AnotherRedisDesktopManager">Another Redis Desktop Manager</a></li>
+</ol>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

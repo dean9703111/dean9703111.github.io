@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>SSH｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/ssh/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 15 Jun 2020 14:50:44 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/ssh/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ubuntu Server基本環境</title>
+      <link>https://deanlin.net/blog/202006/ubuntu-server-basic-setup/</link>
+      <pubDate>Mon, 15 Jun 2020 14:50:44 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/ubuntu-server-basic-setup/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>這篇文章是以部署網頁為導向的環境設定</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/images/ubuntu-server-basic-setup-01.webp" width="1200" height="630" alt="Ubuntu Server基本環境（圖 1）" loading="lazy" decoding="async"></p>
+<p>這篇文章是以部署網頁為導向的環境設定</p>
+<h2 id="1ssh的安裝為了ssh連線">1、ssh的安裝(為了ssh連線)<a class="h-anchor" href="#1ssh%e7%9a%84%e5%ae%89%e8%a3%9d%e7%82%ba%e4%ba%86ssh%e9%80%a3%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install ssh -y
+</span></span></code></pre></div><p><strong>如果遇到：package ‘ssh’ has no installation candidate的錯誤，要記得更新</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apt-get update
+</span></span></code></pre></div><h2 id="2生成金鑰">2、生成金鑰<a class="h-anchor" href="#2%e7%94%9f%e6%88%90%e9%87%91%e9%91%b0" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh-keygen
+</span></span><span style="display:flex;"><span>cd .ssh
+</span></span><span style="display:flex;"><span>mv id_rsa.pub authorized_keys
+</span></span></code></pre></div><h2 id="3修改配置文件etcsshsshd_config">3、修改配置文件，/etc/ssh/sshd_config<a class="h-anchor" href="#3%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6etcsshsshd_config" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/ssh/sshd_config
+</span></span></code></pre></div><p>將# AuthorizedKeysFile %h/.ssh/authorized_keys，把前面的#去掉即可，這個是允許ssh登入的檔案路徑</p>
+<p>註:如果server有安裝gitlab，可能會被拒絕連線，要再加上這個設定:StrictModes no</p>
+<p>修改完記得要將ssh重啟才會生效：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo service ssh restart
+</span></span></code></pre></div><h2 id="4windows上啟動putty進行如下配置">4、windows上啟動putty，進行如下配置<a class="h-anchor" href="#4windows%e4%b8%8a%e5%95%9f%e5%8b%95putty%e9%80%b2%e8%a1%8c%e5%a6%82%e4%b8%8b%e9%85%8d%e7%bd%ae" aria-label="這個段落的連結"></a></h2>
+<p>（1）Session-Logging-Hostname:填上你的linux的ip</p>
+<p>（2）Windows －Translation － 在下拉選單裡選上UTF－8，這裡不設定，登入後將會出現中文亂碼。</p>
+<p>（3）Connection- Data — Auto login username:填上你登入ubuntu時用的使用者名稱。</p>
+<p>（4）Connection- SSH-Auth-Private key file for authentication:選上id_rsa.ppk；</p>
+<h2 id="5設定-authorized_keys-信任清單">5、設定 Authorized_keys 信任清單<a class="h-anchor" href="#5%e8%a8%ad%e5%ae%9a-authorized_keys-%e4%bf%a1%e4%bb%bb%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<pre tabindex="0"><code>vi authorized_keys
+</code></pre><p>進去後貼上rsa key</p>
+<h2 id="6確定能用ssh-key登入後再去修改配置文件">6、確定能用ssh key登入後再去修改配置文件<a class="h-anchor" href="#6%e7%a2%ba%e5%ae%9a%e8%83%bd%e7%94%a8ssh-key%e7%99%bb%e5%85%a5%e5%be%8c%e5%86%8d%e5%8e%bb%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/ssh/sshd_config
+</span></span></code></pre></div><p>修改：PasswordAuthentication no 禁止使用者用密碼登入</p>
+<p>之後記得重啟</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo service ssh restart
+</span></span></code></pre></div><h2 id="7-ubuntu-based-gnulinux-上的防火牆">7、 Ubuntu based GNU/Linux 上的防火牆<a class="h-anchor" href="#7-ubuntu-based-gnulinux-%e4%b8%8a%e7%9a%84%e9%98%b2%e7%81%ab%e7%89%86" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install ufw
+</span></span><span style="display:flex;"><span>sudo ufw enable
+</span></span><span style="display:flex;"><span>sudo ufw allow from 192.168.0.0/12<span style="color:#ff7b72;font-weight:bold">(</span>你允許的網路環境<span style="color:#ff7b72;font-weight:bold">)</span>
+</span></span></code></pre></div><h2 id="8每台的ubuntu-default-editor都改成vim">8、每台的ubuntu default editor都改成vim<a class="h-anchor" href="#8%e6%af%8f%e5%8f%b0%e7%9a%84ubuntu-default-editor%e9%83%bd%e6%94%b9%e6%88%90vim" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo update-alternatives — set editor /usr/bin/vim.basic
+</span></span></code></pre></div><h2 id="9將ip改為static-ip">9、將ip改為static ip<a class="h-anchor" href="#9%e5%b0%87ip%e6%94%b9%e7%82%bastatic-ip" aria-label="這個段落的連結"></a></h2>
+<p>先看新增的網卡名稱</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd /proc/sys/net/ipv4/conf
+</span></span></code></pre></div><p><strong>Ubuntu 16作法：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/network/interfaces
+</span></span><span style="display:flex;"><span>auto ens160
+</span></span><span style="display:flex;"><span>iface ens160 inet static
+</span></span><span style="display:flex;"><span>address 192.168.3.60
+</span></span><span style="display:flex;"><span>netmask 255.255.0.0
+</span></span><span style="display:flex;"><span>gateway 192.168.1.254
+</span></span><span style="display:flex;"><span>dns-nameservers 168.95.1.1 168.95.192.1
+</span></span></code></pre></div><p>改完後</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /etc/init.d/networking restart
+</span></span></code></pre></div><p><strong>Ubuntu 18作法：</strong></p>
+<pre tabindex="0"><code>vi /etc/netplan/50-cloud-init.yaml
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">network</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ethernets</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span><span style="color:#7ee787">enp0s3</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">192.168.0.10</span><span style="color:#a5d6ff">/24]</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">gateway4</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">192.168.0.1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">nameservers</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">              </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">8.8.8.8</span>,<span style="color:#a5d6ff">8.8.4.4</span>]<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">dhcp4</span>:<span style="color:#6e7681"> </span><span style="color:#79c0ff">no</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">2</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d0fcc16dd59df0e5152449c27cd6d1f9" rel="noopener">50-cloud-init.yaml</a>（GitHub Gist）</p>
+<p>改完後</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo netplan try
+</span></span></code></pre></div><p><strong>Ubuntu 20作法：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/netplan/00-installer-config.yaml
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># This is the network config written by &#39;subiquity&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">network</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">ethernets</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ens160</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">your_ip_address/12]</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">gateway4</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">your_gateway</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">optional</span>:<span style="color:#6e7681"> </span><span style="color:#79c0ff">true</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">nameservers</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">168.95.1.1</span>,<span style="color:#a5d6ff">168.95.192.1</span>,<span style="color:#a5d6ff">8.8.8.8</span>,<span style="color:#a5d6ff">8.8.4.4</span>]<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">dhcp4</span>:<span style="color:#6e7681"> </span><span style="color:#79c0ff">no</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">2</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/33b1639b9d52bae158f0c0eb363f025b" rel="noopener">00-installer-config.yaml</a>（GitHub Gist）</p>
+<blockquote>
+<p>PS.如果發現改成靜態網址後無法ssh登入，請把 addresses 的遮罩改為 <code>/12</code></p>
+</blockquote>
+<h2 id="10ubuntu新增使用者並設成-sudo-user">10、ubuntu新增使用者並設成 Sudo user<a class="h-anchor" href="#10ubuntu%e6%96%b0%e5%a2%9e%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e8%a8%ad%e6%88%90-sudo-user" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo adduser newuser
+</span></span><span style="display:flex;"><span>$ usermod -aG sudo newuser
+</span></span></code></pre></div><p>如果要取消這位使用者的 sudoer 資格</p>
+<pre tabindex="0"><code>$sudo deluser newuser sudo
+</code></pre><p>如果要刪除這位使用者</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo deluser — remove-home userNameHere
+</span></span></code></pre></div><p>Add public key to allow remote SSH login for the new user</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>su — newuser
+</span></span><span style="display:flex;"><span>mkdir ~/.ssh
+</span></span><span style="display:flex;"><span>vim ~/.ssh/authorized_keys
+</span></span></code></pre></div><p>查詢帳號有 sudoer 的權限</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo cat /etc/group | grep sudo
+</span></span><span style="display:flex;"><span>$ sudo cat /etc/group | grep admin
+</span></span></code></pre></div><h2 id="11linux與windows間傳送檔案">11、Linux與Windows間傳送檔案<a class="h-anchor" href="#11linux%e8%88%87windows%e9%96%93%e5%82%b3%e9%80%81%e6%aa%94%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>複製本機檔案到linux</p>
+<pre tabindex="0"><code>pscp d:\path\file_name account@192.10.3.64:/path
+</code></pre><h2 id="12lvm-storage相關問題">12、LVM storage相關問題<a class="h-anchor" href="#12lvm-storage%e7%9b%b8%e9%97%9c%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>因為ubuntu 18.4使用的時候，不知道設定為何默認初始硬碟只有4GB，如果要釋放出剩餘的硬碟空間，用以下指令即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo lvextend -rl +100%FREE /dev/mapper/ubuntu — vg-ubuntu — lv
+</span></span></code></pre></div><p>參考資源：</p>
+<p><a href="https://www.peterdavehello.org/2016/01/ubuntu-based-gnulinux-firewall-ufw-essential-config/"><strong>Ufw防火牆設定</strong></a></p>
+<p><a href="https://www.howtoing.com/deploy-node-js-application-with-pm2-on-ubuntu"><strong>如何在Ubuntu 16.04上使用PM2部署Node.js应用程序</strong></a></p>
+<p><a href="https://tw.saowen.com/a/45fd6b0293c602372e720ea216d07c8ac0751f49c19e235126260221367818e6"><strong>windows下如何使用ssh遠端登入Linux</strong></a></p>
+<p><a href="https://loveamberbird.wordpress.com/2013/08/21/%E3%80%90%E7%AD%86%E8%A8%98%E3%80%91%E5%9C%A8linux%E8%88%87windows%E9%96%93%E5%82%B3%E9%80%81%E6%AA%94%E6%A1%88%E6%AD%A5%E9%A9%9F%E6%95%99%E5%AD%B8/"><strong>在Linux與Windows間傳送檔案 — 步驟教學</strong></a></p>
+<p><a href="https://stackoverflow.com/questions/31813080/windows-10-ssh-keys"><strong>win10如果要產生登入的SSH KEY</strong></a></p>
+<p><a href="https://blog.csdn.net/youyudexiaowangzi/article/details/48729897"><strong>sudo被玩壞參考</strong></a></p>
+<p><a href="https://askubuntu.com/questions/1090773/understanding-free-space-volumes-on-ubuntu%20https://blog.xuite.net/lichangying/wretch/214360626-%E5%A6%82%E4%BD%95%E5%8B%95%E6%85%8B%E6%94%BE%E5%A4%A7LVM&#43;on&#43;Linux">LVM storage釋放剩餘空間</a></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

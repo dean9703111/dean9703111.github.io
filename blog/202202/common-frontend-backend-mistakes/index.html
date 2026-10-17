@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>[前端＆後端]工程師常犯的錯誤 — 下班有約系列文｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="筆者跟擔任 Tech Lead 的朋友聊天時，發現在幫新人 Code Review、Code Refactoring、Bug Fix 時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，今天這篇文章我挑選了幾個工程師常犯的錯誤來分享。">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="[前端＆後端]工程師常犯的錯誤 — 下班有約系列文">
+  <meta property="og:description" content="筆者跟擔任 Tech Lead 的朋友聊天時，發現在幫新人 Code Review、Code Refactoring、Bug Fix 時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，今天這篇文章我挑選了幾個工程師常犯的錯誤來分享。">
+  <meta property="og:url" content="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2022-02-23T17:53:45&#43;08:00">
+  <meta property="article:modified_time" content="2025-06-15T22:35:29&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Frontend Development">
+  <meta property="article:tag" content="Backend Development">
+  <meta property="article:tag" content="Issues">
+  <meta property="article:tag" content="Error Handling">
+  <meta property="article:tag" content="下班有約">
+  <meta property="og:image" content="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="639">
+  <meta property="og:image:alt" content="[前端＆後端]工程師常犯的錯誤 — 下班有約系列文">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-og.jpg">
+  <meta name="twitter:title" content="[前端＆後端]工程師常犯的錯誤 — 下班有約系列文">
+  <meta name="twitter:description" content="筆者跟擔任 Tech Lead 的朋友聊天時，發現在幫新人 Code Review、Code Refactoring、Bug Fix 時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，今天這篇文章我挑選了幾個工程師常犯的錯誤來分享。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202202/common-frontend-backend-mistakes/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2025-06-15T22:35:29+08:00","datePublished":"2022-02-23T17:53:45+08:00","description":"筆者跟擔任 Tech Lead 的朋友聊天時，發現在幫新人 Code Review、Code Refactoring、Bug Fix 時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，今天這篇文章我挑選了幾個工程師常犯的錯誤來分享。","headline":"[前端＆後端]工程師常犯的錯誤 — 下班有約系列文","image":{"@type":"ImageObject","height":639,"url":"https://deanlin.net/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"工程師下班有約","url":"https://deanlin.net/series/after-office/"}],"keywords":"Frontend Development, Backend Development, Issues, Error Handling, 下班有約","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202202/common-frontend-backend-mistakes/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E5%89%8D%E7%AB%AF-%E5%BE%8C%E7%AB%AF-%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%8C%AF%E8%AA%A4-%E4%B8%8B%E7%8F%AD%E6%9C%89%E7%B4%84%E7%B3%BB%E5%88%97%E6%96%87-80615ca62a0"],"timeRequired":"PT7M","url":"https://deanlin.net/blog/202202/common-frontend-backend-mistakes/","wordCount":3197},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202202/common-frontend-backend-mistakes/","name":"[前端＆後端]工程師常犯的錯誤 — 下班有約系列文","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">[前端＆後端]工程師常犯的錯誤 — 下班有約系列文</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2022-02-23">2022.02.23</time>
+              <span>更新於 <time datetime="2025-06-15">2025.06.15</time></span>
+              <span>閱讀約 7 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・工程師下班有約 <b>4</b>/ 31</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#-%e4%bf%9d%e7%95%99%e5%a4%aa%e5%a4%9a%e7%84%a1%e7%94%a8%e7%9a%84-consolelog">➤ 保留太多無用的 console.log</a></li><li><a href="#-%e6%b2%92%e6%9c%89%e8%a8%bb%e6%98%8e%e8%bc%b8%e5%87%ba%e7%9a%84-consolelog-%e8%a6%81%e5%81%9a%e4%bb%80%e9%ba%bc%e4%ba%8b">➤ 沒有註明輸出的 console.log 要做什麼事</a></li><li><a href="#-%e5%bf%bd%e8%a6%96-console-%e5%90%90%e5%87%ba%e7%9a%84%e8%ad%a6%e5%91%8a%e9%8c%af%e8%aa%a4">➤ 忽視 Console 吐出的警告、錯誤</a></li><li><a href="#-%e4%b8%8d%e5%90%8c%e5%87%bd%e5%bc%8f%e5%85%b1%e7%94%a8%e5%91%bd%e5%90%8d%e7%9b%b8%e5%90%8c%e7%9a%84%e5%85%a8%e5%9f%9f%e8%ae%8a%e6%95%b8">➤ 不同函式共用「命名相同的全域變數」</a></li><li><a href="#-%e5%a4%a7%e9%87%8f%e5%ad%98%e5%8f%96%e4%b8%8d%e5%bf%85%e8%a6%81%e7%9a%84-api">➤ 大量存取不必要的 API</a></li><li><a href="#-%e5%b0%87%e7%94%a8%e4%b8%8d%e5%88%b0%e7%a8%8b%e5%bc%8f%e7%a2%bc%e8%a8%bb%e8%a7%a3%e8%80%8c%e9%9d%9e%e5%88%aa%e9%99%a4">➤ 將用不到程式碼註解而非刪除</a></li><li><a href="#-%e6%b2%92%e5%af%ab%e8%a8%bb%e8%a7%a3%e6%88%96%e6%98%af%e5%af%ab%e6%b2%92%e6%9c%89%e6%84%8f%e7%be%a9%e7%9a%84%e8%a8%bb%e8%a7%a3">➤ 沒寫註解，或是寫沒有意義的註解</a></li><li class="is-sub"><a href="#-%e8%a8%bb%e8%a7%a3%e7%9a%84%e5%a5%bd%e8%99%95">👍 註解的好處</a></li><li class="is-sub"><a href="#-%e8%ab%8b%e4%b8%8d%e8%a6%81%e6%9c%89%e8%a8%bb%e8%a7%a3%e5%a6%82%e4%b8%8b">🙅 請不要有註解如下</a></li><li><a href="#-copy--paste-%e5%be%8cfunctionvariable-%e5%91%bd%e5%90%8d%e6%b2%92%e6%9c%89%e6%94%b9">➤ Copy &amp; Paste 後，Function、Variable 命名沒有改</a></li><li><a href="#-%e6%b2%92%e6%9c%89%e5%af%ab-try-catch">➤ 沒有寫 try catch</a></li><li><a href="#-%e5%9c%a8%e4%bb%96%e4%ba%ba%e5%8d%94%e5%8a%a9%e4%b8%8b%e5%ae%8c%e6%88%90%e5%8a%9f%e8%83%bd%e5%be%8c%e6%b2%92%e6%9c%89%e7%9c%9f%e6%ad%a3%e4%ba%86%e8%a7%a3%e5%8e%9f%e7%90%86">➤ 在他人協助下完成功能後，沒有真正了解原理</a></li><li><a href="#-%e6%b2%92%e6%9c%89%e5%81%9a-refactoring">➤ 沒有做 Refactoring</a></li><li><a href="#-%e8%a9%a2%e5%95%8f%e5%88%a5%e4%ba%ba%e5%89%8d%e6%b2%92%e6%9c%89%e8%87%aa%e5%b7%b1%e5%98%97%e8%a9%a6">➤ 詢問別人前沒有自己嘗試</a></li><li><a href="#-%e8%a9%a2%e5%95%8f%e7%9a%84%e5%95%8f%e9%a1%8c%e4%b8%8d%e5%a4%a0%e7%b2%be%e7%a2%ba">➤ 詢問的問題不夠精確</a></li><li><a href="#-%e7%ae%a1%e7%90%86%e8%80%85%e6%ac%8a%e9%99%90%e8%88%87%e4%bd%bf%e7%94%a8%e8%80%85%e6%ac%8a%e9%99%90%e6%b7%b7%e5%9c%a8%e4%b8%80%e8%b5%b7">➤ 管理者權限與使用者權限混在一起</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>筆者跟擔任 Tech Lead 的朋友聊天時，發現在幫新人 Code Review、Code Refactoring、Bug Fixing 時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，今天這篇文章我挑選了幾個工程師常犯的錯誤來分享。</p>
+<p><img src="/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-01.webp" srcset="/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-01_hu_e4979b39532cf2ca.webp 720w, /blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="745" alt="\[前端＆後端\]工程師常犯的錯誤 — 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>大綱
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 保留太多無用的 console.log
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 沒有註明輸出的 console.log 要做什麼事
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 忽視 Console 吐出的警告<span style="color:#f85149">、</span>錯誤
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 不同函式共用<span style="color:#f85149">「</span>命名相同的全域變數<span style="color:#f85149">」</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 大量存取不必要的 API
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 將很多用不到程式碼註解而非刪除
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 沒寫註解<span style="color:#f85149">，</span>或是寫沒有意義的註解
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> Copy <span style="color:#ff7b72;font-weight:bold">&amp;</span> Paste 後<span style="color:#f85149">，</span>Function<span style="color:#f85149">、</span>Variable 命名沒有改
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 沒有寫 <span style="color:#ff7b72">try</span> <span style="color:#ff7b72">catch</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 在他人協助下完成功能後<span style="color:#f85149">，</span>沒有真正了解原理
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 沒有做 Refactoring
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 詢問別人前沒有自己嘗試
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 詢問的問題不夠精確
+</span></span><span style="display:flex;"><span><span style="color:#f85149">➤</span> 管理者權限與使用者權限混在一起
+</span></span></code></pre></div><h2 id="-保留太多無用的-consolelog">➤ 保留太多無用的 console.log<a class="h-anchor" href="#-%e4%bf%9d%e7%95%99%e5%a4%aa%e5%a4%9a%e7%84%a1%e7%94%a8%e7%9a%84-consolelog" aria-label="這個段落的連結"></a></h2>
+<p>為了追蹤資料流向，我們會用 console.log 來確認程式是否依照我們的想法在執行；但有不少人只會一直增加新的 console.log，而不把已經不需要的 console.log 給移除。</p>
+<h2 id="-沒有註明輸出的-consolelog-要做什麼事">➤ 沒有註明輸出的 console.log 要做什麼事<a class="h-anchor" href="#-%e6%b2%92%e6%9c%89%e8%a8%bb%e6%98%8e%e8%bc%b8%e5%87%ba%e7%9a%84-consolelog-%e8%a6%81%e5%81%9a%e4%bb%80%e9%ba%bc%e4%ba%8b" aria-label="這個段落的連結"></a></h2>
+<p>筆者曾在按下 F12 開啟開發人員工具幫人 debug 時，看到 Console 這個分頁下印出一堆 API 回傳的 response data，但命名完全一樣都叫「result」，這樣我完全無法知道這些 result 是由哪個 API 回傳的ＱＱ</p>
+<p><img src="/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-02.webp" srcset="/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-02_hu_fc314af30dbf8e02.webp 720w, /blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-02.webp 862w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="862" height="433" alt="沒有註明輸出的 console.log 要做什麼事（圖 2）" loading="lazy" decoding="async"></p>
+<p>不然就是很多意義不明只有自己才知道是什麼意思的 console.log（這類型的往往一個月後連本人都不知道在做什麼…）</p>
+<p><img src="/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-03.webp" srcset="/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-03_hu_1457155ff6bc545a.webp 720w, /blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-03.webp 862w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="862" height="509" alt="沒有註明輸出的 console.log 要做什麼事（圖 3）" loading="lazy" decoding="async"></p>
+<h2 id="-忽視-console-吐出的警告錯誤">➤ 忽視 Console 吐出的警告、錯誤<a class="h-anchor" href="#-%e5%bf%bd%e8%a6%96-console-%e5%90%90%e5%87%ba%e7%9a%84%e8%ad%a6%e5%91%8a%e9%8c%af%e8%aa%a4" aria-label="這個段落的連結"></a></h2>
+<p>有些網頁看似運行的很正常，但在按下 F12 開啟開發人員工具後，你會看到一排讓人血壓上升的紅色 Error Message，如果沒有及時處理遲早有一天會業力引爆的。</p>
+<p><img src="/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-04.webp" srcset="/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-04_hu_3160fe131a2f630f.webp 720w, /blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-04.webp 862w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="862" height="712" alt="忽視 Console 吐出的警告、錯誤（圖 4）" loading="lazy" decoding="async"></p>
+<h2 id="-不同函式共用命名相同的全域變數">➤ 不同函式共用「命名相同的全域變數」<a class="h-anchor" href="#-%e4%b8%8d%e5%90%8c%e5%87%bd%e5%bc%8f%e5%85%b1%e7%94%a8%e5%91%bd%e5%90%8d%e7%9b%b8%e5%90%8c%e7%9a%84%e5%85%a8%e5%9f%9f%e8%ae%8a%e6%95%b8" aria-label="這個段落的連結"></a></h2>
+<p>像是 Vue 框架下用來儲存變數資訊的 「Vuex」，裡面 State 的資訊是可以在多個頁面共同使用，下面舉例幾個不夠謹慎會造成的問題：</p>
+<ul>
+<li>如果在 loading 資料前沒有清空先前的 state 資訊，會導致進入頁面時會閃現上一次進入的資料。</li>
+<li>如果把第幾頁(page)、分頁筆數(per-page)這些參數在多個頁面共用，那你就會看到有些頁面明明是第一次進入，卻跳轉到其他頁數。</li>
+</ul>
+<h2 id="-大量存取不必要的-api">➤ 大量存取不必要的 API<a class="h-anchor" href="#-%e5%a4%a7%e9%87%8f%e5%ad%98%e5%8f%96%e4%b8%8d%e5%bf%85%e8%a6%81%e7%9a%84-api" aria-label="這個段落的連結"></a></h2>
+<p>這裡舉出兩個常見的例子：</p>
+<ul>
+<li>登入後就「一次呼叫所有的 API」，但許多 API 回傳的資料可能使用者根本還用不到。</li>
+</ul>
+<blockquote>
+<p>這邊提醒一下，適當的「預載」可以增加使用者體驗，但如果在系統首頁就全部載入，除了會消耗使用者的資源外，一旦大量使用者同時上線，對伺服器端會造成很大的壓力。</p>
+</blockquote>
+<ul>
+<li>有些搜尋功能會隨著使用者填入的文字去呼叫 API 來即時顯示搜尋結果或是建議關鍵字（ex：Google），但如果沒有把呼叫 API 的時間間隔設定好（debounceTime），使用者又不停更改搜尋列文字，那就會呼叫非常多不必要的 API。</li>
+</ul>
+<h2 id="-將用不到程式碼註解而非刪除">➤ 將用不到程式碼註解而非刪除<a class="h-anchor" href="#-%e5%b0%87%e7%94%a8%e4%b8%8d%e5%88%b0%e7%a8%8b%e5%bc%8f%e7%a2%bc%e8%a8%bb%e8%a7%a3%e8%80%8c%e9%9d%9e%e5%88%aa%e9%99%a4" aria-label="這個段落的連結"></a></h2>
+<p>在開發階段有時會想到很多的解決方案，因為不確定哪個效能較高，所以就把每個演算法實現出來。</p>
+<p>但有些人在決定使用某個解決方案後，依舊沒把其他的方案刪除，這樣的做法容易造成未來維護的困難度。</p>
+<h2 id="-沒寫註解或是寫沒有意義的註解">➤ 沒寫註解，或是寫沒有意義的註解<a class="h-anchor" href="#-%e6%b2%92%e5%af%ab%e8%a8%bb%e8%a7%a3%e6%88%96%e6%98%af%e5%af%ab%e6%b2%92%e6%9c%89%e6%84%8f%e7%be%a9%e7%9a%84%e8%a8%bb%e8%a7%a3" aria-label="這個段落的連結"></a></h2>
+<p>雖然有神人說過：最好的註解就是程式碼本身</p>
+<p>但我想：「<strong>絕大多數的人都難以到達這個境界，所以要乖乖地寫註解ＸＤ」</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> mode <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// do somethings ...
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (mode <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">0</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// excute logic 1
+</span></span></span><span style="display:flex;"><span>} <span style="color:#ff7b72">else</span> <span style="color:#ff7b72">if</span> (mode <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">1</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// excute logic 2
+</span></span></span><span style="display:flex;"><span>} <span style="color:#ff7b72">else</span> <span style="color:#ff7b72">if</span> (mode <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">2</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// excute logic 3
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/463d3dc91bc4e9789a29bcc4323560d9" rel="noopener">bad_remark_example.js</a>（GitHub Gist）</p>
+<p>像是上面這段 Code，我們可以知道 mode 這個變數應該是應用在某個狀態的判斷上；但具體在哪個地方使用、總共有哪些狀態、各自代表什麼意義，在沒有註解的狀態下只能一行一行的閱讀，沒辦法第一時間理解程式。</p>
+<h3 id="-註解的好處">👍 註解的好處<a class="h-anchor" href="#-%e8%a8%bb%e8%a7%a3%e7%9a%84%e5%a5%bd%e8%99%95" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>交代前因後果：為什麼這樣寫?遇到了什麼困難?解決了什麼問題?</li>
+<li>作為文件說明：有些技術是需要被學習後才能夠看得懂的(ex:引入的模組、套件)，你的註解能讓他快速理解這些工具怎麼使用</li>
+</ol>
+<h3 id="-請不要有註解如下">🙅 請不要有註解如下<a class="h-anchor" href="#-%e8%ab%8b%e4%b8%8d%e8%a6%81%e6%9c%89%e8%a8%bb%e8%a7%a3%e5%a6%82%e4%b8%8b" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>毫無意義的牢騷(ex:我好崩潰啊，這段程式我寫了一個禮拜…)</li>
+<li>把註解當成版本控制(ex:2020/08/23 完成此函式)</li>
+<li>說明這段程式是誰寫的(簽名檔)</li>
+<li>把舊的程式碼註解起來怕以後會用到(但通常再也不會用到，而且這個問題用版控就能解決)</li>
+</ol>
+<h2 id="-copy--paste-後functionvariable-命名沒有改">➤ Copy &amp; Paste 後，Function、Variable 命名沒有改<a class="h-anchor" href="#-copy--paste-%e5%be%8cfunctionvariable-%e5%91%bd%e5%90%8d%e6%b2%92%e6%9c%89%e6%94%b9" aria-label="這個段落的連結"></a></h2>
+<p>如果寫專案時發現之前做過類似的功能，我們會複製過來再做微調，以此加快開發的速度。</p>
+<p>但<strong>請修改 Function、Variable 命名！</strong>這不會花你太多時間，但在未來當你需要維護專案時，你會感謝現在的自己。</p>
+<blockquote>
+<p>筆者之前曾在幫忙 Debug 時，於Ａ系統裡面看到一堆Ｂ系統的命名，當下還以為自己開錯專案了…</p>
+</blockquote>
+<h2 id="-沒有寫-try-catch">➤ 沒有寫 try catch<a class="h-anchor" href="#-%e6%b2%92%e6%9c%89%e5%af%ab-try-catch" aria-label="這個段落的連結"></a></h2>
+<p>程式在缺乏 try-catch 的機制下是非常脆弱的，只要發生例外事件就容易崩潰。</p>
+<p>如果你直接假定 API 只會回傳正確的資訊，而沒有撰寫 try-catch 去捕捉可能的 400、500 系列錯誤，就很可能導致系統許多行為錯誤如：</p>
+<ol>
+<li>跳轉到無權限的頁面</li>
+<li>程式進入無限迴圈</li>
+<li>瘋狂 Call 某隻 API 直到變成 429 錯誤（Too Many Requests）</li>
+</ol>
+<h2 id="-在他人協助下完成功能後沒有真正了解原理">➤ 在他人協助下完成功能後，沒有真正了解原理<a class="h-anchor" href="#-%e5%9c%a8%e4%bb%96%e4%ba%ba%e5%8d%94%e5%8a%a9%e4%b8%8b%e5%ae%8c%e6%88%90%e5%8a%9f%e8%83%bd%e5%be%8c%e6%b2%92%e6%9c%89%e7%9c%9f%e6%ad%a3%e4%ba%86%e8%a7%a3%e5%8e%9f%e7%90%86" aria-label="這個段落的連結"></a></h2>
+<p>我相信大部分的人都是樂於幫助別人解決問題的，但同時也相信，沒有人希望再次被「相同的問題」打擾。</p>
+<p>我這邊強烈建議請他人協助問題前，先 commit 一版，這樣無論對方成功還是失敗，你都有一個記錄在。</p>
+<p>如果對方成功解決這個問題，一定找時間回到當時 commit 的那版，用自己的邏輯把功能完成；<strong>請記住，別人完成的任務不會自動成為你的知識。</strong></p>
+<h2 id="-沒有做-refactoring">➤ 沒有做 Refactoring<a class="h-anchor" href="#-%e6%b2%92%e6%9c%89%e5%81%9a-refactoring" aria-label="這個段落的連結"></a></h2>
+<p>演算法相關的 Refactor 有一定的難度，但有一些很基礎的 Refactor 我認為是有必要的，像是變數命名這一塊。</p>
+<p>我們先來看一個不好的範例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> result <span style="color:#ff7b72;font-weight:bold">=</span> responseData;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>]) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (<span style="color:#a5d6ff">&#34;check_in&#34;</span> <span style="color:#ff7b72">in</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>] <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>].check_in <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>    state.check_in <span style="color:#ff7b72;font-weight:bold">=</span> result[<span style="color:#a5d6ff">0</span>].check_in.toString();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>]) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (<span style="color:#a5d6ff">&#34;check_out&#34;</span> <span style="color:#ff7b72">in</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>] <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>].check_out <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>    state.check_out <span style="color:#ff7b72;font-weight:bold">=</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>].check_out.toString();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/3c6c9d59d698b8738771eee07056b8fd" rel="noopener">need_refactor.js</a>（GitHub Gist）</p>
+<p>上面這個是要取得回傳的「最後一筆」資料做邏輯處理，但是全部都使用「<strong>result[result.length -1]</strong>」來表示，相信大家都會看得有點眼花。</p>
+<p>下面我們做個簡單的 Refactor，看起來就會舒服很多：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> result <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> last_record <span style="color:#ff7b72;font-weight:bold">=</span> result[result.length <span style="color:#ff7b72;font-weight:bold">-</span> <span style="color:#a5d6ff">1</span>];
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (last_record) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (<span style="color:#a5d6ff">&#34;check_in&#34;</span> <span style="color:#ff7b72">in</span> last_record <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> last_record.check_in <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>    state.check_in <span style="color:#ff7b72;font-weight:bold">=</span> last_record.check_in.toString();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (last_record) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (<span style="color:#a5d6ff">&#34;check_out&#34;</span> <span style="color:#ff7b72">in</span> last_record <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> last_record.check_out <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>    state.check_out <span style="color:#ff7b72;font-weight:bold">=</span> last_record.check_out.toString();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/f9afe9487cbf14ddec3b92a61335f2f5" rel="noopener">after_refactor.js</a>（GitHub Gist）</p>
+<h2 id="-詢問別人前沒有自己嘗試">➤ 詢問別人前沒有自己嘗試<a class="h-anchor" href="#-%e8%a9%a2%e5%95%8f%e5%88%a5%e4%ba%ba%e5%89%8d%e6%b2%92%e6%9c%89%e8%87%aa%e5%b7%b1%e5%98%97%e8%a9%a6" aria-label="這個段落的連結"></a></h2>
+<p>有些人在遇到問題時沒有先從網路找資料，而是遇到問題先問同事、前輩。</p>
+<p>儘管這樣可以最快速得到解答，但卻少了很多自我思考的部分，長期來講對工程師職涯是非常不健康的。</p>
+<h2 id="-詢問的問題不夠精確">➤ 詢問的問題不夠精確<a class="h-anchor" href="#-%e8%a9%a2%e5%95%8f%e7%9a%84%e5%95%8f%e9%a1%8c%e4%b8%8d%e5%a4%a0%e7%b2%be%e7%a2%ba" aria-label="這個段落的連結"></a></h2>
+<p>有時會收到主旨模糊的問題，像是：「這個搜尋功能常常會 fail，可以幫我看看嗎？」</p>
+<p>如果可以，收到問題的人會希望問題敘述微調一下：「在人資系統中，我如果在職員列表頁面的搜尋條件中加入部門篩選，會發現搜尋出的結果不合預期，有時會找出其他部門的人員，可以幫我看一下是不是資料庫語法錯誤呢？」</p>
+<blockquote>
+<p><strong>結構為</strong>：哪個系統-&gt;哪個頁面-&gt;你調整了哪些參數-&gt;錯誤結果為何-&gt;初步判定錯誤來源</p>
+</blockquote>
+<h2 id="-管理者權限與使用者權限混在一起">➤ 管理者權限與使用者權限混在一起<a class="h-anchor" href="#-%e7%ae%a1%e7%90%86%e8%80%85%e6%ac%8a%e9%99%90%e8%88%87%e4%bd%bf%e7%94%a8%e8%80%85%e6%ac%8a%e9%99%90%e6%b7%b7%e5%9c%a8%e4%b8%80%e8%b5%b7" aria-label="這個段落的連結"></a></h2>
+<p>很多系統都會分成前台（一般使用者）以及後台（管理者），有時後端為了增加程式共用率，而讓他們使用同一隻 API 存取資料，如果權限有設計好那沒問題，但如果沒設計好可能就出大包了。</p>
+<p>以人資系統來說，假設有一隻 API 是用來存取個人資訊的，API 格式為：「users/{user}」</p>
+<p>假使把這隻 API 共用，一般使用者透過修改中間的「user id」就有可能看到其他人的隱私資訊，這在資訊安全上是非常危險的。</p>
+<p>因此建議將一般使用者與管理者的 API 切割清楚，避免讓使用者看到權限外的資料。</p>
+<hr>
+<blockquote class="pullquote"><p>筆者曾經犯過文章中許多錯誤，沒有人一開始就是強者，但至少要走在變強的道路上。</p>
+</blockquote>
+<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
+<figure class="figure"><img src="/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-05.webp" srcset="/blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-05_hu_1f79f5969b960774.webp 720w, /blog/202202/common-frontend-backend-mistakes/images/common-frontend-backend-mistakes-05.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="319" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<pre tabindex="0"><code>下班有約系列文
+▋ [前端]新手工程師容易卡住的問題
+▋ [前端＆後端]工程師常犯的錯誤(本篇)
+▋ 讓開發團隊更好協作的方式
+▋ 談談 Pair Programing
+▋ 談談工程師的話語權
+▋ 出社會後，新鮮人要及早知道的 5 件事
+▋ 面試的性向測驗竟然準到讓人心裡發寒？
+▋ 反其道而行的任務分配
+▋ 現在的 Daily Scrum 真的適合團隊嗎？
+▋ 用低成本也能請到好員工？資深 HR 不想告訴你的秘密！
+</code></pre>
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2022.02.23）</span><a href="https://medium.com/dean-lin/%E5%89%8D%E7%AB%AF-%E5%BE%8C%E7%AB%AF-%E5%B7%A5%E7%A8%8B%E5%B8%AB%E5%B8%B8%E7%8A%AF%E7%9A%84%E9%8C%AF%E8%AA%A4-%E4%B8%8B%E7%8F%AD%E6%9C%89%E7%B4%84%E7%B3%BB%E5%88%97%E6%96%87-80615ca62a0" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/frontend-development/">Frontend Development</a>
+            <a class="chip chip-hash" href="/tags/backend-development/">Backend Development</a>
+            <a class="chip chip-hash" href="/tags/issues/">Issues</a>
+            <a class="chip chip-hash" href="/tags/error-handling/">Error Handling</a>
+            <a class="chip chip-hash" href="/tags/%E4%B8%8B%E7%8F%AD%E6%9C%89%E7%B4%84/">下班有約</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202202%2Fcommon-frontend-backend-mistakes%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202202%2Fcommon-frontend-backend-mistakes%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/" data-title="[前端＆後端]工程師常犯的錯誤 — 下班有約系列文" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/after-office/">工程師下班有約</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>4</b> 篇・共 31 篇</p>
+          </div>
+          <ol class="steps" data-collapsible>
+            <li>
+              <a href="/blog/202111/pair-programming/"><span class="n">01</span><span>談談 Pair Programing</span></a>
+            </li>
+            <li>
+              <a href="/blog/202202/engineers-voice-at-work/"><span class="n">02</span><span>談談工程師的話語權 </span></a>
+            </li>
+            <li>
+              <a href="/blog/202202/frontend-junior-pitfalls/"><span class="n">03</span><span>[前端]新手工程師容易卡住的問題 </span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">04</span><span>[前端＆後端]工程師常犯的錯誤 <span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202202/better-dev-team-collaboration/"><span class="n">05</span><span>讓開發團隊更好協作的方式 </span></a>
+            </li>
+            <li>
+              <a href="/blog/202203/advice-for-new-graduates/"><span class="n">06</span><span>社會新鮮人要盡早知道的 5 件事 </span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202204/personality-tests-in-interviews/"><span class="n">07</span><span>面試的性向測驗竟然準到讓人心裡發寒？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202204/counterintuitive-task-assignment/"><span class="n">08</span><span>反其道而行的任務分配</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202207/is-daily-scrum-working/"><span class="n">09</span><span>現在的 Daily Scrum 真的適合團隊嗎？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202208/hiring-good-people-on-budget/"><span class="n">10</span><span>用低成本也能請到好員工？資深 HR 不想告訴你的秘密！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202311/when-work-is-too-easy/"><span class="n">11</span><span>工作太閒反而毀掉一個人？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202311/build-unfair-advantage/"><span class="n">12</span><span>如何累積「不公平優勢」使自己持續成長</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202403/trade-ten-years-for-innocence/"><span class="n">13</span><span>我願用人生十年，換回自己的天真無邪</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202403/late-offers/"><span class="n">14</span><span>來晚了，我就不要了</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202404/all-in/"><span class="n">15</span><span>我 All in 了！你敢跟嗎？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202405/senior-interview-what-managers-want/"><span class="n">16</span><span>面試資深職位時，主管最在意的是這點！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202405/database-bottlenecks/"><span class="n">17</span><span>當資料庫遇到瓶頸，你會如何處理？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202406/learn-to-negotiate/"><span class="n">18</span><span>小時候不懂！都乖乖接受對方的安排</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202408/a-friend-like-me/"><span class="n">19</span><span>人生很難遇到一個與自己如此相似的朋友</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202507/afteroffice1-15-years-one-book/"><span class="n">20</span><span>我花了十五年證明自己，才累積了一本書的故事</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202507/afteroffice2-i-almost-gave-up-writing/"><span class="n">21</span><span>原本我決定不寫了！這本書是怎麼誕生的？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202507/afteroffice3-job-vs-career-run-like-company/"><span class="n">22</span><span>[直播回放]「工作」≠「職涯」，把自己當一間公司在經營</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202507/afteroffice4-month-top1/"><span class="n">23</span><span>當整個世界都在談 AI，我靜靜寫下人的故事 — 然後取得了排行榜的第一名</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202507/afteroffice5-my-first-book-launch/"><span class="n">24</span><span>《工程師下班有約》要舉辦新書發表會啦！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202507/afteroffice6-youtube-start-ep01/"><span class="n">25</span><span>挑戰，從來不需要獲得別人允許!</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202507/afteroffice7-imagination-and-reality-ep02/"><span class="n">26</span><span>過度美化未來，容易讓人做出衝動的選擇</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202508/afteroffice1-vhs-changed-my-life/"><span class="n">27</span><span>如何透過差異化競爭累積自信</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202508/afteroffice2-hard-work-talent-or-timing/"><span class="n">28</span><span>沒有白走的路！如何找到自己的天賦</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202509/individual-award/"><span class="n">29</span><span>🏆 我做對了哪些事？才拿到最佳員工獎 🏆</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202509/afteroffice1-soldier-life/"><span class="n">30</span><span>沒有意志力？那是因為缺少環境的約束</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202605/more-than-one-way-to-live/"><span class="n">31</span><span>人生不一定只能活成一種樣子</span></a>
+            </li>
+          </ol>
+          <button class="steps-more" type="button" aria-expanded="false">顯示全部 31 篇 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
+          <a class="sb-next" href="/blog/202202/better-dev-team-collaboration/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">讓開發團隊更好協作的方式 </span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202202/frontend-junior-pitfalls/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">[前端]新手工程師容易卡住的問題 — 下班有約系列文</span></a>
+          <a class="next" href="/blog/202202/better-dev-team-collaboration/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">讓開發團隊更好協作的方式 — 下班有約系列文</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#-%e4%bf%9d%e7%95%99%e5%a4%aa%e5%a4%9a%e7%84%a1%e7%94%a8%e7%9a%84-consolelog">➤ 保留太多無用的 console.log</a></li><li><a href="#-%e6%b2%92%e6%9c%89%e8%a8%bb%e6%98%8e%e8%bc%b8%e5%87%ba%e7%9a%84-consolelog-%e8%a6%81%e5%81%9a%e4%bb%80%e9%ba%bc%e4%ba%8b">➤ 沒有註明輸出的 console.log 要做什麼事</a></li><li><a href="#-%e5%bf%bd%e8%a6%96-console-%e5%90%90%e5%87%ba%e7%9a%84%e8%ad%a6%e5%91%8a%e9%8c%af%e8%aa%a4">➤ 忽視 Console 吐出的警告、錯誤</a></li><li><a href="#-%e4%b8%8d%e5%90%8c%e5%87%bd%e5%bc%8f%e5%85%b1%e7%94%a8%e5%91%bd%e5%90%8d%e7%9b%b8%e5%90%8c%e7%9a%84%e5%85%a8%e5%9f%9f%e8%ae%8a%e6%95%b8">➤ 不同函式共用「命名相同的全域變數」</a></li><li><a href="#-%e5%a4%a7%e9%87%8f%e5%ad%98%e5%8f%96%e4%b8%8d%e5%bf%85%e8%a6%81%e7%9a%84-api">➤ 大量存取不必要的 API</a></li><li><a href="#-%e5%b0%87%e7%94%a8%e4%b8%8d%e5%88%b0%e7%a8%8b%e5%bc%8f%e7%a2%bc%e8%a8%bb%e8%a7%a3%e8%80%8c%e9%9d%9e%e5%88%aa%e9%99%a4">➤ 將用不到程式碼註解而非刪除</a></li><li><a href="#-%e6%b2%92%e5%af%ab%e8%a8%bb%e8%a7%a3%e6%88%96%e6%98%af%e5%af%ab%e6%b2%92%e6%9c%89%e6%84%8f%e7%be%a9%e7%9a%84%e8%a8%bb%e8%a7%a3">➤ 沒寫註解，或是寫沒有意義的註解</a></li><li class="is-sub"><a href="#-%e8%a8%bb%e8%a7%a3%e7%9a%84%e5%a5%bd%e8%99%95">👍 註解的好處</a></li><li class="is-sub"><a href="#-%e8%ab%8b%e4%b8%8d%e8%a6%81%e6%9c%89%e8%a8%bb%e8%a7%a3%e5%a6%82%e4%b8%8b">🙅 請不要有註解如下</a></li><li><a href="#-copy--paste-%e5%be%8cfunctionvariable-%e5%91%bd%e5%90%8d%e6%b2%92%e6%9c%89%e6%94%b9">➤ Copy &amp; Paste 後，Function、Variable 命名沒有改</a></li><li><a href="#-%e6%b2%92%e6%9c%89%e5%af%ab-try-catch">➤ 沒有寫 try catch</a></li><li><a href="#-%e5%9c%a8%e4%bb%96%e4%ba%ba%e5%8d%94%e5%8a%a9%e4%b8%8b%e5%ae%8c%e6%88%90%e5%8a%9f%e8%83%bd%e5%be%8c%e6%b2%92%e6%9c%89%e7%9c%9f%e6%ad%a3%e4%ba%86%e8%a7%a3%e5%8e%9f%e7%90%86">➤ 在他人協助下完成功能後，沒有真正了解原理</a></li><li><a href="#-%e6%b2%92%e6%9c%89%e5%81%9a-refactoring">➤ 沒有做 Refactoring</a></li><li><a href="#-%e8%a9%a2%e5%95%8f%e5%88%a5%e4%ba%ba%e5%89%8d%e6%b2%92%e6%9c%89%e8%87%aa%e5%b7%b1%e5%98%97%e8%a9%a6">➤ 詢問別人前沒有自己嘗試</a></li><li><a href="#-%e8%a9%a2%e5%95%8f%e7%9a%84%e5%95%8f%e9%a1%8c%e4%b8%8d%e5%a4%a0%e7%b2%be%e7%a2%ba">➤ 詢問的問題不夠精確</a></li><li><a href="#-%e7%ae%a1%e7%90%86%e8%80%85%e6%ac%8a%e9%99%90%e8%88%87%e4%bd%bf%e7%94%a8%e8%80%85%e6%ac%8a%e9%99%90%e6%b7%b7%e5%9c%a8%e4%b8%80%e8%b5%b7">➤ 管理者權限與使用者權限混在一起</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202202%2Fcommon-frontend-backend-mistakes%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202202%2Fcommon-frontend-backend-mistakes%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/" data-title="[前端＆後端]工程師常犯的錯誤 — 下班有約系列文" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_bf1adbce5bb8fbcc.webp" srcset="/blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_77a7ba93efa6226a.webp 240w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_dca6240ff135eca5.webp 480w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_e6a4a09b25bf8902.webp 800w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_bf1adbce5bb8fbcc.webp 1144w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1144" height="644" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/after-office/">工程師下班有約</a></div>
+
+    <h3 class="card-title"><a href="/blog/202405/database-bottlenecks/">當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文</a></h3>
+    <p class="card-desc">除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。 今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2024-05-22">2024.05.22</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABwBACdASoYAA0APw1mp0emIqGYBABjEMT2AFYQLmGtxgvrR8iYdU56umdxIADhmhSEFvCROi4rNO3jtXennvsPHIQkDgBN9Nb2ivV598j/WoN8rxzsVo&#43;AqSaLL0d3EMNaEggyNZJK1g3NzEye314n8PwD444024Js0HvjbaxuAd4W/5KefO4mkM/4OTK7KoyEAA==" alt="" width="24" height="13"><img src="/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-01_hu_f9c2447208cedc91.webp" srcset="/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-01_hu_b7860207c10ac087.webp 240w, /blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-01_hu_2d75d5b54d36d5f5.webp 480w, /blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-01_hu_81894b7c2d0fc8c5.webp 800w, /blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-01_hu_f9c2447208cedc91.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="635" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/after-office/">工程師下班有約</a></div>
+
+    <h3 class="card-title"><a href="/blog/202202/frontend-junior-pitfalls/">[前端]新手工程師容易卡住的問題 — 下班有約系列文</a></h3>
+    <p class="card-desc">筆者跟擔任 Tech Lead 的朋友聊天時，發現我們在幫新人 Code Review、Code Refactoring、Bug Fixing時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，而今天這篇文章會針對新手工程師容易卡住的問題來做分享。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-02-23">2022.02.23</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>7 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAAAQBQCdASoYAA4APw1mpkemIqGYBABjEMTgCdMoMxpn/AjN0kHPgo/tx/csNI5F4KoAAP6&#43;WagprNf745POTRLNWnejyjruh73RlFve34ChS9&#43;x&#43;7CGMFuVJ5skA/dnczD04iZgJ0FQTxBf1Z8mnLnouUfX0zm&#43;NDcypPqxDa3siX/JWWD2XI6ZtCM4TjL5bScEsZaJTcu42L3fGjHX3AFdwd1cnrZyxcQ6AAAA" alt="" width="24" height="14"><img src="/blog/202408/a-friend-like-me/images/a-friend-like-me-01_hu_56e6e9a285a253e6.webp" srcset="/blog/202408/a-friend-like-me/images/a-friend-like-me-01_hu_b1e1fd5790079a80.webp 240w, /blog/202408/a-friend-like-me/images/a-friend-like-me-01_hu_d4e28b22001b7394.webp 480w, /blog/202408/a-friend-like-me/images/a-friend-like-me-01_hu_a3c5f1a9997d00dd.webp 800w, /blog/202408/a-friend-like-me/images/a-friend-like-me-01_hu_56e6e9a285a253e6.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="705" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/career/">職涯成長</a><span class="sep" aria-hidden="true">/</span><a href="/series/after-office/">工程師下班有約</a></div>
+
+    <h3 class="card-title"><a href="/blog/202408/a-friend-like-me/">人生很難遇到一個與自己如此相似的朋友 ── 下班有約系列文</a></h3>
+    <p class="card-desc">我們都是工程師/講師/作家/魔術師/自媒體創作者/不浪費酒精聯盟，甚至現在還待在相同的產業。因為經歷高度相似，所以我們遇到的選擇、機遇、困境也很雷同。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2024-08-03">2024.08.03</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202202/common-frontend-backend-mistakes/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

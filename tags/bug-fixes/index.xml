@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Bug Fixes｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/bug-fixes/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 23 Feb 2022 10:03:38 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/bug-fixes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[前端]新手工程師容易卡住的問題 — 下班有約系列文</title>
+      <link>https://deanlin.net/blog/202202/frontend-junior-pitfalls/</link>
+      <pubDate>Wed, 23 Feb 2022 10:03:38 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202202/frontend-junior-pitfalls/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>筆者跟擔任 Tech Lead 的朋友聊天時，發現我們在幫新人 Code Review、Code Refactoring、Bug Fixing時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，而今天這篇文章會針對新手工程師容易卡住的問題來做分享。</description>
+      <content:encoded><![CDATA[<p>筆者跟擔任 Tech Lead 的朋友聊天時，發現我們在幫新人 Code Review、Code Refactoring、Bug Fixing 時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，而今天這篇文章會針對新手工程師容易卡住的問題來做分享。</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-01.webp" width="1400" height="741" alt="\[前端\]新手工程師容易卡住的問題 — 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+➤ 對網頁的元件(tag)、屬性(attr)不熟悉
+➤ 對 Object、Array 以及 null、undefine、&#34;&#34; 的特性並不熟
+➤ 不了解「==」跟「===」的差異
+➤ API 傳參數時遇到各種遇到困難
+➤ 非同步(Asynchronous)/同步(Synchronous)概念混亂
+➤ 不了解程式的運作流程
+➤ 演算法能力需要加強
+➤ 看不懂 Console 吐出的錯誤
+</code></pre><h2 id="-對網頁的元件tag屬性attr不熟悉">➤ 對網頁的元件(tag)、屬性(attr)不熟悉<a class="h-anchor" href="#-%e5%b0%8d%e7%b6%b2%e9%a0%81%e7%9a%84%e5%85%83%e4%bb%b6tag%e5%b1%ac%e6%80%a7attr%e4%b8%8d%e7%86%9f%e6%82%89" aria-label="這個段落的連結"></a></h2>
+<p>通常我們對「按鈕」的認知是「button」這個元件，相關的「click」事件也是由它來觸發；但我曾經遇過下面這個案例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#7ee787">v-btn</span> color<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;grey&#34;</span> class<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;ml-4 mt-7&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#7ee787">h6</span> <span style="color:#f85149">@</span>click<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;search()&#34;</span>&gt;搜尋&lt;/<span style="color:#7ee787">h6</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">v-btn</span>&gt;
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/4a40a295f6d3211094992235066a364b" rel="noopener">err_button.html</a>（GitHub Gist）</p>
+<p>他將「click」的事件包到「h6」這個元件中，這造成有時候<strong>點擊按鈕是沒有反應的</strong>，因為 click 事件觸發的有效範圍只在「h6」裡面，而<strong>不是整個 button 的範圍</strong>。</p>
+<p>後來發現這類因為對網頁元件不熟悉而導致的 Bug 還蠻常見的，如果 Debug 遇到類似問題時，可以先到網路上查詢大家通常會用這個元件來做什麼事，可以減少烏龍事件的發生。</p>
+<blockquote>
+<p>筆者曾看過用「table」來做切版的，在電腦螢幕 Demo 時看起來一切正常，但切換到手機的瞬間就崩潰了…</p>
+</blockquote>
+<h2 id="-對-objectarray-以及-nullundefine-的特性並不熟">➤ 對 Object、Array 以及 null、undefine、”” 的特性並不熟<a class="h-anchor" href="#-%e5%b0%8d-objectarray-%e4%bb%a5%e5%8f%8a-nullundefine-%e7%9a%84%e7%89%b9%e6%80%a7%e4%b8%a6%e4%b8%8d%e7%86%9f" aria-label="這個段落的連結"></a></h2>
+<p>前端串接 API 時，通常都會接收到以 json 格式回傳的物件，但假設我們要取得的是 Array 裡面的資料，如果沒有經過驗證就直接使用很容易會產生 Bug。</p>
+<p>像下面這個範例，如果回傳的是空陣列，如果沒有先驗證「陣列長度」就直接取用就會噴錯誤。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> response <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span>console.log(response[<span style="color:#a5d6ff">0</span>].status);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/caae7f1fadb077386c91a1df48f0e190" rel="noopener">array_err.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-02.webp" width="1400" height="227" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<p>有時我們會用物件參數的值來判斷要執行哪個程式，但如果用 undefined、空字串、null 來比對，就可能造成程式沒有依照我們想的邏輯去執行。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> user <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  id<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,
+</span></span><span style="display:flex;"><span>  name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baobao&#34;</span>,
+</span></span><span style="display:flex;"><span>  email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baobao@gmail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>  status<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (status <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;執行A&#34;</span>);
+</span></span><span style="display:flex;"><span>} <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;執行B&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/c6ae5bef92b0fd1974736afc837ef9d2" rel="noopener">null_logic.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-03.webp" width="782" height="280" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<p>下面再舉例一個極端物件，大家可以不要急著往下滑看答案，先思考看看印出來會是什麼結果？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> object <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  a<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  b<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  c<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span>,
+</span></span><span style="display:flex;"><span>  d<span style="color:#ff7b72;font-weight:bold">:</span> [],
+</span></span><span style="display:flex;"><span>  e<span style="color:#ff7b72;font-weight:bold">:</span> {},
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.a) console.log(object.a);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.b) console.log(object.b);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.c) console.log(object.c);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.d) console.log(object.d);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.e) console.log(object.e);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/a8b7daca5e33156180627955c87ba3c7" rel="noopener">object_example.js</a>（GitHub Gist）</p>
+<p>從下圖你可以看到除了「陣列、物件」外，其他都不會通過喔～</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-04.webp" width="1400" height="577" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 4）" loading="lazy" decoding="async"></p>
+<hr>
+<p>又或者有時我們在處理字串時會用「include」這個函式來比對，但如果你丟進去的參數是「null、undefine」這類的也會出事喔！</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> object <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  string<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>object.string.include(<span style="color:#a5d6ff">&#34;something..&#34;</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/b4bf6ebb83058e45981b7d47aef86372" rel="noopener">include_err.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-05.webp" width="782" height="165" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 5）" loading="lazy" decoding="async"></p>
+<h2 id="-不了解跟的差異">➤ 不了解「==」跟「===」的差異<a class="h-anchor" href="#-%e4%b8%8d%e4%ba%86%e8%a7%a3%e8%b7%9f%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h2>
+<p>不知道大家有沒有想過上面提到的「undefined、null、空字串」如果用「==」跟「===」來比較會有怎麼樣的結果。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;undefined==null&#34;</span>, <span style="color:#79c0ff">undefined</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#79c0ff">null</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;undefined===null&#34;</span>, <span style="color:#79c0ff">undefined</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">null</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;null==&#39;&#39;&#34;</span>, <span style="color:#79c0ff">null</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;null===&#39;&#39;&#34;</span>, <span style="color:#79c0ff">null</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;&#39;==undefined&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#79c0ff">undefined</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;&#39;===undefined&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">undefined</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/1cd4b3426fda2774476d96f59ca98e76" rel="noopener">null_undefined_empty.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-06.webp" width="1400" height="578" alt="不了解「==」跟「===」的差異（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<p>或者像是數字、字串、布林值這類的比較，有時這類型的的錯誤也常常讓人 Bug 找半天。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;true&#39;==true&#34;</span>, <span style="color:#a5d6ff">&#34;true&#34;</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;true&#39;===true&#34;</span>, <span style="color:#a5d6ff">&#34;true&#34;</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;1==&#39;1&#39;&#34;</span>, <span style="color:#a5d6ff">1</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#a5d6ff">&#34;1&#34;</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;1===&#39;1&#39;&#34;</span>, <span style="color:#a5d6ff">1</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;1&#34;</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d1325479adeb360fedf3415766d1d18a" rel="noopener">number_boolean.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-07.webp" width="1400" height="391" alt="不了解「==」跟「===」的差異（圖 7）" loading="lazy" decoding="async"></p>
+<h2 id="-api-傳參數時遇到各種困難">➤ API 傳參數時遇到各種困難<a class="h-anchor" href="#-api-%e5%82%b3%e5%8f%83%e6%95%b8%e6%99%82%e9%81%87%e5%88%b0%e5%90%84%e7%a8%ae%e5%9b%b0%e9%9b%a3" aria-label="這個段落的連結"></a></h2>
+<p>許多新手前端儘管可以完成切版，但是在串接 API 時卻遇到非常多的困難，就算看著 API 文件，在操作 GET、POST、PUT 傳遞參數時有很高的機率傳錯格式，像是：</p>
+<ul>
+<li>POST 的參數用 Params 傳，直接變成明碼。</li>
+<li>不知道 Body 的 form-data 怎麼組成、raw 如何組成 json 格式。</li>
+<li>常常有缺少或是格式錯誤參數。</li>
+</ul>
+<p>這部分我覺得如果後端工程師願意將 Postman 的 Collection 匯出，並在 Description 寫好邏輯直接讓前端工程師來確認，就會稍微減少以上的問題。</p>
+<h2 id="-非同步asynchronous同步synchronous概念混亂">➤ 非同步(Asynchronous)/同步(Synchronous)概念混亂<a class="h-anchor" href="#-%e9%9d%9e%e5%90%8c%e6%ad%a5asynchronous%e5%90%8c%e6%ad%a5synchronous%e6%a6%82%e5%bf%b5%e6%b7%b7%e4%ba%82" aria-label="這個段落的連結"></a></h2>
+<p>以非同步(Asynchronous)來說，最常見的錯誤就是前端在呼叫 API 時，並沒有等待資料回傳就直接使用它，導致畫面渲染的時候出現各種 Bug。</p>
+<p>以同步(Synchronous)來說，有時會設計了太多不必要的等待機制，導致在某個環節卡死無法進行下一步。</p>
+<h2 id="-不了解程式的運作流程">➤ 不了解程式的運作流程<a class="h-anchor" href="#-%e4%b8%8d%e4%ba%86%e8%a7%a3%e7%a8%8b%e5%bc%8f%e7%9a%84%e9%81%8b%e4%bd%9c%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<p>新進工程師通常都要維護 Legacy code，但通常他們並不具備掌握程式運作流程的能力。</p>
+<p>這塊除了註解以及技術文件可以加快新手的熟練度外，資深工程師願意一起 Pair Programing 也是一個讓新進工程師能力大增的方式。</p>
+<blockquote>
+<p>我在實戰經驗中發現<a href="https://deanlin.net/blog/202111/pair-programming/">手把手教學（pair programing）</a>的效率比給 hint 的效率高很多，如果只給新手 hint，除發他天賦異稟，不然有大機率是有聽沒有懂。</p>
+</blockquote>
+<p>在幫忙 Debug 時，筆者也發現很多新手工程師並不瞭解自己的程式到底會怎麼跑，這個時候我們可以透過下中斷點（Breakpoint），讓程式執行的每一步慢慢地在我們眼前呈現。</p>
+<h2 id="-演算法能力需要加強">➤ 演算法能力需要加強<a class="h-anchor" href="#-%e6%bc%94%e7%ae%97%e6%b3%95%e8%83%bd%e5%8a%9b%e9%9c%80%e8%a6%81%e5%8a%a0%e5%bc%b7" aria-label="這個段落的連結"></a></h2>
+<p>很多時候一個結果是需要經過多次運算才會得到，其中可能含有複雜的 and(&amp;&amp;)、or(ll)、not(!)、大於(&gt;)、小於(&lt;)..邏輯。</p>
+<p>假設你今天要設計一個打卡系統，如果要判斷一個職員今日出勤是否有異常，在程式設計上就需要考慮到幾個基礎邏輯：</p>
+<ol>
+<li>公司是否有彈性上、下班時間</li>
+<li>該名職員上、下班打卡時間是否在彈性上、下班的區間中</li>
+<li>該名職員上班總時數是否符合公司規定</li>
+<li>在判斷上下班打卡異常時，是否有考慮到假勤</li>
+</ol>
+<p>如果上面的邏輯複雜度已經超過你的腦容量，我強列建議回歸紙筆。</p>
+<p>複雜的邏輯用紙筆寫下來會比較容易理解，這是因為大腦在面對電腦時，邏輯容易憑空想像；而用紙筆寫的時候則可以將邏輯具象化，讓大腦放慢一點腳步反而能找到解法。</p>
+<blockquote>
+<p>想提升演算法能力，推薦挑戰 LeeCode easy 等級的題目。</p>
+</blockquote>
+<h2 id="-看不懂-console-吐出的錯誤">➤ 看不懂 Console 吐出的錯誤<a class="h-anchor" href="#-%e7%9c%8b%e4%b8%8d%e6%87%82-console-%e5%90%90%e5%87%ba%e7%9a%84%e9%8c%af%e8%aa%a4" aria-label="這個段落的連結"></a></h2>
+<p>遇到問題卡關時，我們往往會先上網找答案，不管正不正確，先貼回來看看能不能動。</p>
+<p>有時候可能真的找到正確解答了，但因為兩者程式執行的環境不同而有報錯，此時很多新人會因為看不懂這個錯誤，轉而找其他的解答複製貼上。</p>
+<p>其實如果你將上面的錯誤訊息貼到 Google，就有很大的機率可以得到解答；一直尋找只靠一步就能完成的解答，有時反而是在走遠路。</p>
+<blockquote>
+<p><a href="https://stackoverflow.com/">StackOverflow </a>上面聚集各種大神，只要善用關鍵字，基本上你遇到的問題以前已經有數不清的人踩過坑了。</p>
+</blockquote>
+<h2 id="-只使用自己會的技能">➤ 只使用自己會的技能<a class="h-anchor" href="#-%e5%8f%aa%e4%bd%bf%e7%94%a8%e8%87%aa%e5%b7%b1%e6%9c%83%e7%9a%84%e6%8a%80%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>面對新的問題時，我們會習慣從大腦搜尋已經純熟技能，但有些問題是現有技能無法處理的，或者要花大量時間才能解決。</p>
+<p>以前端的 UI Component 舉例，有些人花大量的時間去創造，但往往最後產出的結果遠遠不如現成的框架、套件，甚至還會有各式各樣的 Bug。</p>
+<p>下次遇到現有技能很難解決的問題時，不妨先搜尋網路，看看是否有前輩已經提供很好的解決方案；學習新技能所花的時間，有時會比硬要用過去技能解決更省時喔～</p>
+<hr>
+<blockquote class="pullquote"><p>這篇文章只是舉出最常見的幾個問題，筆者相信還有很多點沒有提到，如果讀者有想到的話歡迎補充～</p>
+</blockquote>
+<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-08.webp" width="1400" height="319" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<pre tabindex="0"><code>下班有約系列文
+▋ [前端]新手工程師容易卡住的問題(本篇)
+▋ [前端＆後端]工程師常犯的錯誤
+▋ 讓開發團隊更好協作的方式
+▋ 談談 Pair Programing
+▋ 談談工程師的話語權
+▋ 出社會後，新鮮人要及早知道的 5 件事
+▋ 面試的性向測驗竟然準到讓人心裡發寒？
+▋ 反其道而行的任務分配
+▋ 現在的 Daily Scrum 真的適合團隊嗎？
+▋ 用低成本也能請到好員工？資深 HR 不想告訴你的秘密！
+</code></pre>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

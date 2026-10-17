@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟。">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub">
+  <meta property="og:description" content="每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟。">
+  <meta property="og:url" content="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2021-04-08T14:28:48&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:21:52&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Nuxt.js">
+  <meta property="article:tag" content="Docker">
+  <meta property="article:tag" content="MacOS">
+  <meta property="article:tag" content="Docker Hub">
+  <meta property="article:tag" content="Docker Image">
+  <meta property="og:image" content="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="674">
+  <meta property="og:image:alt" content="在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-og.jpg">
+  <meta name="twitter:title" content="在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub">
+  <meta name="twitter:description" content="每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:21:52+08:00","datePublished":"2021-04-08T14:28:48+08:00","description":"每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟。","headline":"在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub","image":{"@type":"ImageObject","height":674,"url":"https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Nuxt.js, Docker, macOS, Docker Hub, Docker Image","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E5%9C%A8-mac-%E5%B0%87-nuxt-js-%E5%B0%88%E6%A1%88-build-%E6%88%90-docker-image-%E7%99%BC%E4%BD%88%E5%88%B0-dockerhub-e92a021c6916"],"timeRequired":"PT2M","url":"https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/","wordCount":973},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/","name":"在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2021-04-08">2021.04.08</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 2 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e4%ba%8b%e5%85%88%e6%ba%96%e5%82%99">一、事先準備</a></li><li class="is-sub"><a href="#-%e5%89%b5%e5%bb%ba-nuxtjs-%e5%b0%88%e6%a1%88">➤ 創建 Nuxt.js 專案</a></li><li class="is-sub"><a href="#-%e4%b8%8b%e8%bc%89--%e5%ae%89%e8%a3%9d-docker">➤ 下載 &amp; 安裝 Docker</a></li><li><a href="#%e4%ba%8c%e5%9c%a8-local-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image">二、在 local 把 Nuxt.js 專案 Build 成 docker image</a></li><li class="is-sub"><a href="#-%e6%92%b0%e5%af%ab-dockerfile--dockerignore">➤ 撰寫 dockerfile &amp; .dockerignore</a></li><li class="is-sub"><a href="#-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image">➤ 把 Nuxt.js 專案 build 成 Docker Image</a></li><li><a href="#%e4%b8%89%e5%b0%87-docker-image-%e7%99%bc%e4%bd%88%e5%88%b0-dockerhub-%e4%b8%8a%e9%9d%a2">三、將 Docker Image 發佈到 dockerhub 上面</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟；整體操作流程個人感覺非常簡單，大家不要被新的技術嚇到了，通常新技術的門檻比想像的更低一點。</p>
+<p><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01_hu_11a01119ea2d1714.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="786" alt="在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>一、事先準備
+ ➤ 創建 Nuxt.js 專案
+ ➤ 下載 &amp; 安裝 Docker
+二、在 local 把 Nuxt.js 專案 Build 成 Docker Image
+ ➤ 撰寫 dockerfile &amp; .dockerignore
+ ➤ 把 Nuxt.js 專案 build 成 Docker Image
+三、將 Docker Image 發佈到 dockerhub 上面
+</code></pre><h2 id="一事先準備">一、事先準備<a class="h-anchor" href="#%e4%b8%80%e4%ba%8b%e5%85%88%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h2>
+<h3 id="-創建-nuxtjs-專案">➤ 創建 Nuxt.js 專案<a class="h-anchor" href="#-%e5%89%b5%e5%bb%ba-nuxtjs-%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>如果你已經有 Nuxt.js 的專案可以跳過下面的操作流程</p>
+</blockquote>
+<p><strong>STEP 1：</strong>創建一個 Nuxt.js 專案</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app nuxtjs-tutorial
+</span></span></code></pre></div><p>在創建過程中會問你一些問題，你可以參考筆者的選擇：</p>
+<p><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-02.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-02_hu_3d0a5d518377b4be.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="555" alt="創建 Nuxt.js 專案（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2：</strong>讓 Nuxt.js 專案跑起來</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ cd nuxtjs-tutorial 
+</span></span><span style="display:flex;"><span>$ yarn dev
+</span></span></code></pre></div><figure class="figure"><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-03.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-03_hu_4e72af604187802.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-03.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1149" alt="看到這樣的狀況就是跑起來成功嚕" loading="lazy" decoding="async">
+  <figcaption>看到這樣的狀況就是跑起來成功嚕</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-04.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-04_hu_b8dd08f5996911e7.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-04.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="775" alt="開啟 http://localhost:3000/ 可以順利看到畫面了喔！" loading="lazy" decoding="async">
+  <figcaption>開啟 <a href="http://localhost:3000/">http://localhost:3000/</a> 可以順利看到畫面了喔！</figcaption>
+</figure>
+
+<h3 id="-下載--安裝-docker">➤ 下載 &amp; 安裝 Docker<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89--%e5%ae%89%e8%a3%9d-docker" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1：</strong>下載 Docker</p>
+<p><strong>前往官網<a href="https://docs.docker.com/docker-for-mac/install/">下載 Docker 安裝檔</a></strong></p>
+<blockquote>
+<p>安裝過程就是狂按下一步，就不在多做介紹，下載後要把 App 打開依照步驟執行才算是完成安裝喔！</p>
+</blockquote>
+<p><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-05.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-05_hu_35c1f5d1228878f1.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-05.webp 1184w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1184" height="437" alt="下載 &amp; 安裝 Docker（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2：</strong>註冊 Docker</p>
+<p>在官網<a href="https://hub.docker.com/signup">註冊 docker 帳號</a></p>
+<p><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-06.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-06_hu_15a337b17e3bec51.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-06.webp 1184w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1184" height="866" alt="下載 &amp; 安裝 Docker（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3：</strong>在 local 端登入 docker</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ docker login
+</span></span></code></pre></div><p>輸入剛剛註冊的帳號密碼</p>
+<p><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-07.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-07_hu_c6487f004b361210.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-07.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="179" alt="下載 &amp; 安裝 Docker（圖 7）" loading="lazy" decoding="async"></p>
+<h2 id="二在-local-把-nuxtjs-專案-build-成-docker-image">二、在 local 把 Nuxt.js 專案 Build 成 docker image<a class="h-anchor" href="#%e4%ba%8c%e5%9c%a8-local-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image" aria-label="這個段落的連結"></a></h2>
+<h3 id="-撰寫-dockerfile--dockerignore">➤ 撰寫 dockerfile &amp; .dockerignore<a class="h-anchor" href="#-%e6%92%b0%e5%af%ab-dockerfile--dockerignore" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1：先用指令建立這兩個檔案</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ touch dockerfile
+</span></span><span style="display:flex;"><span>$ touch .dockerignore
+</span></span></code></pre></div><p><strong>STEP 2：撰寫 </strong>dockerfile</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># node 運行環境</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node:12.19.0</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 存放image的目錄</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> mkdir -p /app<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> . /app<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 如果需要相關的環境變數請自行調整路徑</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#COPY ./env/.prod-env /app/env/.prod-env</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 對外的port</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">ENV</span> HOST 0.0.0.0 <span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝套件並build專案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> yarn<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> yarn build<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 執行專案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [ <span style="color:#a5d6ff">&#34;yarn&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span> ]<span style="color:#f85149">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/647663b391da8292d80089d445f3e7e6" rel="noopener">dockerfile</a>（GitHub Gist）</p>
+<p><strong>STEP 2：撰寫 </strong>.dockerignore</p>
+<pre tabindex="0"><code>npm-debug.log
+node_modules
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/3d2509de3aba92d14d42b530c2e654ed" rel="noopener">.dockerignore</a>（GitHub Gist）</p>
+<h3 id="-把-nuxtjs-專案-build-成-docker-image">➤ 把 Nuxt.js 專案 build 成 Docker Image<a class="h-anchor" href="#-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1</strong>：Build Docker Image</p>
+<p>在專案目錄下輸入指令後耐心等待打包，<strong>docker_example</strong> 是這個 image 的名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker build -t docker_example .
+</span></span></code></pre></div><p><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-08.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-08_hu_17f017d9aaee4a28.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-08.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="510" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>：Run Docker Image</p>
+<p>輸入指令確認 image 是否成功</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -it — rm -p 80:3000 docker_example
+</span></span></code></pre></div><blockquote>
+<p>特別注意『80 是對外 port，3000 是 container 的 port』，<strong>docker_example </strong>就是剛剛建立的 image 名稱</p>
+</blockquote>
+<p><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-09.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-09_hu_caedd6c94e7f4a31.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="469" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 9）" loading="lazy" decoding="async"></p>
+<p>上圖 172.xx.xx.x:3000 的網址點開來是沒有畫面的，因為我們已經透過指令改變對外 port 到 80 了，在網址列上輸入 <a href="http://localhost/">http://localhost/</a> 就能成功看到供果嚕～</p>
+<p><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-10.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-10_hu_2212866690bf393e.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-10.webp 1226w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1226" height="792" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 10）" loading="lazy" decoding="async"></p>
+<h2 id="三將-docker-image-發佈到-dockerhub-上面">三、將 Docker Image 發佈到 dockerhub 上面<a class="h-anchor" href="#%e4%b8%89%e5%b0%87-docker-image-%e7%99%bc%e4%bd%88%e5%88%b0-dockerhub-%e4%b8%8a%e9%9d%a2" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：給剛剛建立的 Image 一個 tag，username 是你 Doacker 的帳戶，xxximage是你希望這個 Image 在 dockerhub 上呈現的名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker tag docker_example username/xxximage
+</span></span></code></pre></div><p><strong>STEP 2</strong>：列出目前存在的 Images</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker images
+</span></span></code></pre></div><p><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-11.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-11_hu_8ebe4bbac13f62d.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-11.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="144" alt="三、將 Docker Image 發佈到 dockerhub 上面（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：把這個 Image 丟到 dockerhub 的 repositories</p>
+<blockquote>
+<p>這個 push 的過程會根據你產生 Image 的大小決定，通常要等一段時間</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker push username/xxximage
+</span></span></code></pre></div><p><strong>STEP 4</strong>：在自己的 Docker 帳戶上看到剛剛上傳的 Docker Image</p>
+<p><img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-12.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-12_hu_dcb9fb05589aee32.webp 720w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-12.webp 1217w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1217" height="273" alt="三、將 Docker Image 發佈到 dockerhub 上面（圖 12）" loading="lazy" decoding="async"></p>
+<p>之後要部署這個 Docker Image 到其他 Server 就只需要輸入下面指令就能獲得嚕～</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker pull username/xxximage
+</span></span></code></pre></div><hr>
+<p>希望這篇文章有幫助到使用 Mac 開發 Nuxt.js 專案的朋友們～</p>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2021.04.08）</span><a href="https://medium.com/dean-lin/%E5%9C%A8-mac-%E5%B0%87-nuxt-js-%E5%B0%88%E6%A1%88-build-%E6%88%90-docker-image-%E7%99%BC%E4%BD%88%E5%88%B0-dockerhub-e92a021c6916" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/nuxt.js/">Nuxt.js</a>
+            <a class="chip chip-hash" href="/tags/docker/">Docker</a>
+            <a class="chip chip-hash" href="/tags/macos/">MacOS</a>
+            <a class="chip chip-hash" href="/tags/docker-hub/">Docker Hub</a>
+            <a class="chip chip-hash" href="/tags/docker-image/">Docker Image</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202104%2Fnuxtjs-docker-image-dockerhub%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202104%2Fnuxtjs-docker-image-dockerhub%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/" data-title="在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202104/vue-vuex-vuetify-nuxt-explained/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">5 分鐘帶你搞懂 Vue、Vuex、Vuetify、Nuxt.js 之間的關係</span></a>
+          <a class="next" href="/blog/202104/validate-json-with-jsonschema/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">拒當前端黑鍋俠！用「jsonschema」來驗證後端回傳的 json 資料結構</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e4%ba%8b%e5%85%88%e6%ba%96%e5%82%99">一、事先準備</a></li><li class="is-sub"><a href="#-%e5%89%b5%e5%bb%ba-nuxtjs-%e5%b0%88%e6%a1%88">➤ 創建 Nuxt.js 專案</a></li><li class="is-sub"><a href="#-%e4%b8%8b%e8%bc%89--%e5%ae%89%e8%a3%9d-docker">➤ 下載 &amp; 安裝 Docker</a></li><li><a href="#%e4%ba%8c%e5%9c%a8-local-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image">二、在 local 把 Nuxt.js 專案 Build 成 docker image</a></li><li class="is-sub"><a href="#-%e6%92%b0%e5%af%ab-dockerfile--dockerignore">➤ 撰寫 dockerfile &amp; .dockerignore</a></li><li class="is-sub"><a href="#-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image">➤ 把 Nuxt.js 專案 build 成 Docker Image</a></li><li><a href="#%e4%b8%89%e5%b0%87-docker-image-%e7%99%bc%e4%bd%88%e5%88%b0-dockerhub-%e4%b8%8a%e9%9d%a2">三、將 Docker Image 發佈到 dockerhub 上面</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202104%2Fnuxtjs-docker-image-dockerhub%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202104%2Fnuxtjs-docker-image-dockerhub%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/" data-title="在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAADQBACdASoYAA0APw1oqUgmIyIYBABjEMTxAE6ZQUAABjdMyjpwAhZwwgMKV&#43;j80AD&#43;wy3Y87z3C2FDLZXUOBDaJMglT7JfGJF8AwA&#43;V&#43;O&#43;hswHl0Dggi&#43;v0838&#43;geKfnvINz3UeChgVifvbUUmlGiwlgaMw9Gbs92623HrfN9XpfNU6SRaNLsSjZYIgRRDnK9Ut7I3uxAKRWGrE&#43;rYXedKccLj5Ej/fIbwAA==" alt="" width="24" height="13"><img src="/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-01_hu_a2478c27e5e7537e.webp" srcset="/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-01_hu_2680784ff5ae3b91.webp 240w, /blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-01_hu_2a8bb345b52dcfbb.webp 480w, /blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-01_hu_7517a1158bc95622.webp 800w, /blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-01_hu_a2478c27e5e7537e.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="629" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202209/reduce-docker-image-size/">實測有效！手把手帶你將 Docker Image 體積減少 90%</a></h3>
+    <p class="card-desc">Docker Image 體積越大，那部署要花的時間就越長；假如每個版本都有好幾 GB，那並不是一個理想的狀態；因此筆者開始動手實作，想看看到底能將 Docker Image 的體積縮小多少！</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-09-01">2022.09.01</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAACwBACdASoYAA0APw1qp0emIyGYBABjEMT2AE6ZQYwAKTqpxnITxryPSPylVE9AAPyOiWNniKXHxw9WUfiz15GtcXPn&#43;Qut7zYCHIV8NIGTakUTxvm1fzyirEwl8zgR3Oy/gnePGl7VSasXV4R57EoLIdftbEwpfYfjl5wT2JIAAA==" alt="" width="24" height="13"><img src="/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-01_hu_26814c0be161aebd.webp" srcset="/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-01_hu_47b5a3fe230e4e2e.webp 240w, /blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-01_hu_5819ebf7b6abea68.webp 480w, /blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-01_hu_258a8102b7354422.webp 800w, /blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-01_hu_26814c0be161aebd.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="634" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202201/nodejs-docker-kubernetes-deploy/">帶你將 Node.js Web App 給 Docker 化，並用 Kubernetes 部署的超簡單範例</a></h3>
+    <p class="card-desc">公司很早就導入了 Kubernetes（K8s），主要是為了自動化部署以及管理、監測多台機器上的 Container，在遇到高併發情境時可以自動擴展。過去我都是以輔助者的角色跟 DevOps 說我希望有哪些功能，所以便藉著寫這篇文章的機會來初探這個已經成為業界潮流的技術。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-01-21">2022.01.21</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-01_hu_561ea0925b46fa35.webp" srcset="/blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-01_hu_ccc99b4690ca88a1.webp 240w, /blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-01_hu_936105e8cd2c1abc.webp 480w, /blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-01_hu_b00862ca4041a961.webp 800w, /blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-01_hu_561ea0925b46fa35.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202110/apache-bench-load-testing/">Apache Bench — 壓力測試好夥伴</a></h3>
+    <p class="card-desc">最近在測試 K8s 在大流量時 pod 的 auto scaling 機制，使用的工具是 Mac 本身內建 Apache Bench，這篇文章就來介紹它的基礎使用方式。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-10-27">2021.10.27</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>2 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

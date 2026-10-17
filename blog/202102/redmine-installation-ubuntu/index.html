@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="專案管理的工具非常之多，但是 jira、notion、clickup、trello 這類的專案管理都需要付錢，目前公司採用 Teams 的 planner、Lists 又不符合實際使用情境；之前有短暫的導入 testlink，不過那個 20 年前的 UI…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202102/redmine-installation-ubuntu/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04">
+  <meta property="og:description" content="專案管理的工具非常之多，但是 jira、notion、clickup、trello 這類的專案管理都需要付錢，目前公司採用 Teams 的 planner、Lists 又不符合實際使用情境；之前有短暫的導入 testlink，不過那個 20 年前的 UI…">
+  <meta property="og:url" content="https://deanlin.net/blog/202102/redmine-installation-ubuntu/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2021-02-18T15:00:45&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:12:49&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="團隊合作">
+  <meta property="article:tag" content="Redmine">
+  <meta property="article:tag" content="Project Management Tool">
+  <meta property="article:tag" content="安裝教學">
+  <meta property="article:tag" content="Ubuntu Server">
+  <meta property="article:tag" content="專案管理">
+  <meta property="og:image" content="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="672">
+  <meta property="og:image:alt" content="Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-og.jpg">
+  <meta name="twitter:title" content="Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04">
+  <meta name="twitter:description" content="專案管理的工具非常之多，但是 jira、notion、clickup、trello 這類的專案管理都需要付錢，目前公司採用 Teams 的 planner、Lists 又不符合實際使用情境；之前有短暫的導入 testlink，不過那個 20 年前的 UI…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202102/redmine-installation-ubuntu/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"團隊合作"},"articleSection":"團隊合作","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:12:49+08:00","datePublished":"2021-02-18T15:00:45+08:00","description":"專案管理的工具非常之多，但是 jira、notion、clickup、trello 這類的專案管理都需要付錢，目前公司採用 Teams 的 planner、Lists 又不符合實際使用情境；之前有短暫的導入 testlink，不過那個 20 年前的 UI…","headline":"Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04","image":{"@type":"ImageObject","height":672,"url":"https://deanlin.net/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"Redmine 專案管理","url":"https://deanlin.net/series/redmine/"}],"keywords":"Redmine, Project Management Tool, 安裝教學, Ubuntu Server, 專案管理","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202102/redmine-installation-ubuntu/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/redmine-%E8%B6%85%E8%A9%B3%E7%B4%B0%E5%AE%89%E8%A3%9D%E6%95%99%E5%AD%B8-redmine-4-1-1-on-ubuntu-16-04-ac0882b44a51"],"timeRequired":"PT6M","url":"https://deanlin.net/blog/202102/redmine-installation-ubuntu/","wordCount":2903},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/teamwork/","name":"團隊合作","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202102/redmine-installation-ubuntu/","name":"Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/">技術教學</a></li>
+        <li><a href="/categories/teamwork/" aria-current="page">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/" aria-current="page">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/teamwork/">團隊合作</a>
+      </nav>
+      <h1 class="article-title">Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2021-02-18">2021.02.18</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 6 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・Redmine 專案管理 <b>1</b>/ 6</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e5%ae%89%e8%a3%9d%e7%92%b0%e5%a2%83">一、安裝環境</a></li><li><a href="#%e4%ba%8c%e5%ae%89%e8%a3%9d%e9%a0%86%e5%ba%8f">二、安裝順序</a></li><li><a href="#step-1%e5%ae%89%e8%a3%9d-mysql">STEP 1：安裝 MySQL</a></li><li><a href="#step-2%e5%bb%ba%e7%ab%8b-redmine-%e4%bd%bf%e7%94%a8%e8%80%85%e5%b8%b3%e8%99%9f">STEP 2：建立 Redmine 使用者帳號</a></li><li><a href="#step-3%e5%ae%89%e8%a3%9d-rvm">STEP 3：安裝 RVM</a></li><li><a href="#step-4%e5%ae%89%e8%a3%9d-ruby">STEP 4：安裝 Ruby</a></li><li><a href="#step-5%e5%ae%89%e8%a3%9d-passenger-and-nginx">STEP 5：安裝 Passenger and Nginx</a></li><li><a href="#step-6%e8%a8%ad%e5%ae%9a-nginx">STEP 6：設定 Nginx</a></li><li><a href="#step-7%e5%9c%a8-mysql-%e5%a2%9e%e5%8a%a0-redmine-%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85">STEP 7：在 MySQL 增加 redmine 的使用者</a></li><li><a href="#step-8%e5%ae%89%e8%a3%9d-redmine">STEP 8：安裝 Redmine</a></li><li class="is-sub"><a href="#-%e4%b8%8b%e8%bc%89%e5%ae%98%e6%96%b9-image">➤ 下載官方 image</a></li><li class="is-sub"><a href="#-%e8%aa%bf%e6%95%b4-redmine-%e8%a3%a1%e9%9d%a2%e7%9a%84%e8%b3%87%e6%96%99%e5%ba%ab%e8%a8%ad%e5%ae%9a">➤ 調整 redmine 裡面的資料庫設定</a></li><li class="is-sub"><a href="#-%e4%b8%8b%e8%bc%89%e7%9b%b8%e9%97%9c%e5%a5%97%e4%bb%b6">➤ 下載相關套件</a></li><li class="is-sub"><a href="#-%e5%88%9d%e5%a7%8b%e5%8c%96-redmine">➤ 初始化 redmine</a></li><li><a href="#step-9%e5%ae%89%e8%a3%9d-redmine-%e5%a4%96%e6%8e%9b">STEP 9：安裝 Redmine 外掛</a></li><li><a href="#step-10%e8%a8%ad%e5%ae%9a-redmine-%e5%af%84%e4%bf%a1%e5%8a%9f%e8%83%bd">STEP 10：設定 Redmine 寄信功能</a></li><li><a href="#%e4%b8%89%e5%82%99%e8%a8%bb">三、備註</a></li><li class="is-sub"><a href="#-%e8%ae%80%e5%ae%8c%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0%e5%be%8c">🙂 讀完這篇文章後</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>專案管理的工具非常之多，但是 jira、notion、clickup、trello 這類的專案管理都需要付錢，目前公司採用 Teams 的 planner、Lists 又不符合實際使用情境；之前有短暫的導入 testlink，不過那個 20 年前的 UI 設計很快就勸退大家。基於上述原因決定嘗試使用 Redmine 這個專案管理工具，本篇文章會詳細說明安裝的步驟即遭遇過的問題，文章大綱如下：</p>
+<pre tabindex="0"><code>一、安裝環境
+二、安裝順序
+  STEP 1：安裝 MySQL
+  STEP 2：建立 Redmine 使用者帳號
+  STEP 3：安裝 RVM
+  STEP 4：安裝 Ruby
+  STEP 5：安裝 Passenger and Nginx
+  STEP 6：設定 Nginx
+  STEP 7：在 MySQL 增加 redmine 的使用者
+  STEP 8：安裝 Redmine
+  STEP 9：安裝 Redmine 外掛
+  STEP 10：設定 Redmine 寄信功能
+三、備註
+</code></pre><p><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-01.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-01_hu_dff7d8fee404a496.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="784" alt="Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="一安裝環境">一、安裝環境<a class="h-anchor" href="#%e4%b8%80%e5%ae%89%e8%a3%9d%e7%92%b0%e5%a2%83" aria-label="這個段落的連結"></a></h2>
+<p>官方沒有建議的硬體規格，但是看到有 <a href="https://www.redmineup.com/pages/blog/self-hosted-on-in-the-cloud-how-to-choose-infrastructure-and-hardware-configuration-for-redmine">文章分享</a> 最低硬體配置如下：</p>
+<ul>
+<li>Processor: Intel Celeron (min 300 MHz)</li>
+<li>RAM: 1–2 GB RAM</li>
+<li>HDD: 30–40 GB</li>
+</ul>
+<p>但通常使用最低硬體配置得到的結果就是容易卡，很多人同時上線使用時會讓卡到讓你懷疑人生，下面是我安裝時的配置目前使用起來算是流暢給大家參考用：</p>
+<ul>
+<li>Processor: 使用 VMWARE 的虛擬單核心</li>
+<li>RAM: 8GB RAM</li>
+<li>HDD: 500 GB</li>
+<li>OS: ubuntu 16.04</li>
+</ul>
+<h2 id="二安裝順序">二、安裝順序<a class="h-anchor" href="#%e4%ba%8c%e5%ae%89%e8%a3%9d%e9%a0%86%e5%ba%8f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>操作時請注意角色權限(root、redmine)，否則安裝到一半會卡住</p>
+</blockquote>
+<h2 id="step-1安裝-mysql">STEP 1：安裝 MySQL<a class="h-anchor" href="#step-1%e5%ae%89%e8%a3%9d-mysql" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： root</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 安裝 MySQL 套件
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt install build-essential mysql-server libmysqlclient-dev imagemagick libmagickwand-dev
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 安裝後驗證 MySQL Version
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    mysql -u root -p
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/b38188a5ef4141b93c01b319a80b371b" rel="noopener">mysql_install.md</a>（GitHub Gist）</p>
+<figure class="figure"><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-02.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-02_hu_ac54deea90500eaa.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-02.webp 1258w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1258" height="514" alt="看到類似上方的 MySQL 資訊就代表你安裝成功嚕！" loading="lazy" decoding="async">
+  <figcaption>看到類似上方的 MySQL 資訊就代表你安裝成功嚕！</figcaption>
+</figure>
+
+<h2 id="step-2建立-redmine-使用者帳號">STEP 2：建立 Redmine 使用者帳號<a class="h-anchor" href="#step-2%e5%bb%ba%e7%ab%8b-redmine-%e4%bd%bf%e7%94%a8%e8%80%85%e5%b8%b3%e8%99%9f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： root</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 建立 Redmine 使用者，資料放在 <span style="color:#a5d6ff">`/data/redmine`</span>
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    adduser --system \
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        --shell /bin/bash \
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        --gecos &#39;Redmine Administrator&#39; \
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        --group \
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        --home /data/redmine redmine;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 建立 rvm group
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    groupadd rvm
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 允許 redmine 可以 sudo
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    adduser redmine sudo
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 設定 redmine 密碼
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    passwd redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 將 redmine 使用者加入 rvm 群組
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    usermod -a -G rvm redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/7443c1b56e1f7a585472834ea2ec65b0" rel="noopener">add_redmine_user.md</a>（GitHub Gist）</p>
+<h2 id="step-3安裝-rvm">STEP 3：安裝 RVM<a class="h-anchor" href="#step-3%e5%ae%89%e8%a3%9d-rvm" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： redmine</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 安裝gnupg2
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    sudo apt install gnupg2
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 安裝 GPG keys:
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 安裝 RVM
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    \curl -sSL https://get.rvm.io | bash -s stable
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 讓 rvm 指令生效
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    source /data/redmine/.rvm/scripts/rvm
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 確認安裝的RVM版本
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rvm --version
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/c05ee64e18057de7a430df6b474ebd9e" rel="noopener">install_RVM.md</a>（GitHub Gist）</p>
+<figure class="figure"><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-03.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-03_hu_1621a9953d9fac2d.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-03.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="74" alt="看到類似上方的 RVM 資訊就代表你安裝成功嚕！" loading="lazy" decoding="async">
+  <figcaption>看到類似上方的 RVM 資訊就代表你安裝成功嚕！</figcaption>
+</figure>
+
+<h2 id="step-4安裝-ruby">STEP 4：安裝 Ruby<a class="h-anchor" href="#step-4%e5%ae%89%e8%a3%9d-ruby" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： redmine</p>
+</blockquote>
+<p>作者的 <strong>RUBY_VERSION 為 2.3.8</strong>，這裡安裝的版本請<a href="https://www.redmine.org/projects/redmine/wiki/redmineinstall#Ruby-interpreter">參考 Redmine 的官方建議</a>，如果安裝其他的版本後續安裝 Redmine 時會發生錯誤</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 檢查 rvm 必要的套件
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rvm requirements
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 安裝指定的 ruby version
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rvm install ${RUBY_VERSION}
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 將此版本設定為預設
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rvm use ${RUBY_VERSION} --default
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 確認安裝的 Ruby 版本
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ruby --version
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/26719eedd99c32afc8f8d5820e058078" rel="noopener">intsall_ruby.md</a>（GitHub Gist）</p>
+<figure class="figure"><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-04.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-04_hu_428df210891bcd3c.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-04.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="74" alt="看到類似上方的 ruby 資訊就代表你安裝成功嚕！" loading="lazy" decoding="async">
+  <figcaption>看到類似上方的 ruby 資訊就代表你安裝成功嚕！</figcaption>
+</figure>
+
+<h2 id="step-5安裝-passenger-and-nginx">STEP 5：安裝 Passenger and Nginx<a class="h-anchor" href="#step-5%e5%ae%89%e8%a3%9d-passenger-and-nginx" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： root</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 安裝 Passenger PGP key 和 HTTPS support for package manager
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt install -y dirmngr gnupg
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7 
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt install -y apt-transport-https ca-certificates
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. Add passenger APT repository
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    sh -c &#39;echo deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main &gt; /etc/apt/sources.list.d/passenger.list&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt update
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 安裝 Passenger and NGINX
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    apt install -y nginx-extras passenger
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/b44c3fa2e4c3a95b133182431af9da3c" rel="noopener">install_Passenger_Nginx.md</a>（GitHub Gist）</p>
+<h2 id="step-6設定-nginx">STEP 6：設定 Nginx<a class="h-anchor" href="#step-6%e8%a8%ad%e5%ae%9a-nginx" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： root</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 編輯 Nginx 設定檔案
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    vi /etc/nginx/nginx.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 移除此行註解#：`</span>include /etc/nginx/passenger.conf;<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`conf
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ...
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ##
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    # Phusion Passenger config
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ##
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    # Uncomment it if you installed passenger or passenger-enterprise
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ##
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    include /etc/nginx/passenger.conf;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 接下來要調整 Nginx 的網站設定，所以建議先備份原本的設定
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.orig
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 編輯 Nginx 的網站設定
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    vi /etc/nginx/sites-available/default
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">6. 調整網站的根目錄位置以及 Passenger 設定
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    #root /var/www/html; #將原本的註解或是移除
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    root /data/redmine/current/public;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    passenger_enabled on;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    client_max_body_size 10m;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">7. 把 location 段落註解
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    #location / {
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">            # First attempt to serve request as file, then
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">            # as directory, then fall back to displaying a 404.
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    #       try_files $uri $uri/ =404;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    #}
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/dc2d42e3059a7beff2912bbd34be52ea" rel="noopener">set_nginx.md</a>（GitHub Gist）</p>
+<p>完成上述步驟後再做以下驗證：</p>
+<ol>
+<li>更改目錄權限： <code>chown -R www-data /var/www</code></li>
+<li>重啟 Nginx： <code>systemctl restart nginx</code></li>
+<li>驗證 Passenger and NGINX: <code>/usr/bin/passenger-config validate-install</code></li>
+</ol>
+<p><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-05.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-05_hu_77563ff77fae5a2c.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-05.webp 1030w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1030" height="426" alt="STEP 6：設定 Nginx（圖 5）" loading="lazy" decoding="async"></p>
+<p>4. 檢查 Ngninx 狀態與 Passenger process: <code>/usr/sbin/passenger-memory-stats</code></p>
+<p><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-06.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-06_hu_91930f2728bbd58.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-06.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="498" alt="STEP 6：設定 Nginx（圖 6）" loading="lazy" decoding="async"></p>
+<h2 id="step-7在-mysql-增加-redmine-的使用者">STEP 7：在 MySQL 增加 redmine 的使用者<a class="h-anchor" href="#step-7%e5%9c%a8-mysql-%e5%a2%9e%e5%8a%a0-redmine-%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： root</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 登入 MySQL
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    mysql -u root -p
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 創建 redmine 資料庫
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    CREATE DATABASE redmine CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 創建 redmine 使用者，密碼記得自行調整
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    CREATE USER &#39;redmine&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;password&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 給予使用者權限
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    GRANT ALL PRIVILEGES ON redmine.* TO &#39;redmine&#39;@&#39;localhost&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">6. 使權限生效
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    FLUSH PRIVILEGES;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">7. 離開 MySQL
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    quit;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/f0d6fa77b683a40cec8d44e5be51e36c" rel="noopener">mysql_add_redmine_user.md</a>（GitHub Gist）</p>
+<h2 id="step-8安裝-redmine">STEP 8：安裝 Redmine<a class="h-anchor" href="#step-8%e5%ae%89%e8%a3%9d-redmine" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： redmine</p>
+</blockquote>
+<h3 id="-下載官方-image">➤ 下載官方 image<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89%e5%ae%98%e6%96%b9-image" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 到[<span style="color:#7ee787">官方網站</span>](https://www.redmine.org/projects/redmine/wiki/Download)了解最新的stable版本（筆者安裝版本為 4.1.1）
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">2.</span> 前往放置 redmine image 的目錄
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cd /data/redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 下載官方 image 並解壓縮
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    wget https://www.redmine.org/releases/redmine-4.1.1.tar.gz
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    tar zxvf redmine-4.1.1.tar.gz
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 建立連結資料夾 current
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    ln -s redmine-4.1.1 current
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 前往連結資料夾
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cd current
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/523ff799ed15fd78787e5664bcd589e3" rel="noopener">redmine_download.md</a>（GitHub Gist）</p>
+<h3 id="-調整-redmine-裡面的資料庫設定">➤ 調整 redmine 裡面的資料庫設定<a class="h-anchor" href="#-%e8%aa%bf%e6%95%b4-redmine-%e8%a3%a1%e9%9d%a2%e7%9a%84%e8%b3%87%e6%96%99%e5%ba%ab%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 將 redmine 的資料庫範例設定檔複製一份
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cp -pR config/database.yml.example config/database.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 編輯資料庫設定檔案
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    vi config/database.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`  
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3.  調整 production 的資訊即可，內容填上 STEP7 建立的使用者資訊即可
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`yml
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    production:
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      adapter: mysql2
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      database: redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      host: localhost
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      username: redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      password: &#34;your password&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      # Use &#34;utf8&#34; instead of &#34;utfmb4&#34; for MySQL prior to 5.7.7
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      encoding: utf8mb4
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/9cb24f48fd8b8fa969c4138a12186a76" rel="noopener">redmine_database_config.md</a>（GitHub Gist）</p>
+<h3 id="-下載相關套件">➤ 下載相關套件<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89%e7%9b%b8%e9%97%9c%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 先確認當前資料夾為 <span style="color:#a5d6ff">`/data/redmine/current`</span>
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    pwd
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 執行 gem, bundle 安裝依賴套件
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    gem install bundler
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    bundle install --without development test
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    &gt; 如果安裝過程中遇到錯誤可能是因為沒有安裝到 ruby 的套件  
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    &gt; 1. 先安裝 `</span>sudo apt-get install ruby-dev<span style="color:#a5d6ff">`  
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    &gt; 2. 再執行一次 `</span>bundle install --without development test` 確認有無報錯
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/540d8de42ff10326664acdb6f29c08d4" rel="noopener">redmine_install_package.md</a>（GitHub Gist）</p>
+<h3 id="-初始化-redmine">➤ 初始化 redmine<a class="h-anchor" href="#-%e5%88%9d%e5%a7%8b%e5%8c%96-redmine" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 先確認當前資料夾為 /data/redmine/current
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    pwd
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 用 Rake 啟動 redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    bundle exec rake generate_secret_token
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. Migrate Database Schema(初始化資料庫)
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    RAILS_ENV=production bundle exec rake db:migrate
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. Load Initial Data(下面會請你選擇語言，預設為英文，語言後續都能再做調整)
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    RAILS_ENV=production bundle exec rake redmine:load_default_data
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 用 Nginx 重啟 Redmine
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    sudo systemctl restart nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/79b903f7c4f1f22821aa91bbb21dca06" rel="noopener">redmine_init.md</a>（GitHub Gist）</p>
+<p>接下來你可以瀏覽 <code>http:&lt;server_ip&gt;</code> ，如果順利的話可以看到 Redmine 登入畫面如下：</p>
+<figure class="figure"><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-07.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-07_hu_a713f8a750bed8d6.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-07.webp 1148w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1148" height="565" alt="預設 admin/admin 登入" loading="lazy" decoding="async">
+  <figcaption>預設 <code>admin/admin</code> 登入</figcaption>
+</figure>
+
+<h2 id="step-9安裝-redmine-外掛">STEP 9：安裝 Redmine 外掛<a class="h-anchor" href="#step-9%e5%ae%89%e8%a3%9d-redmine-%e5%a4%96%e6%8e%9b" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： redmine</p>
+</blockquote>
+<p>Plugin 安裝方式雷同，下面以 <code>Redmine Dashboard 2</code>為範例安裝</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 先進入 redmine 的 plugin 資料夾
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cd /current/plugins
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 下載 plugin，最新的 release 請參考[官方](https://github.com/jgraichen/redmine_dashboard)
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    wget https://github.com/jgraichen/redmine_dashboard/archive/v2.9.0.tar.gz
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 解壓縮檔案
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    tar zxvf v2.9.0.tar.gz
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 移除壓縮檔
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rm v2.9.0.tar.gz
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">6.  安裝相關套件
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    bundle install
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">7. 將套件相關 DB 進行 migrate 到 production
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    rake db:migrate RAILS_ENV=production
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">8. 將套件安裝至 production
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">9. 安裝完畢後重啟讓設定生效
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    sudo systemctl restart nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d625c9f43d9667e086f3eb73328becb6" rel="noopener">redmine_plugin.md</a>（GitHub Gist）</p>
+<figure class="figure"><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-08.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-08_hu_a57ec3d79b95f2bc.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-08.webp 1148w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1148" height="529" alt="安裝成功後的外掛程式會直接出現喔～" loading="lazy" decoding="async">
+  <figcaption>安裝成功後的外掛程式會直接出現喔～</figcaption>
+</figure>
+
+<h2 id="step-10設定-redmine-寄信功能">STEP 10：設定 Redmine 寄信功能<a class="h-anchor" href="#step-10%e8%a8%ad%e5%ae%9a-redmine-%e5%af%84%e4%bf%a1%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>角色： redmine</p>
+</blockquote>
+<p>如果沒做這個步驟是寄不出信的，需要做下面的調整即可</p>
+<figure class="figure"><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-09.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-09_hu_891775f42d74f4e2.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="125" alt="設定前在：網站管理&gt;設定&gt;電子郵件提醒選項。會出現的畫面" loading="lazy" decoding="async">
+  <figcaption>設定前在：網站管理&gt;設定&gt;電子郵件提醒選項。會出現的畫面</figcaption>
+</figure>
+
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span><span style="color:#ff7b72">1.</span> 進入 redmine 設定的資料夾
+</span></span><span style="display:flex;"><span>    ``<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cd /current/config
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">2. 將 redmine 的設定範例設定檔複製一份
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    cp -pR configuration.yml.example configuration.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">3. 編輯 redmine 設定檔案
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    vi configuration.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">4. 調整 production 的資訊即可，下面用 Gmail 作為範例
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    production:
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      delivery_method: :smtp
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">      smtp_settings:
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        enable_starttls_auto: true
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        address: &#34;smtp.gmail.com&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        port: 587
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        domain: &#34;smtp.gmail.com&#34; # &#39;your.domain.com&#39; for GoogleApps
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        authentication: :plain
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        user_name: &#34;email&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        password: &#34;email pw&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">     `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">5. 設定完畢後重啟生效
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>`<span style="color:#a5d6ff">`
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    sudo systemctl restart nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    `</span>``
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/120f7f2368b770899f5cacdc8344e61a" rel="noopener">redmine_email.md</a>（GitHub Gist）</p>
+<figure class="figure"><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-10.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-10_hu_9ebef6b0669a073c.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-10.webp 1147w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1147" height="488" alt="網站管理&gt;設定&gt;電子郵件提醒選項的右下角會有“寄送測試郵件的按鈕”提供測試喔" loading="lazy" decoding="async">
+  <figcaption>網站管理&gt;設定&gt;電子郵件提醒選項的右下角會有“寄送測試郵件的按鈕”提供測試喔</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-11.webp" srcset="/blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-11_hu_cef5e1601e4dc404.webp 720w, /blog/202102/redmine-installation-ubuntu/images/redmine-installation-ubuntu-11.webp 1262w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1262" height="484" alt="收到的測試郵件會長這個樣子" loading="lazy" decoding="async">
+  <figcaption>收到的測試郵件會長這個樣子</figcaption>
+</figure>
+
+<h2 id="三備註">三、備註<a class="h-anchor" href="#%e4%b8%89%e5%82%99%e8%a8%bb" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>如果進入網頁時畫面沒有顯示應該是因為防火牆問題，可以用下面指令嘗試：<code>sudo ufw allow http</code> 、<code>sudo ufw allow https</code></li>
+<li>參考資源：<a href="https://rickhw.github.io/2019/05/11/Redmine/Install-Redmine40x-on-Ubuntu1604/">Redmine 安裝篇：Redmine 4.0.x on Ubuntu 16.04</a>、<a href="https://rickhw.github.io/2017/03/18/Redmine/Redmine-Plugins/">Redmine Plugins and Themes</a>、<a href="https://www.redmine.org/projects/redmine/wiki/HowTo_Install_Redmine_on_Ubuntu_step_by_step">HowTo Install Redmine on Ubuntu step by step</a></li>
+</ol>
+<hr>
+<pre tabindex="0"><code>安裝完後如果想進一步了解如何使用 Redmine，可以參考以下文章：
+👍 如何用 Redmine 做專案管理＆體驗心得
+👍 Redmine Plugins &amp; Themes 介紹：那些我成功擴充的外掛
+👍 用 Redmine 做專案管理 — 管理者不可不知的設定
+👍 用 Redmine 做專案管理 — 一般用戶不可不知的基礎功能
+👍 Redmine 教育訓練 — 依角色權限說明
+</code></pre><hr>
+<h3 id="-讀完這篇文章後">🙂 讀完這篇文章後<a class="h-anchor" href="#-%e8%ae%80%e5%ae%8c%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0%e5%be%8c" aria-label="這個段落的連結"></a></h3>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2021.02.18）</span><a href="https://medium.com/dean-lin/redmine-%E8%B6%85%E8%A9%B3%E7%B4%B0%E5%AE%89%E8%A3%9D%E6%95%99%E5%AD%B8-redmine-4-1-1-on-ubuntu-16-04-ac0882b44a51" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/redmine/">Redmine</a>
+            <a class="chip chip-hash" href="/tags/project-management-tool/">Project Management Tool</a>
+            <a class="chip chip-hash" href="/tags/%E5%AE%89%E8%A3%9D%E6%95%99%E5%AD%B8/">安裝教學</a>
+            <a class="chip chip-hash" href="/tags/ubuntu-server/">Ubuntu Server</a>
+            <a class="chip chip-hash" href="/tags/%E5%B0%88%E6%A1%88%E7%AE%A1%E7%90%86/">專案管理</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202102%2Fredmine-installation-ubuntu%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202102%2Fredmine-installation-ubuntu%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202102/redmine-installation-ubuntu/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202102/redmine-installation-ubuntu/" data-title="Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/redmine/">Redmine 專案管理</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>1</b> 篇・共 6 篇</p>
+          </div>
+          <ol class="steps">
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">01</span><span>Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202102/redmine-project-management-review/"><span class="n">02</span><span>如何用 Redmine 做專案管理＆體驗心得</span></a>
+            </li>
+            <li>
+              <a href="/blog/202103/redmine-plugins-and-themes/"><span class="n">03</span><span>Redmine Plugins &amp; Themes 介紹：那些我成功安裝的外掛</span></a>
+            </li>
+            <li>
+              <a href="/blog/202103/redmine-admin-settings/"><span class="n">04</span><span>用 Redmine 做專案管理 — 管理者不可不知的設定</span></a>
+            </li>
+            <li>
+              <a href="/blog/202103/redmine-basics-for-users/"><span class="n">05</span><span>用 Redmine 做專案管理 — 一般用戶不可不知的基礎功能</span></a>
+            </li>
+            <li>
+              <a href="/blog/202103/redmine-training-by-role/"><span class="n">06</span><span>Redmine 教育訓練 — 依角色權限說明</span></a>
+            </li>
+          </ol>
+          <a class="sb-next" href="/blog/202102/redmine-project-management-review/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">如何用 Redmine 做專案管理＆體驗心得</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202102/are-you-valuable/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">你值錢嗎！有價值嗎？</span></a>
+          <a class="next" href="/blog/202102/redmine-project-management-review/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">如何用 Redmine 做專案管理＆體驗心得</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e5%ae%89%e8%a3%9d%e7%92%b0%e5%a2%83">一、安裝環境</a></li><li><a href="#%e4%ba%8c%e5%ae%89%e8%a3%9d%e9%a0%86%e5%ba%8f">二、安裝順序</a></li><li><a href="#step-1%e5%ae%89%e8%a3%9d-mysql">STEP 1：安裝 MySQL</a></li><li><a href="#step-2%e5%bb%ba%e7%ab%8b-redmine-%e4%bd%bf%e7%94%a8%e8%80%85%e5%b8%b3%e8%99%9f">STEP 2：建立 Redmine 使用者帳號</a></li><li><a href="#step-3%e5%ae%89%e8%a3%9d-rvm">STEP 3：安裝 RVM</a></li><li><a href="#step-4%e5%ae%89%e8%a3%9d-ruby">STEP 4：安裝 Ruby</a></li><li><a href="#step-5%e5%ae%89%e8%a3%9d-passenger-and-nginx">STEP 5：安裝 Passenger and Nginx</a></li><li><a href="#step-6%e8%a8%ad%e5%ae%9a-nginx">STEP 6：設定 Nginx</a></li><li><a href="#step-7%e5%9c%a8-mysql-%e5%a2%9e%e5%8a%a0-redmine-%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85">STEP 7：在 MySQL 增加 redmine 的使用者</a></li><li><a href="#step-8%e5%ae%89%e8%a3%9d-redmine">STEP 8：安裝 Redmine</a></li><li class="is-sub"><a href="#-%e4%b8%8b%e8%bc%89%e5%ae%98%e6%96%b9-image">➤ 下載官方 image</a></li><li class="is-sub"><a href="#-%e8%aa%bf%e6%95%b4-redmine-%e8%a3%a1%e9%9d%a2%e7%9a%84%e8%b3%87%e6%96%99%e5%ba%ab%e8%a8%ad%e5%ae%9a">➤ 調整 redmine 裡面的資料庫設定</a></li><li class="is-sub"><a href="#-%e4%b8%8b%e8%bc%89%e7%9b%b8%e9%97%9c%e5%a5%97%e4%bb%b6">➤ 下載相關套件</a></li><li class="is-sub"><a href="#-%e5%88%9d%e5%a7%8b%e5%8c%96-redmine">➤ 初始化 redmine</a></li><li><a href="#step-9%e5%ae%89%e8%a3%9d-redmine-%e5%a4%96%e6%8e%9b">STEP 9：安裝 Redmine 外掛</a></li><li><a href="#step-10%e8%a8%ad%e5%ae%9a-redmine-%e5%af%84%e4%bf%a1%e5%8a%9f%e8%83%bd">STEP 10：設定 Redmine 寄信功能</a></li><li><a href="#%e4%b8%89%e5%82%99%e8%a8%bb">三、備註</a></li><li class="is-sub"><a href="#-%e8%ae%80%e5%ae%8c%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0%e5%be%8c">🙂 讀完這篇文章後</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202102%2Fredmine-installation-ubuntu%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202102%2Fredmine-installation-ubuntu%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202102/redmine-installation-ubuntu/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202102/redmine-installation-ubuntu/" data-title="Redmine 超詳細安裝教學：Redmine 4.1.1 on Ubuntu 16.04" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202103/redmine-training-by-role/images/redmine-training-by-role-01_hu_e0c6a2170ef7719b.webp" srcset="/blog/202103/redmine-training-by-role/images/redmine-training-by-role-01_hu_23606ba38b2d5cda.webp 240w, /blog/202103/redmine-training-by-role/images/redmine-training-by-role-01_hu_72916baa1ad18c15.webp 480w, /blog/202103/redmine-training-by-role/images/redmine-training-by-role-01_hu_3e340c3b7e2732f6.webp 800w, /blog/202103/redmine-training-by-role/images/redmine-training-by-role-01_hu_e0c6a2170ef7719b.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/redmine/">Redmine 專案管理</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/redmine-training-by-role/">Redmine 教育訓練 — 依角色權限說明</a></h3>
+    <p class="card-desc">這篇是 Redmine 系列的最後一篇，把每個角色及操作要注意的細節整合起來，如果想把 Redmine 用來專案管理看這篇就非常夠了，本篇目標是讓專案中的三種角色(管理人員、開發人員、測試人員)了解如何使用這個系統。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-08">2021.03.08</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202103/redmine-basics-for-users/images/redmine-basics-for-users-01_hu_d9ba27bf17ae9e10.webp" srcset="/blog/202103/redmine-basics-for-users/images/redmine-basics-for-users-01_hu_5bc764fdf2f86329.webp 240w, /blog/202103/redmine-basics-for-users/images/redmine-basics-for-users-01_hu_9bfeed24178cf35f.webp 480w, /blog/202103/redmine-basics-for-users/images/redmine-basics-for-users-01_hu_d126c9622c6d799d.webp 800w, /blog/202103/redmine-basics-for-users/images/redmine-basics-for-users-01_hu_d9ba27bf17ae9e10.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/redmine/">Redmine 專案管理</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/redmine-basics-for-users/">用 Redmine 做專案管理 — 一般用戶不可不知的基礎功能</a></h3>
+    <p class="card-desc">了解基礎操作，其他細節的功能自己慢慢熟悉就可以了，這篇文章會分享讓專案順利運行的基礎功能。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-05">2021.03.05</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>2 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202103/redmine-admin-settings/images/redmine-admin-settings-01_hu_7e4e7a803c7db37e.webp" srcset="/blog/202103/redmine-admin-settings/images/redmine-admin-settings-01_hu_e5fbe5682cba7e66.webp 240w, /blog/202103/redmine-admin-settings/images/redmine-admin-settings-01_hu_984d2e0f686d6601.webp 480w, /blog/202103/redmine-admin-settings/images/redmine-admin-settings-01_hu_391893a6ce862912.webp 800w, /blog/202103/redmine-admin-settings/images/redmine-admin-settings-01_hu_7e4e7a803c7db37e.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/redmine/">Redmine 專案管理</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/redmine-admin-settings/">用 Redmine 做專案管理 — 管理者不可不知的設定</a></h3>
+    <p class="card-desc">Redmine 的功能非常多，尤其是管理者在專案創建初期需要做非常多細節的設定；對於專案成員來說他們只需依造管理員制訂的規範操作即可。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-03">2021.03.03</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202102/redmine-installation-ubuntu/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

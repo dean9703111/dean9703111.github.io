@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>高階函數｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/%E9%AB%98%E9%9A%8E%E5%87%BD%E6%95%B8/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Fri, 23 Sep 2022 18:06:00 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/%E9%AB%98%E9%9A%8E%E5%87%BD%E6%95%B8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈</title>
+      <link>https://deanlin.net/blog/202209/foreach-vs-for-loop/</link>
+      <pubDate>Fri, 23 Sep 2022 18:06:00 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202209/foreach-vs-for-loop/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。 但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。</description>
+      <content:encoded><![CDATA[<p>在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。</p>
+<p>但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。</p>
+<p><img src="https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-01.webp" width="1400" height="731" alt="forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="-別在-foreach-裡面使用-await">別在 forEach 裡面使用 await<a class="h-anchor" href="#-%e5%88%a5%e5%9c%a8-foreach-%e8%a3%a1%e9%9d%a2%e4%bd%bf%e7%94%a8-await" aria-label="這個段落的連結"></a></h2>
+<p>朋友想透過 forEach 去遍歷陣列，並希望在遍歷完畢後去做其他事情。我將他的程式結構縮減如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> arr <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">2</span>, <span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">4</span>];
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> waitOneSec <span style="color:#ff7b72;font-weight:bold">=</span> (val) =&gt;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">new</span> Promise((res, rej) =&gt; {
+</span></span><span style="display:flex;"><span>    setTimeout(() =&gt; {
+</span></span><span style="display:flex;"><span>      res(val);
+</span></span><span style="display:flex;"><span>    }, <span style="color:#a5d6ff">1000</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> test() {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;Start 🎬&#34;</span>);
+</span></span><span style="display:flex;"><span>  arr.forEach(<span style="color:#ff7b72">async</span> (val) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> res <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> waitOneSec(val);
+</span></span><span style="display:flex;"><span>    console.log(res);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;End 🔚&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>test();
+</span></span></code></pre></div><p>儘管在 forEach 裡面用了 await，但實際執行的結果卻不是直覺想的那樣；從下圖可以看到，<strong>在 forEcah 的 await 跑完前，「End 🔚」就先印出來了</strong>：</p>
+<p><img src="https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-02.webp" width="600" height="638" alt="別在 forEach 裡面使用 await（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>會出現這樣的結果，<code>是因為 forEach 本身不是 Promise</code>，forEach 只是將陣列的內容抽出來放入 callback function；假如你把 forEach 改成 map 也會遇到相同的問題。</p>
+</blockquote>
+<p>了解問題的成因後，我們可以採取最簡單暴力的方案，那就是改用 for 迴圈處理：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> arr <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">2</span>, <span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">4</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> waitOneSec <span style="color:#ff7b72;font-weight:bold">=</span> (val) =&gt;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">new</span> Promise((res, rej) =&gt; {
+</span></span><span style="display:flex;"><span>    setTimeout(() =&gt; {
+</span></span><span style="display:flex;"><span>      res(val);
+</span></span><span style="display:flex;"><span>    }, <span style="color:#a5d6ff">1000</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> test() {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;Start 🎬&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">let</span> i <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>; i <span style="color:#ff7b72;font-weight:bold">&lt;</span> arr.length; i<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> res <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> waitOneSec(arr[i]);
+</span></span><span style="display:flex;"><span>    console.log(res);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;End 🔚&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>test();
+</span></span></code></pre></div><p>從下圖可以看到，程式依照我們期待步驟的執行了：</p>
+<p><img src="https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-03.webp" width="600" height="638" alt="別在 forEach 裡面使用 await（圖 3）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>備註</strong>：有些人會自己寫一個函式（ex：asyncForEach），用 forEach 的寫法來跑 await，但兩者運行的觀念要搞清楚避免混淆，<a href="https://israynotarray.com/javascript/20211029/2739130728/">參考連結</a>。</p>
+</blockquote>
+<hr>
+<h2 id="-疑原來無法中斷-foreach-迴圈">疑！原來無法中斷 forEach 迴圈！<a class="h-anchor" href="#-%e7%96%91%e5%8e%9f%e4%be%86%e7%84%a1%e6%b3%95%e4%b8%ad%e6%96%b7-foreach-%e8%bf%b4%e5%9c%88" aria-label="這個段落的連結"></a></h2>
+<p>解決上面的問題後，筆者開始好奇 forEach 跟 for 迴圈還有什麼差異。</p>
+<p>在看過網路多篇文章後，我認為實務上比較有可能遇到的，應該是 <code>return</code> 無法中斷迴圈這件事。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> arr <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">2</span>, <span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">4</span>];
+</span></span><span style="display:flex;"><span>arr.forEach(<span style="color:#ff7b72">async</span> (val) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (val <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">3</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  console.log(val);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>在下圖中可以看到，就算我們設定在 3 的時候要 return，它還是會遍歷完整個陣列：</p>
+<p><img src="https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-04.webp" width="463" height="281" alt="疑！原來無法中斷 forEach 迴圈！（圖 4）" loading="lazy" decoding="async"></p>
+<p>但同樣的程式我們改成 for 迴圈，透過 break 就能中斷迴圈的執行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> arr <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">2</span>, <span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">4</span>];
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">var</span> i <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>; i <span style="color:#ff7b72;font-weight:bold">&lt;</span> arr.length; i<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (arr[i] <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">3</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">break</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  console.log(arr[i]);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-05.webp" width="463" height="213" alt="疑！原來無法中斷 forEach 迴圈！（圖 5）" loading="lazy" decoding="async"></p>
+<p>如果沒注意到這個細節，我想有些人會 Debug 到崩潰 😅</p>
+<p>今天這篇文章應該算是冷知識分享，也順便幫自己做個紀錄，希望有幫助到剛好遇到類似問題的朋友們 😃</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

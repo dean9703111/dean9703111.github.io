@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Programming｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/programming/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 19 Jan 2023 10:55:58 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/programming/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Jest 框架進階應用（describe、Setup and Teardown、Mock function）</title>
+      <link>https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/</link>
+      <pubDate>Thu, 19 Jan 2023 10:55:58 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>一個功能底下可能有很多函式，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。</description>
+      <content:encoded><![CDATA[<blockquote>
+<p><em>如</em>果你對 Jest 這個測試框架還一無所知，建議先看<a href="https://deanlin.net/blog/202301/jest-unit-testing-typescript/">上一篇文章</a>喔！</p>
+</blockquote>
+<p>一個功能底下可能有很多函式，如果測試程式沒有適當的區分，那在遇到錯誤時會難以管理，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。</p>
+<p><img src="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-01.webp" width="1150" height="597" alt="Jest 框架進階應用（describe、Setup and Teardown、Mock function）（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+一、測試分組（describe）
+二、在測試前、後要執行的任務（Setup and Teardown）
+三、用 Mock Function 減少測試時的相依性
+四、VSCode 的 Jest 外掛
+</code></pre><blockquote>
+<p>讀者可以直接到<a href="https://github.com/dean9703111/jest-typescript-starter/tree/master/jest-advanced">筆者的 Github </a>，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。</p>
+</blockquote>
+<h2 id="一測試分組describe">一、測試分組（describe）<a class="h-anchor" href="#%e4%b8%80%e6%b8%ac%e8%a9%a6%e5%88%86%e7%b5%84describe" aria-label="這個段落的連結"></a></h2>
+<p>比如今天我們設計一個計算機，裏面包含「加減乘除」等功能，如果要針對不同 function 做分組測試，我們可以這樣做：</p>
+<ul>
+<li><strong>calculator.ts</strong>：計算機基礎功能（加減乘除）。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> sum(a: <span style="color:#ff7b72">number</span>, b: <span style="color:#ff7b72">number</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">+</span> b;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> minus(a: <span style="color:#ff7b72">number</span>, b: <span style="color:#ff7b72">number</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">-</span> b;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> multiply(a: <span style="color:#ff7b72">number</span>, b: <span style="color:#ff7b72">number</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">*</span> b;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> divide(a: <span style="color:#ff7b72">number</span>, b: <span style="color:#ff7b72">number</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">/</span> b;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>calculator.test.ts</strong>：分組測試計算機基礎功能。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { sum, minus, multiply, divide } <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#34;./calculator&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;測試加法&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;1 + 1 = 2&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(sum(<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">1</span>)).toBe(<span style="color:#a5d6ff">2</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;3 + 3 = 7&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(sum(<span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">4</span>)).toBe(<span style="color:#a5d6ff">7</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;測試減法&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;5 - 1 = 4&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(minus(<span style="color:#a5d6ff">5</span>, <span style="color:#a5d6ff">1</span>)).toBe(<span style="color:#a5d6ff">4</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;3 - 3 = 0&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(minus(<span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">3</span>)).toBe(<span style="color:#a5d6ff">0</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;測試乘法&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;1 * 5 = 5&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(multiply(<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">5</span>)).toBe(<span style="color:#a5d6ff">5</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;3 * 3 = 9&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(multiply(<span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">3</span>)).toBe(<span style="color:#a5d6ff">9</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;測試除法&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;6 / 2 = 3&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(divide(<span style="color:#a5d6ff">6</span>, <span style="color:#a5d6ff">2</span>)).toBe(<span style="color:#a5d6ff">3</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;3 / 2 = 1.5&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(divide(<span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">2</span>)).toBe(<span style="color:#a5d6ff">1.5</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>運行測試指令 <code>npm run test</code>，順利的話就會看到下圖測試分組的結果嚕！</p>
+<p><img src="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-02.webp" width="946" height="1042" alt="一、測試分組（describe）（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="二在測試前後要執行的任務setup-and-teardown">二、在測試前、後要執行的任務（Setup and Teardown）<a class="h-anchor" href="#%e4%ba%8c%e5%9c%a8%e6%b8%ac%e8%a9%a6%e5%89%8d%e5%be%8c%e8%a6%81%e5%9f%b7%e8%a1%8c%e7%9a%84%e4%bb%bb%e5%8b%99setup-and-teardown" aria-label="這個段落的連結"></a></h2>
+<p>Jest 有提供 4 種函數：</p>
+<ul>
+<li><strong>beforeAll</strong>：在所有測試開始前執行。</li>
+<li><strong>afterAll</strong>：在所有測試完畢後執行。</li>
+<li><strong>beforeEach</strong>：在每個測試開始前執行。</li>
+<li><strong>afterEach</strong>：在每個測試結束後執行。</li>
+</ul>
+<p>舉個例子，如果今天要設計「考核系統」，除了有考生外，還需要模擬出「合格」、「不合格」的情境，為了避免影響到資料庫，我們可以這樣做：</p>
+<ul>
+<li><strong>user.ts</strong>：我們先預設的 score 的基準為 60 分，可透過 addScore、minusScore 來加減分。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">default</span> <span style="color:#ff7b72">class</span> user {
+</span></span><span style="display:flex;"><span>  name: <span style="color:#ff7b72">string</span>;
+</span></span><span style="display:flex;"><span>  score: <span style="color:#ff7b72">number</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">constructor</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.score <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">60</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  addScore() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.score <span style="color:#ff7b72;font-weight:bold">+=</span> <span style="color:#a5d6ff">10</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  minusScore() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">this</span>.score <span style="color:#ff7b72;font-weight:bold">-=</span> <span style="color:#a5d6ff">10</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>exam.test.ts</strong>：利用「beforeAll」將考生的資料初始化，並透過「beforeEach」將分組測試的分數重新校正（若少了這個動作，第二個測試會沿用上一個測試的結果，會變成 70–10=60 分），測試完畢後用「afterAll」將考生資料清空。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> user <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#34;./user&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> userDB: <span style="color:#ff7b72">user</span>[] <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> insertTestData <span style="color:#ff7b72;font-weight:bold">=</span> (name: <span style="color:#ff7b72">string</span>) <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> User <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> user();
+</span></span><span style="display:flex;"><span>  User.name <span style="color:#ff7b72;font-weight:bold">=</span> name;
+</span></span><span style="display:flex;"><span>  userDB.push(User);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> clearTestData <span style="color:#ff7b72;font-weight:bold">=</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  userDB.length <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>beforeAll(() <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  insertTestData(<span style="color:#a5d6ff">&#34;baobao&#34;</span>);
+</span></span><span style="display:flex;"><span>  insertTestData(<span style="color:#a5d6ff">&#34;mochi&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;baoboa 分數計算&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  beforeEach(() <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">0</span>].score <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">60</span>;
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;60 + 10 為 70 分&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">0</span>].addScore();
+</span></span><span style="display:flex;"><span>    expect(userDB[<span style="color:#a5d6ff">0</span>].score).toBe(<span style="color:#a5d6ff">70</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;60 - 10 為 50 分&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">0</span>].minusScore();
+</span></span><span style="display:flex;"><span>    expect(userDB[<span style="color:#a5d6ff">0</span>].score).toBe(<span style="color:#a5d6ff">50</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;mochi 分數計算&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  beforeEach(() <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">1</span>].score <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">60</span>;
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;60 + 10 為 70 分&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">1</span>].addScore();
+</span></span><span style="display:flex;"><span>    expect(userDB[<span style="color:#a5d6ff">1</span>].score).toBe(<span style="color:#a5d6ff">70</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  test(<span style="color:#a5d6ff">&#34;60 - 10 為 50 分&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    userDB[<span style="color:#a5d6ff">1</span>].minusScore();
+</span></span><span style="display:flex;"><span>    expect(userDB[<span style="color:#a5d6ff">1</span>].score).toBe(<span style="color:#a5d6ff">50</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>afterAll(() <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  clearTestData();
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>這邊補充說明一下，運行單個測試檔案的指令為： <code>npm run test -t path/user.test.ts</code>。</p>
+<p>如果運行順利，就會看到下圖的測試結果嚕！</p>
+<p><img src="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-03.webp" width="1232" height="624" alt="二、在測試前、後要執行的任務（Setup and Teardown）（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="三用-mock-function-減少測試時的相依性">三、用 Mock Function 減少測試時的相依性<a class="h-anchor" href="#%e4%b8%89%e7%94%a8-mock-function-%e6%b8%9b%e5%b0%91%e6%b8%ac%e8%a9%a6%e6%99%82%e7%9a%84%e7%9b%b8%e4%be%9d%e6%80%a7" aria-label="這個段落的連結"></a></h2>
+<p>單元測試時，我們更關心「單一功能」的正確與否；如果一個單元測試涵蓋太多函式，那在發生錯誤時，我們很難判斷到底是哪一段發生錯誤。</p>
+<ul>
+<li><strong>fetch.js</strong>：我們透過「fetchData」呼叫外部 api，而「hideComplete」是設計用來隱藏已完成的 todos。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> axios <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#34;axios&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> fetchData() {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> response <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> axios.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">`https://jsonplaceholder.typicode.com/todos`</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> response;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> hideComplete(data) {
+</span></span><span style="display:flex;"><span>  data <span style="color:#ff7b72;font-weight:bold">=</span> data.filter(<span style="color:#ff7b72">function</span> (value<span style="color:#ff7b72;font-weight:bold">:</span> { completed: <span style="color:#ff7b72">boolean</span> }) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> value.completed <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">false</span>;
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> data;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>fetch.test.js</strong>：為了減少相依性，我們不希望直接呼叫真實的 api，所以透過 <code>jest.mock</code> 將 axios 給 mock 起來；並透過 3 種情境測試：「有成功換成模擬資料、資料格式符合預期、獨立測試 hideComplete 函式」。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { fetchData, hideComplete } from <span style="color:#a5d6ff">&#34;./fetch&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> axios from <span style="color:#a5d6ff">&#34;axios&#34;</span>;
+</span></span><span style="display:flex;"><span>jest.mock(<span style="color:#a5d6ff">&#34;axios&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> mockedAxios <span style="color:#ff7b72;font-weight:bold">=</span> axios as jest.Mocked<span style="color:#ff7b72;font-weight:bold">&lt;</span><span style="color:#ff7b72">typeof</span> axios<span style="color:#ff7b72;font-weight:bold">&gt;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 模擬我們期望收到的資料結構
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> data <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    userId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,
+</span></span><span style="display:flex;"><span>    id<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,
+</span></span><span style="display:flex;"><span>    title<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;task 1&#34;</span>,
+</span></span><span style="display:flex;"><span>    completed<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">false</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    userId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">2</span>,
+</span></span><span style="display:flex;"><span>    id<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">2</span>,
+</span></span><span style="display:flex;"><span>    title<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;task 2&#34;</span>,
+</span></span><span style="display:flex;"><span>    completed<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#34;確認結果被替換成模擬資料&#34;</span>, <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  mockedAxios.get.mockResolvedValue(data);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> result <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> fetchData();
+</span></span><span style="display:flex;"><span>  expect(result).toEqual(data);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#34;驗證資料格式&#34;</span>, <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  mockedAxios.get.mockResolvedValue(data);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> result <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> fetchData();
+</span></span><span style="display:flex;"><span>  expect(<span style="color:#ff7b72">typeof</span> result[<span style="color:#a5d6ff">0</span>].userId).toBe(<span style="color:#a5d6ff">&#34;number&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(<span style="color:#ff7b72">typeof</span> result[<span style="color:#a5d6ff">0</span>].id).toBe(<span style="color:#a5d6ff">&#34;number&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(<span style="color:#ff7b72">typeof</span> result[<span style="color:#a5d6ff">0</span>].title).toBe(<span style="color:#a5d6ff">&#34;string&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(<span style="color:#ff7b72">typeof</span> result[<span style="color:#a5d6ff">0</span>].completed).toBe(<span style="color:#a5d6ff">&#34;boolean&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#34;測試 hideComplete 函式運作&#34;</span>, <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  mockedAxios.get.mockResolvedValue(data);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">let</span> result <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> fetchData();
+</span></span><span style="display:flex;"><span>  result <span style="color:#ff7b72;font-weight:bold">=</span> hideComplete(result);
+</span></span><span style="display:flex;"><span>  expect(result[<span style="color:#a5d6ff">0</span>].completed).toBe(<span style="color:#79c0ff">false</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>輸入<code>npm run test -t path/user.test.ts</code>後，如果順利就會看到下圖的測試結果嚕！</p>
+<p><img src="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-04.webp" width="1256" height="616" alt="三、用 Mock Function 減少測試時的相依性（圖 4）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="四vscode-的-jest-外掛">四、VSCode 的 Jest 外掛<a class="h-anchor" href="#%e5%9b%9bvscode-%e7%9a%84-jest-%e5%a4%96%e6%8e%9b" aria-label="這個段落的連結"></a></h2>
+<p>每新增一個測試就要跑一次 <code>npm run test</code> 是不是很煩？如果想獨立測試某個檔案還要先確認文件路徑真的讓人心累 😨</p>
+<p>但好在 VSCode 有「<a href="https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest">Jest</a>」這個 Extensions 讓我們事半功倍。</p>
+<p><img src="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-05.webp" width="1400" height="480" alt="四、VSCode 的 Jest 外掛（圖 5）" loading="lazy" decoding="async"></p>
+<p>安裝完成後，VSCode 的左側會多出一個「Testing」的 icon，只要你在專案下有設定 <code>jest.config.js</code> 就會出現（如果還未設定可以參考<a href="https://deanlin.net/blog/202301/jest-unit-testing-typescript/">上一篇文章</a>）。</p>
+<p><img src="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-06.webp" width="1400" height="615" alt="四、VSCode 的 Jest 外掛（圖 6）" loading="lazy" decoding="async"></p>
+<p>在 test 文檔左側即可看到測試成功的「v」與失敗的「x」。</p>
+<p><img src="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-07.webp" width="1048" height="462" alt="四、VSCode 的 Jest 外掛（圖 7）" loading="lazy" decoding="async"></p>
+<p>失敗的測試會在 expect 下方出現紅色底線，滑鼠移過去就會顯示預期值（Expected）與接收值（Received）的差異。</p>
+<p><img src="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-08.webp" width="1400" height="641" alt="四、VSCode 的 Jest 外掛（圖 8）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>備註</strong>：身邊有朋友在安裝外掛後遇到了一些奇怪的 Error 無法正常使用，重開 VSCode、看官方文檔怎麼調整都無用，最後用大絕「重新開機」就正常了</p>
+</blockquote>
+<hr>
+<p>常用的 Jest 應用就介紹到這邊，真的要自己動手實驗過才會理解裏面的原理喔！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/2680ca82395e" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">單元測試系列文</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-card-01_hu_ef2384f40f02a8f4.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>認識 Jest 測試框架，開始動手寫單元測試（TypeScript）</title>
+      <link>https://deanlin.net/blog/202301/jest-unit-testing-typescript/</link>
+      <pubDate>Thu, 19 Jan 2023 10:55:37 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/jest-unit-testing-typescript/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>這篇文章會從建立專案開始，依序帶你了解需要設定的環境、單元測試的結構，接著帶你完成第一個單元測試。 在對單元測試有基礎的概念後，會透過實際的範例讓你了解不同匹配器（Matchers）的使用時機，話不多說，我們直接開始吧！</description>
+      <content:encoded><![CDATA[<blockquote>
+<p>如果你還在猶豫是否學習測試框架，不妨先看看筆者在<a href="https://deanlin.net/blog/202301/frontend-testing-roadmap/">上一篇文章</a>的分享喔！</p>
+</blockquote>
+<p>這篇文章會從建立專案開始，依序帶你了解需要設定的環境、單元測試的結構，接著帶你完成第一個單元測試。</p>
+<p>在對單元測試有基礎的概念後，會透過實際的範例讓你了解不同匹配器（Matchers）的使用時機，話不多說，我們直接開始吧！</p>
+<p><img src="https://deanlin.net/blog/202301/jest-unit-testing-typescript/images/jest-unit-testing-typescript-01.webp" width="1147" height="599" alt="認識 Jest 測試框架，開始動手寫單元測試（TypeScript）（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+一、初始化專案、設定測試環境
+二、了解單元測試的結構，撰寫程式
+三、了解 Jest 常用的匹配器（Matchers）
+</code></pre><blockquote>
+<p>讀者可以直接到<a href="https://github.com/dean9703111/jest-typescript-starter/tree/master/jest-basic">筆者的 Github</a> ，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。</p>
+</blockquote>
+<h2 id="一初始化專案設定測試環境">一、初始化專案、設定測試環境<a class="h-anchor" href="#%e4%b8%80%e5%88%9d%e5%a7%8b%e5%8c%96%e5%b0%88%e6%a1%88%e8%a8%ad%e5%ae%9a%e6%b8%ac%e8%a9%a6%e7%92%b0%e5%a2%83" aria-label="這個段落的連結"></a></h2>
+<p><strong>SETP 1</strong>：初始化專案＆安裝 Jest。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir jest-practice
+</span></span><span style="display:flex;"><span>cd jest-practice
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>npm init -f
+</span></span><span style="display:flex;"><span>npm install jest babel-jest ts-jest @types/jest
+</span></span></code></pre></div><p><strong>SETP 2</strong>：進入「package.json」增加測試用 scripts。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f85149">...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;scripts&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;test&#34;</span>: <span style="color:#a5d6ff">&#34;jest&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#f85149">...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>SETP 3</strong>：在根目錄下新增「jest.config.ts」。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>module.exports <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  transform<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#39;^.+\\.tsx?$&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;ts-jest&#39;</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  moduleFileExtensions<span style="color:#ff7b72;font-weight:bold">:</span> [<span style="color:#a5d6ff">&#39;ts&#39;</span>],
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p><strong>SETP 4</strong>：在根目錄下新增「tsconfig.json」。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;compilerOptions&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;esModuleInterop&#34;</span>: <span style="color:#79c0ff">true</span>,
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 id="二了解單元測試的結構撰寫程式">二、了解單元測試的結構，撰寫程式<a class="h-anchor" href="#%e4%ba%8c%e4%ba%86%e8%a7%a3%e5%96%ae%e5%85%83%e6%b8%ac%e8%a9%a6%e7%9a%84%e7%b5%90%e6%a7%8b%e6%92%b0%e5%af%ab%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>我們就用最簡單的「加法」來做說明：<code>a + b = c</code></p>
+<p>如果把加法寫成單元測試，可以拆解成下面的結構：</p>
+<ul>
+<li><strong>測試的目標</strong>：我們要證明 <code>a + b = c</code>。</li>
+<li><strong>要測試的 function</strong>：要測試 <code>sum</code> 這個 function。</li>
+<li><strong>測試期待的結果</strong>：確認 sum 執行 <code>a + b</code> 的結果等於 <code>c</code>。</li>
+</ul>
+<p><strong>SETP 1</strong>：在專案下新增兩個檔案</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 放測試的 function</span>
+</span></span><span style="display:flex;"><span>touch public.ts
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 測試的腳本</span>
+</span></span><span style="display:flex;"><span>touch public.test.ts
+</span></span></code></pre></div><p><strong>SETP 2</strong>：在 public.ts 撰寫 <code>sum</code> 這個 function，並於 public.test.ts 用測試程式來驗證他。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// public.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">function</span> sum (a: <span style="color:#ff7b72">number</span> ,b: <span style="color:#ff7b72">number</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">+</span> b;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// public.test.ts
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { sum } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">require</span>(<span style="color:#a5d6ff">&#39;./public&#39;</span>);
+</span></span><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#39;測試 8 + 9 等於 17&#39;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(sum(<span style="color:#a5d6ff">8</span>, <span style="color:#a5d6ff">9</span>)).toBe(<span style="color:#a5d6ff">17</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p><strong>SETP 3</strong>：運行測試指令 <code>npm run test</code> ，如果順利就會看到下圖的結果：</p>
+<p><img src="https://deanlin.net/blog/202301/jest-unit-testing-typescript/images/jest-unit-testing-typescript-02.webp" width="694" height="520" alt="二、了解單元測試的結構，撰寫程式（圖 2）" loading="lazy" decoding="async"></p>
+<p>最後我們再來回顧一下先前提到的結構：</p>
+<ul>
+<li><strong>測試的目標</strong>：test(<code>測試 8 + 9 等於 17</code>, () =&gt; {});</li>
+<li><strong>要測試的 function</strong>：<code>sum(8, 9)</code></li>
+<li><strong>測試期待的結果</strong>：expect(sum(8, 9)).toBe(<code>17</code>);</li>
+</ul>
+<hr>
+<h2 id="三了解-jest-常用的匹配器matchers">三、了解 Jest 常用的匹配器（Matchers）<a class="h-anchor" href="#%e4%b8%89%e4%ba%86%e8%a7%a3-jest-%e5%b8%b8%e7%94%a8%e7%9a%84%e5%8c%b9%e9%85%8d%e5%99%a8matchers" aria-label="這個段落的連結"></a></h2>
+<p>匹配器（Matchers）是讓我們驗證執行結果是否符合預期的工具，下面筆者放上幾個常用的範例。</p>
+<ul>
+<li>toBe：最常用的匹配器。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#39;toBe 匹配器其實能取代許多 Matcher&#39;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    expect(<span style="color:#a5d6ff">1</span> <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">2</span>).toBe(<span style="color:#a5d6ff">3</span>);
+</span></span><span style="display:flex;"><span>    expect(<span style="color:#79c0ff">null</span>).toBe(<span style="color:#79c0ff">null</span>);
+</span></span><span style="display:flex;"><span>    expect(<span style="color:#79c0ff">null</span>).toBeNull();
+</span></span><span style="display:flex;"><span>    expect(<span style="color:#79c0ff">undefined</span>).toBe(<span style="color:#79c0ff">undefined</span>);
+</span></span><span style="display:flex;"><span>    expect(<span style="color:#79c0ff">undefined</span>).toBeUndefined();
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><ul>
+<li>toEqual：如果要物件（object）間的比對可以使用它。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#39;toEqual 主要是比對物件&#39;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> data <span style="color:#ff7b72;font-weight:bold">=</span> { one: <span style="color:#ff7b72">1</span> };
+</span></span><span style="display:flex;"><span>    data[<span style="color:#a5d6ff">&#39;two&#39;</span>] <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">2</span>;
+</span></span><span style="display:flex;"><span>    expect(data).toEqual({ one: <span style="color:#ff7b72">1</span>, two: <span style="color:#ff7b72">2</span> });
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><ul>
+<li>toBeCloseTo：應用在小數點的計算。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#39;小數點相加&#39;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> value <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0.1</span> <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">0.2</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 有小數點的請使用 toBeCloseTo，否則會有 rounding error
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// expect(value).toBe(0.3);
+</span></span></span><span style="display:flex;"><span>    expect(value).toBeCloseTo(<span style="color:#a5d6ff">0.3</span>); <span style="color:#8b949e;font-style:italic">// This works.
+</span></span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><ul>
+<li>toMatch：字串比對。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#39;透過 toMatch 確認「stop」是否存在於字串&#39;</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>    expect(<span style="color:#a5d6ff">&#39;Christoph&#39;</span>).toMatch(<span style="color:#79c0ff">/stop/</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><ul>
+<li>toContain：確認「值」是否存在於陣列。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#39;toContain 會透過迭代來確認陣列是否存在某值&#39;</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> shoppingList <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#39;diapers&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#39;kleenex&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#39;trash bags&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#39;paper towels&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#39;milk&#39;</span>,
+</span></span><span style="display:flex;"><span>    ];
+</span></span><span style="display:flex;"><span>    expect(shoppingList).toContain(<span style="color:#a5d6ff">&#39;milk&#39;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><ul>
+<li>toThrow：確認吐出的錯誤訊息是否符合期待。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>test(<span style="color:#a5d6ff">&#39;toThrow 可以用來檢核錯誤訊息&#39;</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>    expect(() =&gt; doSomething()).toThrow();
+</span></span><span style="display:flex;"><span>    expect(() =&gt; doSomething()).toThrow(Error);
+</span></span><span style="display:flex;"><span>    expect(() =&gt; doSomething()).toThrow(<span style="color:#a5d6ff">&#39;Something wrong&#39;</span>);
+</span></span><span style="display:flex;"><span>    expect(() =&gt; doSomething()).toThrow(<span style="color:#79c0ff">/wrong/</span>);
+</span></span><span style="display:flex;"><span>    expect(() =&gt; doSomething()).toThrow(<span style="color:#79c0ff">/^Something wrong!$/</span>);<span style="color:#8b949e;font-style:italic">// 若要求完全相同
+</span></span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>以上是 Jest 測試框架的入門應用，如果想更深入的了解，可以參考筆者的文章： <a href="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/">Jest 框架進階應用（describe、Setup and Teardown、Mock function）</a></p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/2680ca82395e" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">單元測試系列文</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/jest-unit-testing-typescript/images/jest-unit-testing-typescript-card-01_hu_ef2384f40f02a8f4.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

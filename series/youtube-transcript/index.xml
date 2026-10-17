@@ -1,0 +1,823 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>YouTube 影片轉逐字稿｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/series/youtube-transcript/</link>
+    <description>請 ChatGPT 帶你用 Python 下載 YouTube 音檔，再用 Whisper 轉成逐字稿、用 GPT 產生摘要。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 03 Apr 2023 16:56:33 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/series/youtube-transcript/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>用 Python 搭配 OpenAI 的 GPT、Whisper API 取得 Youtube 影片摘要</title>
+      <link>https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/</link>
+      <pubDate>Mon, 03 Apr 2023 16:56:33 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>如果追求點擊率、按讚數，我應該要用「工程師要失業了！靠 ChatGPT 就能寫出取得 Youtube 影片摘要的程式！」來當標題。但現在還是有不少 ChatGPT 無法解決的問題。這篇文章會用範例讓讀者理解 ChatGPT 在寫程式上的侷限，以及適合使用的場景。</description>
+      <content:encoded><![CDATA[<p>如果追求點擊率、按讚數，我應該要用「工程師要失業了！靠 ChatGPT 就能寫出取得 Youtube 影片摘要的程式！」來當標題。</p>
+<p>也許隨著 AI 持續發展，這個標題在未來真的可以實現，但並不是現在。</p>
+<p>儘管 ChatGPT 的出現，讓寫程式的門檻大幅降低；但現在還是有不少 ChatGPT 無法解決，或是解決不好的問題。</p>
+<p>這篇文章會用範例讓讀者理解 ChatGPT 在寫程式上的侷限，以及適合使用的場景。</p>
+<p><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-01.webp" width="1143" height="632" alt="用 Python 搭配 OpenAI 的 GPT、Whisper API 取得 Youtube 影片摘要（圖 1）" loading="lazy" decoding="async"></p>
+<p><a href="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/">在前面的文章中</a>，筆者已經實現用 Python 將 Youtube 影片轉逐字稿。</p>
+<p>而在這篇文章，我將導入 OpenAI 的 GPT API，請他幫我們整理逐字稿，並取得影片摘要。</p>
+<blockquote class="pullquote"><p>提醒大家，不要未經授權下載有版權保護的影片喔！</p>
+</blockquote>
+<h2 id="導入-openai-的-gpt-api提升逐字稿可讀性">導入 OpenAI 的 GPT API，提升逐字稿可讀性<a class="h-anchor" href="#%e5%b0%8e%e5%85%a5-openai-%e7%9a%84-gpt-api%e6%8f%90%e5%8d%87%e9%80%90%e5%ad%97%e7%a8%bf%e5%8f%af%e8%ae%80%e6%80%a7" aria-label="這個段落的連結"></a></h2>
+<p>😀：「下面是我用 Python 寫的 Youtube 影片轉成逐字稿的程式，我想要在這個基礎上擴充功能，我在後續的對話中會提出自己的需求，請問你可以幫忙嗎？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">openai</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 切割音檔成多個小檔案</span>
+</span></span><span style="display:flex;"><span>chunk_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">100</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>  <span style="color:#8b949e;font-style:italic"># 100 秒</span>
+</span></span><span style="display:flex;"><span>chunks <span style="color:#ff7b72;font-weight:bold">=</span> [audio_file[i:i<span style="color:#ff7b72;font-weight:bold">+</span>chunk_size] <span style="color:#ff7b72">for</span> i <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">0</span>, len(audio_file), chunk_size)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 使用 OpenAI 的 Audio API 將每個小檔案轉成文字，然後合併在一起</span>
+</span></span><span style="display:flex;"><span>openai<span style="color:#ff7b72;font-weight:bold">.</span>api_key <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;YOUR_API_KEY&#34;</span>
+</span></span><span style="display:flex;"><span>transcript <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> chunk <span style="color:#ff7b72;font-weight:bold">in</span> chunks:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">with</span> chunk<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;temp.wav&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;wav&#34;</span>) <span style="color:#ff7b72">as</span> f:
+</span></span><span style="display:flex;"><span>        result <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>Audio<span style="color:#ff7b72;font-weight:bold">.</span>transcribe(<span style="color:#a5d6ff">&#34;whisper-1&#34;</span>, f)
+</span></span><span style="display:flex;"><span>        transcript <span style="color:#ff7b72;font-weight:bold">+=</span> result[<span style="color:#a5d6ff">&#34;text&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 印出轉換後的文字</span>
+</span></span><span style="display:flex;"><span>print(transcript)
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-02.webp" width="1013" height="238" alt="導入 OpenAI 的 GPT API，提升逐字稿可讀性（圖 2）" loading="lazy" decoding="async"></p>
+<p>因為 ChatGPT 的資料截止於 2021 年 9 月，此時的他對於未來世界並不了解，所以我們需要去官方找範例程式，請他協助合併。</p>
+<p>這邊我們使用的是 OpenAI 的 Chat 功能：<a href="https://platform.openai.com/docs/api-reference/chat">https://platform.openai.com/docs/api-reference/chat</a></p>
+<p>😀：「我找到了一個可以整理逐字稿的套件，官方範例如下，我希望將最後的結果印出來，要如何將他與我現在的程式結合呢？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">os</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">openai</span>
+</span></span><span style="display:flex;"><span>openai<span style="color:#ff7b72;font-weight:bold">.</span>api_key <span style="color:#ff7b72;font-weight:bold">=</span> os<span style="color:#ff7b72;font-weight:bold">.</span>getenv(<span style="color:#a5d6ff">&#34;OPENAI_API_KEY&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>completion <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>ChatCompletion<span style="color:#ff7b72;font-weight:bold">.</span>create(
+</span></span><span style="display:flex;"><span>  model<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;gpt-3.5-turbo&#34;</span>,
+</span></span><span style="display:flex;"><span>  messages<span style="color:#ff7b72;font-weight:bold">=</span>[
+</span></span><span style="display:flex;"><span>    {<span style="color:#a5d6ff">&#34;role&#34;</span>: <span style="color:#a5d6ff">&#34;user&#34;</span>, <span style="color:#a5d6ff">&#34;content&#34;</span>: <span style="color:#a5d6ff">&#34;Hello!&#34;</span>}
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(completion<span style="color:#ff7b72;font-weight:bold">.</span>choices[<span style="color:#a5d6ff">0</span>]<span style="color:#ff7b72;font-weight:bold">.</span>message)
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-03.webp" width="888" height="666" alt="導入 OpenAI 的 GPT API，提升逐字稿可讀性（圖 3）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-04.webp" width="888" height="657" alt="導入 OpenAI 的 GPT API，提升逐字稿可讀性（圖 4）" loading="lazy" decoding="async"></p>
+<p>前面幾篇文章中，我們靠 ChatGPT 就能順利完成專案；但在這篇文章中，<strong>如果你缺乏程式的開發經驗就可能會卡很久</strong>。</p>
+<p>首先，<strong>你有沒有發現 ChatGPT 根本不是使用我們提供的官方範例程式！</strong>如果你嘗試跑起來會出現各式各樣的錯誤：</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-05.webp" width="1400" height="353" alt="這個錯誤是因為他擅自把模型從 gpt-3.5-turbo 改為 davinci 所造成的" loading="lazy" decoding="async">
+  <figcaption>這個錯誤是因為他擅自把模型從 gpt-3.5-turbo 改為 davinci 所造成的</figcaption>
+</figure>
+
+<p>儘管筆者使用多種方式來調教他，最終也成功試出能夠讓 ChatGPT 吐出正確回應的指令，<strong>但這個指令不具有參考價值，因為我必須描述得非常詳細，如果使用方式太過複雜，那就不是一個值得分享的使用方式</strong>。</p>
+<p>所以筆者還是靠自己整合出一個版本：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">openai</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 切割音檔成多個小檔案</span>
+</span></span><span style="display:flex;"><span>chunk_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">100</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>  <span style="color:#8b949e;font-style:italic"># 100 秒</span>
+</span></span><span style="display:flex;"><span>chunks <span style="color:#ff7b72;font-weight:bold">=</span> [audio_file[i:i<span style="color:#ff7b72;font-weight:bold">+</span>chunk_size] <span style="color:#ff7b72">for</span> i <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">0</span>, len(audio_file), chunk_size)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 使用 OpenAI 的 Audio API 將每個小檔案轉成文字，然後合併在一起</span>
+</span></span><span style="display:flex;"><span>openai<span style="color:#ff7b72;font-weight:bold">.</span>api_key <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;YOUR_API_KEY&#34;</span>
+</span></span><span style="display:flex;"><span>transcript <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> chunk <span style="color:#ff7b72;font-weight:bold">in</span> chunks:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">with</span> chunk<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;temp.wav&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;wav&#34;</span>) <span style="color:#ff7b72">as</span> f:
+</span></span><span style="display:flex;"><span>        result <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>Audio<span style="color:#ff7b72;font-weight:bold">.</span>transcribe(<span style="color:#a5d6ff">&#34;whisper-1&#34;</span>, f)
+</span></span><span style="display:flex;"><span>        transcript <span style="color:#ff7b72;font-weight:bold">+=</span> result[<span style="color:#a5d6ff">&#34;text&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 整理逐字稿</span>
+</span></span><span style="display:flex;"><span>completion <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>ChatCompletion<span style="color:#ff7b72;font-weight:bold">.</span>create(
+</span></span><span style="display:flex;"><span>  model<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;gpt-3.5-turbo&#34;</span>,
+</span></span><span style="display:flex;"><span>  messages<span style="color:#ff7b72;font-weight:bold">=</span>[
+</span></span><span style="display:flex;"><span>    {<span style="color:#a5d6ff">&#34;role&#34;</span>: <span style="color:#a5d6ff">&#34;user&#34;</span>, <span style="color:#a5d6ff">&#34;content&#34;</span>: <span style="color:#a5d6ff">&#34;使用繁體中文閱讀，幫我改錯字、加標點符號，並分段使內容更通順：</span><span style="color:#79c0ff">\n</span><span style="color:#a5d6ff">&#34;</span><span style="color:#ff7b72;font-weight:bold">+</span>transcript}
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 印出整理後的文字</span>
+</span></span><span style="display:flex;"><span>print(completion<span style="color:#ff7b72;font-weight:bold">.</span>choices[<span style="color:#a5d6ff">0</span>]<span style="color:#ff7b72;font-weight:bold">.</span>message<span style="color:#ff7b72;font-weight:bold">.</span>content)
+</span></span></code></pre></div><p>STEP 1：安裝相關 Python 套件，<code>pip install pytube pydub openai</code></p>
+<p>STEP 2：建立一個<code>youtube-summary.py</code>的檔案，貼上 ChatGPT 的程式。</p>
+<p>STEP 3：在終端機輸入<code>python youtube-summary.py</code>，然後稍等一段時間&hellip;就會看到成果啦！</p>
+<p><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-06.webp" width="1400" height="614" alt="導入 OpenAI 的 GPT API，提升逐字稿可讀性（圖 6）" loading="lazy" decoding="async"></p>
+<p>表面上看起來整理得挺不錯，但仔細看會發現結尾突然斷掉了，這是為什麼呢？</p>
+<p>這邊用 OpenAI 官方文件比較好說明，每個 GPT 模型都有自己的 <code>max_tokens</code>，我們選用的 <code>gpt-3.5-turbo</code> 最高上限是 4096。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-07.webp" width="1400" height="1231" alt="https://platform.openai.com/docs/models/gpt-3.5" loading="lazy" decoding="async">
+  <figcaption><a href="https://platform.openai.com/docs/models/gpt-3.5">https://platform.openai.com/docs/models/gpt-3.5</a></figcaption>
+</figure>
+
+<p>所以截斷的原因就是我們的 prompt 太長了，這邊跟大家科普一下，所謂 prompt 長度就是我們傳入的逐字稿長度。</p>
+<p>而中文跟英文計算 Token 的方式也不盡相同，如果使用英文，1000 個 tokens 大約等於 750 個單字；但如果使用中文，1000 個 tokens 大約只有 400 字。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-08.webp" width="1400" height="1132" alt="https://platform.openai.com/tokenizer" loading="lazy" decoding="async">
+  <figcaption><a href="https://platform.openai.com/tokenizer">https://platform.openai.com/tokenizer</a></figcaption>
+</figure>
+
+<p>上面是補充說明，讓我們回到原本的話題，我們要如何讓逐字稿完整的被整理，不要被截斷呢？</p>
+<p>最直覺的做法就是將逐字稿「分段」傳送過去，4096 的 token 換算成中文大約 1600 字，我們保守一點，用「1200」的長度來做分割，下面是整理好的程式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">openai</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 切割音檔成多個小檔案</span>
+</span></span><span style="display:flex;"><span>chunk_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">100</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>  <span style="color:#8b949e;font-style:italic"># 100 秒</span>
+</span></span><span style="display:flex;"><span>chunks <span style="color:#ff7b72;font-weight:bold">=</span> [audio_file[i:i<span style="color:#ff7b72;font-weight:bold">+</span>chunk_size] <span style="color:#ff7b72">for</span> i <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">0</span>, len(audio_file), chunk_size)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 使用 OpenAI 的 Audio API 將每個小檔案轉成文字，然後合併在一起</span>
+</span></span><span style="display:flex;"><span>openai<span style="color:#ff7b72;font-weight:bold">.</span>api_key <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;YOUR_API_KEY&#34;</span>
+</span></span><span style="display:flex;"><span>transcript <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> chunk <span style="color:#ff7b72;font-weight:bold">in</span> chunks:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">with</span> chunk<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;temp.wav&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;wav&#34;</span>) <span style="color:#ff7b72">as</span> f:
+</span></span><span style="display:flex;"><span>        result <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>Audio<span style="color:#ff7b72;font-weight:bold">.</span>transcribe(<span style="color:#a5d6ff">&#34;whisper-1&#34;</span>, f)
+</span></span><span style="display:flex;"><span>        transcript <span style="color:#ff7b72;font-weight:bold">+=</span> result[<span style="color:#a5d6ff">&#34;text&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 依照我們指定的長度分割字串</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">def</span> <span style="color:#d2a8ff;font-weight:bold">split_text</span>(text, max_length):
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> [text[i:i<span style="color:#ff7b72;font-weight:bold">+</span>max_length] <span style="color:#ff7b72">for</span> i <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">0</span>, len(text), max_length)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 整理逐字稿</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">def</span> <span style="color:#d2a8ff;font-weight:bold">process_text</span>(text):
+</span></span><span style="display:flex;"><span>    response <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>ChatCompletion<span style="color:#ff7b72;font-weight:bold">.</span>create(
+</span></span><span style="display:flex;"><span>        model<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;gpt-3.5-turbo&#34;</span>,
+</span></span><span style="display:flex;"><span>        messages<span style="color:#ff7b72;font-weight:bold">=</span>[
+</span></span><span style="display:flex;"><span>            {<span style="color:#a5d6ff">&#34;role&#34;</span>: <span style="color:#a5d6ff">&#34;system&#34;</span>, <span style="color:#a5d6ff">&#34;content&#34;</span>: <span style="color:#a5d6ff">&#34;You are a helpful assistant.&#34;</span>},
+</span></span><span style="display:flex;"><span>            {<span style="color:#a5d6ff">&#34;role&#34;</span>: <span style="color:#a5d6ff">&#34;user&#34;</span>, <span style="color:#a5d6ff">&#34;content&#34;</span>: <span style="color:#a5d6ff">&#34;使用繁體中文閱讀，幫我改錯字、加標點符號，並分段使內容更通順：</span><span style="color:#79c0ff">\n</span><span style="color:#a5d6ff">&#34;</span><span style="color:#ff7b72;font-weight:bold">+</span>text}
+</span></span><span style="display:flex;"><span>        ]
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> response<span style="color:#ff7b72;font-weight:bold">.</span>choices[<span style="color:#a5d6ff">0</span>]<span style="color:#ff7b72;font-weight:bold">.</span>message<span style="color:#ff7b72;font-weight:bold">.</span>content
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 處理長字串</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">def</span> <span style="color:#d2a8ff;font-weight:bold">process_long_text</span>(long_text):
+</span></span><span style="display:flex;"><span>    text_list <span style="color:#ff7b72;font-weight:bold">=</span> split_text(long_text, <span style="color:#a5d6ff">1200</span>)
+</span></span><span style="display:flex;"><span>    processed_text_list <span style="color:#ff7b72;font-weight:bold">=</span> [process_text(text) <span style="color:#ff7b72">for</span> text <span style="color:#ff7b72;font-weight:bold">in</span> text_list]
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;&#34;</span><span style="color:#ff7b72;font-weight:bold">.</span>join(processed_text_list)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 呼叫分段處理函式</span>
+</span></span><span style="display:flex;"><span>processed_transcript <span style="color:#ff7b72;font-weight:bold">=</span> process_long_text(transcript)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 印出處理後的逐字稿</span>
+</span></span><span style="display:flex;"><span>print(processed_transcript)
+</span></span></code></pre></div><p>在終端機輸入<code>python youtube-summary.py</code>，就會看到被分段，並加上標點符號的成果啦！</p>
+<p><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-09.webp" width="1400" height="639" alt="導入 OpenAI 的 GPT API，提升逐字稿可讀性（圖 9）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>關於字串分割的方式，筆者是向 ChatGPT 詢問：「我逐字稿的字數可能超過 1 萬字，而這個 api 最多只能讀 1200 字，請問我要如何改寫？」改編而來的；儘管 ChatGPT 面對新套件力有不逮，但基礎的問題還是可以順利回答。</p>
+</blockquote>
+<hr>
+<h2 id="取得逐字稿摘要轉成-txt-格式">取得逐字稿摘要，轉成 txt 格式<a class="h-anchor" href="#%e5%8f%96%e5%be%97%e9%80%90%e5%ad%97%e7%a8%bf%e6%91%98%e8%a6%81%e8%bd%89%e6%88%90-txt-%e6%a0%bc%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>基本上下面的程式就是筆者自己改造的了，我做了兩件事：</p>
+<ol>
+<li>在 <code>process_long_text</code> 函式增加了一個 <code>type</code> 的參數，裡面可以放置不同類型的 prompt（ex：整理逐字稿、摘要）。</li>
+<li>將整理好的文字寫入 txt 檔案。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">openai</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 切割音檔成多個小檔案</span>
+</span></span><span style="display:flex;"><span>chunk_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">100</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>  <span style="color:#8b949e;font-style:italic"># 100 秒</span>
+</span></span><span style="display:flex;"><span>chunks <span style="color:#ff7b72;font-weight:bold">=</span> [audio_file[i:i<span style="color:#ff7b72;font-weight:bold">+</span>chunk_size]
+</span></span><span style="display:flex;"><span>          <span style="color:#ff7b72">for</span> i <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">0</span>, len(audio_file), chunk_size)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 使用 OpenAI 的 Audio API 將每個小檔案轉成文字，然後合併在一起</span>
+</span></span><span style="display:flex;"><span>openai<span style="color:#ff7b72;font-weight:bold">.</span>api_key <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;YOUR_API_KEY&#34;</span>
+</span></span><span style="display:flex;"><span>transcript <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> chunk <span style="color:#ff7b72;font-weight:bold">in</span> chunks:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">with</span> chunk<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;temp.wav&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;wav&#34;</span>) <span style="color:#ff7b72">as</span> f:
+</span></span><span style="display:flex;"><span>        result <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>Audio<span style="color:#ff7b72;font-weight:bold">.</span>transcribe(<span style="color:#a5d6ff">&#34;whisper-1&#34;</span>, f)
+</span></span><span style="display:flex;"><span>        transcript <span style="color:#ff7b72;font-weight:bold">+=</span> result[<span style="color:#a5d6ff">&#34;text&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 依照我們指定的長度分割字串</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">def</span> <span style="color:#d2a8ff;font-weight:bold">split_text</span>(text, max_length):
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> [text[i:i<span style="color:#ff7b72;font-weight:bold">+</span>max_length] <span style="color:#ff7b72">for</span> i <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">0</span>, len(text), max_length)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 依照 type 處理文字</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">def</span> <span style="color:#d2a8ff;font-weight:bold">process_text</span>(text, type):
+</span></span><span style="display:flex;"><span>    response <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>ChatCompletion<span style="color:#ff7b72;font-weight:bold">.</span>create(
+</span></span><span style="display:flex;"><span>        model<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;gpt-3.5-turbo&#34;</span>,
+</span></span><span style="display:flex;"><span>        messages<span style="color:#ff7b72;font-weight:bold">=</span>[
+</span></span><span style="display:flex;"><span>            {<span style="color:#a5d6ff">&#34;role&#34;</span>: <span style="color:#a5d6ff">&#34;system&#34;</span>, <span style="color:#a5d6ff">&#34;content&#34;</span>: <span style="color:#a5d6ff">&#34;You are a helpful assistant.&#34;</span>},
+</span></span><span style="display:flex;"><span>            {<span style="color:#a5d6ff">&#34;role&#34;</span>: <span style="color:#a5d6ff">&#34;user&#34;</span>, <span style="color:#a5d6ff">&#34;content&#34;</span>: type <span style="color:#ff7b72;font-weight:bold">+</span> text}
+</span></span><span style="display:flex;"><span>        ]
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> response<span style="color:#ff7b72;font-weight:bold">.</span>choices[<span style="color:#a5d6ff">0</span>]<span style="color:#ff7b72;font-weight:bold">.</span>message<span style="color:#ff7b72;font-weight:bold">.</span>content
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 處理長字串</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">def</span> <span style="color:#d2a8ff;font-weight:bold">process_long_text</span>(long_text, type):
+</span></span><span style="display:flex;"><span>    text_list <span style="color:#ff7b72;font-weight:bold">=</span> split_text(long_text, <span style="color:#a5d6ff">1200</span>)
+</span></span><span style="display:flex;"><span>    processed_text_list <span style="color:#ff7b72;font-weight:bold">=</span> [process_text(text, type) <span style="color:#ff7b72">for</span> text <span style="color:#ff7b72;font-weight:bold">in</span> text_list]
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;&#34;</span><span style="color:#ff7b72;font-weight:bold">.</span>join(processed_text_list)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 呼叫分段處理函式</span>
+</span></span><span style="display:flex;"><span>processed_transcript <span style="color:#ff7b72;font-weight:bold">=</span> process_long_text(transcript, <span style="color:#a5d6ff">&#34;使用繁體中文閱讀，幫我改錯字、加標點符號，並分段使內容更通順：</span><span style="color:#79c0ff">\n</span><span style="color:#a5d6ff">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 呼叫取得摘要函式</span>
+</span></span><span style="display:flex;"><span>processed_summary <span style="color:#ff7b72;font-weight:bold">=</span> process_long_text(processed_transcript, <span style="color:#a5d6ff">&#34;閱讀以下文字，用「-」作為前綴條列出重點，用「繁體中文」呈現：</span><span style="color:#79c0ff">\n</span><span style="color:#a5d6ff">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">with</span> open(<span style="color:#a5d6ff">&#34;path/to/save/directory/text.txt&#34;</span>, <span style="color:#a5d6ff">&#34;w&#34;</span>) <span style="color:#ff7b72">as</span> file:
+</span></span><span style="display:flex;"><span>    file<span style="color:#ff7b72;font-weight:bold">.</span>write(<span style="color:#a5d6ff">&#34;摘要：</span><span style="color:#79c0ff">\n</span><span style="color:#a5d6ff">&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> processed_summary <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#34;</span><span style="color:#79c0ff">\n\n\n</span><span style="color:#a5d6ff">逐字稿：</span><span style="color:#79c0ff">\n</span><span style="color:#a5d6ff">&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> processed_transcript)
+</span></span></code></pre></div><p>在終端機輸入<code>python youtube-summary.py</code>，就會看到「Youtube 摘要、整理過的逐字稿」被寫入 txt 檔案中啦！</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-10.webp" width="1400" height="1042" alt="讀者可依照自己的需求再做優化" loading="lazy" decoding="async">
+  <figcaption>讀者可依照自己的需求再做優化</figcaption>
+</figure>
+
+<hr>
+<h2 id="筆者想說的話">筆者想說的話<a class="h-anchor" href="#%e7%ad%86%e8%80%85%e6%83%b3%e8%aa%aa%e7%9a%84%e8%a9%b1" aria-label="這個段落的連結"></a></h2>
+<p>不知道有多少人會把文章看完，但其實這篇文章我寫得很沮喪。</p>
+<p>程式的部分我花不到 1 小時就完工，但文章卻寫了 4 個多小時，我不停在思考怎麼樣的呈現方式對讀者來說是有幫助的。</p>
+<p>最終我選擇了上面的呈現方式，任何工具都有不完美的地方，沒必要所有事情都依賴 ChatGPT。</p>
+<p>以這篇文章完成的功能來說，ChatGPT 的幫助如下：</p>
+<ol>
+<li>提供字串分割的函式</li>
+<li>寫入 txt 檔案的方式</li>
+</ol>
+<p>其他部分基本上都是筆者自己改寫的，並不是說 ChatGPT 絕對辦不到，只是想表達工具用在對的地方才會有最大效益（ex：基礎程式、簡單除錯、最小可執行程式），我也不想只呈現完美的路徑。</p>
+<p>最後再聊聊自己為什麼會寫這個 Side Project 吧。</p>
+<p>我這個人喜歡閱讀文章大過看影片，因為我可以在文章中快速找到自己需要的重點，而觀看影片很難讓我做到這件事。</p>
+<p>如果看影片是為了娛樂，那我會享受這個過程；但有時看影片是為了吸收知識，那這樣的效率對我來說就太慢了，所以我就做了這個小工具，提升自己吸收知識的效率。</p>
+<blockquote>
+<p>我喜歡依照自己的「節奏」來吸收資訊，而閱讀滿足了這點。</p>
+</blockquote>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/images/youtube-summary-gpt-whisper-api-11.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>在 Local 導入 Whisper 套件，用 Python 免費將 Youtube 影片轉換成逐字稿！</title>
+      <link>https://deanlin.net/blog/202304/local-whisper-youtube-transcript/</link>
+      <pubDate>Sat, 01 Apr 2023 12:26:52 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202304/local-whisper-youtube-transcript/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>如果每次轉逐字稿都使用線上的 Whisper API 會快速消耗 OpenAI 的 Token，要是時常有轉長影片的需求，那可能得花不少錢在上面。 所以這篇文章筆者要向大家介紹如何在 Local 環境導入 Whisper 套件的方案，免費將 Youtube 影片轉換成逐字稿！</description>
+      <content:encoded><![CDATA[<p>如果每次轉逐字稿都使用線上的 Whisper API 會快速消耗 OpenAI 的 Token，要是時常有轉長影片的需求，那可能得花不少錢在上面（雖然他真的很方便）。</p>
+<p>所以這篇文章筆者要向大家介紹如何在 Local 環境導入 Whisper 套件的方案，免費將 Youtube 影片轉換成逐字稿！</p>
+<p><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-01.webp" width="1291" height="711" alt="在 Local 導入 Whisper 套件，用 Python 免費將 Youtube 影片轉換成逐字稿！（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>提醒大家，不要未經授權下載有版權保護的影片喔！</p>
+</blockquote>
+<blockquote>
+<p><strong>小提醒</strong>：雖然原則上按照步驟就能順利完成，但每個人的電腦環境會有些許差異，遇到特殊狀況時，請自行排除（或是問 ChatGPT）。</p>
+</blockquote>
+<h2 id="觀看-whisper-官方文件">觀看 Whisper 官方文件<a class="h-anchor" href="#%e8%a7%80%e7%9c%8b-whisper-%e5%ae%98%e6%96%b9%e6%96%87%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>GitHub 官網：<a href="https://github.com/openai/whisper">https://github.com/openai/whisper</a></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-02.webp" width="1400" height="1061" alt="有興趣的朋友可以看圖片，來了解這款套件的訓練方式，這邊筆者就不再贅述。" loading="lazy" decoding="async">
+  <figcaption>有興趣的朋友可以看圖片，來了解這款套件的訓練方式，這邊筆者就不再贅述。</figcaption>
+</figure>
+
+<hr>
+<h2 id="安裝-whisper-套件">安裝 Whisper 套件<a class="h-anchor" href="#%e5%ae%89%e8%a3%9d-whisper-%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：首先要特別注意的，就是目前這款套件是使用「Python 3.9.9」的版本，如果你安裝的是最新版的 Python，那後續連基礎的安裝就會失敗。</p>
+<p>安裝 Python 3.9 版本：<code>brew install <a href="mailto:python@3.9">python@3.9</a></code></p>
+<p><strong>STEP 2</strong>：如果你在 local 環境已經安裝了其他版本的 Python，就需要切換到 3.9 的版本才能夠順利執行後續安裝，建議直接改 alias 比較快。</p>
+<pre tabindex="0"><code>vi ~/.zshrc
+alias python=&#39;python3.9&#39;
+alias pip=&#39;pip3.9
+</code></pre><p><strong>STEP 3</strong>：前面兩個步驟完成後，接下來安裝「通常」就會順利很多。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pip install torch torchvision torchaudio
+</span></span><span style="display:flex;"><span>pip install ffmpeg-python
+</span></span><span style="display:flex;"><span>pip install -U openai-whisper
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># windows (https://chocolatey.org/)可使用 choco install ffmpeg</span>
+</span></span><span style="display:flex;"><span>brew install ffmpeg
+</span></span><span style="display:flex;"><span>pip install setuptools-rust
+</span></span></code></pre></div><blockquote>
+<p>如果想了解每個套件負責的任務是什麼，可以參考官網：<a href="https://github.com/openai/whisper#setup">https://github.com/openai/whisper#setup</a></p>
+</blockquote>
+<p><strong>STEP 4</strong>：確認是否安裝成功。</p>
+<p>在終端機輸入指令：<code>whisper &ndash;help</code>，如果出現下面的畫面就代表你安裝成功嚕！</p>
+<p><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-03.webp" width="1400" height="640" alt="安裝 Whisper 套件（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="用-whisper-套件將-youtube-影片轉換成逐字稿">用 Whisper 套件將 Youtube 影片轉換成逐字稿<a class="h-anchor" href="#%e7%94%a8-whisper-%e5%a5%97%e4%bb%b6%e5%b0%87-youtube-%e5%bd%b1%e7%89%87%e8%bd%89%e6%8f%9b%e6%88%90%e9%80%90%e5%ad%97%e7%a8%bf" aria-label="這個段落的連結"></a></h2>
+<p>筆者在<a href="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/">前面的文章</a>，已經完成將 Youtube 影片轉換成音檔的程式，接下來我們可以請 ChatGPT 幫我們做程式組合的任務。</p>
+<blockquote>
+<p>請自行安裝 pytube、pydub 的套件。</p>
+</blockquote>
+<p>😀：「下面是我用 Python 寫的 Youtube 影片轉成音檔的程式，我想要在這個基礎上擴充功能，我在後續的對話中會提出自己的需求，請問你可以幫忙嗎？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 檢查音檔是否可以正常解碼</span>
+</span></span><span style="display:flex;"><span>print(audio_file)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 將音檔轉換為 MP3 格式</span>
+</span></span><span style="display:flex;"><span>mp3_file <span style="color:#ff7b72;font-weight:bold">=</span> audio_file<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio.mp3&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;mp3&#34;</span>)
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-04.webp" width="1007" height="336" alt="用 Whisper 套件將 Youtube 影片轉換成逐字稿（圖 4）" loading="lazy" decoding="async"></p>
+<p>😀：「我找到了一個可以將 mp3 檔案轉成文字檔的套件，官方範例如下，我要如何將他與我現在的程式結合呢？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">whisper</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>model <span style="color:#ff7b72;font-weight:bold">=</span> whisper<span style="color:#ff7b72;font-weight:bold">.</span>load_model(<span style="color:#a5d6ff">&#34;base&#34;</span>)
+</span></span><span style="display:flex;"><span>result <span style="color:#ff7b72;font-weight:bold">=</span> model<span style="color:#ff7b72;font-weight:bold">.</span>transcribe(<span style="color:#a5d6ff">&#34;audio.mp3&#34;</span>)
+</span></span><span style="display:flex;"><span>print(result[<span style="color:#a5d6ff">&#34;text&#34;</span>])
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-05.webp" width="1007" height="806" alt="用 Whisper 套件將 Youtube 影片轉換成逐字稿（圖 5）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-06.webp" width="1007" height="734" alt="用 Whisper 套件將 Youtube 影片轉換成逐字稿（圖 6）" loading="lazy" decoding="async"></p>
+<p>我們在前面已經完成相關的套件安裝了，接下來直接嘗試看看 ChatGPT 組合後的程式是否靠譜。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">whisper</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 檢查音檔是否可以正常解碼</span>
+</span></span><span style="display:flex;"><span>print(audio_file)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 將音檔轉換為 MP3 格式</span>
+</span></span><span style="display:flex;"><span>mp3_file <span style="color:#ff7b72;font-weight:bold">=</span> audio_file<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio.mp3&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;mp3&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取 MP3 檔案，轉成文字檔案</span>
+</span></span><span style="display:flex;"><span>model <span style="color:#ff7b72;font-weight:bold">=</span> whisper<span style="color:#ff7b72;font-weight:bold">.</span>load_model(<span style="color:#a5d6ff">&#34;base&#34;</span>)
+</span></span><span style="display:flex;"><span>result <span style="color:#ff7b72;font-weight:bold">=</span> model<span style="color:#ff7b72;font-weight:bold">.</span>transcribe(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio.mp3&#34;</span>)
+</span></span><span style="display:flex;"><span>print(result[<span style="color:#a5d6ff">&#34;text&#34;</span>])
+</span></span></code></pre></div><p><strong>SETP 1</strong>：建立一個<code>youtube-local-whisper.py</code>的檔案，貼上 ChatGPT 的程式。</p>
+<p><strong>SETP 2</strong>：在終端機輸入<code>python youtube-local-whisper.py</code>，然後稍等一段時間&hellip;就可以見證奇蹟啦！</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-07.webp" width="1400" height="840" alt="儘管有成功轉換逐字稿，但這個品質真的有點悲劇。" loading="lazy" decoding="async">
+  <figcaption>儘管有成功轉換逐字稿，但這個品質真的有點悲劇。</figcaption>
+</figure>
+
+<hr>
+<h2 id="提升轉出的逐字稿品質">提升轉出的逐字稿品質<a class="h-anchor" href="#%e6%8f%90%e5%8d%87%e8%bd%89%e5%87%ba%e7%9a%84%e9%80%90%e5%ad%97%e7%a8%bf%e5%93%81%e8%b3%aa" aria-label="這個段落的連結"></a></h2>
+<p>在程式中，預設的 model 是 base 模型，實際上他有提供這些模型供我們選擇：「tiny/base/small/medium/large」</p>
+<p>不過越往上，對電腦的需求越高，花費時間越多，我們可以先看一下官方提供的對照表：</p>
+<p><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-08.webp" width="1400" height="391" alt="提升轉出的逐字稿品質（圖 8）" loading="lazy" decoding="async"></p>
+<p>除了 model 的選擇外，另一個是「語言」，如果一開始有設定好也能提升辨識的準確度（ex：中文是「zh」）。</p>
+<blockquote>
+<p>有興趣的朋友可以看一下套件目前提供的語言列表：<a href="https://github.com/openai/whisper/blob/main/whisper/tokenizer.py">https://github.com/openai/whisper/blob/main/whisper/tokenizer.py</a></p>
+</blockquote>
+<p>下面是筆者將語言調整成「zh」，並選擇「medium」這個 Model 優化的程式（除非你電腦性能超級優秀，否則選擇 large 會等到天荒地老）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">whisper</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 檢查音檔是否可以正常解碼</span>
+</span></span><span style="display:flex;"><span>print(audio_file)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 將音檔轉換為 MP3 格式</span>
+</span></span><span style="display:flex;"><span>mp3_file <span style="color:#ff7b72;font-weight:bold">=</span> audio_file<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio.mp3&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;mp3&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取 MP3 檔案，轉成文字檔案</span>
+</span></span><span style="display:flex;"><span>model <span style="color:#ff7b72;font-weight:bold">=</span> whisper<span style="color:#ff7b72;font-weight:bold">.</span>load_model(<span style="color:#a5d6ff">&#34;medium&#34;</span>)
+</span></span><span style="display:flex;"><span>result <span style="color:#ff7b72;font-weight:bold">=</span> model<span style="color:#ff7b72;font-weight:bold">.</span>transcribe(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio.mp3&#34;</span>, language<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;zh&#39;</span>)
+</span></span><span style="display:flex;"><span>print(result[<span style="color:#a5d6ff">&#34;text&#34;</span>])
+</span></span></code></pre></div><p>這次輸出的結果總算是比較接近預期的了（真的要等一段時間喔…）。</p>
+<p><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-09.webp" width="1400" height="868" alt="提升轉出的逐字稿品質（圖 9）" loading="lazy" decoding="async"></p>
+<p>如果覺得看起來眼花，那就交給 ChatGPT 幫你整理一下吧！</p>
+<p>😀：「幫我改錯字、分段、加標點符號，讓內容更通順：[逐字稿]」</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-10.webp" width="1021" height="709" alt="大家可以發現裡面的文字不是百分百正確，品質還是需要自己把關的喔！" loading="lazy" decoding="async">
+  <figcaption>大家可以發現裡面的文字不是百分百正確，品質還是需要自己把關的喔！</figcaption>
+</figure>
+
+<hr>
+<h2 id="結論優化還是需要一定的專業水平">結論：優化還是需要一定的專業水平<a class="h-anchor" href="#%e7%b5%90%e8%ab%96%e5%84%aa%e5%8c%96%e9%82%84%e6%98%af%e9%9c%80%e8%a6%81%e4%b8%80%e5%ae%9a%e7%9a%84%e5%b0%88%e6%a5%ad%e6%b0%b4%e5%b9%b3" aria-label="這個段落的連結"></a></h2>
+<p>如果是一個 0 基礎的人，我會更建議使用筆者的<a href="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/">另外一篇文章</a>，來實作 Youtube 轉逐字稿的功能。</p>
+<p>因為在 Local 環境導入 Whisper 真的還是有一些技術門檻，光是環境設定的部分，就可能讓沒經驗的人經歷「困惑 ➝ 絕望 ➝ 投降」的 3 個階段；不過，如果能順利設定完成，那將給自己帶來巨大的成就感。</p>
+<p>儘管初步的程式，我們可以靠 ChatGPT 幫我們組合出來；但因為 Whisper 畢竟是一款新的套件，如果想要對他優化，還是需要具備閱讀技術文件的能力。</p>
+<p>有了 AI 輔助，工程師就能把更多的精力放在優化而非基礎建設上，相信在不久的將來，M 型化會越來越明顯。</p>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202304/local-whisper-youtube-transcript/images/local-whisper-youtube-transcript-11.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>進階應用！詢問 ChatGPT 如何用 Python 將 Youtube 影片轉換成逐字稿（OpenAI 的 whisper）</title>
+      <link>https://deanlin.net/blog/202303/python-youtube-transcript-whisper/</link>
+      <pubDate>Fri, 31 Mar 2023 13:50:25 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202303/python-youtube-transcript-whisper/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>上一篇文章中，筆者靠 ChatGPT 成功將 Youtube 影片轉換成音檔（mp3），在這篇文章中，我會分享如何用 OpenAI 提供的 whisper api 將 音檔轉成逐字稿。</description>
+      <content:encoded><![CDATA[<p><a href="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/">上一篇文章中</a>，筆者靠 ChatGPT 成功將 Youtube 影片轉換成音檔（mp3），在這篇文章中，我會分享如何用 OpenAI 提供的 whisper api 將 音檔轉成逐字稿。</p>
+<blockquote>
+<p>如果沒有程式基礎的朋友，建議先從<a href="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/">上一篇文章</a>開始閱讀。</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-01.webp" width="1289" height="717" alt="進階應用！詢問 ChatGPT 如何用 Python 將 Youtube 影片轉換成逐字稿（OpenAI 的 whisper）（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p><em>提醒大家，不要未經授權下載有版權保護的影片喔！</em></p>
+</blockquote>
+<p>目前的 ChatGPT 資料截止於 2021 年 9 月，如果用到最近才新增的技術，我們還是要先到官網查看文件。</p>
+<p>OpenAI 技術文件：<a href="https://platform.openai.com/docs/guides/speech-to-text">https://platform.openai.com/docs/guides/speech-to-text</a></p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-02.webp" width="1400" height="906" alt="進階應用！詢問 ChatGPT 如何用 Python 將 Youtube 影片轉換成逐字稿（OpenAI 的 whisper）（圖 2）" loading="lazy" decoding="async"></p>
+<p>儘管 ChatGPT 不知道未來世界的資料，但我們還是可以請他幫我們將程式重組。</p>
+<p>😀：「下面是我用 Python 寫的 Youtube 影片轉成音檔的程式，我想要在這個基礎上擴充功能，我在後續的對話中會提出自己的需求，請問你可以幫忙嗎？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 檢查音檔是否可以正常解碼</span>
+</span></span><span style="display:flex;"><span>print(audio_file)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 將音檔轉換為 MP3 格式</span>
+</span></span><span style="display:flex;"><span>mp3_file <span style="color:#ff7b72;font-weight:bold">=</span> audio_file<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio.mp3&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;mp3&#34;</span>)
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-03.webp" width="1012" height="445" alt="進階應用！詢問 ChatGPT 如何用 Python 將 Youtube 影片轉換成逐字稿（OpenAI 的 whisper）（圖 3）" loading="lazy" decoding="async"></p>
+<p>😀：「我找到了一個可以將 mp3 檔案轉成文字檔的套件，官方範例如下，我要如何將他與我現在的程式結合呢？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">openai</span>
+</span></span><span style="display:flex;"><span>audio_file<span style="color:#ff7b72;font-weight:bold">=</span> open(<span style="color:#a5d6ff">&#34;/path/to/file/audio.mp3&#34;</span>, <span style="color:#a5d6ff">&#34;rb&#34;</span>)
+</span></span><span style="display:flex;"><span>transcript <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>Audio<span style="color:#ff7b72;font-weight:bold">.</span>transcribe(<span style="color:#a5d6ff">&#34;whisper-1&#34;</span>, audio_file)
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-04.webp" width="1012" height="728" alt="進階應用！詢問 ChatGPT 如何用 Python 將 Youtube 影片轉換成逐字稿（OpenAI 的 whisper）（圖 4）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-05.webp" width="1012" height="445" alt="進階應用！詢問 ChatGPT 如何用 Python 將 Youtube 影片轉換成逐字稿（OpenAI 的 whisper）（圖 5）" loading="lazy" decoding="async"></p>
+<p>有了 ChatGPT 的提示後，我們可以按照下面的步驟操作。</p>
+<p><strong>SETP 1</strong>：安裝新套件：<code>pip3 install openai</code>。</p>
+<blockquote>
+<p>如果上一篇文章沒有安裝到，請記得順便安裝不然會有錯誤訊息喔：<code>pip install pydub pytube</code></p>
+</blockquote>
+<p><strong>SETP 2</strong>：建立一個檔案<code>youtube-to-text.py</code>，然後貼上 ChatGPT 提供的程式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">openai</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 將音檔轉換為 WAV 格式</span>
+</span></span><span style="display:flex;"><span>wav_file <span style="color:#ff7b72;font-weight:bold">=</span> audio_file<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio.wav&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;wav&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 使用 OpenAI 的 Audio API 將音檔轉成文字</span>
+</span></span><span style="display:flex;"><span>openai<span style="color:#ff7b72;font-weight:bold">.</span>api_key <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;YOUR_API_KEY&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">with</span> open(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio.wav&#34;</span>, <span style="color:#a5d6ff">&#34;rb&#34;</span>) <span style="color:#ff7b72">as</span> f:
+</span></span><span style="display:flex;"><span>    transcript <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>Audio<span style="color:#ff7b72;font-weight:bold">.</span>transcribe(<span style="color:#a5d6ff">&#34;whisper-1&#34;</span>, f)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 印出轉換後的文字</span>
+</span></span><span style="display:flex;"><span>print(transcript)
+</span></span></code></pre></div><blockquote>
+<p>我們原本是將 Youtube 轉換成 mp3 檔，而這次 ChatGPT 改寫的過程中，把它轉換成了 wav 檔；並且對我們提供的範例程式做了一定程度的改寫（ex：告訴我們要自己填入”YOUR_API_KEY”）。</p>
+</blockquote>
+<p><strong>SETP 3</strong>：請先去 <a href="https://platform.openai.com/account/api-keys">https://platform.openai.com/account/api-keys</a> 申請自己的 API Key，將 YOUR_API_KEY 替換成自己的。</p>
+<blockquote>
+<p><strong>小提醒：</strong>將 API Key 放入環境變數的作法更好，不過這篇文章以 Demo 目的為主，讀者切記不要把自己的 API Key 洩露出去了。</p>
+</blockquote>
+<p><strong>SETP 4</strong>：輸入 <code>python youtube-to-text.py</code> 執行程式，結果遇到了錯誤如下：</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-06.webp" width="1400" height="574" alt="進階應用！詢問 ChatGPT 如何用 Python 將 Youtube 影片轉換成逐字稿（OpenAI 的 whisper）（圖 6）" loading="lazy" decoding="async"></p>
+<p>看不懂錯誤訊息沒關係，直接貼到 ChatGPT。</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-07.webp" width="1001" height="746" alt="進階應用！詢問 ChatGPT 如何用 Python 將 Youtube 影片轉換成逐字稿（OpenAI 的 whisper）（圖 7）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-08.webp" width="860" height="756" alt="進階應用！詢問 ChatGPT 如何用 Python 將 Youtube 影片轉換成逐字稿（OpenAI 的 whisper）（圖 8）" loading="lazy" decoding="async"></p>
+<p>原來是檔案大小的問題，這邊筆者將 10 秒的時間拉長到 100 秒，避免聲音切割過度。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">openai</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 切割音檔成多個小檔案</span>
+</span></span><span style="display:flex;"><span>chunk_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">100</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>  <span style="color:#8b949e;font-style:italic"># 100 秒</span>
+</span></span><span style="display:flex;"><span>chunks <span style="color:#ff7b72;font-weight:bold">=</span> [audio_file[i:i<span style="color:#ff7b72;font-weight:bold">+</span>chunk_size] <span style="color:#ff7b72">for</span> i <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">0</span>, len(audio_file), chunk_size)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 使用 OpenAI 的 Audio API 將每個小檔案轉成文字，然後合併在一起</span>
+</span></span><span style="display:flex;"><span>openai<span style="color:#ff7b72;font-weight:bold">.</span>api_key <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;YOUR_API_KEY&#34;</span>
+</span></span><span style="display:flex;"><span>transcript <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> chunk <span style="color:#ff7b72;font-weight:bold">in</span> chunks:
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">with</span> chunk<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;temp.wav&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;wav&#34;</span>) <span style="color:#ff7b72">as</span> f:
+</span></span><span style="display:flex;"><span>        result <span style="color:#ff7b72;font-weight:bold">=</span> openai<span style="color:#ff7b72;font-weight:bold">.</span>Audio<span style="color:#ff7b72;font-weight:bold">.</span>transcribe(<span style="color:#a5d6ff">&#34;whisper-1&#34;</span>, f)
+</span></span><span style="display:flex;"><span>        transcript <span style="color:#ff7b72;font-weight:bold">+=</span> result[<span style="color:#a5d6ff">&#34;text&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 印出轉換後的文字</span>
+</span></span><span style="display:flex;"><span>print(transcript)
+</span></span></code></pre></div><p>再輸入一次 <code>python youtube-to-text.py</code> 執行程式，接著就順利取得逐字稿啦！！！！</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-09.webp" width="1400" height="795" alt="大家可以發現裡面的文字不是百分百正確，品質還是需要自己把關的喔！" loading="lazy" decoding="async">
+  <figcaption>大家可以發現裡面的文字不是百分百正確，品質還是需要自己把關的喔！</figcaption>
+</figure>
+
+<h2 id="結論要懂得組合應用">結論：要懂得組合應用<a class="h-anchor" href="#%e7%b5%90%e8%ab%96%e8%a6%81%e6%87%82%e5%be%97%e7%b5%84%e5%90%88%e6%87%89%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<p>相比於上一篇，這篇文章的門檻比較高，像是多了：</p>
+<ol>
+<li>前往 OpenAI 官網，取得所需技術文件</li>
+<li>需要一定的英文閱讀能力（雖然你也可以請 ChatGPT 幫你翻譯）</li>
+<li>讓原有程式基礎上，疊加新應用的提問技巧</li>
+</ol>
+<p>不過儘管我們取得了逐字稿，但這份逐字稿真的有點醜，閱讀起來有點困難。</p>
+<p>這邊我們可以直接把他丟到 ChatGPT，請他幫忙分段落、整理摘要。</p>
+<p>😀：「幫我改錯字、分段、加標點符號，讓內容更通順：<code>[逐字稿]</code>」</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-10.webp" width="1014" height="711" alt="大家可以發現裡面的文字不是百分百正確，品質還是需要自己把關的喔！" loading="lazy" decoding="async">
+  <figcaption>大家可以發現裡面的文字不是百分百正確，品質還是需要自己把關的喔！</figcaption>
+</figure>
+
+<p>😀：「幫我擷取 300 字摘要：<code>[逐字稿]</code>」</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-11.webp" width="1014" height="287" alt="結論：要懂得組合應用（圖 11）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>摘要的內容有點赤裸 😅，不過當年筆者參加比賽的確就是為了出書。</p>
+</blockquote>
+<p>不過手動貼到 ChatGPT 還是有點麻煩，<a href="https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/">下一篇筆者就來分享如何透過 OpenAI 的 GPT-3.5 模型</a>，幫我們整理逐字稿內容吧！</p>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/images/python-youtube-transcript-whisper-12.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）</title>
+      <link>https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/</link>
+      <pubDate>Wed, 29 Mar 2023 22:46:00 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>筆者真的嚇到了🫢，沒想到我真的做到一行程式碼都沒寫，以菜鳥的語氣跟 ChatGPT 對話，就能完成一個用 Python 將 Youtube 影片轉成音檔（mp3）的小專案。</description>
+      <content:encoded><![CDATA[<p>筆者真的嚇到了🫢，沒想到我真的做到一行程式碼都沒寫，以菜鳥的語氣跟 ChatGPT 對話，就能完成一個用 Python 將 Youtube 影片轉成音檔（mp3）的小專案。</p>
+<p>在這篇文章中，我附上與 ChatGPT 的完整對話，大家只要複製貼上就可以嘗試看看嚕！</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-01.webp" width="1139" height="626" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>Python 環境安裝的部分我就不贅述了，筆者使用的是 Python3；不過有設定 alias name，讓 python3/pip3 的指令對應 python/pip。</p>
+</blockquote>
+<p>😀：「我使用的程式語言是 Python，他有辦法抓取 Youtube 影片的音擋嗎？」</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-02.webp" width="886" height="692" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>ChatGPT 這邊也有提醒大家，不要未經授權下載有版權保護的影片喔！</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=VIDEO_ID&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span></code></pre></div><p><strong>SETP 1</strong>：建立一個<code>youtube-test.py</code>的檔案，貼上 ChatGPT 的程式。</p>
+<p><strong>SETP 2</strong>：如果要執行程式，請安裝套件：<code>pip install pytube</code>。</p>
+<p><strong>SETP 3</strong>：將 url 替換成自己的：<a href="https://www.youtube.com/watch?v=IvOdTbIYZs4%22%EF%BC%88%E9%80%99%E6%98%AF%E7%AD%86%E8%80%85%E5%88%86%E4%BA%AB%E5%87%BA%E6%9B%B8%E5%BF%83%E5%BE%97%E7%9A%84%E5%BD%B1%E7%89%87%EF%BC%89%E3%80%82">https://www.youtube.com/watch?v=IvOdTbIYZs4</a></p>
+<blockquote>
+<p>這是筆者分享出書心得的影片。</p>
+</blockquote>
+<p><strong>SETP 4</strong>：在終端機輸入<code>python youtube-test.py</code>執行它，你會發現他自動建立了資料夾路徑，裡面存放著「audio」的檔案。</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-03.webp" width="584" height="388" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 3）" loading="lazy" decoding="async"></p>
+<p>😀：「有順利在「path/to/save/directory」這個路徑下產生「audio」的檔案了，但他無法打開，這個真的是音擋嗎？」</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-04.webp" width="886" height="653" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 4）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>請安裝套件：<code>pip install pydub</code></p>
+</blockquote>
+<p>😀：「如何與上一段程式結合呢？」</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-05.webp" width="807" height="720" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 5）" loading="lazy" decoding="async"></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>Copy code
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=VIDEO_ID&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 檢查音檔是否可以正常解碼</span>
+</span></span><span style="display:flex;"><span>print(audio_file)
+</span></span></code></pre></div><p>在終端機輸入<code>python youtube-test.py</code>，結果冒出一堆錯誤訊息。</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-06.webp" width="1400" height="612" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 6）" loading="lazy" decoding="async"></p>
+<p>把錯誤的結果貼到 ChatGPT，他是會幫你解答的。</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-07.webp" width="995" height="425" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 7）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>若未安裝 homebrew 的朋友也可以詢問 ChatGPT 如何安裝。</p>
+</blockquote>
+<p>在終端機輸入<code>brew install ffmpeg</code>，之後等他安裝完成（頗久的&hellip;）</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-08.webp" width="1400" height="706" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 8）" loading="lazy" decoding="async"></p>
+<p>再輸入一次<code>python youtube-test.py</code>，從終端機來看，天下太平了！</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-09.webp" width="1400" height="101" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 9）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-10.webp" width="882" height="681" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 10）" loading="lazy" decoding="async"></p>
+<p>然後我們把 ChatGPT 的建議加入最後一行，讓他轉成 mp3 檔案。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 檢查音檔是否可以正常解碼</span>
+</span></span><span style="display:flex;"><span>print(audio_file)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 將音檔轉換為 MP3 格式</span>
+</span></span><span style="display:flex;"><span>mp3_file <span style="color:#ff7b72;font-weight:bold">=</span> audio_file<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio.mp3&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;mp3&#34;</span>)
+</span></span></code></pre></div><p>此時你在終端機執行<code>python youtube-test.py</code> 會有一種感動！這個 mp3 擋真的在播放 Youtube 影片的音檔了…太神了…</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-11.webp" width="818" height="328" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 11）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-12.webp" width="1400" height="637" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 12）" loading="lazy" decoding="async"></p>
+<h2 id="結語讓不會程式的人更願意嘗試">結語：讓不會程式的人更願意嘗試<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e8%ae%93%e4%b8%8d%e6%9c%83%e7%a8%8b%e5%bc%8f%e7%9a%84%e4%ba%ba%e6%9b%b4%e9%a1%98%e6%84%8f%e5%98%97%e8%a9%a6" aria-label="這個段落的連結"></a></h2>
+<p>寫程式是一條非常艱辛的路，中間會遇到非常多的險阻與挫折。</p>
+<p>就像上面展示的範例一樣，我們很難一次就得到正確的結果，但在發生錯誤時，過往會需要花費大量的時間除錯、找文件。</p>
+<p>這些失敗的經歷會使人成長，但同時也會消耗熱情。</p>
+<p>而 ChatGPT 的出現，很大程度地減緩了這塊的痛苦，讓我們更容易上手程式。</p>
+<blockquote>
+<p>不過這對程式教育產業來說，可說是巨大的衝擊，因為人們多了一個全新的選擇（而且還不賴）。</p>
+<p>下一篇就來分享<a href="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/">如何搭配 OpenAI 的 whisper api 將音檔（mp3）轉換成文字吧</a>！</p>
+</blockquote>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-13.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

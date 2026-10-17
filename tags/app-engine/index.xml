@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>App Engine｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/app-engine/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 24 Jun 2020 14:01:45 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/app-engine/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NUXTJS GCP serverless實戰</title>
+      <link>https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/</link>
+      <pubDate>Wed, 24 Jun 2020 14:01:45 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>因為跟著官方文件做，讓我被雷了整整一天，於是我決定紀錄操作流程，希望看到的人可以節省時間</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-01.webp" width="1080" height="600" alt="NUXTJS GCP serverless實戰（圖 1）" loading="lazy" decoding="async"></p>
+<h3 id="事前準備">事前準備<a class="h-anchor" href="#%e4%ba%8b%e5%89%8d%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>你有GCP的帳戶(沒有就直接去開一個)</li>
+<li>你有信用卡(因為GCP serverless服務一定要綁信用卡，就算你一塊錢都沒花，你還是得綁定)</li>
+<li>你會用git(如果不會你要抄襲前人的成果都很難)</li>
+<li>如果有mac電腦會是最棒的，因為作者的操作都是在mac的環境</li>
+</ol>
+<h3 id="文章目標">文章目標<a class="h-anchor" href="#%e6%96%87%e7%ab%a0%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>根據官方文件建立Nuxt專案</li>
+<li>開啟GCP App Engine</li>
+<li>將Nuxt專案deploy到GCP</li>
+</ol>
+<p>SETP 1/5 : 建立Nuxt專案</p>
+<p><a href="https://nuxtjs.org/guide/installation">這裡是官方安裝說明文件</a>，根據我的個人經驗，你每個禮拜都會得到不一樣的錯誤訊息(感覺他們工程師根本沒有qa就直接上正式版本了…)，以下為我操作的及遇到的錯誤及相關解決方案。</p>
+<p>創建nuxt專案，project-name請自由發揮</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app &lt;project-name&gt;
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-02.webp" width="1312" height="236" alt="文章目標（圖 2）" loading="lazy" decoding="async"></p>
+<p>接下來會問你一堆問題，根據我之後會撰寫的文章類型，你可以跟我做一樣的設定</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-03.webp" width="1274" height="390" alt="文章目標（圖 3）" loading="lazy" decoding="async"></p>
+<p>只要你運氣夠差，你就會遇到這個錯誤：</p>
+<pre tabindex="0"><code>throw new SAOError(`Failed to install ${packageName} in ${cwd}`)
+</code></pre><p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-04.webp" width="1400" height="633" alt="文章目標（圖 4）" loading="lazy" decoding="async"></p>
+<p>別怕，仔細看錯誤訊息，你會發現是因為local端的node版本過低，最新的nuxt需要你的<a href="https://nodejs.org/en/">node版本</a>保持在13.7以上，建議你可以使用<a href="https://github.com/nvm-sh/nvm#install--update-script">nvm這個套件</a>來做local端node的版本控制</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-05.webp" width="810" height="72" alt="文章目標（圖 5）" loading="lazy" decoding="async"></p>
+<p>調整完node版本後再下一樣建立nuxt的指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app &lt;project-name&gt;
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-06.webp" width="1286" height="968" alt="文章目標（圖 6）" loading="lazy" decoding="async"></p>
+<p>這次就會通過嚕～接著下指令確認使否正常跑</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd nuxt_baobao
+</span></span><span style="display:flex;"><span>yarn dev
+</span></span></code></pre></div><p>如果成功出現下面的畫面就恭喜你嚕～</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-07.webp" width="740" height="938" alt="文章目標（圖 7）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-08.webp" width="1400" height="726" alt="http://localhost:3000/" loading="lazy" decoding="async">
+  <figcaption><a href="http://localhost:3000/">http://localhost:3000/</a></figcaption>
+</figure>
+
+<p>SETP 2/5 : 將nuxt專案build起來</p>
+<p>因為實際運行你總不可能把整個專案丟到GCP，所以要下指令build這個專案，那他變小一點</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn build
+</span></span></code></pre></div><p>如果沒發生意外應該會build失敗(我真的懷疑他們到底有沒有做過上線測試…)</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-09.webp" width="1400" height="755" alt="文章目標（圖 9）" loading="lazy" decoding="async"></p>
+<p>因為很多人遇到這個問題，有興趣可以參考<a href="https://github.com/postcss/autoprefixer/issues/1328#issuecomment-647279513">這篇文章</a>，不然就複製下面指令執行</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nvm use 14.4
+</span></span><span style="display:flex;"><span>yarn add autoprefixer@9.8.1
+</span></span></code></pre></div><p>安裝完套件再下一次yarn build指令就能順利完成</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-10.webp" width="1400" height="755" alt="文章目標（圖 10）" loading="lazy" decoding="async"></p>
+<p>SETP 3/5 : 開啟GCP App Engine</p>
+<p>我建議你先建立一個<a href="https://console.cloud.google.com/cloud-resource-manager">GCP新的專案</a>來做這次的操作，建立好專案去App Engine建立應用程式</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-11.webp" width="1275" height="608" alt="文章目標（圖 11）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-12.webp" width="551" height="555" alt="地區請選擇離自己近的，價格會便宜一點" loading="lazy" decoding="async">
+  <figcaption>地區請選擇離自己近的，價格會便宜一點</figcaption>
+</figure>
+
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-13.webp" width="776" height="363" alt="文章目標（圖 13）" loading="lazy" decoding="async"></p>
+<p>SETP 4/5 : 下載Google Cloud SDK</p>
+<p>如果你可以根據<a href="https://cloud.google.com/sdk/docs/quickstarts">官方文件</a>操作，裡面有提供各式各樣的安裝方法，一開始我是直接下載壓縮檔來安裝，但遇到各種悲劇…</p>
+<pre tabindex="0"><code>Welcome to the Google Cloud SDK!
+ERROR:root:code for hash md5 was not found.
+</code></pre><p>然後網路上你查到<a href="https://stackoverflow.com/questions/25372911/python-pip-error-on-osx">大部分的答案</a>都是唬爛你的</p>
+<p>所以我個人建議你使用<a href="https://brew.sh/index_zh-tw">homebrew</a>安裝吧</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew cask install google-cloud-sdk
+</span></span></code></pre></div><p>安裝後你可以嘗試看看</p>
+<pre tabindex="0"><code>gcloud init
+</code></pre><p>如果不發生意外應該又是一大串的錯誤…這個時候的問題通常是python版本的問題，請指定你執行gcp的python版本</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export <span style="color:#79c0ff">CLOUDSDK_PYTHON</span><span style="color:#ff7b72;font-weight:bold">=</span>python3
+</span></span></code></pre></div><p>之後再執行gcloud init應該就是一路通暢了，裡面會有一些讓你登入以及選擇專案的選項就按造個人需求調整即可</p>
+<p>SETP 5/5 : deploy Nuxt專案到GCP App Engine</p>
+<p>如果你上面的操作都很順利，你接下來就可以嘗試把本地的nuxt專案發布到GCP上面了，首先你要在nuxt專案做以下調整，這裡是<a href="https://nuxtjs.org/faq/appengine-deployment/">官方文件</a>(跟著照做會錯誤)：</p>
+<p>新增app.yaml檔案，這個檔案是在deploy的時候使用的</p>
+<p>PS.在這裡我要特別提醒一件事情，一但你的環境(env)設定為flex，你醒來的時候帳單就有可能爆掉，所以這個部分請謹慎，這是我端午連假完打開GCP帳單發現的慘痛經驗，使用標準環境才會有免費配額，但還是會扣一點費用(ex: Google Storage、Could Build…)。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">runtime</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">nodejs12</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">instance_class</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">F1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">automatic_scaling</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">max_instances</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">handlers</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>- <span style="color:#7ee787">url</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">/_nuxt</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">static_dir</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">.nuxt/dist/client</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">secure</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>- <span style="color:#7ee787">url</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">/(.*\.(gif|png|jpg|ico|txt))$</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">static_files</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">static/\1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">upload</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">static/.*\.(gif|png|jpg|ico|txt)$</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">secure</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>- <span style="color:#7ee787">url</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">/.*</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">script</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">auto</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">secure</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">env_variables</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">HOST</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;0.0.0.0&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">NODE_ENV</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;production&#39;</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/6b739e200a284d085377d96555e2d171" rel="noopener">nuxt_baobao_app.yaml</a>（GitHub Gist）</p>
+<p>調整package.json檔案，要在dependencies加上“@nuxtjs/vuetify”，並加上這個專案nodejs的版本(本範例為14.4)</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;name&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt_baobao&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;version&#34;</span>: <span style="color:#a5d6ff">&#34;1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;private&#34;</span>: <span style="color:#79c0ff">true</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;scripts&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;dev&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;build&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt build&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;start&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt start&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;export&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt export&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;serve&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt serve&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;lint:js&#34;</span>: <span style="color:#a5d6ff">&#34;eslint --ext .js,.vue --ignore-path .gitignore .&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;lint&#34;</span>: <span style="color:#a5d6ff">&#34;yarn lint:js&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;dependencies&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/axios&#34;</span>: <span style="color:#a5d6ff">&#34;^5.11.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/vuetify&#34;</span>: <span style="color:#a5d6ff">&#34;^1.11.2&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;autoprefixer&#34;</span>: <span style="color:#a5d6ff">&#34;9.8.1&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;chart.js&#34;</span>: <span style="color:#a5d6ff">&#34;^2.9.3&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;hchs-vue-charts&#34;</span>: <span style="color:#a5d6ff">&#34;^1.2.8&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;nuxt&#34;</span>: <span style="color:#a5d6ff">&#34;^2.13.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;vue-chartjs&#34;</span>: <span style="color:#a5d6ff">&#34;^3.5.0&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;devDependencies&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/eslint-config&#34;</span>: <span style="color:#a5d6ff">&#34;^3.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/eslint-module&#34;</span>: <span style="color:#a5d6ff">&#34;^2.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/vuetify&#34;</span>: <span style="color:#a5d6ff">&#34;^1.11.2&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;babel-eslint&#34;</span>: <span style="color:#a5d6ff">&#34;^10.1.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint&#34;</span>: <span style="color:#a5d6ff">&#34;^7.2.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint-config-prettier&#34;</span>: <span style="color:#a5d6ff">&#34;^6.11.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint-plugin-nuxt&#34;</span>: <span style="color:#a5d6ff">&#34;^1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint-plugin-prettier&#34;</span>: <span style="color:#a5d6ff">&#34;^3.1.4&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;prettier&#34;</span>: <span style="color:#a5d6ff">&#34;^2.0.5&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;engines&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;node&#34;</span>: <span style="color:#a5d6ff">&#34;^12&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/e4436bcdb26e49a6bb1be8afc98d59a9" rel="noopener">nuxt_baobao_package.json</a>（GitHub Gist）</p>
+<p>完成以上設定後在專案目錄下指令</p>
+<pre tabindex="0"><code>gcloud init
+</code></pre><p>這裡會讓你再次確認自己的設定檔(是否初始化、新增)，登入的google帳號，選擇雲端專案(就是你剛剛新增的那個專案)</p>
+<p>在完成上述設定後就可以輸入以下指令來deploy啦(這裡會讓你在確認一下deploy發布的專案位置)</p>
+<pre tabindex="0"><code>gcloud app deploy
+</code></pre><p>如果你看到以下畫面就要恭喜你了</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-14.webp" width="1400" height="341" alt="文章目標（圖 14）" loading="lazy" decoding="async"></p>
+<p>輸入下面指令可以檢視你的網頁是否發布成功嚕～</p>
+<pre tabindex="0"><code>gcloud app browse
+</code></pre><figure class="figure"><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-15.webp" width="1400" height="758" alt="https://nuxt-demo-281302.dt.r.appspot.com" loading="lazy" decoding="async">
+  <figcaption><a href="https://nuxt-demo-281302.dt.r.appspot.com">https://nuxt-demo-281302.dt.r.appspot.com</a></figcaption>
+</figure>
+
+<p>如果有問題歡迎在下方回覆，如果這篇文章有讓你少走彎路請用力拍手喔～</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

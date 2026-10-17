@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Parallel Processing｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/parallel-processing/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 19 Sep 2022 18:18:14 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/parallel-processing/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>JavaScript 如何讓多個 async/await 函式同時執行──  從實際案例了解 Promise.all 和 Promise.allSettled 的區別</title>
+      <link>https://deanlin.net/blog/202209/promise-all-vs-allsettled/</link>
+      <pubDate>Mon, 19 Sep 2022 18:18:14 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202209/promise-all-vs-allsettled/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>撰寫前端時，一個頁面往往需要 call 多支 API 才能完成渲染。為了等資料回傳，我們通常都會搭配 await，但有時 API 之間並沒有要求執行的順序；在這樣的情境下，如果還是採取順序執行的方案，當需要 call 多支 API 時就會浪費使用者許多時間。</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202209/promise-all-vs-allsettled/images/promise-all-vs-allsettled-01.webp" width="1400" height="730" alt="JavaScript 如何讓多個 async/await 函式同時執行── 從實際案例了解 Promise.all 和 Promise.allSettled 的區別（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>大家可以在瀏覽器按下「F12」，於 Console 的分頁貼上文中的程式碼來驗證喔！</p>
+</blockquote>
+<p>撰寫前端時，一個頁面往往需要 call 多支 API 才能完成渲染。</p>
+<p>為了等資料回傳，我們通常都會搭配 await，但有時 API 之間並沒有要求執行的順序（下一隻 API 並不需要使用上一隻 API 回傳的結果作為參數）。</p>
+<p>在這樣的情境下，如果還是採取順序執行的方案，當需要 call 多支 API 時就會浪費使用者許多時間。下面筆者就先舉一個直觀的範例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> waitFor <span style="color:#ff7b72;font-weight:bold">=</span> delay =&gt; <span style="color:#ff7b72">new</span> Promise(resolve =&gt; setTimeout(resolve, delay));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api1 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;A&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api2 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;B&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api3 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;C&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> callMutiApi () {
+</span></span><span style="display:flex;"><span>    console.time();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> a <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> api1()
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> b <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> api2()
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> c <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> api3()
+</span></span><span style="display:flex;"><span>    console.log({ a, b, c });
+</span></span><span style="display:flex;"><span>    console.timeEnd();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>callMutiApi();
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/96bab87fbec6f71ab71c28a334cd14cb" rel="noopener">await-basic.js</a>（GitHub Gist）</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202209/promise-all-vs-allsettled/images/promise-all-vs-allsettled-02.webp" width="460" height="76" alt="在瀏覽器 Console 分頁的執行結果" loading="lazy" decoding="async">
+  <figcaption>在瀏覽器 Console 分頁的執行結果</figcaption>
+</figure>
+
+<p>在上圖中，我們可以看到總執行時長為 1512 ms，有許多時間被浪費在等待上一支 API 執行完畢。</p>
+<hr>
+<h2 id="採用-promiseall-來解決問題">採用 Promise.all 來解決問題<a class="h-anchor" href="#%e6%8e%a1%e7%94%a8-promiseall-%e4%be%86%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>既然 API 之間沒有要求執行的順序，我們就可以將其改寫為 <code>Promise.all</code>，讓函式同時執行來提升效率：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> waitFor <span style="color:#ff7b72;font-weight:bold">=</span> delay =&gt; <span style="color:#ff7b72">new</span> Promise(resolve =&gt; setTimeout(resolve, delay));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api1 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;A&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api2 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;B&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api3 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;C&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> callMutiApi () {
+</span></span><span style="display:flex;"><span>    console.time();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> promises <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>        api1(),
+</span></span><span style="display:flex;"><span>        api2(),
+</span></span><span style="display:flex;"><span>        api3(),
+</span></span><span style="display:flex;"><span>    ];
+</span></span><span style="display:flex;"><span>    Promise.all(promises).then(values =&gt; {
+</span></span><span style="display:flex;"><span>        console.log(values);
+</span></span><span style="display:flex;"><span>        console.timeEnd();
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>callMutiApi();
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/74b5067420a84b845ad7fec8c7f415b2" rel="noopener">promise-all.js</a>（GitHub Gist）</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202209/promise-all-vs-allsettled/images/promise-all-vs-allsettled-03.webp" width="460" height="76" alt="在瀏覽器 Console 分頁的執行結果" loading="lazy" decoding="async">
+  <figcaption>在瀏覽器 Console 分頁的執行結果</figcaption>
+</figure>
+
+<p>經過改寫，我們可以從輸出的結果中看到，總執行時長從 <code>1512 ms</code> 下降到 <code>502 ms</code>，這對使用者來說是非常有感的提升。</p>
+<hr>
+<h2 id="promiseall-會碰到什麼問題">Promise.all 會碰到什麼問題？<a class="h-anchor" href="#promiseall-%e6%9c%83%e7%a2%b0%e5%88%b0%e4%bb%80%e9%ba%bc%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>儘管透過 <code>Promise.all</code> 已經提升了不少效率，但這個方案在其中一支 API 吐 error 時，情況就會變得很麻煩。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> waitFor <span style="color:#ff7b72;font-weight:bold">=</span> delay =&gt; <span style="color:#ff7b72">new</span> Promise(resolve =&gt; setTimeout(resolve, delay));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api1 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;A&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api2 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;B&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api3 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">throw</span> <span style="color:#a5d6ff">&#34;error&#34;</span>; <span style="color:#8b949e;font-style:italic">// 丟出錯誤訊息
+</span></span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> callMutiApi () {
+</span></span><span style="display:flex;"><span>    console.time();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> promises <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>        api1(),
+</span></span><span style="display:flex;"><span>        api2(),
+</span></span><span style="display:flex;"><span>        api3(),
+</span></span><span style="display:flex;"><span>    ];
+</span></span><span style="display:flex;"><span>    Promise.all(promises)
+</span></span><span style="display:flex;"><span>        .then(values =&gt; console.log(values))
+</span></span><span style="display:flex;"><span>        .<span style="color:#ff7b72">catch</span>(err =&gt; console.log(err))
+</span></span><span style="display:flex;"><span>        .<span style="color:#ff7b72">finally</span>(() =&gt; console.timeEnd())
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>callMutiApi();
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/f486fa060c62e1f35136ec0f23e26900" rel="noopener">promise-all-err.js</a>（GitHub Gist）</p>
+<p>如果執行上面的程式，你會發現透過 catch <strong>我們成功抓到 “error” 的錯誤訊息，但其他執行成功的訊息全部都消失了（</strong><code>Promise.all</code><strong>的失敗優先原則）</strong>。</p>
+<p>有時這種「只有成功 or 失敗」的結果的確是我們要的，但在實務上，我們未必需要所有 API 都執行成功，面對錯誤我們可以設計另一套處理方案。</p>
+<hr>
+<h2 id="導入-promiseallsettled-解決問題">導入 Promise.allSettled 解決問題<a class="h-anchor" href="#%e5%b0%8e%e5%85%a5-promiseallsettled-%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>為了取得所有回傳結果，我們可以改為使用 <code>Promise.allSettled</code>，在輸出的時候，它會多出一個 <code>status</code> 的參數，用來說明執行結果的成功 or 失敗。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> waitFor <span style="color:#ff7b72;font-weight:bold">=</span> delay =&gt; <span style="color:#ff7b72">new</span> Promise(resolve =&gt; setTimeout(resolve, delay));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api1 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;A&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api2 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">&#34;B&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> api3 () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> waitFor(<span style="color:#a5d6ff">500</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">throw</span> <span style="color:#a5d6ff">&#34;error&#34;</span>; <span style="color:#8b949e;font-style:italic">// 丟出錯誤訊息
+</span></span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> callMutiApi () {
+</span></span><span style="display:flex;"><span>    console.time();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> promises <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>        api1(),
+</span></span><span style="display:flex;"><span>        api2(),
+</span></span><span style="display:flex;"><span>        api3(),
+</span></span><span style="display:flex;"><span>    ];
+</span></span><span style="display:flex;"><span>    Promise.allSettled(promises).then(values =&gt; {
+</span></span><span style="display:flex;"><span>        console.log(values);
+</span></span><span style="display:flex;"><span>        console.timeEnd();
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>callMutiApi();
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/7d76243df020caf8f2b9e24649ed77da" rel="noopener">promise-allSettled.js</a>（GitHub Gist）</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202209/promise-all-vs-allsettled/images/promise-all-vs-allsettled-04.webp" width="603" height="210" alt="在瀏覽器 Console 分頁的執行結果" loading="lazy" decoding="async">
+  <figcaption>在瀏覽器 Console 分頁的執行結果</figcaption>
+</figure>
+
+<p>從上圖我們可以看到，無論執行的結果是成功或失敗，我們都能取得那些執行成功後的訊息。</p>
+<blockquote>
+<p><strong>備註： </strong>Node.js 從 v12.9.0 開始支援 Promise.allSettled 的語法，大多數的瀏覽器也在 2019 年後支援；針對少數不支援的環境，你可以透過 npm 套件自行擴充，如：<a href="https://www.npmjs.com/package/promise.allsettled">promise.allsettled</a></p>
+</blockquote>
+<hr>
+<h2 id="總結">總結<a class="h-anchor" href="#%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>如果 API 沒有要求執行的順序，但需要等每個 API 都執行完畢後才能進入下一步，那 Promise.all 同時執行的機制可以有效縮短執行時間。</li>
+<li>為了解決 Promise.all 失敗後，成功訊息一併消失的問題，可以改用 Promise.allSettled 來取得所有回傳結果。</li>
+</ol>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

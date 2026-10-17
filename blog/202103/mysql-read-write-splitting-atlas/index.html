@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令正確分流">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting">
+  <meta property="og:description" content="如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令正確分流">
+  <meta property="og:url" content="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2021-03-29T08:50:19&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:19:59&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Atlas">
+  <meta property="article:tag" content="Ubuntu">
+  <meta property="article:tag" content="MySQL">
+  <meta property="article:tag" content="讀寫分離">
+  <meta property="article:tag" content="Rw Splitting">
+  <meta property="og:image" content="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="652">
+  <meta property="og:image:alt" content="Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-og.jpg">
+  <meta name="twitter:title" content="Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting">
+  <meta name="twitter:description" content="如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令正確分流">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:19:59+08:00","datePublished":"2021-03-29T08:50:19+08:00","description":"如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令正確分流","headline":"Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting","image":{"@type":"ImageObject","height":652,"url":"https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"MySQL 主從架構","url":"https://deanlin.net/series/mysql-replication/"}],"keywords":"Atlas, Ubuntu, MySQL, 讀寫分離, Rw Splitting","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/ubuntu-%E7%94%A8-atlas-%E5%AF%A6%E7%8F%BE-mysql-proxy-%E8%AE%80%E5%AF%AB%E5%88%86%E9%9B%A2-read-write-splitting-72759b1b1b33"],"timeRequired":"PT5M","url":"https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/","wordCount":2183},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/","name":"Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting</h1>
+      <p class="article-lede">如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令正確分流</p>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2021-03-29">2021.03.29</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 5 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・MySQL 主從架構 <b>2</b>/ 4</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad">一、前置作業</a></li><li class="is-sub"><a href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e8%a6%81%e7%95%b6-mysql-proxy-%e7%9a%84-ubuntu-server">➤ 準備一台要當 MySQL Proxy 的 ubuntu server</a></li><li class="is-sub"><a href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0-master-server-%e8%b2%a0%e8%b2%ac%e5%af%ab%e5%85%a5">➤ 準備一台 Master server 負責寫入</a></li><li class="is-sub"><a href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e4%bb%a5%e4%b8%8a%e7%9a%84-slave-server-%e8%b2%a0%e8%b2%ac%e8%ae%80%e5%8f%96">➤ 準備一台以上的 Slave server 負責讀取</a></li><li class="is-sub"><a href="#-%e5%9c%a8-master-server-%e8%a3%a1%e9%9d%a2%e5%a2%9e%e5%8a%a0%e7%b5%a6-proxy-server-%e4%bd%bf%e7%94%a8%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e5%89%b5%e5%bb%ba%e6%b8%ac%e8%a9%a6%e7%94%a8-table">➤ 在 Master Server 裡面增加給 Proxy server 使用的使用者，並創建測試用 table</a></li><li><a href="#%e4%ba%8cmysql-proxy-%e7%9a%84%e9%81%b8%e6%93%87">二、MySQL Proxy 的選擇</a></li><li><a href="#%e4%b8%89atlas-%e5%8a%9f%e8%83%bd%e4%bb%8b%e7%b4%b9">三、Atlas 功能介紹</a></li><li><a href="#%e5%9b%9b%e5%9c%a8-ubunut-%e5%ae%89%e8%a3%9d-atlas">四、在 Ubunut 安裝 Atlas</a></li><li><a href="#%e4%ba%94%e9%80%a3%e5%88%b0-atlas-%e7%ae%a1%e7%90%86-server">五、連到 Atlas 管理 server</a></li><li class="is-sub"><a href="#-%e6%9f%a5%e7%9c%8b-atlas-%e7%9a%84%e7%ae%a1%e7%90%86%e5%91%bd%e4%bb%a4">➤ 查看 Atlas 的管理命令</a></li><li class="is-sub"><a href="#-%e6%9f%a5%e7%9c%8b-mysql-%e8%ae%80%e5%af%ab%e5%88%86%e9%9b%a2%e8%a8%ad%e5%ae%9a%e6%98%af%e5%90%a6%e7%94%9f%e6%95%88">➤ 查看 MySQL 讀寫分離設定是否生效</a></li><li><a href="#%e5%85%ad%e5%af%a6%e9%9a%9b%e6%b8%ac%e8%a9%a6%e9%80%8f%e9%81%8e-atlas-proxy-%e6%98%af%e5%90%a6%e9%81%94%e6%88%90%e8%ae%80%e5%af%ab%e5%88%86%e9%9b%a2">六、實際測試透過 Atlas Proxy 是否達成讀寫分離</a></li><li class="is-sub"><a href="#-%e6%b8%ac%e8%a9%a6%e5%af%ab%e5%85%a5%e5%8a%9f%e8%83%bd">➤ 測試寫入功能</a></li><li class="is-sub"><a href="#-%e6%b8%ac%e8%a9%a6%e8%ae%80%e5%8f%96%e5%8a%9f%e8%83%bd">➤ 測試讀取功能</a></li><li class="is-sub"><a href="#-%e8%a7%80%e5%af%9f-sql-%e9%81%8b%e8%a1%8c%e7%9a%84-log">➤ 觀察 sql 運行的 log</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>在『<a href="/blog/202103/mysql-master-slave-replication/">MySQL Master Slave Replication 主從式架構設定教學</a>』這篇文章的結尾有提到如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅 ，除非你的 Slave server 只是用來做資料分析 🤔；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令分流到正確的 server。</p>
+<figure class="figure"><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-01.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-01_hu_d427b339010bc087.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="761" alt="此為設計架構圖" loading="lazy" decoding="async">
+  <figcaption>此為設計架構圖</figcaption>
+</figure>
+
+<pre tabindex="0"><code>一、前置作業
+二、MySQL Proxy 的選擇
+三、Atlas 功能介紹
+四、在 Ubunut 安裝 Atlas
+五、連到 Atlas 管理 server
+六、實際測試透過 Atlas Proxy 是否達成讀寫分離
+</code></pre><h2 id="一前置作業">一、前置作業<a class="h-anchor" href="#%e4%b8%80%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>OS version、MySQL 是筆者安裝時的環境，ip 是給大家參考對應的</p>
+</blockquote>
+<h3 id="-準備一台要當-mysql-proxy-的-ubuntu-server">➤ 準備一台要當 MySQL Proxy 的 ubuntu server<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e8%a6%81%e7%95%b6-mysql-proxy-%e7%9a%84-ubuntu-server" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>OS version：ubuntu 16.04</li>
+<li>MySQL：5.7</li>
+<li>ip ：172.16.9.39</li>
+</ul>
+<h3 id="-準備一台-master-server-負責寫入">➤ 準備一台 Master server 負責寫入<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0-master-server-%e8%b2%a0%e8%b2%ac%e5%af%ab%e5%85%a5" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>OS version：ubuntu 16.04</li>
+<li>MySQL：5.7</li>
+<li>ip ：172.16.9.32</li>
+</ul>
+<h3 id="-準備一台以上的-slave-server-負責讀取">➤ 準備一台以上的 Slave server 負責讀取<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e4%bb%a5%e4%b8%8a%e7%9a%84-slave-server-%e8%b2%a0%e8%b2%ac%e8%ae%80%e5%8f%96" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>準備兩台以上測試 load balance 才會準確，這塊有興趣的讀者可以自己嘗試</p>
+</blockquote>
+<ul>
+<li>OS version：ubuntu 16.04</li>
+<li>MySQL：5.7</li>
+<li>ip ：172.16.9.32</li>
+</ul>
+<h3 id="-在-master-server-裡面增加給-proxy-server-使用的使用者並創建測試用-table">➤ 在 Master Server 裡面增加給 Proxy server 使用的使用者，並創建測試用 table<a class="h-anchor" href="#-%e5%9c%a8-master-server-%e8%a3%a1%e9%9d%a2%e5%a2%9e%e5%8a%a0%e7%b5%a6-proxy-server-%e4%bd%bf%e7%94%a8%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e5%89%b5%e5%bb%ba%e6%b8%ac%e8%a9%a6%e7%94%a8-table" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*建立proxy server使用者*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">CREATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">USER</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;proxy_account&#39;</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#a5d6ff">&#39;%&#39;</span><span style="color:#6e7681"> </span>IDENTIFIED<span style="color:#6e7681"> </span><span style="color:#ff7b72">BY</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;proxy_password&#39;</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*給使用者權限*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">GRANT</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">ALL</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">ON</span><span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">*</span>.<span style="color:#ff7b72;font-weight:bold">*</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">TO</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;proxy_account&#39;</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#a5d6ff">&#39;%&#39;</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*使權限生效*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span>FLUSH<span style="color:#6e7681"> </span><span style="color:#ff7b72">PRIVILEGES</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*創建測試用資料庫*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CREATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">DATABASE</span><span style="color:#6e7681"> </span>proxy_test;<span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/3c818b9e9a1294cd7e33f108985884e0" rel="noopener">create_proxy_user.sql</a>（GitHub Gist）</p>
+<h2 id="二mysql-proxy-的選擇">二、MySQL Proxy 的選擇<a class="h-anchor" href="#%e4%ba%8cmysql-proxy-%e7%9a%84%e9%81%b8%e6%93%87" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li><strong>MySQL Proxy</strong>：原本想使用官方工具來處理讀寫分離，但一上<strong>官網發現連他自己都不推薦使用</strong>😱，所以就不在多費心力研究。</li>
+</ul>
+<p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-02.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-02_hu_d8f30a5ef1ab1daf.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-02.webp 1296w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1296" height="398" alt="二、MySQL Proxy 的選擇（圖 2）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>MySQL Router</strong>：根據官方的指引認真的研究這個工具後發現雖然設定上簡單，但並不是很符合需求，他的<strong>讀寫分離是同一台伺服器分成兩個 port 來處理</strong>，雖然現在主流框架都支援這樣的操作，但我認為這樣的方式並不優雅</li>
+<li><strong>kingshard</strong>：是基於 Go 語言開發的 MySQL Proxy，在 github 上面擁有高人氣；但實際使用心得真的是滿滿的陰影…<strong>官方安裝指引非常的爛</strong>，鬼才知道要自己切換 branch 才能使用啊？設定檔根本要用錯誤嘗試法，沒說清楚必填選填，上面這些問題也就罷了，安裝成功後居然告訴我只有 windows 的電腦可以測試 <a href="https://github.com/flike/kingshard/issues/591#issuecomment-776367532">mac 電腦不行</a>😡，作者是在開玩笑嗎？總之我非常的不推薦。</li>
+<li><strong>Atlas</strong>：是基於 MySQL-Proxy 0.8.2 版本開發的工具，由 360 公司推出，在 github 上面找到最新的版本是 2015 年推出的，至於為什麼不再更新的理由，360 公司表示因為這個工具已經夠棒了🥴，沒什麼繼續優化的必要性了；事實上這個工具也是筆者最後選用的，儘管安裝過程滿滿的坑😓</li>
+</ul>
+<h2 id="三atlas-功能介紹">三、Atlas 功能介紹<a class="h-anchor" href="#%e4%b8%89atlas-%e5%8a%9f%e8%83%bd%e4%bb%8b%e7%b4%b9" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>讀寫分離</li>
+<li>slave server 的 load balance</li>
+<li>IP filter</li>
+<li>DBA 可以輕鬆的上下線 DB（有指令支持）</li>
+<li>自動移除當機的 DB（但如果當機的是 master server，就只剩讀取功能）</li>
+</ol>
+<h2 id="四在-ubunut-安裝-atlas">四、在 Ubunut 安裝 Atlas<a class="h-anchor" href="#%e5%9b%9b%e5%9c%a8-ubunut-%e5%ae%89%e8%a3%9d-atlas" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>筆者在安裝過程中感受到滿滿的惡意</p>
+</blockquote>
+<p><strong>STEP 1</strong>：下載 &amp; 安裝 Atlas</p>
+<p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-03.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-03_hu_eea65b7ffa7d4fe3.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-03.webp 1259w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1259" height="340" alt="四、在 Ubunut 安裝 Atlas（圖 3）" loading="lazy" decoding="async"></p>
+<p>你可以在官方 <a href="https://github.com/Qihoo360/Atlas/releases">github release </a>中找到 deb 的安裝包下載他</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wget https://github.com/Qihoo360/Atlas/releases/download/2.2/Atlas-2.2-debian6.0-x86_64.deb
+</span></span></code></pre></div><p>執行安裝</p>
+<pre tabindex="0"><code>dpkg -i Atlas-2.2-debian6.0-x86_64.deb
+</code></pre><p><strong>STEP 2</strong>：調整 Atlas 的設定檔</p>
+<p>Atlas 的安裝路徑是/usr/local/mysql-proxy ，執行時的參數會參考 conf 目錄下的 test.cnf 檔案</p>
+<pre tabindex="0"><code>vi /usr/local/mysql-proxy/conf/test.cnf
+</code></pre><p>下面幾個需要特別調整，其他用默認的就可以了</p>
+<ul>
+<li><strong>proxy-backend-addresses</strong>：填寫 Master server 的 ip</li>
+</ul>
+<p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-04.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-04_hu_e1db7c9523098468.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-04.webp 1196w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1196" height="88" alt="四、在 Ubunut 安裝 Atlas（圖 4）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>proxy-read-only-backend-addresses</strong>：填寫 Slave server 的 ip</li>
+</ul>
+<p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-05.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-05_hu_b9a1486b5abab85d.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-05.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="122" alt="四、在 Ubunut 安裝 Atlas（圖 5）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>pwds</strong>：請使用於前置作業 Master server 新增專門給 Proxy Server 使用的帳號密碼，密碼要用下面的指令作加密</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 前往加密的目錄</span>
+</span></span><span style="display:flex;"><span>cd /usr/local/mysql-proxy/bin
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 對密碼加密</span>
+</span></span><span style="display:flex;"><span>./encrypt proxy_password
+</span></span></code></pre></div><p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-06.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-06_hu_d9f45d1ccddfcbf5.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-06.webp 1332w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1332" height="126" alt="四、在 Ubunut 安裝 Atlas（圖 6）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-07.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-07_hu_88078123e972388a.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-07.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="136" alt="四、在 Ubunut 安裝 Atlas（圖 7）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>sql-log</strong>：預設是 OFF 不會紀錄，但為了方便觀察讀寫是否分離，我們將它設定為 REALTIME</li>
+</ul>
+<p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-08.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-08_hu_9d1cf688d78d556.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-08.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="138" alt="四、在 Ubunut 安裝 Atlas（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：啟動 Atlas</p>
+<p>輸入下面指令即可啟動 Atlas</p>
+<pre tabindex="0"><code>/usr/local/mysql-proxy/bin/mysql-proxyd test start
+</code></pre><p>不過應該有 99% 的人會在這個步驟失敗</p>
+<figure class="figure"><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-09.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-09_hu_72ccaba2256d412e.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="90" alt="這是另外一種啟動方式，反正只是給大家看會有什麼錯誤而已" loading="lazy" decoding="async">
+  <figcaption>這是另外一種啟動方式，反正只是給大家看會有什麼錯誤而已</figcaption>
+</figure>
+
+<p>你可以在 log 裡面看錯誤訊息</p>
+<pre tabindex="0"><code>vi /usr/local/mysql-proxy/log/test.log
+</code></pre><p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-10.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-10_hu_9b2ece4e94102f7a.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-10.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="192" alt="四、在 Ubunut 安裝 Atlas（圖 10）" loading="lazy" decoding="async"></p>
+<p><strong>解決方式：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝套件相關套件</span>
+</span></span><span style="display:flex;"><span>apt-get install libmysqlclient-dev
+</span></span><span style="display:flex;"><span>apt-get install mysql-client
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載缺失的 libmysqlclient.so.16 套件，我是在這個網站找到的</span>
+</span></span><span style="display:flex;"><span>wget http://files.directadmin.com/services/debian_5.0_64/libmysqlclient.so.16
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 將 libmysqlclient.so.16 搬移到 lib 目錄下</span>
+</span></span><span style="display:flex;"><span>mv libmysqlclient.so.16 /usr/lib/x86_64-linux-gnu/
+</span></span></code></pre></div><p>再次啟動 Atlas</p>
+<pre tabindex="0"><code>/usr/local/mysql-proxy/bin/mysql-proxyd test start
+</code></pre><p>看到 <strong>OK: MySQL-Proxy of test is started</strong> 的提示就成功嚕！</p>
+<p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-11.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-11_hu_3aae2eca84404324.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-11.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="73" alt="四、在 Ubunut 安裝 Atlas（圖 11）" loading="lazy" decoding="async"></p>
+<p>檢查 Atlas 服務狀態</p>
+<pre tabindex="0"><code>/usr/local/mysql-proxy/bin/mysql-proxyd test status
+</code></pre><p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-12.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-12_hu_3bab5df6c36dfe48.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-12.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="104" alt="四、在 Ubunut 安裝 Atlas（圖 12）" loading="lazy" decoding="async"></p>
+<h2 id="五連到-atlas-管理-server">五、連到 Atlas 管理 server<a class="h-anchor" href="#%e4%ba%94%e9%80%a3%e5%88%b0-atlas-%e7%ae%a1%e7%90%86-server" aria-label="這個段落的連結"></a></h2>
+<p>Atlas 預設的管理 port 為 2345，ip 填寫 Proxy server ip，如果 admin 的帳號密碼沒換就是跟下面一樣</p>
+<pre tabindex="0"><code>mysql -h172.16.9.39 -P2345 -uuser -ppwd
+</code></pre><p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-13.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-13_hu_e79560600843b16.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-13.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="553" alt="五、連到 Atlas 管理 server（圖 13）" loading="lazy" decoding="async"></p>
+<h3 id="-查看-atlas-的管理命令">➤ 查看 Atlas 的管理命令<a class="h-anchor" href="#-%e6%9f%a5%e7%9c%8b-atlas-%e7%9a%84%e7%ae%a1%e7%90%86%e5%91%bd%e4%bb%a4" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code>mysql&gt; select * from help;
+</code></pre><p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-14.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-14_hu_1a3932b44ca23114.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-14.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="529" alt="查看 Atlas 的管理命令（圖 14）" loading="lazy" decoding="async"></p>
+<h3 id="-查看-mysql-讀寫分離設定是否生效">➤ 查看 MySQL 讀寫分離設定是否生效<a class="h-anchor" href="#-%e6%9f%a5%e7%9c%8b-mysql-%e8%ae%80%e5%af%ab%e5%88%86%e9%9b%a2%e8%a8%ad%e5%ae%9a%e6%98%af%e5%90%a6%e7%94%9f%e6%95%88" aria-label="這個段落的連結"></a></h3>
+<p>rw 為讀寫權限，ro 代表只有讀的權限</p>
+<pre tabindex="0"><code>mysql&gt; select * from backends;
+</code></pre><p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-15.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-15_hu_29c55997ce96a5ea.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-15.webp 942w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="942" height="320" alt="查看 MySQL 讀寫分離設定是否生效（圖 15）" loading="lazy" decoding="async"></p>
+<p>到這步其實就可以完結撒花惹 😊😊😊😊😊😊</p>
+<h2 id="六實際測試透過-atlas-proxy-是否達成讀寫分離">六、實際測試透過 Atlas Proxy 是否達成讀寫分離<a class="h-anchor" href="#%e5%85%ad%e5%af%a6%e9%9a%9b%e6%b8%ac%e8%a9%a6%e9%80%8f%e9%81%8e-atlas-proxy-%e6%98%af%e5%90%a6%e9%81%94%e6%88%90%e8%ae%80%e5%af%ab%e5%88%86%e9%9b%a2" aria-label="這個段落的連結"></a></h2>
+<p>Atlas 預設的proxy port 為 1234，ip 填寫 Proxy server ip，登入的帳號密碼填寫你在 Master 申請給 Atlas Proxy 使用的那組</p>
+<pre tabindex="0"><code>mysql -h172.16.9.39 -P1234 -uproxy_account -pproxy_password
+</code></pre><p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-16.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-16_hu_d911ff7c5a4928f2.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-16.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="536" alt="六、實際測試透過 Atlas Proxy 是否達成讀寫分離（圖 16）" loading="lazy" decoding="async"></p>
+<h3 id="-測試寫入功能">➤ 測試寫入功能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e5%af%ab%e5%85%a5%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code># 先選擇之前創建的測試資料庫
+mysql&gt; use proxy_test;
+# 創建表並塞入一寫資料
+mysql&gt; CREATE TABLE department (id INT,name varchar(50));
+mysql&gt; INSERT INTO department VALUES (1, &#39;Sales&#39;);
+mysql&gt; INSERT INTO department VALUES (2, &#39;Operator&#39;);
+</code></pre><p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-17.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-17_hu_4e4d02b11293aded.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-17.webp 1062w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1062" height="308" alt="測試寫入功能（圖 17）" loading="lazy" decoding="async"></p>
+<h3 id="-測試讀取功能">➤ 測試讀取功能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e8%ae%80%e5%8f%96%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code># 先選擇之前創建的測試資料庫
+mysql&gt; use proxy_test;
+# 讀取剛剛創建的 table
+mysql&gt; SELECT * FROM department;
+</code></pre><p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-18.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-18.webp 536w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="536" height="308" alt="測試讀取功能（圖 18）" loading="lazy" decoding="async"></p>
+<h3 id="-觀察-sql-運行的-log">➤ 觀察 sql 運行的 log<a class="h-anchor" href="#-%e8%a7%80%e5%af%9f-sql-%e9%81%8b%e8%a1%8c%e7%9a%84-log" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>記得把 Atla 設定檔的 ssql-log 參數調整為 REALTIME 才會有喔！</p>
+</blockquote>
+<p>前往 log file</p>
+<pre tabindex="0"><code>tail /usr/local/mysql-proxy/log/sql_test.log
+</code></pre><p>從下圖我們可以觀察到，負責變更資料庫的是 Master server(172.16.3.32)，讀取的則是 Slave Server(172.16.3.33)，恭喜自己大功告成</p>
+<p><img src="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-19.webp" srcset="/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-19_hu_ee8c79b91ef8dd5c.webp 720w, /blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-19.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="530" alt="觀察 sql 運行的 log（圖 19）" loading="lazy" decoding="async"></p>
+<hr>
+<p>希望這篇文章有幫助到使用 Ubuntu 架設 MySQL 並且想做到讀寫分離的開發人員，網路上對這塊的資訊相對來說比較零散，有些甚至都是錯誤，整理起來這些文件也真的很費力，如果對你有幫助的話可以幫我按個拍手👏給我一點繼續分享技術文章的動力。</p>
+<pre tabindex="0"><code>如果你想了解資料庫主從式架構的設定歡迎參考我的文章：
+👍 MySQL Master Slave Replication 主從式架構設定教學
+👍 在 MySQL 5.7 解決主從複製的延遲問題
+</code></pre><hr>
+<p><strong>參考資訊</strong>：<a href="http://files.directadmin.com/services/debian_5.0_64/libmysqlclient.so.16">下載libmysqlclient.so.16檔案</a>、<a href="https://www.jianshu.com/p/67d4b34b2af4">讀寫分離測試</a>、<a href="https://zhuanlan.zhihu.com/p/94279867">Mysql访问中间件 — Atlas初探</a>、<a href="https://www.jianshu.com/p/b68e429d09c7">Atlas</a>、<a href="https://github.com/Qihoo360/Atlas/blob/master/README_ZH.md">Atlas Github</a></p>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2021.03.29）</span><a href="https://medium.com/dean-lin/ubuntu-%E7%94%A8-atlas-%E5%AF%A6%E7%8F%BE-mysql-proxy-%E8%AE%80%E5%AF%AB%E5%88%86%E9%9B%A2-read-write-splitting-72759b1b1b33" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/atlas/">Atlas</a>
+            <a class="chip chip-hash" href="/tags/ubuntu/">Ubuntu</a>
+            <a class="chip chip-hash" href="/tags/mysql/">MySQL</a>
+            <a class="chip chip-hash" href="/tags/%E8%AE%80%E5%AF%AB%E5%88%86%E9%9B%A2/">讀寫分離</a>
+            <a class="chip chip-hash" href="/tags/rw-splitting/">Rw Splitting</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202103%2Fmysql-read-write-splitting-atlas%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202103%2Fmysql-read-write-splitting-atlas%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/" data-title="Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/mysql-replication/">MySQL 主從架構</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>2</b> 篇・共 4 篇</p>
+          </div>
+          <ol class="steps">
+            <li>
+              <a href="/blog/202103/mysql-master-slave-replication/"><span class="n">01</span><span>MySQL Master Slave Replication 主從式架構設定教學</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">02</span><span>Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202103/mysql-benchmark-sysbench/"><span class="n">03</span><span>用 sysbench 測試 MySQL 性能 — 在 mac &amp; ubuntu 上的安裝與使用</span></a>
+            </li>
+            <li>
+              <a href="/blog/202103/mysql-replication-lag/"><span class="n">04</span><span>解決 MySQL 主從複製的延遲問題 (Replication lag)</span></a>
+            </li>
+          </ol>
+          <a class="sb-next" href="/blog/202103/mysql-benchmark-sysbench/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">用 sysbench 測試 MySQL 性能 — 在 mac &amp; ubuntu 上的安裝與使用</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202103/mysql-master-slave-replication/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">MySQL Master Slave Replication 主從式架構設定教學</span></a>
+          <a class="next" href="/blog/202103/mysql-benchmark-sysbench/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">用 sysbench 測試 MySQL 性能 — 在 mac &amp; ubuntu 上的安裝與使用</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad">一、前置作業</a></li><li class="is-sub"><a href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e8%a6%81%e7%95%b6-mysql-proxy-%e7%9a%84-ubuntu-server">➤ 準備一台要當 MySQL Proxy 的 ubuntu server</a></li><li class="is-sub"><a href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0-master-server-%e8%b2%a0%e8%b2%ac%e5%af%ab%e5%85%a5">➤ 準備一台 Master server 負責寫入</a></li><li class="is-sub"><a href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e4%bb%a5%e4%b8%8a%e7%9a%84-slave-server-%e8%b2%a0%e8%b2%ac%e8%ae%80%e5%8f%96">➤ 準備一台以上的 Slave server 負責讀取</a></li><li class="is-sub"><a href="#-%e5%9c%a8-master-server-%e8%a3%a1%e9%9d%a2%e5%a2%9e%e5%8a%a0%e7%b5%a6-proxy-server-%e4%bd%bf%e7%94%a8%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e5%89%b5%e5%bb%ba%e6%b8%ac%e8%a9%a6%e7%94%a8-table">➤ 在 Master Server 裡面增加給 Proxy server 使用的使用者，並創建測試用 table</a></li><li><a href="#%e4%ba%8cmysql-proxy-%e7%9a%84%e9%81%b8%e6%93%87">二、MySQL Proxy 的選擇</a></li><li><a href="#%e4%b8%89atlas-%e5%8a%9f%e8%83%bd%e4%bb%8b%e7%b4%b9">三、Atlas 功能介紹</a></li><li><a href="#%e5%9b%9b%e5%9c%a8-ubunut-%e5%ae%89%e8%a3%9d-atlas">四、在 Ubunut 安裝 Atlas</a></li><li><a href="#%e4%ba%94%e9%80%a3%e5%88%b0-atlas-%e7%ae%a1%e7%90%86-server">五、連到 Atlas 管理 server</a></li><li class="is-sub"><a href="#-%e6%9f%a5%e7%9c%8b-atlas-%e7%9a%84%e7%ae%a1%e7%90%86%e5%91%bd%e4%bb%a4">➤ 查看 Atlas 的管理命令</a></li><li class="is-sub"><a href="#-%e6%9f%a5%e7%9c%8b-mysql-%e8%ae%80%e5%af%ab%e5%88%86%e9%9b%a2%e8%a8%ad%e5%ae%9a%e6%98%af%e5%90%a6%e7%94%9f%e6%95%88">➤ 查看 MySQL 讀寫分離設定是否生效</a></li><li><a href="#%e5%85%ad%e5%af%a6%e9%9a%9b%e6%b8%ac%e8%a9%a6%e9%80%8f%e9%81%8e-atlas-proxy-%e6%98%af%e5%90%a6%e9%81%94%e6%88%90%e8%ae%80%e5%af%ab%e5%88%86%e9%9b%a2">六、實際測試透過 Atlas Proxy 是否達成讀寫分離</a></li><li class="is-sub"><a href="#-%e6%b8%ac%e8%a9%a6%e5%af%ab%e5%85%a5%e5%8a%9f%e8%83%bd">➤ 測試寫入功能</a></li><li class="is-sub"><a href="#-%e6%b8%ac%e8%a9%a6%e8%ae%80%e5%8f%96%e5%8a%9f%e8%83%bd">➤ 測試讀取功能</a></li><li class="is-sub"><a href="#-%e8%a7%80%e5%af%9f-sql-%e9%81%8b%e8%a1%8c%e7%9a%84-log">➤ 觀察 sql 運行的 log</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202103%2Fmysql-read-write-splitting-atlas%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202103%2Fmysql-read-write-splitting-atlas%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/" data-title="Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202103/mysql-replication-lag/images/mysql-replication-lag-01_hu_8afe199402bb1af5.webp" srcset="/blog/202103/mysql-replication-lag/images/mysql-replication-lag-01_hu_5cd542d0ee64826a.webp 240w, /blog/202103/mysql-replication-lag/images/mysql-replication-lag-01_hu_467bc8fa6028df9f.webp 480w, /blog/202103/mysql-replication-lag/images/mysql-replication-lag-01_hu_b7a6f87e30629008.webp 800w, /blog/202103/mysql-replication-lag/images/mysql-replication-lag-01_hu_8afe199402bb1af5.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/mysql-replication/">MySQL 主從架構</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/mysql-replication-lag/">解決 MySQL 主從複製的延遲問題 (Replication lag)</a></h3>
+    <p class="card-desc">Slave DB 上的資料從 Master DB 複製過來時會有延遲，所以會造成用戶看到舊的資訊；在過去想解決這個問題真的需要 18 般武藝，但到了 MySQL 5.7 版後官方說只要調整一個設定就能解決，具體做法讓我們看下去。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-29">2021.03.29</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>2 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-01_hu_52204879ca5aa0b4.webp" srcset="/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-01_hu_cf788ef99a5d4c10.webp 240w, /blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-01_hu_919e775a90bd8870.webp 480w, /blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-01_hu_c47e7c5ed38e073d.webp 800w, /blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-01_hu_52204879ca5aa0b4.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/mysql-replication/">MySQL 主從架構</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/mysql-benchmark-sysbench/">用 sysbench 測試 MySQL 性能 — 在 mac &amp; ubuntu 上的安裝與使用</a></h3>
+    <p class="card-desc">sysbench 是我目前使用上最順手的一個測試工具，安裝、使用都非常容易，除了資料庫的測試外他還能對 CPU、Memory…做測試，本篇會詳細說明如何使用它來做 MySQL 性能測試，其他的功能可以參考文末附的連結。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-29">2021.03.29</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-01_hu_1644a71f70d67c96.webp" srcset="/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-01_hu_dcad66f0287d4a4.webp 240w, /blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-01_hu_dc9db424d668310d.webp 480w, /blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-01_hu_b71d36b95a8e5ba7.webp 800w, /blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-01_hu_1644a71f70d67c96.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/mysql-replication/">MySQL 主從架構</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/mysql-master-slave-replication/">MySQL Master Slave Replication 主從式架構設定教學</a></h3>
+    <p class="card-desc">Master Slave Replication 是一個 Web 工程師需要具備的基礎概念，我們可以透過這個技術有效的降低 Database server 負荷，同時給使用者提供更穩定順暢的體驗；本文除了讓你了解這個技術的原理外還會以 MySQL…</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-25">2021.03.25</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

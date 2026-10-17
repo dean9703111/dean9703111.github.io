@@ -1,0 +1,1245 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Docker｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/docker/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Sat, 12 Sep 2026 10:09:20 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker 建隔離環境，讓 Claude Code 火力全開，用 Hostinger 部署上線！</title>
+      <link>https://deanlin.net/blog/202609/claude-code-docker-hostinger/</link>
+      <pubDate>Sat, 12 Sep 2026 10:09:20 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202609/claude-code-docker-hostinger/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>相信很多人在面對繁瑣重複的工作時，腦袋可能會冒出一句話：「如果有工具可以幫我搞定就好了！」</description>
+      <content:encoded><![CDATA[<figure class="figure"><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-01.webp" width="1400" height="788" alt="https://youtu.be/BPdyiaC-3Lw" loading="lazy" decoding="async">
+  <figcaption><a href="https://youtu.be/BPdyiaC-3Lw">https://youtu.be/BPdyiaC-3Lw</a></figcaption>
+</figure>
+
+<p>相信很多人在面對繁瑣重複的工作時，腦袋可能會冒出一句話：「如果有工具可以幫我搞定就好了！」</p>
+<p>這幾個月我收到許多 AI 輔助開發的企業內訓邀請；為了呈現最高品質的內容，我想把過去 YouTube 影片底下的留言彙整起來。</p>
+<blockquote class="pullquote"><p>但問題來了，YouTube 並沒有匯出留言的功能</p>
+</blockquote>
+<p>而我有些影片留言就有幾百則，如果手動整理，那是一個非常浩大且無趣的過程。</p>
+<p>這就是我在日常工作遇到的痛點，我相信大家在自己的工作中，一定也有對應的痛點。</p>
+<p>這邊再分享一個實際案例，前陣子我受邀到三軍總醫院分享 AI 輔助開發的經驗。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-02.webp" width="1400" height="1052" alt="Docker 建隔離環境，讓 Claude Code 火力全開，用 Hostinger 部署上線！（圖 2）" loading="lazy" decoding="async"></p>
+<p>當時就以醫院的兩大痛點「月報製作」和「排班系統」當案例，現場向醫護人員展示 AI 的可能性，以及要注意的資安議題。</p>
+<p>分享這些案例，是想讓大家了解，過去我們可能有想法，但因為沒有技術，因此只能等別人開發</p>
+<p>但現在，只要想法與需求足夠明確，其實是有辦法在 AI 的輔助下，自己完成工具的。</p>
+<blockquote>
+<p>但實際動手時，會遇到幾個問題。</p>
+</blockquote>
+<p>首先，不管你選擇的 AI Agent 是 Claude Code、Codex 還是 Cursor；它們在執行任務時，時常會跳出一些操作權限的提醒，問你要同意還是拒絕。</p>
+<p>假如你沒有相關技術背景，其實很難判斷該接受還是拒絕，而且閱讀這些資訊真的很花時間；要是不小心接受了 AI 的危險指令，電腦甚至有被清空磁碟或格式化的風險。</p>
+<h3 id="-在隔離環境執行-claude-code">① 在隔離環境執行 Claude Code<a class="h-anchor" href="#-%e5%9c%a8%e9%9a%94%e9%9b%a2%e7%92%b0%e5%a2%83%e5%9f%b7%e8%a1%8c-claude-code" aria-label="這個段落的連結"></a></h3>
+<p>所以我會先跟大家分享，如何用 Claude Code 搭配 Docker 建立一個可以放心讓 AI 執行的隔離環境；在這個環境中，AI 可以自動執行所有指令，不用擔心影響到自己的電腦。</p>
+<h3 id="-設計好系統目標後放手讓-ai-agent-執行">② 設計好系統目標後，放手讓 AI Agent 執行<a class="h-anchor" href="#-%e8%a8%ad%e8%a8%88%e5%a5%bd%e7%b3%bb%e7%b5%b1%e7%9b%ae%e6%a8%99%e5%be%8c%e6%94%be%e6%89%8b%e8%ae%93-ai-agent-%e5%9f%b7%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>但在讓 AI 執行前，我們需要先告訴他明確的目標，以及驗收的標準。如果可以，最好再指定使用的技術，這樣得到的成品會更符合自己的預期。</p>
+<h3 id="-加入-git-版本控制">③ 加入 Git 版本控制<a class="h-anchor" href="#-%e5%8a%a0%e5%85%a5-git-%e7%89%88%e6%9c%ac%e6%8e%a7%e5%88%b6" aria-label="這個段落的連結"></a></h3>
+<p>而在 AI 製作完初版後，我們要先加入 Git 版本控制。因為 AI 修改程式碼的幅度很大，如果沒有版本控制，改壞就回不去了。</p>
+<h3 id="-透過-hostinger-部署上線">④ 透過 Hostinger 部署上線<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-hostinger-%e9%83%a8%e7%bd%b2%e4%b8%8a%e7%b7%9a" aria-label="這個段落的連結"></a></h3>
+<p>另外如果你想把成果分享給朋友，或作為個人的作品集；我會分享透過 Hostinger 部署上線的步驟。</p>
+<h3 id="-上線後要考量的事">⑤ 上線後要考量的事<a class="h-anchor" href="#-%e4%b8%8a%e7%b7%9a%e5%be%8c%e8%a6%81%e8%80%83%e9%87%8f%e7%9a%84%e4%ba%8b" aria-label="這個段落的連結"></a></h3>
+<p>但上線只是考驗的開始，我也會分享系統上線後可能會遭遇的挑戰。</p>
+<blockquote>
+<p>完整的 Demo，可以觀看 YT 喔 👉</p>
+<p>對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。</p>
+</blockquote>
+<div class="yt" data-yt="BPdyiaC-3Lw" data-title="- YouTube">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=BPdyiaC-3Lw" target="_blank" rel="noopener" aria-label="播放影片：- YouTube">
+    <img src="https://i.ytimg.com/vi/BPdyiaC-3Lw/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">- YouTube</span>
+  </a>
+</div>
+
+<hr>
+<h2 id="-在隔離環境執行-claude-code-1">① 在隔離環境執行 Claude Code<a class="h-anchor" href="#-%e5%9c%a8%e9%9a%94%e9%9b%a2%e7%92%b0%e5%a2%83%e5%9f%b7%e8%a1%8c-claude-code-1" aria-label="這個段落的連結"></a></h2>
+<p>在正片開始前，我先說明會使用到的工具</p>
+<h3 id="-claude-code">➤ Claude Code<a class="h-anchor" href="#-claude-code" aria-label="這個段落的連結"></a></h3>
+<p>首先你需要選一個 AI Agent，這隻影片的範例是 Claude Code；目前需要付費升級到 Pro 以上的版本才能使用。</p>
+<p>如果你使用 macOS 或 Linux，可以在終端機透過下面指令安裝</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -fsSL https://claude.ai/install.sh | bash
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-03.webp" width="1400" height="815" alt="Claude Code（圖 3）" loading="lazy" decoding="async"></p>
+<p>另外 Windows 可以參考下面的指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>irm https<span style="color:#f85149">:</span>//claude.ai/install.<span style="color:#79c0ff">ps1</span> | iex
+</span></span></code></pre></div><h3 id="-docker">➤ Docker<a class="h-anchor" href="#-docker" aria-label="這個段落的連結"></a></h3>
+<p>接下來要安裝是 Docker，他可以幫我們建立隔離環境的「容器」</p>
+<p><a href="https://www.docker.com/products/docker-desktop/">https://www.docker.com/products/docker-desktop/</a></p>
+<p>如果你直接在電腦的終端機執行 Claude，AI 就有機會動到電腦裡的資料與設定；<strong>而 Docker 的作用，就是把 Claude 的執行環境限制在容器之內。</strong></p>
+<p>在這樣的狀態下，AI 執行起來會安全許多，因為他看不到容器外的資訊。</p>
+<p>在官網上，你可以根據自己的作業系統選擇要安裝的版本。安裝完成後打開 Docker Desktop，不需要註冊，也不用登入帳號。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-04.webp" width="1400" height="815" alt="Docker（圖 4）" loading="lazy" decoding="async"></p>
+<p>看到左下角有一個綠色的「Egine Running」，就代表 Docker 引擎已經在你的電腦背景跑起來了。</p>
+<p>如果想更確定的話，可以在終端機輸入 <code>docker -v</code> 來確認</p>
+<h3 id="-nodejs">➤ Node.js<a class="h-anchor" href="#-nodejs" aria-label="這個段落的連結"></a></h3>
+<p>再來因為今天示範的是網頁工具，所以我們需要安裝 Node.js，由於 Node.js 有許多版本，所以我們要透過 nvm 來安裝與管理。</p>
+<p>如果你使用 macOS 或 Linux，可以在終端機透過下面指令安裝。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash
+</span></span></code></pre></div><p>而 Windows 可以到官網下載最新的「setup.exe」安裝程式。</p>
+<p><a href="https://github.com/coreybutler/nvm-windows/releases">https://github.com/coreybutler/nvm-windows/releases</a></p>
+<p>安裝完成後，重新開啟終端機，並輸入 <code>nvm -v</code> 確認版本，接著再輸入 <code>nvm install &ndash;lts</code> 安裝最新版本的 Node.js，並輸入 <code>node -v</code> 確認有切換到最新版本。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-05.webp" width="1400" height="815" alt="Node.js（圖 5）" loading="lazy" decoding="async"></p>
+<h3 id="-安裝程式碼編輯器-ide">➤ 安裝程式碼編輯器 IDE<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d%e7%a8%8b%e5%bc%8f%e7%a2%bc%e7%b7%a8%e8%bc%af%e5%99%a8-ide" aria-label="這個段落的連結"></a></h3>
+<p>接著我們要安裝一個程式碼編輯器（IDE），我這邊使用的是 <a href="https://cursor.com/zh-Hant/download">Cursor</a>，但如果你想用 VS Code 或 Antigravity 也都可以</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-06.webp" width="1400" height="815" alt="安裝程式碼編輯器 IDE（圖 6）" loading="lazy" decoding="async"></p>
+<h3 id="-安裝-dev-containers-外掛">➤ 安裝 Dev Containers 外掛<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-dev-containers-%e5%a4%96%e6%8e%9b" aria-label="這個段落的連結"></a></h3>
+<p>裝好 IDE 後，點擊左側的 Extensions，搜尋「Docker Dev Containers」，選第一個進行安裝即可。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-07.webp" width="1400" height="815" alt="安裝 Dev Containers 外掛（圖 7）" loading="lazy" decoding="async"></p>
+<p>安裝完成後，我們的程式碼編輯器就能直接在 Docker 容器裡面工作了。</p>
+<h3 id="-下載練習用的專案">➤ 下載練習用的專案<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89%e7%b7%b4%e7%bf%92%e7%94%a8%e7%9a%84%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<p>確認前面的工具都準備完成後，我們要透過 Git 來下載練習用的專案</p>
+<p><a href="https://git-scm.com/install/windows">https://git-scm.com/install/windows</a></p>
+<p>如果你是第一次使用 Git，可以到官網根據自己的系統下載，安裝完成後輸入 <code>git &ndash;version</code> 確認版本。</p>
+<p>另外輸入下面兩行，可以確認有沒有完成帳號的設定。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git config --global user.name
+</span></span><span style="display:flex;"><span>git config --global user.email
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-08.webp" width="1400" height="815" alt="下載練習用的專案（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>這些設定都完成後，就可以下載專案了，歡迎路過按個 Star，讓我知道自己的分享對大家有幫助：</strong></p>
+<p><a href="https://github.com/deancourse/claude-code-docker-container">https://github.com/deancourse/claude-code-docker-container</a></p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-09.webp" width="1400" height="815" alt="下載練習用的專案（圖 9）" loading="lazy" decoding="async"></p>
+<p><strong>大家可以直接 Fork 我的 Repository 來體驗，Fork 完成後，點擊 Code，從裡面複製專案網址。</strong></p>
+<p>然後回到程式碼編輯器，點擊「Clone Repo」，貼上剛剛複製的網址來下載專案。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-10.webp" width="1400" height="815" alt="下載練習用的專案（圖 10）" loading="lazy" decoding="async"></p>
+<p>指定下載路徑，完成後點擊「開啟」，就可以跟著一起操作了。</p>
+<h3 id="-專案簡介">➤ 專案簡介<a class="h-anchor" href="#-%e5%b0%88%e6%a1%88%e7%b0%a1%e4%bb%8b" aria-label="這個段落的連結"></a></h3>
+<p>這個專案我是參考 <a href="https://github.com/anthropics/claude-code/tree/main/.devcontainer">Claude Code 官方的範本</a>修改的</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-11.webp" width="1400" height="815" alt="專案簡介（圖 11）" loading="lazy" decoding="async"></p>
+<p>我在它的基礎上，加上了前端網頁設計與 Git Commit 的 Skill，以及給 AI 參考的 CLAUDE.md，<a href="https://github.com/multica-ai/%E2%89%88-karpathy-skills/blob/main/CLAUDE.md">這份 CLAUDE.md 是參考 andrej-karpathy 的版本</a></p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-12.webp" width="1400" height="815" alt="專案簡介（圖 12）" loading="lazy" decoding="async"></p>
+<h3 id="-在-ide-啟動沙盒">➤ 在 IDE 啟動沙盒<a class="h-anchor" href="#-%e5%9c%a8-ide-%e5%95%9f%e5%8b%95%e6%b2%99%e7%9b%92" aria-label="這個段落的連結"></a></h3>
+<p>在了解專案基礎架構後，輸入「F1」貼上 <code>Dev Containers: Reopen in Container</code></p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-13.webp" width="1400" height="815" alt="在 IDE 啟動沙盒（圖 13）" loading="lazy" decoding="async"></p>
+<p>這個指令會幫你下載容器所需的資源，第一次執行會比較久，啟動完成後，左下角就會顯示 Container Claude Code Sandbox。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-14.webp" width="1400" height="815" alt="在 IDE 啟動沙盒（圖 14）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>這邊提醒一下大家，我在企業內訓時，有部分學員遇到啟動失敗的問題；通常把整個 IDE 關掉重啟就會成功，如果還是不行，可以把錯誤訊息貼到 Claude Code 進行分析。</p>
+</blockquote>
+<h3 id="-確認-claude-code-可以使用">➤ 確認 Claude Code 可以使用<a class="h-anchor" href="#-%e7%a2%ba%e8%aa%8d-claude-code-%e5%8f%af%e4%bb%a5%e4%bd%bf%e7%94%a8" aria-label="這個段落的連結"></a></h3>
+<p>接著我們打開終端機輸入 <code>claude</code>，第一次在這個容器操作時會需要登入；登入後，你會發現這是一個非常乾淨的 Claude。</p>
+<p>在 /skills 的部分，你只會看到我預先放進去的技能</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-15.webp" width="1400" height="815" alt="確認 Claude Code 可以使用（圖 15）" loading="lazy" decoding="async"></p>
+<p>而 /permissions 這塊，完全是空白的</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-16.webp" width="1400" height="815" alt="確認 Claude Code 可以使用（圖 16）" loading="lazy" decoding="async"></p>
+<p>接著，我們來做一個測試，跟 AI 說：</p>
+<pre tabindex="0"><code>幫我列出桌面有哪些檔案
+</code></pre><p>如果是在自己電腦的終端機執行這個指令，AI 會列出桌面的檔案；但因為我們這裡是容器，所以你會看到 AI 跟你說他找不到。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-17.webp" width="1400" height="815" alt="確認 Claude Code 可以使用（圖 17）" loading="lazy" decoding="async"></p>
+<p>因為他在容器裡面，而桌面這個資料夾，是在容器外面；做到這邊先給自己拍拍手，我們已經完成了隔離環境，接下來就能開啟無限制模式，讓 AI 大展身手</p>
+<hr>
+<h2 id="-設定系統目標讓-ai-火力全開">② 設定系統目標，讓 AI 火力全開<a class="h-anchor" href="#-%e8%a8%ad%e5%ae%9a%e7%b3%bb%e7%b5%b1%e7%9b%ae%e6%a8%99%e8%ae%93-ai-%e7%81%ab%e5%8a%9b%e5%85%a8%e9%96%8b" aria-label="這個段落的連結"></a></h2>
+<h3 id="-大膽執行危險模式">➤ 大膽執行危險模式<a class="h-anchor" href="#-%e5%a4%a7%e8%86%bd%e5%9f%b7%e8%a1%8c%e5%8d%b1%e9%9a%aa%e6%a8%a1%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>確認 AI 在容器內，碰不到容器外的資料後，我們先用 Control + C 關閉這個對話。</p>
+<p>然後就可以用 <code>claude &ndash;dangerously-skip-permissions</code> 的方式啟動 Claude 了。</p>
+<p>啟動時，Claude 會跳出警告，要選擇「Yes,I accept」才能繼續。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-18.webp" width="1400" height="815" alt="大膽執行危險模式（圖 18）" loading="lazy" decoding="async"></p>
+<p>在這個模式下，AI 不會再詢問權限相關問題，可以火力全開。</p>
+<h3 id="-定好目標讓-ai-執行">➤ 定好目標讓 AI 執行<a class="h-anchor" href="#-%e5%ae%9a%e5%a5%bd%e7%9b%ae%e6%a8%99%e8%ae%93-ai-%e5%9f%b7%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>但正因為 AI 會火力全開，所以我們在設定執行目標時，越精確越好，否則 Token 額度會消耗得非常快。</p>
+<p>比如今天要跟大家示範的是製作「YouTube 留言彙整工具」，假使我只給他這麼一句話當目標，最後的成果通常會不如預期。</p>
+<p>根據我的經驗，需求至少要涵蓋 3 個要素：「使用情境、技術限制、驗證方式」</p>
+<pre tabindex="0"><code>我想要建立一個 YouTube 留言彙整工具，需求如下：
+
+【專案結構】
+1. 放在目前 repo 的根目錄，不需建立子資料夾
+2. 為了方便部署，package.json 必須在根目錄
+3. 在 README.md 增加一節說明使用方式
+
+【使用情境】
+1. 輸入「播放清單」網址，彙整清單內所有影片的留言
+2. 輸入「單支影片」網址，彙整該影片的留言
+3. 輸入「頻道」網址，彙整頻道內影片的留言
+4. 網址輸入欄可以共用，有輸入提示
+5. 載入留言時，會有進度條，知道現在正在抓取哪支影片
+
+【篩選條件】
+- 可以設定搜尋的時間範圍（起訖日期）
+- 可以設定關鍵字，只保留包含關鍵字的留言
+
+【技術限制】
+- 使用 Node.js 開發
+- 不需透過 YouTube API 取得資料，參考 npm 既有套件（取得評論的）
+- 匯出結果先呈現在網頁上，要有階層關係、影片縮圖，可下載成 Markdown（不同影片不同檔案）
+
+【驗證方式】
+請用下面三個真實網址，為所有情境撰寫測試：
+- 播放清單：https://www.youtube.com/watch?v=2hbYCe_E5aU&amp;list=PLWWZkn1dW3eAvSZfJv0-02q27JIsfbN2f
+- 單支影片：https://www.youtube.com/watch?v=2hbYCe_E5aU
+- 頻道：https://www.youtube.com/@dlcorner
+測試必須包含以下驗收條件，低於門檻視為失敗：
+① 播放清單：抓到的影片數量 ≥ 10 支
+② 單支影片：留言總數 ≥ 400 則
+③ 頻道：列出的影片數量 ≥ 40 支
+④ 設定時間範圍後，結果中不得出現範圍外的留言
+⑤ 設定關鍵字後，每一則留言都必須包含該關鍵字
+
+完成後執行所有測試，如果有失敗的案例，
+請修復後重新執行，最多嘗試 10 次；
+最後回報每個情境實際抓到的影片數與留言總數。
+</code></pre><h3 id="專案結構為未來的部署做準備">➤【專案結構】為未來的部署做準備<a class="h-anchor" href="#%e5%b0%88%e6%a1%88%e7%b5%90%e6%a7%8b%e7%82%ba%e6%9c%aa%e4%be%86%e7%9a%84%e9%83%a8%e7%bd%b2%e5%81%9a%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h3>
+<p>首先在專案結構這塊，我要求他直接在 Repo 根目錄下開發，並要求 package.json 這個存放專案資訊的檔案要放在根目錄，方便未來部署。</p>
+<p>如果沒有事先交代，AI 很可能會另外建一個子資料夾，把整個專案放在裡面，這會導致部署時需要再額外調整資料夾結構。</p>
+<h3 id="使用情境把模糊的想法變成明確的功能">➤【使用情境】把模糊的想法變成明確的功能<a class="h-anchor" href="#%e4%bd%bf%e7%94%a8%e6%83%85%e5%a2%83%e6%8a%8a%e6%a8%a1%e7%b3%8a%e7%9a%84%e6%83%b3%e6%b3%95%e8%ae%8a%e6%88%90%e6%98%8e%e7%a2%ba%e7%9a%84%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<p>在使用情境這塊，如果僅提供「幫我做一個 YouTube 留言彙整工具」這種模糊指令，那 AI 針對細節只能靠猜，所以我把實際的情境拆成「播放清單、單支影片、頻道」這三種。</p>
+<p>因為這就是我實際會用到的場景，而篩選條件則是使用情境的延伸，目的是讓我更精準地獲得資訊。</p>
+<h3 id="技術限制決定成品長什麼樣子">➤【技術限制】決定成品長什麼樣子<a class="h-anchor" href="#%e6%8a%80%e8%a1%93%e9%99%90%e5%88%b6%e6%b1%ba%e5%ae%9a%e6%88%90%e5%93%81%e9%95%b7%e4%bb%80%e9%ba%bc%e6%a8%a3%e5%ad%90" aria-label="這個段落的連結"></a></h3>
+<p>至於技術限制，是在幫 AI 縮小工具的選擇範圍；這邊我指定使用 Node.js 開發，如果不指定，AI 可能會使用其他程式語言。</p>
+<p>再來是「不透過 YouTube API」，因為官方 API 需要跑另一套流程，而我希望用現成的套件來處理就好。</p>
+<p>最後匯出格式我也明確指定要使用網頁，並呈現階層關係與影片縮圖，而且要讓我能下載成 Markdown 格式方便後續使用。</p>
+<h3 id="驗證方式讓-ai-沒辦法自我感覺良好">➤【驗證方式】讓 AI 沒辦法自我感覺良好<a class="h-anchor" href="#%e9%a9%97%e8%ad%89%e6%96%b9%e5%bc%8f%e8%ae%93-ai-%e6%b2%92%e8%be%a6%e6%b3%95%e8%87%aa%e6%88%91%e6%84%9f%e8%a6%ba%e8%89%af%e5%a5%bd" aria-label="這個段落的連結"></a></h3>
+<p>最後則是驗證，AI 時常沒有完成任務，卻騙我們說他搞定了。</p>
+<p>所以我給了三個真實網址，並設下具體的判斷規則，這些數據都是我頻道的真實資料。</p>
+<p>當執行結果不符合這些規則時，AI 就會自動除錯。加入測試後，我們就能大幅減少手動驗證的成本。</p>
+<h3 id="-最後三行讓-ai-自己跑完測試--修復的迴圈">➤ 最後三行：讓 AI 自己跑完「測試 → 修復」的迴圈<a class="h-anchor" href="#-%e6%9c%80%e5%be%8c%e4%b8%89%e8%a1%8c%e8%ae%93-ai-%e8%87%aa%e5%b7%b1%e8%b7%91%e5%ae%8c%e6%b8%ac%e8%a9%a6--%e4%bf%ae%e5%be%a9%e7%9a%84%e8%bf%b4%e5%9c%88" aria-label="這個段落的連結"></a></h3>
+<p>最後三行，我設計了一個<strong>測試迴圈。</strong></p>
+<p>因為我們是讓 AI 用放飛自我的模式執行，所以 Token 額度燒得很快。</p>
+<p>尤其在他遇到無法解決的錯誤時，燒得最兇，所以我設定了一個嘗試次數上限，作為失敗時的停損點。</p>
+<h3 id="-人工驗證">➤ 人工驗證<a class="h-anchor" href="#-%e4%ba%ba%e5%b7%a5%e9%a9%97%e8%ad%89" aria-label="這個段落的連結"></a></h3>
+<p>稍等一段時間，AI 回報他已經完成了任務，並且測試全數通過。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-19.webp" width="1400" height="815" alt="人工驗證（圖 19）" loading="lazy" decoding="async"></p>
+<p><strong>但做完跟做好是兩件事</strong>，這邊我跟大家簡單說明專案的架構。</p>
+<p>先打開 package.json 這個檔案，裡面會有專案的名稱、描述、指令，以及使用到的套件。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-20.webp" width="1400" height="815" alt="人工驗證（圖 20）" loading="lazy" decoding="async"></p>
+<p>然後開啟一個新的終端機，輸入 <code>npm run start</code> 來啟動專案：</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-21.webp" width="1400" height="815" alt="人工驗證（圖 21）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>你也可以直接請 AI 幫你啟動，但如果對專案架構有基礎認知會更好。</p>
+</blockquote>
+<p>接著我們把網址複製下來貼到瀏覽器上，先驗證單支影片是否可以運作，點擊「開始驗證」後，工具就會開始幫我們彙整 YouTube 留言。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-22.webp" width="1400" height="815" alt="人工驗證（圖 22）" loading="lazy" decoding="async"></p>
+<p>稍等一段時間就執行完畢了，你可以看到影片的縮圖，以及下方的留言階層；確認符合預期後，便可點擊「下載 Mardown」來看看呈現的結果是不是自己要的。</p>
+<p>在驗證單隻影片符合需求後，就可以擴增測試範圍到「播放清單」與「頻道影片」。</p>
+<p>儘管功能都符合預期，但有些細節是在擴增測試範圍後才會發現的，像是有多隻影片的狀態下，需要往下滑才能看到後面的影片留言，操作上並不直覺。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-23.webp" width="1400" height="815" alt="人工驗證（圖 23）" loading="lazy" decoding="async"></p>
+<p>這個部分，我也會在後面的章節來做優化。</p>
+<hr>
+<h2 id="-加入-git-版本控制改壞還有回頭路">③ 加入 Git 版本控制，改壞還有回頭路<a class="h-anchor" href="#-%e5%8a%a0%e5%85%a5-git-%e7%89%88%e6%9c%ac%e6%8e%a7%e5%88%b6%e6%94%b9%e5%a3%9e%e9%82%84%e6%9c%89%e5%9b%9e%e9%a0%ad%e8%b7%af" aria-label="這個段落的連結"></a></h2>
+<p>在確認基礎功能符合預期後，我們要給這個專案加上版本控制，這邊會使用到 Git 這個工具。</p>
+<p>這樣就算 AI 未來把專案改壞了，我們都還有回頭路可以走。</p>
+<h3 id="-建立第一個存檔點">➤ 建立第一個存檔點<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b%e7%ac%ac%e4%b8%80%e5%80%8b%e5%ad%98%e6%aa%94%e9%bb%9e" aria-label="這個段落的連結"></a></h3>
+<p>這邊先請 AI 幫我們產生 commit，直接使用 Git Smart Commit 這個 Skill 即可。</p>
+<pre tabindex="0"><code>/git-smart-commit
+</code></pre><p>你可以把 commit 想像成遊戲的「存檔點」，每完成一個階段就存一次檔，就算後面打輸了，也能回到上一個存檔點重來。</p>
+<p>畢竟 AI 修改程式碼的幅度很大，有時你只是請他調整一個小功能，他卻順手動了其他地方，如果沒有存檔點，改壞就真的回不去了。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-24.webp" width="1400" height="815" alt="建立第一個存檔點（圖 24）" loading="lazy" decoding="async"></p>
+<h3 id="-推上-github為部署做準備">➤ 推上 GitHub，為部署做準備<a class="h-anchor" href="#-%e6%8e%a8%e4%b8%8a-github%e7%82%ba%e9%83%a8%e7%bd%b2%e5%81%9a%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h3>
+<p>最後，我建議把專案推上 GitHub，除了多一份雲端備份，後面部署上線時也會用到。</p>
+<p>點擊左側的「Source Control」，接著選擇「同步變更」，然後你就會看到錯誤訊息：</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-25.webp" width="1400" height="815" alt="推上 GitHub，為部署做準備（圖 25）" loading="lazy" decoding="async"></p>
+<p>這是因為我們還在 Docker Container 環境裡面，你需要點擊左下角的「Container Claude Code Sandbox」，然後選擇「Reopen Folder Locally」用本機的資料夾開啟：</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-26.webp" width="1400" height="815" alt="推上 GitHub，為部署做準備（圖 26）" loading="lazy" decoding="async"></p>
+<p>此時再點擊一次「同步變更」，就可以把資訊傳到 GitHub，接著來到 GitHub 頁面，看到專案的資料有上傳上去，就代表你成功嚕！</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-27.webp" width="1400" height="815" alt="推上 GitHub，為部署做準備（圖 27）" loading="lazy" decoding="async"></p>
+<h3 id="-優化專案並同步更新">➤ 優化專案並同步更新<a class="h-anchor" href="#-%e5%84%aa%e5%8c%96%e5%b0%88%e6%a1%88%e4%b8%a6%e5%90%8c%e6%ad%a5%e6%9b%b4%e6%96%b0" aria-label="這個段落的連結"></a></h3>
+<p>有了存檔點後，我們就可以來繼續優化專案了，像我覺得現在的網頁太素，影片一多操作起來要往下一直拉，不方便，就可以直接請 AI 使用前端技能幫我們優化一下：</p>
+<pre tabindex="0"><code>/frontend-design
+幫我美化頁面質感，希望撈取過程可以切換到不同影片的縮圖，讓我知道現在執行到哪一個，並且在上面有列表，我點擊哪個影片，就顯示對應的留言串
+</code></pre><p>稍等一段時間，AI 就完成了優化，除了外型比先前的版本更好看外。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-28.webp" width="1400" height="815" alt="優化專案並同步更新（圖 28）" loading="lazy" decoding="async"></p>
+<p>你會發現他撈取過程會切換到不同影片的縮圖，並且在上面有列表，我點擊哪個影片，就顯示對應的留言串，這樣子我們網頁的易用性就更好了。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-29.webp" width="1400" height="815" alt="優化專案並同步更新（圖 29）" loading="lazy" decoding="async"></p>
+<p>如果想把這個版本更新上去，流程是一樣的，使用 Git Smart Commit 這個 Skill：</p>
+<pre tabindex="0"><code>/git-smart-commit
+</code></pre><p>然後選擇「Reopen Folder Locally」用本機的資料夾開啟，再把變更推送到 GitHub 就好。</p>
+<hr>
+<h2 id="-透過-hostinger-將網站部署上線">④ 透過 Hostinger 將網站部署上線<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-hostinger-%e5%b0%87%e7%b6%b2%e7%ab%99%e9%83%a8%e7%bd%b2%e4%b8%8a%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
+<p>這邊跟大家說明一下，如果專案是純前端的靜態網頁，我們可以透過 GitHub Pages 來做部署</p>
+<p>但因為今天的範例專案有需要一台伺服器來運行，所以我用 Hostinger 來做示範：<a href="https://hostinger.com/deanlin10">https://hostinger.com/deanlin10</a></p>
+<p>進入官網後，可以透過 Google 帳號直接註冊登入，因為我們是網頁專案，所以點擊左側的「Websites」分頁。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-30.webp" width="1400" height="815" alt="④ 透過 Hostinger 將網站部署上線（圖 30）" loading="lazy" decoding="async"></p>
+<p>這邊你會看到不同方案的價格，週期越長，價格會越便宜；如果你有輸入我的優惠碼「DEANLIN」，會再獲得 10% 的優惠。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-31.webp" width="1400" height="815" alt="④ 透過 Hostinger 將網站部署上線（圖 31）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>如果體驗跟想像不符，官方也有 30 天退款保證，讓大家可以更放心地使用。</p>
+</blockquote>
+<p>接著再回到部署的流程，我們在「Websites」下面選擇「Web Apps」，接著點擊「Add website」，選擇「Deploy Web App」。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-32.webp" width="1400" height="815" alt="④ 透過 Hostinger 將網站部署上線（圖 32）" loading="lazy" decoding="async"></p>
+<p>如果你有購買 Domain，可以直接從這邊選擇，又或者使用「Use temporary domain」這種暫時性的網址。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-33.webp" width="1400" height="815" alt="④ 透過 Hostinger 將網站部署上線（圖 33）" loading="lazy" decoding="async"></p>
+<p>然後你會看到一張世界地圖，這是在選擇伺服器的位置，建議選擇離延遲比較低的機房，這邊我就選擇 Malaysia。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-34.webp" width="1400" height="815" alt="④ 透過 Hostinger 將網站部署上線（圖 34）" loading="lazy" decoding="async"></p>
+<p>接下來，你可以選擇上傳檔案，但因為我們的專案已經同步到 GitHub，所以選擇匯入指定的 GitHub Repository 即可。</p>
+<p>在與自己的 GitHub 建立連線後，你可以直接貼上 GitHub 專案的網址，然後選擇 Deploy 即可。</p>
+<p>中間會詢問你一些部署的參數，你可以根據實際需求調整。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-35.webp" width="1400" height="815" alt="④ 透過 Hostinger 將網站部署上線（圖 35）" loading="lazy" decoding="async"></p>
+<p>這邊我採用默認值來部署，接著稍等一段時間，它就會顯示部署完畢！</p>
+<p>我們可以點擊這個臨時網址來驗證功能，首先你可以看到至少網頁是有成功渲染出來的，並且可以抓到留言，切換影片留言也會跟著切換，Markdown 檔案也可以順利下載。</p>
+<p><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-36.webp" width="1400" height="815" alt="④ 透過 Hostinger 將網站部署上線（圖 36）" loading="lazy" decoding="async"></p>
+<p>走到這一步真的太感動了，還沒幫影片按讚的朋友，可以順手按個讚！</p>
+<hr>
+<h2 id="-系統上線後才是考驗的開始">⑤ 系統上線後，才是考驗的開始<a class="h-anchor" href="#-%e7%b3%bb%e7%b5%b1%e4%b8%8a%e7%b7%9a%e5%be%8c%e6%89%8d%e6%98%af%e8%80%83%e9%a9%97%e7%9a%84%e9%96%8b%e5%a7%8b" aria-label="這個段落的連結"></a></h2>
+<p>在這個專案中，我們使用套件而非官方提供的 API 來抓資料，雖然也能達到相同目的，但是有代價的。</p>
+<h3 id="-大量使用可能被封鎖">➤ 大量使用可能被封鎖<a class="h-anchor" href="#-%e5%a4%a7%e9%87%8f%e4%bd%bf%e7%94%a8%e5%8f%af%e8%83%bd%e8%a2%ab%e5%b0%81%e9%8e%96" aria-label="這個段落的連結"></a></h3>
+<p>首先，如果這個工具是你個人使用，那通常不會有問題；但如果變成網頁開放讓大家使用，一旦使用人數多了，<strong>就容易被官方判定為「異常」，進而被封鎖。</strong></p>
+<h3 id="-網頁可能會改版">➤ 網頁可能會改版<a class="h-anchor" href="#-%e7%b6%b2%e9%a0%81%e5%8f%af%e8%83%bd%e6%9c%83%e6%94%b9%e7%89%88" aria-label="這個段落的連結"></a></h3>
+<p>另外我們使用的套件是參考網頁結構來取得資訊的，這代表當 YouTube 改版後，如果套件沒有跟著更新，<strong>你的程式就抓不到東西了</strong>。</p>
+<h3 id="-不是對錯而是取捨">➤ 不是對錯，而是取捨<a class="h-anchor" href="#-%e4%b8%8d%e6%98%af%e5%b0%8d%e9%8c%af%e8%80%8c%e6%98%af%e5%8f%96%e6%8d%a8" aria-label="這個段落的連結"></a></h3>
+<p>講到這邊，可能會有人說：「那直接走官方 API 不是更穩定？」</p>
+<p>沒錯，官方 API 更穩定，如果要打造正式產品，我也推薦走官方的路。</p>
+<p>但如果你期待的是把專案 Clone 下來就能直接跑，不需要那麼多複雜的步驟，那今天這個範例就夠用了。</p>
+<blockquote class="pullquote"><p>在真實世界中，沒有最好的方案，只有當下最合適的選擇。</p>
+</blockquote>
+<hr>
+<h2 id="結語即使使用者只有你在-ai-時代也值得開發">結語：即使使用者只有你，在 AI 時代也值得開發<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e5%8d%b3%e4%bd%bf%e4%bd%bf%e7%94%a8%e8%80%85%e5%8f%aa%e6%9c%89%e4%bd%a0%e5%9c%a8-ai-%e6%99%82%e4%bb%a3%e4%b9%9f%e5%80%bc%e5%be%97%e9%96%8b%e7%99%bc" aria-label="這個段落的連結"></a></h2>
+<p>最後想跟大家分享我自己在 AI Coding 上的心得。我的本職是軟體工程師，寫了十幾年的程式。</p>
+<p>過去評估一個工具值不值得做，看的是需要花多少時間，以及有多少受眾。</p>
+<blockquote class="pullquote"><p>但在 AI 時代，這個邏輯改變了</p>
+</blockquote>
+<p><strong>如果工具能用 AI 製作出來，即使受眾只有自己一個人，那也值得做。</strong></p>
+<p>就拿彙整 YouTube 留言這個案例來說；我不確定多少人有相同需求，但我知道純手動會把自己搞死。</p>
+<p>在手寫程式碼的年代，這個專案至少要花一個週末才能完成；而我一年可能只跑個兩三次，不太可能為了它投入這麼多時間。</p>
+<p>但有了 AI 輔助 Coding 後，大家也看到了，只要指令足夠明確，把任務交給 AI，你就可以轉頭做其他事了</p>
+<blockquote class="pullquote"><p>時間成本也從「一個週末」，變成「泡一杯咖啡的時間」</p>
+</blockquote>
+<p>很多過去被判斷不值得做的工具，或許現在都值得做了；但這件事有一個前提，你要能把需求講清楚、把驗證邏輯交代好。</p>
+<blockquote>
+<p>因為 AI 做完，不代表他做好了</p>
+</blockquote>
+<p>好的，今天的分享就到這邊，如果這個系列有給你啟發與幫助；別忘了按讚、訂閱，並把文章分享給需要的朋友。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202609/claude-code-docker-hostinger/images/claude-code-docker-hostinger-37.webp" width="1400" height="914" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</title>
+      <link>https://deanlin.net/blog/202603/claude-code-openspec/</link>
+      <pubDate>Thu, 12 Mar 2026 13:35:43 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202603/claude-code-openspec/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>最近收到的企業邀約中，除了有軟體部門想將 AI 導入開發工作流外，也有不少來自人力資源、執行業務部門的邀約。</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-01.webp" width="1400" height="788" alt="【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案（圖 1）" loading="lazy" decoding="async"></p>
+<p>最近收到的企業邀約中，除了有軟體部門想將 AI 導入開發工作流外，也有不少來自人力資源、執行業務部門的邀約。</p>
+<p>而面對要客製化的課程，會先安排需求訪談。</p>
+<p>開會過程中，有位客戶說的話讓我印象深刻，他說：</p>
+<blockquote class="pullquote"><p>「我們企業的痛點，是開發系統的人不用系統；真正用系統的人不會開發，所以我們才想學 Vibe Coding。」</p>
+</blockquote>
+<p>其實這個痛點是業界常態，以人力資源系統來舉例好了，<strong>雖然是工程師開發，但 HR 才是主要的使用者。</strong></p>
+<p>這導致<strong>不管前期規劃與設計有多麼詳盡，初步完成的產品在進入易用性測試後，還是會收到一大堆需求變更。</strong></p>
+<p>會有這樣的結果，並不是使用者很刁鑽；而是真正的問題，往往在使用後才會被發現；但這些並不是在前期設計，就能完全考慮到的。</p>
+<p>所以有些企業想導入 Vibe Coding，目標是讓熟悉業務的人：</p>
+<blockquote class="pullquote"><p>有能力設計出符合自己使用需求的產品，並希望完成的產品原型，未來能交給工程師做後續的優化與維護。</p>
+</blockquote>
+<p>這個課程需求如果放在去年，我還真的不敢接；但最近 AI 成長的速度實在太快了。</p>
+<p>今天跟大家介紹的 Claude Code，已經可以讓沒有任何程式基礎的人，在了解與 AI 對話的技巧後，生成出一套涵蓋前後端與資料庫的系統。</p>
+<p>並透過與 OpenSpec 的搭配，讓 AI 幫忙撰寫專案文件，達成用規格驅動開發的目標；<strong>同時解決過去小白不知道如何撰寫規格，以及工程師不想寫文件的痛點。</strong></p>
+<blockquote class="pullquote"><p>在 Claude Code 與 OpenSpec 的幫助下，我們不僅能完成專案從 0 到 1 的建置，更可以做到從 1 到 100 的迭代。</p>
+</blockquote>
+<blockquote>
+<p>完整的 Demo，可以觀看 YT 喔 👉</p>
+<p>對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。</p>
+</blockquote>
+<div class="yt" data-yt="FeQv7mngg6Q" data-title="YouTube 影片">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=FeQv7mngg6Q" target="_blank" rel="noopener" aria-label="播放影片：YouTube 影片">
+    <img src="https://i.ytimg.com/vi/FeQv7mngg6Q/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">YouTube 影片</span>
+  </a>
+</div>
+
+<hr>
+<h2 id="-安裝-claude-與-openspec初始化專案設定">① 安裝 Claude 與 OpenSpec，初始化專案設定<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-claude-%e8%88%87-openspec%e5%88%9d%e5%a7%8b%e5%8c%96%e5%b0%88%e6%a1%88%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<h3 id="-安裝-antigravity">➤ 安裝 Antigravity<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-antigravity" aria-label="這個段落的連結"></a></h3>
+<p>今天這個教學，你可以使用自己熟悉的程式碼編輯器，不管是 VSCode、Cursor、Antigravity 都可以。</p>
+<p>如果不知道使用哪一款，可以跟我一樣，使用 Google 最新推出的 AI 程式碼編輯器 <a href="https://antigravity.google">Antigravity</a>，登入 Google 帳號就能免費使用。</p>
+<p>但這次，我們沒有要使用到編輯器內建的 AI 功能，使用他，<strong>只是為了方便檢視程式碼與規格文件的變更，並降低 Claude Code 的入門難度。</strong></p>
+<h3 id="-確認-nodejs-版本">➤ 確認 Node.js 版本<a class="h-anchor" href="#-%e7%a2%ba%e8%aa%8d-nodejs-%e7%89%88%e6%9c%ac" aria-label="這個段落的連結"></a></h3>
+<p>因為今天分享的 OpenSpec 與實作的全端專案會使用到 Node.js。</p>
+<p>所以，我們打開終端機輸入「node -v」，來確認電腦是否有完成安裝。</p>
+<p>如果沒有顯示版號，而是出現沒有指令的錯誤訊息，就需要先去安裝 Node.js 才能執行後續步驟。</p>
+<p>在安裝 Node.js 這塊，我建議大家透過 NVM 來安裝；<strong>因為 Node.js 有多個版本，而 NVM 這款工具可以幫你快速在不同版本間切換、更新。</strong></p>
+<p>如果你跟我一樣使用 Mac，執行下面的指令就可以安裝了：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+</span></span></code></pre></div><p>但如果你是 Windows，就需要<a href="https://github.com/coreybutler/nvm-windows/releases">下載 exe 檔來安裝</a>。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-02.webp" width="775" height="614" alt="確認 Node.js 版本（圖 2）" loading="lazy" decoding="async"></p>
+<p>nvm 安裝完成後，要開啟新的終端機，然後輸入 <code>nvm -v</code>，確認有成功安裝。</p>
+<p>接下來輸入 <code>nvm install — lts</code> 來安裝最新版本的 Node.js，安裝完畢後，輸入 <code>node -v</code> 便可檢視剛剛安裝的版本。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-03.webp" width="693" height="207" alt="確認 Node.js 版本（圖 3）" loading="lazy" decoding="async"></p>
+<h3 id="-安裝-openspec">➤ 安裝 OpenSpec<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-openspec" aria-label="這個段落的連結"></a></h3>
+<p>在 Node.js 安裝完成後，我們要來安裝 OpenSpec，只要在終端機輸入指令，便可以完成全局安裝：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm install -g @fission-ai/openspec@latest
+</span></span></code></pre></div><p>透過這款工具，我們只要用白話的方式與 AI 對話，就能建立完善的規格，讓專案從零到一的過程更加完善。</p>
+<p>而且日後擴增、修改功能時，不管人類還是 AI，都有對應的文件規格可以參考。</p>
+<p><strong>這可以盡量避免過去用 AI 寫程式時，相同功能重複被寫好幾次的痛點。</strong></p>
+<h3 id="-安裝-claude-code">➤ 安裝 Claude Code<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-claude-code" aria-label="這個段落的連結"></a></h3>
+<p>安裝好 OpenSpec 後，接下來要安裝 <a href="https://code.claude.com/docs/zh-TW/overview">Claude Code</a>。</p>
+<p>你可選擇在終端機輸入指令安裝：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>macOS, Linux, WSL<span style="color:#f85149">:</span>
+</span></span><span style="display:flex;"><span>```
+</span></span><span style="display:flex;"><span>curl -fsSL https<span style="color:#f85149">:</span>//claude.ai/install.<span style="color:#79c0ff">sh</span> | bash
+</span></span><span style="display:flex;"><span>```
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Windows PowerShell<span style="color:#f85149">:</span>
+</span></span><span style="display:flex;"><span>```
+</span></span><span style="display:flex;"><span>irm https<span style="color:#f85149">:</span>//claude.ai/install.<span style="color:#79c0ff">ps1</span> | iex
+</span></span><span style="display:flex;"><span>```
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Windows CMD<span style="color:#f85149">:</span>
+</span></span><span style="display:flex;"><span>```
+</span></span><span style="display:flex;"><span>curl -fsSL https<span style="color:#f85149">:</span>//claude.ai/install.<span style="color:#79c0ff">cmd</span> -o install.<span style="color:#79c0ff">cmd</span> &amp;&amp; install.<span style="color:#79c0ff">cmd</span> &amp;&amp; del install.<span style="color:#79c0ff">cmd</span>
+</span></span><span style="display:flex;"><span>```
+</span></span></code></pre></div><p>但終端機對新手來說，用起來會比較有壓力，所以我更推薦在介面上操作；打開左側的 Extensions，搜尋 Claude Code 就能找到這個外掛。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-04.webp" width="1400" height="806" alt="安裝 Claude Code（圖 4）" loading="lazy" decoding="async"></p>
+<p>點擊 Install 安裝完畢後，點擊 Open Claude 的按鈕，就可以打開他。</p>
+<p>如果你過去使用過 Cursor 或是 Antigravity，其實操作上大同小異，就是有個對話視窗可以跟 AI 溝通。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-05.webp" width="1400" height="806" alt="安裝 Claude Code（圖 5）" loading="lazy" decoding="async"></p>
+<p>但提醒大家，目前 Claude Code 只有付費版才能夠使用，你可以在對話框輸入「/login」來登入。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-06.webp" width="1400" height="806" alt="安裝 Claude Code（圖 6）" loading="lazy" decoding="async"></p>
+<p>這邊我們選擇第一個，在網頁點擊授權後回到程式碼編輯器。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-07.webp" width="1400" height="806" alt="安裝 Claude Code（圖 7）" loading="lazy" decoding="async"></p>
+<p>另外如果你使用免費版帳號，在登入時會出現這個提醒升級的畫面：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-08.webp" width="1400" height="476" alt="安裝 Claude Code（圖 8）" loading="lazy" decoding="async"></p>
+<p>目前 Claude 的月費是每月 20 美金，如果看完今天的影片，覺得 Claude Code 很強大的話，可以考慮付費訂閱。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-09.webp" width="1400" height="706" alt="安裝 Claude Code（圖 9）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>我認為「時間」才是最寶貴的資產；而「AI」可以幫助你奪回自己的時間。</p>
+</blockquote>
+<h3 id="-在專案初始-openspec">➤ 在專案初始 OpenSpec<a class="h-anchor" href="#-%e5%9c%a8%e5%b0%88%e6%a1%88%e5%88%9d%e5%a7%8b-openspec" aria-label="這個段落的連結"></a></h3>
+<p>登入完成後，你可以在電腦建立一個專案用的空白資料夾，然後選擇 Explorer 用 Open Folder 的方式打開他。</p>
+<p>由於這個專案要搭配 OpenSpec 輔助開發，所以要點擊 toggle panel 在終端機輸入：</p>
+<pre tabindex="0"><code>openspec init
+</code></pre><p>執行指令後，要點擊 Enter 進行初始化，這時問你使用哪些 AI 工具，你可以用「上下鍵」移動，並透過「空白鍵」做選擇。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-10.webp" width="1400" height="806" alt="在專案初始 OpenSpec（圖 10）" loading="lazy" decoding="async"></p>
+<p>他是可以多選的，但因為今天以 Claude 做示範，所以就只選 Claude Code。</p>
+<p>完成後，就會在左側目錄下看到新增的資料夾，首先要介紹的是「.claude」的資料夾，這個裡面是存放驅動 OpenSpec 功能的 Agent Skills 技能包。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-11.webp" width="1400" height="806" alt="在專案初始 OpenSpec（圖 11）" loading="lazy" decoding="async"></p>
+<p>如果你在與 AI 對話的過程中，需求涉及專案的新增、修改、刪除等任務時，AI 會自動調用這些技能，不需要你特別去背指令，我覺得這才更符合 Vibe Coding 的開發流程。</p>
+<blockquote>
+<p>如果你想更深入了解 Agent Skills，我過去有拍一隻影片分享安裝、使用、製作的技巧：<a href="https://youtu.be/xe00zJEtuMo">https://youtu.be/xe00zJEtuMo</a></p>
+</blockquote>
+<p>提醒一下大家，在指令不夠明確時，AI 可能不會觸發對應的 Skill，假如想強制驅動 openspec，可以在對話窗中輸入「/opsx」來操作。</p>
+<p>目前預設只有提供 4 個指令，其實已經足以面對大多數的需求了。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-12.webp" width="1388" height="698" alt="在專案初始 OpenSpec（圖 12）" loading="lazy" decoding="async"></p>
+<p>如果你想要擴充指令的話，可以在終端機輸入</p>
+<pre tabindex="0"><code>openspec config profile
+</code></pre><p>此時會看到幾個選項：</p>
+<p>1. Delivery 是指這些功能「裝在哪裡」</p>
+<p>2. Workflows 則是這些功能「有哪些」</p>
+<p>這邊我選擇「Delivery and workflows」示範給大家看：</p>
+<p>1. Delivery 我選擇要同時安裝在 skills 跟 commands 中</p>
+<p>2. 而 workflows 我就用空白鍵，把可以使用的都全選</p>
+<p>完成後按下 Enter 就好，安裝好的 skills 跟 commands 會出現在資料夾底下：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-13.webp" width="1400" height="806" alt="在專案初始 OpenSpec（圖 13）" loading="lazy" decoding="async"></p>
+<p>如果你想知道每個 Skill 的具體功能，直接請 AI 解釋給你聽就好，這邊就直接貼提示詞，跟他說：</p>
+<pre tabindex="0"><code>我想知道 openspec 目前安裝的 skill 用途
+請使用表格呈現，用白話簡短描述
+</code></pre><p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-14.webp" width="1400" height="806" alt="在專案初始 OpenSpec（圖 14）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-規格驅動開發從零打造全端系統">② 規格驅動開發，從零打造全端系統<a class="h-anchor" href="#-%e8%a6%8f%e6%a0%bc%e9%a9%85%e5%8b%95%e9%96%8b%e7%99%bc%e5%be%9e%e9%9b%b6%e6%89%93%e9%80%a0%e5%85%a8%e7%ab%af%e7%b3%bb%e7%b5%b1" aria-label="這個段落的連結"></a></h2>
+<h3 id="-安裝-docker">➤ 安裝 Docker<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-docker" aria-label="這個段落的連結"></a></h3>
+<p>根據過去經驗，最容易在環境設定上卡關的是「資料庫」，因為每個人電腦環境不同，所以要先<a href="https://www.docker.com/">安裝 Docker </a>這款工具。</p>
+<p>你可以把 Docker 想成一個「標準化的容器」，把專案需要的環境通通打包在裡面，這樣不管你用 Mac 還是 Windows，打開就能跑，不用自己一個一個裝，也方便未來與其他人一起維護專案。</p>
+<p>到官網根據自己的作業系統下載安裝後，就可以直接使用，不需要特別註冊、登入帳號。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-15.webp" width="1400" height="806" alt="安裝 Docker（圖 15）" loading="lazy" decoding="async"></p>
+<p>在完成 Docker 安裝後，接下來，我們就能體驗 OpenSpec 加 Claude Code 的威力了。</p>
+<h3 id="-過去的開發流程">➤ 過去的開發流程<a class="h-anchor" href="#-%e9%81%8e%e5%8e%bb%e7%9a%84%e9%96%8b%e7%99%bc%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p>今天的教學，我想以大部分上班族都會使用到的「出缺勤系統」作為範例。</p>
+<p>在沒有 AI 輔助的年代，如果想完成這個系統，前期需要與 HR 部門開會釐清需求，然後請設計師根據需求完成每個頁面的流程示意圖。</p>
+<p>過程中 PM 會把討論細節撰寫成需求規格，之後才會由工程師著手開發。</p>
+<p><strong>過去光是要做出能讓 HR 體驗的最小可行性系統（MVP），都至少要花一個月的時間。</strong></p>
+<p>但現在，前面的所有步驟，已經有機會讓沒有程式背景的 HR 自行完成。</p>
+<blockquote>
+<p>大家不要急著留言說我妖言惑眾，看完示範後，就會知道這一切並不是誇飾。</p>
+</blockquote>
+<h3 id="-prompt-設計">➤ Prompt 設計<a class="h-anchor" href="#-prompt-%e8%a8%ad%e8%a8%88" aria-label="這個段落的連結"></a></h3>
+<p>完整提示詞如下：</p>
+<pre tabindex="0"><code>請設計一個出缺勤管理系統，員工可以透過此系統打卡上下班
+權限分成管理者與一般使用者，管理者可以修改、新增/刪除使用者
+新增使用者時，會發送 Email 給予登入密碼
+員工可透過系統請假、申請加班，申請假單需要簽核流程，並且有年假、補休申請，代理人制度
+
+前端使用 React，後端使用 Express，資料庫用 Postgres
+希望透過 Docker 啟動，並且要包含 Postgres Admin 網頁
+這是初步需求，我們可以透過討論釐清細節後，參考 openspec 的 skill 執行
+</code></pre><p>在提示詞中，我分成了 3 塊，分別是「專案目標、使用技術、細節討論」</p>
+<ul>
+<li><strong>專案目標</strong>：在專案目標這塊，我先大概說明自己的需求，一開始的描述有點模糊沒有關係，因為 AI 會在後續跟你釐清細節。</li>
+</ul>
+<pre tabindex="0"><code>請設計一個出缺勤管理系統，員工可以透過此系統打卡上下班
+權限分成管理者與一般使用者，管理者可以修改、新增/刪除使用者
+新增使用者時，會發送 Email 給予登入密碼
+員工可透過系統請假、申請加班，申請假單需要簽核流程，並且有年假、補休申請，代理人制度
+</code></pre><ul>
+<li><strong>使用技術</strong>：接下來則是描述使用技術，這個非常重要，如果希望專案完成原型後，可以由工程師團隊接手維護；一定要先詢問他們目前最擅長的「前端、後端、資料庫」是哪些，並且為了讓彼此環境一致、啟動更方便，所以我指定使用 Docker 來啟動。</li>
+</ul>
+<pre tabindex="0"><code>前端使用 React，後端使用 Express，資料庫用 Postgres
+希望透過 Docker 啟動專案，並且要包含 Postgres Admin 網頁
+</code></pre><ul>
+<li><strong>細節討論</strong>：最後則是提醒 AI 要與我們討論規格的細節，這樣可以釐清一開始沒說清楚的地方，最後要求他要參考 openspec 的 skill</li>
+</ul>
+<pre tabindex="0"><code>這是初步需求，我們可以透過討論釐清細節後，參考 openspec 的 skill 執行
+</code></pre><p>送出提示詞後，你可以看到 AI 會根據我們的需求提出問題，讓細節更加完善：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-16.webp" width="1400" height="806" alt="Prompt 設計（圖 16）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>同時提醒一下大家，用 Plan Mode 的規劃會非常詳盡，如果大家想要加速體驗，可以在提示詞最後加上「以最小可行性方案來規劃」，否則執行下去跑半小時也是有可能的。</p>
+</blockquote>
+<h3 id="-openspec-撰寫專案文件">➤ OpenSpec 撰寫專案文件<a class="h-anchor" href="#-openspec-%e6%92%b0%e5%af%ab%e5%b0%88%e6%a1%88%e6%96%87%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<p>前面釐清完需求後，你會看到 AI 觸發 OpenSpec 的 Skills 做更細部的規劃：</p>
+<ul>
+<li><strong>proposal.md</strong>：一開始會先建立 proposal，這個文件是用來確認目標是否正確、範圍是否合理。</li>
+<li><strong>design.md</strong>：然後再進入技術規劃，design 文件就是在說明技術挑選的理由，以及專案可能會遇到的風險與處理方案。</li>
+<li><strong>specs 資料夾</strong>：緊接著在 specs 資料夾底下，會根據功能區分資料夾，並分別建立說明細節的規格文件。</li>
+<li><strong>task.md</strong>：在最後會設計一個執行任務的 task 文件，他是用來檢驗任務是否完成的列表，目前都是空的，等任務完成後才會打勾。</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-17.webp" width="1400" height="806" alt="OpenSpec 撰寫專案文件（圖 17）" loading="lazy" decoding="async"></p>
+<h3 id="-規格驅動開發sdd">➤ 規格驅動開發（SDD）<a class="h-anchor" href="#-%e8%a6%8f%e6%a0%bc%e9%a9%85%e5%8b%95%e9%96%8b%e7%99%bcsdd" aria-label="這個段落的連結"></a></h3>
+<p>確認以上規劃都符合預期後，說「開始實作」，AI 就會根據規劃開始撰寫程式了。</p>
+<p>在等待一段時間後，AI 說他已經完成了初版，此時剛剛 Task 的任務列表已經全部打勾：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-18.webp" width="1400" height="806" alt="規格驅動開發（SDD）（圖 18）" loading="lazy" decoding="async"></p>
+<p>如果你不知道如何啟動專案，可以貼上下面的提示詞請 AI 幫忙啟動</p>
+<pre tabindex="0"><code>幫我啟動專案，我想在 Local 開發前後端程式
+只有 Postgres 跟 Postgres Admin 用 Docker 啟動
+如果根目錄 README.md 沒有操作步驟，請協助補充
+</code></pre><blockquote>
+<p>我個人建議第一次啟動可以請 AI 幫忙，因為處理較大型的專案時</p>
+<p>AI 有很高的機率在第一版遇到一些零星錯誤，我們可以先讓他自我修正一下</p>
+</blockquote>
+<h3 id="-初步驗證功能">➤ 初步驗證功能<a class="h-anchor" href="#-%e5%88%9d%e6%ad%a5%e9%a9%97%e8%ad%89%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<p>啟動後就可以根據 AI 只是來確認功能是否符合預期。</p>
+<p>首先我們可以正常打卡的，並且當打卡時間沒有在上班時間內時，會有遲到的訊息：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-19.webp" width="1400" height="806" alt="初步驗證功能（圖 19）" loading="lazy" decoding="async"></p>
+<p>因為我們進來的權限是管理者，所以也可以進行使用者的新增、權限的設定：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-20.webp" width="1400" height="806" alt="初步驗證功能（圖 20）" loading="lazy" decoding="async"></p>
+<p>再確認網頁內容可以順利瀏覽後，接著我們可以試著打開 Postgres Admin 網頁，看一下資料庫是否是否有順利寫入。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-21.webp" width="1400" height="806" alt="初步驗證功能（圖 21）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>如果不知道這些資訊如何填寫，直接問 AI 就好了。</p>
+</blockquote>
+<p>使用者的資訊會存放在 users 資料夾，這邊就能看到預設的 Admin 管理者帳號，以及剛剛新增的一般使用者：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-22.webp" width="1400" height="806" alt="初步驗證功能（圖 22）" loading="lazy" decoding="async"></p>
+<h3 id="-接受此次變更">➤ 接受此次變更<a class="h-anchor" href="#-%e6%8e%a5%e5%8f%97%e6%ad%a4%e6%ac%a1%e8%ae%8a%e6%9b%b4" aria-label="這個段落的連結"></a></h3>
+<p>初步確認功能符合預期後，我們回到程式碼編輯器，可以跟他說</p>
+<pre tabindex="0"><code>功能符合預期，進行歸檔
+</code></pre><p>稍等一段時間後，你會發現原本空空的 specs 資料夾底下，出現專案對應的規格文件，而 archives 底下出現了歸檔的文件，並註明了對應的日期。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-23.webp" width="1400" height="806" alt="接受此次變更（圖 23）" loading="lazy" decoding="async"></p>
+<h3 id="-建立專案規則">➤ 建立專案規則<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b%e5%b0%88%e6%a1%88%e8%a6%8f%e5%89%87" aria-label="這個段落的連結"></a></h3>
+<p>在完成專案初步建立後，我們可以在 Claude 對話窗輸入「/init」，這個指令會掃描目前的專案結構，並在根目錄建立「CLAUDE.md」。</p>
+<p>這份文件會在每次對話開始時自動載入，幫助 Claude 在未來開發過程中，能更了解這個專案的架構、技術、開發規則等資訊。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-24.webp" width="1400" height="806" alt="建立專案規則（圖 24）" loading="lazy" decoding="async"></p>
+<p>除了 Claude 的設定外，我們也可以幫 OpenSpec 建立規則，你可以在對話窗輸入這段提示詞：</p>
+<pre tabindex="0"><code>Please read openspec/config.yaml and help me fill it out
+with details about my project, tech stack, and conventions
+</code></pre><p>這是請 AI 幫你填寫專案使用到的技術，以及需要遵守規則，目標是讓 OpenSpec 的 Skill 觸發時，有參考的慣例。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-25.webp" width="1400" height="806" alt="建立專案規則（圖 25）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>簡單來說，CLAUDE.md 是給「做事」用的，openspec/config.yaml 是給「規劃」用的。</p>
+</blockquote>
+<hr>
+<h2 id="-建立版本控制根據需求迭代功能">③ 建立版本控制，根據需求迭代功能<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b%e7%89%88%e6%9c%ac%e6%8e%a7%e5%88%b6%e6%a0%b9%e6%93%9a%e9%9c%80%e6%b1%82%e8%bf%ad%e4%bb%a3%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>在完成專案初版後，我強烈建議大家先建立版本控制，因為 Vibe Coding 時，你的每個指令都可能大幅調整專案程式。</p>
+<p>但 AI 修改的結果未必是你要的，甚至有時會把正常的功能給改壞了。</p>
+<p><strong>為了把改壞的內容救回來，我會建議大家安裝 Git，這個程式碼版本控制工具，並註冊 GitHub 帳號來管理專案。</strong></p>
+<blockquote>
+<p>如果你是第一次接觸，我有專門錄一隻影片分享詳細的操作步驟！</p>
+<p><a href="https://www.youtube.com/watch?v=5DEV_K0JauQ&amp;t=836s">https://www.youtube.com/watch?v=5DEV_K0JauQ&amp;t=836s</a></p>
+</blockquote>
+<h3 id="-設計-gitignore">➤ 設計 .gitignore<a class="h-anchor" href="#-%e8%a8%ad%e8%a8%88-gitignore" aria-label="這個段落的連結"></a></h3>
+<p>版本控制並不代表你需要把專案底下所有檔案都上傳，比如像「.env」這類有隱私資訊的檔案就不適合加入。</p>
+<p>所以我們要建立「.gitignore」，把他從 Git 版控中移除；如果不確定專案有哪些檔案、資料夾要加入「.gitignore」，可以使用下面的提示詞：</p>
+<pre tabindex="0"><code>請幫我設計專案的「.gitignore」
+但「.claude、openspec」要加入版本控制
+</code></pre><h3 id="-建立版本控制">➤ 建立版本控制<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b%e7%89%88%e6%9c%ac%e6%8e%a7%e5%88%b6" aria-label="這個段落的連結"></a></h3>
+<p>完成前面 Git 的相關設定後，可以點擊左側的 Source Control，點擊 Initialize Repository 可以初始化專案。</p>
+<p>接著點擊 Generate，AI 就會辨識我們更新的內容，來產生 commit 訊息；確認文字描述符合自己的預期後，點擊 commit，就會在自己的電腦記錄這個變更。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-26.webp" width="1400" height="806" alt="建立版本控制（圖 26）" loading="lazy" decoding="async"></p>
+<p>但如果想更新到雲端，你需要點擊 Publish Branch才會正式上傳喔！</p>
+<p>如果專案尚未存在於 GitHub，會有彈窗出現，讓你輸入專案名稱，這邊我就用跟資料夾一樣的就好了。</p>
+<p>如果你的專案沒打算對外公開原始碼，我建議選擇 Private 隱私模式，完成後，點擊 Open GitHub 去看看是否部署順利。</p>
+<p>如果能看到專案的內容，就代表你成功上傳專案了！</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-27.webp" width="1400" height="806" alt="建立版本控制（圖 27）" loading="lazy" decoding="async"></p>
+<h3 id="-迭代功能">➤ 迭代功能<a class="h-anchor" href="#-%e8%bf%ad%e4%bb%a3%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<p><strong>其實不管 Vibe Coding 還是開發系統，最難的並不是 0 到 1，而是 1 到 100 的那段路。</strong></p>
+<p>不過有了 OpenSpec 的幫助，這一切會變得容易許多。</p>
+<p>這邊我們開一個新對話窗來處理新任務，比如我們可能會有忘記打卡的情形發生，就可以跟 AI 說：</p>
+<pre tabindex="0"><code>幫我設計忘打卡的處理方案，讓規則彈性一點，使用 OpenSpec
+</code></pre><p>這樣 AI 就會開始著手設計，並根據 OpenSpec 的 SKill 建立對應的需求規格；稍等一段時間後，AI 就完成了前期的設計。</p>
+<p>由於我們有加入 Git 做版本控制，所以可以在 Source Control 中，清楚看到 AI 撰寫的需求變更規格書。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-28.webp" width="1400" height="806" alt="迭代功能（圖 28）" loading="lazy" decoding="async"></p>
+<p>再確認需求與自己的期待相符後，接下來的流程都是一樣的，直接跟他說「開始實作」就好。</p>
+<h3 id="-驗證功能">➤ 驗證功能<a class="h-anchor" href="#-%e9%a9%97%e8%ad%89%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<p>等 AI 完成調整後，因為功能涉及後端與資料庫，所以我會建議大家跟 AI 說：</p>
+<pre tabindex="0"><code>請協助確認資料庫變更是否執行，並幫我重新啟動後端程式
+</code></pre><p>等 AI 執行完畢後，我們再去瀏覽網頁，這樣測試會比較準。</p>
+<p>畫面中能看到補打卡的功能完成新增：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-29.webp" width="1400" height="806" alt="驗證功能（圖 29）" loading="lazy" decoding="async"></p>
+<p>申請補打卡：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-30.webp" width="1400" height="806" alt="驗證功能（圖 30）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-31.webp" width="1400" height="806" alt="驗證功能（圖 31）" loading="lazy" decoding="async"></p>
+<p>核准補打卡：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-32.webp" width="1400" height="806" alt="驗證功能（圖 32）" loading="lazy" decoding="async"></p>
+<p>確認結果生效：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-33.webp" width="1400" height="806" alt="驗證功能（圖 33）" loading="lazy" decoding="async"></p>
+<h3 id="-功能歸檔">➤ 功能歸檔<a class="h-anchor" href="#-%e5%8a%9f%e8%83%bd%e6%ad%b8%e6%aa%94" aria-label="這個段落的連結"></a></h3>
+<p>確認沒問題後，回到程式碼編輯器，直接在與 AI 的對話窗說</p>
+<pre tabindex="0"><code>幫我歸檔
+</code></pre><p>稍等一段時間後，你就會看到 archive 裡面多了一個資料夾，裡面放的就是這次的變更。</p>
+<p>另外專案的 specs 也有進行對應的調整，綠色是新增，黃色是變更的意思。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-34.webp" width="1400" height="806" alt="功能歸檔（圖 34）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>這邊也提醒大家，每做完一件事，記得保持 commit 的好習慣；這樣每個版本完成的功能會比較明確，而不是一堆功能全部混一起。</p>
+</blockquote>
+<h3 id="-模擬測試資料">➤ 模擬測試資料<a class="h-anchor" href="#-%e6%a8%a1%e6%93%ac%e6%b8%ac%e8%a9%a6%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h3>
+<p>補充一個情境，不是所有變更，都會觸發 OpenSpec 的 Skill。</p>
+<p>比如目前專案初始狀態下，只有一個 Admin 的帳號，這樣想測試多位使用者的不同情境，要自己手動慢慢加，很沒效率。</p>
+<p>此時我們就可以請 AI 幫忙設計模擬資料，我就跟他說：</p>
+<pre tabindex="0"><code>我想要根據權限建立多位使用者，來模擬不同情境
+</code></pre><p>因為這個需求不會涉及到功能上的改變，所以不會觸發 OpenSpec 的 Skill</p>
+<p>等 AI 完成後，我們可以到員工管理看一下，哇！真的建立了對應的員工資料：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-35.webp" width="1400" height="806" alt="模擬測試資料（圖 35）" loading="lazy" decoding="async"></p>
+<p>這樣可以方便我們測試更加複雜的流程。</p>
+<h3 id="-設定-email-smtp">➤ 設定 Email SMTP<a class="h-anchor" href="#-%e8%a8%ad%e5%ae%9a-email-smtp" aria-label="這個段落的連結"></a></h3>
+<p>另外如果有功能卡住，不知道如何處理時，也可以先詢問 AI 如何設定。</p>
+<p>比如新增員工時，會需要寄信通知，但如果環境變數沒有設定好，信件是不會發送的。</p>
+<p>此時就可以詢問 AI：</p>
+<pre tabindex="0"><code>我要如何設定環境變數，讓 email 可以順利寄出？
+</code></pre><p>這邊他就說 Gmail 要開啟兩步驟驗證，我們就點擊對應的網址來進行設定。</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-36.webp" width="1400" height="806" alt="設定 Email SMTP（圖 36）" loading="lazy" decoding="async"></p>
+<p>設定完成後，因為我們有更新到「.env」環境檔，所以要重啟才會生效，你可以直接請 AI 幫忙：</p>
+<pre tabindex="0"><code>幫我重啟後端
+</code></pre><p>重啟完畢後，我們再新增一個使用者測試是否能收到信件：</p>
+<p><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-37.webp" width="1400" height="806" alt="設定 Email SMTP（圖 37）" loading="lazy" decoding="async"></p>
+<p><strong>如果你也跟著教學走到了這一步，先給自己拍拍手，然後別忘記幫文章點個讚。</strong></p>
+<p>你已經初步完成一個有資料庫的全端系統啦！</p>
+<h3 id="-ai-正在改變企業決策">➤ AI 正在改變企業決策<a class="h-anchor" href="#-ai-%e6%ad%a3%e5%9c%a8%e6%94%b9%e8%ae%8a%e4%bc%81%e6%a5%ad%e6%b1%ba%e7%ad%96" aria-label="這個段落的連結"></a></h3>
+<p>如果在幾個月前拍這個主題，我肯定會從 AI 完成的系統挑出很多安全性的漏洞。</p>
+<p>但這次拍完教學後有點被嚇到，雖然還是遇到了許多功能上 Bug，但我已經無法在短時間找出系統漏洞了。</p>
+<p><strong>以往這類的出缺勤管理系統，企業都是要找特定廠商購買，並且支付年費來維護的；但 Vibe Coding 的出現，可能會導致企業做出不同的選擇。</strong></p>
+<p>不過提醒大家，目前只是完成系統的初版，如果接下來打算在團隊內開發協作，還需要設計合適的工作流。</p>
+<blockquote>
+<p>我過去有拍一隻影片，分享如何解決版本控制與團隊協作的痛點：<a href="https://youtu.be/1VuLTQidbPM">https://youtu.be/1VuLTQidbPM</a></p>
+<p>另外如果你想要讓系統更穩定，還需要加入自動化測試，畢竟市場不會為爛產品買單：<a href="https://youtu.be/Rb0_LutRIaw">https://youtu.be/Rb0_LutRIaw</a></p>
+</blockquote>
+<blockquote class="pullquote"><p>別忘記，不管 AI 有多強大，出事還是要人類來背鍋。</p>
+</blockquote>
+<hr>
+<h2 id="結語ai-時代下每個人正在經歷角色的轉變">結語：AI 時代下每個人，正在經歷角色的轉變<a class="h-anchor" href="#%e7%b5%90%e8%aa%9eai-%e6%99%82%e4%bb%a3%e4%b8%8b%e6%af%8f%e5%80%8b%e4%ba%ba%e6%ad%a3%e5%9c%a8%e7%b6%93%e6%ad%b7%e8%a7%92%e8%89%b2%e7%9a%84%e8%bd%89%e8%ae%8a" aria-label="這個段落的連結"></a></h2>
+<p>其實我是懷抱沈重的心情發布這期影片的，因為今天介紹的 OpenSpec 與 Claude Code 給了我完全不同的開發體驗。</p>
+<p>如果你是工程師，一定要嘗試看看這個工具組合；假使你沒有程式背景，建議跟著影片實作一遍。</p>
+<p>其實早在幾個月前，我就想拍攝這個主題了。</p>
+<p>但用相同的指令，當時 AI 完成的初版，連專案啟動都有問題。我需要來回溝通十幾次，才能勉強讓專案跑起來，但結果還是漏洞百出。</p>
+<p>可是今天這期影片想必大家也都看到了，我們已經能用簡單的提示詞生成一個有資料庫、登入功能的前後端系統。</p>
+<p>儘管中間遇到了一些小問題，目前版本也有許多細節要優化。</p>
+<blockquote class="pullquote"><p>但光是這個版本，放在過去可是要一個專業團隊才有辦法完成。</p>
+</blockquote>
+<p>也許這樣說會被很多人罵，但我還是想提醒大家，尤其是工程師。</p>
+<p>過去，程式碼是個昂貴的產品，但不是程式碼本身貴，而是要產生出有意義的程式，需要大量的經驗、專業。</p>
+<p>但 AI 的發展正在讓程式碼快速貶值，因為 AI 不僅寫程式很快，品質還越來越優秀。</p>
+<p>不過今天這隻影片想傳遞的不是「工程師已死」，這類網路上爛大街的口號。</p>
+<p>而是透過實際的範例告訴大家，在 AI 時代下的每個人，大家正在經歷角色的轉變。</p>
+<blockquote class="pullquote"><p>工程師的重點不再是寫了多少行程式，而是去評估系統架構、審查程式碼合理性。</p>
+</blockquote>
+<blockquote class="pullquote"><p>而 PM 與執行業務單位，也不再只是眼巴巴的等工程師開發，在 AI 的輔助下，他們已經可以嘗試加入開發。</p>
+</blockquote>
+<p>這中間當然還有很多細節要磨合，我自己也還在摸索。</p>
+<p><strong>但有件事我可以肯定，現在的開發分工，跟過去相比已經不一樣了；而不久的將來，變化只會更快。</strong></p>
+<p>好的，今天的分享就到這邊，如果這篇文章對你有幫助，可以順手按個讚，並把文章分享給對 AI 主題感興趣的朋友們。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202603/claude-code-openspec/images/claude-code-openspec-38.webp" width="1400" height="914" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>[n8n 教學]用 Docker 在 Local 建立免費 &amp; 無限次數使用的自動化工具</title>
+      <link>https://deanlin.net/blog/202501/n8n-docker-local-setup/</link>
+      <pubDate>Tue, 14 Jan 2025 21:22:38 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202501/n8n-docker-local-setup/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>n8n 是款能把你從重複的例行性任務中，拯救出來的自動化工具。 使用者可以透過視覺化的介面，用拖拉節點、設定參數的方式來建立符合自己需求的工作流。這篇文章會分享本地部署的詳細步驟。</description>
+      <content:encoded><![CDATA[<p>n8n 是款能把你從重複的例行性任務中，拯救出來的自動化工具。</p>
+<p>使用者可以透過視覺化的介面，用拖拉節點、設定參數的方式來建立符合自己需求的工作流。</p>
+<p>他有<a href="https://n8n.io/">雲端</a>與本地（local）的版本，考量到許多工作流程需要放上私鑰（ex: Google API Key、OpenAI API Key），以及雲端版本至少要付費 20 歐元（限制工作流程執行 2500 次）；所以筆者選擇了本地部署的方案，這篇文章會分享詳細的操作步驟。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-01.webp" width="1400" height="785" alt="\[n8n 教學\]用 Docker 在 Local 建立免費 &amp; 無限次數使用的自動化工具（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="-step-1-安裝-docker">STEP 1: 安裝 Docker<a class="h-anchor" href="#-step-1-%e5%ae%89%e8%a3%9d-docker" aria-label="這個段落的連結"></a></h2>
+<p>前往 Docker 官網: <a href="https://www.docker.com/">https://www.docker.com/</a></p>
+<p>根據自己的作業系統選擇對應的版本下載。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-02.webp" width="1400" height="686" alt="STEP 1: 安裝 Docker（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-step-2-使用-docker-composeyml-安裝-n8n">STEP 2: 使用 docker-compose.yml 安裝 n8n<a class="h-anchor" href="#-step-2-%e4%bd%bf%e7%94%a8-docker-composeyml-%e5%ae%89%e8%a3%9d-n8n" aria-label="這個段落的連結"></a></h2>
+<p>你可以直接 git clone <a href="https://github.com/dean9703111/n8n-google-sheet-exmaple">筆者的 GitHub 專案</a>，或者建立一個 <code>n8n</code> 的資料夾，新增 <code>docker-compose.yml</code> 檔案。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">n8n_storage</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">services</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">n8n</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">n8nio/n8n:latest</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">restart</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;127.0.0.1:5678:5678&#34;</span><span style="color:#6e7681"> </span><span style="color:#8b949e;font-style:italic"># 根據實際需求設定</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">n8n_storage:/home/node/.n8n</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p>貼上內容後，在終端機（Terminal）輸入 <code>docker compose up -d</code> 即可啟動</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-03.webp" width="1400" height="193" alt="如果要關閉，輸入 `docker cpose down` 即可" loading="lazy" decoding="async">
+  <figcaption>如果要關閉，輸入 `docker cpose down` 即可</figcaption>
+</figure>
+
+<hr>
+<h2 id="-step-3-註冊-n8n-帳號">STEP 3: 註冊 n8n 帳號<a class="h-anchor" href="#-step-3-%e8%a8%bb%e5%86%8a-n8n-%e5%b8%b3%e8%99%9f" aria-label="這個段落的連結"></a></h2>
+<p>進入網址: <a href="http://127.0.0.1:5678/">http://127.0.0.1:5678</a></p>
+<p>如果看到下面的帳號設定畫面就代表你 n8n 安裝成功了！</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-04.webp" width="1281" height="886" alt="STEP 3: 註冊 n8n 帳號（圖 4）" loading="lazy" decoding="async"></p>
+<p>帳號設定完成後，你會看到下面的初始畫面。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-05.webp" width="1281" height="961" alt="STEP 3: 註冊 n8n 帳號（圖 5）" loading="lazy" decoding="async"></p>
+<p>這邊要特別提醒的是，<code>你一定要記得自己的 Email 跟 Password</code>，因為官方 Forgot Password 的功能只是擺飾用的。</p>
+<p><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-06.webp" width="1281" height="412" alt="STEP 3: 註冊 n8n 帳號（圖 6）" loading="lazy" decoding="async"></p>
+<p>到這一步，你就完成 n8n local 環境的初始化了！<a href="https://deanlin.net/blog/202501/n8n-core-nodes/">下一篇文章將會向讀者分享 n8n Node（節點）的使用方法。</a></p>
+<p><strong>延伸閱讀</strong>:</p>
+<ul>
+<li><a href="https://deanlin.net/blog/202501/n8n-core-nodes/">[n8n 教學]掌握重要節點 (Node) 使用情境：Set、Loop Over Items、If、Code、HTTP Request、Wait</a></li>
+<li><a href="https://deanlin.net/blog/202501/n8n-seo-keyword-matrix/">[n8n 教學]在 Google Sheet 自動建立 SEO 關鍵字矩陣</a></li>
+</ul>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-card-01_hu_5cc01196a8daf348.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202501/n8n-docker-local-setup/images/n8n-docker-local-setup-07.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>實測有效！手把手帶你將 Docker Image 體積減少 90%</title>
+      <link>https://deanlin.net/blog/202209/reduce-docker-image-size/</link>
+      <pubDate>Thu, 01 Sep 2022 18:34:28 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202209/reduce-docker-image-size/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>Docker Image 體積越大，那部署要花的時間就越長；假如每個版本都有好幾 GB，那並不是一個理想的狀態；因此筆者開始動手實作，想看看到底能將 Docker Image 的體積縮小多少！</description>
+      <content:encoded><![CDATA[<p>Docker Image 體積越大，那部署要花的時間就越長；假如每個版本都有好幾 GB，那並不是一個理想的狀態；因此筆者開始動手實作，想看看到底能將 Docker Image 的體積縮小多少！</p>
+<p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-01.webp" width="1400" height="734" alt="實測有效！手把手帶你將 Docker Image 體積減少 90%（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+ㄧ、先初始化一個簡易的 Node.js 專案
+二、撰寫 Dockefile，了解優化前體積有多大
+三、使用 Node.js 的 Alpine 版本
+四、正式環境下，不需要安裝 devDependencies 的套件
+五、如果我們只使用最基礎的 Alpine，然後 Node.js 自己安裝呢？
+六、採用多階段構建，取用上個階段產生的結果
+七、使用 Distroless 讓正式環境更加安全
+</code></pre><h2 id="ㄧ先初始化一個簡易的-nodejs-專案">ㄧ、先初始化一個簡易的 Node.js 專案<a class="h-anchor" href="#%e3%84%a7%e5%85%88%e5%88%9d%e5%a7%8b%e5%8c%96%e4%b8%80%e5%80%8b%e7%b0%a1%e6%98%93%e7%9a%84-nodejs-%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立資料夾</span>
+</span></span><span style="display:flex;"><span>mkdir docker-test
+</span></span><span style="display:flex;"><span>cd docker-test
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 初始化應用</span>
+</span></span><span style="display:flex;"><span>npm init
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝 express</span>
+</span></span><span style="display:flex;"><span>npm install express --save
+</span></span></code></pre></div><p>初始化後的 package.json 大概會長這樣（scripts 的 start 筆者有微調）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;name&#34;</span>: <span style="color:#a5d6ff">&#34;docker-test&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;version&#34;</span>: <span style="color:#a5d6ff">&#34;1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;description&#34;</span>: <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;main&#34;</span>: <span style="color:#a5d6ff">&#34;index.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;scripts&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;start&#34;</span>: <span style="color:#a5d6ff">&#34;node index.js&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;author&#34;</span>: <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;license&#34;</span>: <span style="color:#a5d6ff">&#34;ISC&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;dependencies&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;express&#34;</span>: <span style="color:#a5d6ff">&#34;^4.18.1&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>接著我們新增一個「index.js」的檔案，並貼上如下程式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express()
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> port <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">3000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.get(<span style="color:#a5d6ff">&#39;/&#39;</span>, (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  res.send(<span style="color:#a5d6ff">&#39;Hello World!&#39;</span>)
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(port, () =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">`Example app listening on port </span><span style="color:#a5d6ff">${</span>port<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><p>為了實測不同情境打包的影響，我們安裝一個儲存在「devDependencies」的套件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm install eslint -save-dev
+</span></span></code></pre></div><hr>
+<h2 id="二撰寫-dockefile了解優化前體積有多大">二、撰寫 Dockefile，了解優化前體積有多大<a class="h-anchor" href="#%e4%ba%8c%e6%92%b0%e5%af%ab-dockefile%e4%ba%86%e8%a7%a3%e5%84%aa%e5%8c%96%e5%89%8d%e9%ab%94%e7%a9%8d%e6%9c%89%e5%a4%9a%e5%a4%a7" aria-label="這個段落的連結"></a></h2>
+<p>這邊我們就先用最簡易的方式寫 Dockerfile：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 運行的資料夾</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 移動所需檔案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝套件</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 提供服務的接口</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;npm&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p>接下來輸入 <code>docker build -t docker-test .</code> 就可以建立 Docker Image（docker-test 是名稱）。</p>
+<p>然後輸入 <code>docker images</code> ，確認剛剛建立的 Docker Image 是否存在；從下圖我們可以看到<strong>優化前的 Image 大小高達 1.01GB</strong>。</p>
+<p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-02.webp" width="1400" height="123" alt="二、撰寫 Dockefile，了解優化前體積有多大（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="三使用-nodejs-的-alpine-版本">三、使用 Node.js 的 Alpine 版本<a class="h-anchor" href="#%e4%b8%89%e4%bd%bf%e7%94%a8-nodejs-%e7%9a%84-alpine-%e7%89%88%e6%9c%ac" aria-label="這個段落的連結"></a></h2>
+<p>Node.js Alpine 版本的 Image 體積會遠小於完整的 Node.js Image，現在我們修改一下 Dockerfile：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 使用 Alpine 版本 </span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node:alpine</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;npm&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p>輸入 <code>docker build -t docker-test-alpine .</code> 來建立 Image，完成後輸入 <code>docker images</code> 看看 build 出來的 Image 體積是否改變。</p>
+<p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-03.webp" width="1400" height="168" alt="三、使用 Node.js 的 Alpine 版本（圖 3）" loading="lazy" decoding="async"></p>
+<p>從上圖我們可以看到，Alpine 的版本讓它的體積從 1.01GB 下降到了 189MB，整整少了 812MB！</p>
+<hr>
+<h2 id="四正式環境下不需要安裝-devdependencies-的套件">四、正式環境下，不需要安裝 devDependencies 的套件<a class="h-anchor" href="#%e5%9b%9b%e6%ad%a3%e5%bc%8f%e7%92%b0%e5%a2%83%e4%b8%8b%e4%b8%8d%e9%9c%80%e8%a6%81%e5%ae%89%e8%a3%9d-devdependencies-%e7%9a%84%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>通常一個專案會安裝一些 devDependencies 的套件，但這些套件只需要在開發環境中輔助使用，在正式環境下並沒有安裝的必要。</p>
+<p>我們調整一下 Dockerfile 安裝套件的指令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node:alpine</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 只安裝 dependencies 的套件</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install --production<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;npm&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-04.webp" width="1400" height="210" alt="四、正式環境下，不需要安裝 devDependencies 的套件（圖 4）" loading="lazy" decoding="async"></p>
+<p>在上圖我們可以看到體積又變小了，果然還有優化的空間（少了 12MB）。</p>
+<hr>
+<h2 id="五如果我們只使用最基礎的-alpine然後-nodejs-自己安裝呢">五、如果我們只使用最基礎的 Alpine，然後 Node.js 自己安裝呢？<a class="h-anchor" href="#%e4%ba%94%e5%a6%82%e6%9e%9c%e6%88%91%e5%80%91%e5%8f%aa%e4%bd%bf%e7%94%a8%e6%9c%80%e5%9f%ba%e7%a4%8e%e7%9a%84-alpine%e7%84%b6%e5%be%8c-nodejs-%e8%87%aa%e5%b7%b1%e5%ae%89%e8%a3%9d%e5%91%a2" aria-label="這個段落的連結"></a></h2>
+<p>剛剛我們使用的是 Node.js 的 Alpine 版本，如果更極端一點，只使用最基礎的 Alpine，然後自己額外安裝 Node.js 會有什麼樣的結果呢？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 使用最基礎的 Alpine</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">alpine:latest</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 自己安裝 Node.js &amp; npm</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> apk add --no-cache --update nodejs npm<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install --production<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;npm&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-05.webp" width="1400" height="247" alt="五、如果我們只使用最基礎的 Alpine，然後 Node.js 自己安裝呢？（圖 5）" loading="lazy" decoding="async"></p>
+<p>沒想到這個操作把整包 Image 的體積壓的更低了（從 177MB 降到 64.7MB）。</p>
+<hr>
+<h2 id="六採用多階段構建取用上個階段產生的結果">六、採用多階段構建，取用上個階段產生的結果<a class="h-anchor" href="#%e5%85%ad%e6%8e%a1%e7%94%a8%e5%a4%9a%e9%9a%8e%e6%ae%b5%e6%a7%8b%e5%bb%ba%e5%8f%96%e7%94%a8%e4%b8%8a%e5%80%8b%e9%9a%8e%e6%ae%b5%e7%94%a2%e7%94%9f%e7%9a%84%e7%b5%90%e6%9e%9c" aria-label="這個段落的連結"></a></h2>
+<p>Docker Image 你可以先想想成疊疊樂，在這之中多執行一次「RUN」就會多疊一層；而在 Docker 的世界中可以允許有多個「FROM」，但只會取用最後一個「FROM」所建立的 Image。</p>
+<p>在了解上面的概念後，我們就可以把「安裝」的步驟放在第一個「FROM」裡面執行，然後第二個 FROM 就只是單純地把第一層安裝好的結果搬過去即可，用 Dockerfile 實現會長這樣：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">alpine:latest</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">AS</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">builder</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> apk add --no-cache --update nodejs npm<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 先完成安裝</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install --production<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">alpine:latest</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> apk add --no-cache --update nodejs npm<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 把安裝好的全部移過去</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> --from<span style="color:#ff7b72;font-weight:bold">=</span>builder /usr/src/app .<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;npm&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-06.webp" width="1400" height="267" alt="六、採用多階段構建，取用上個階段產生的結果（圖 6）" loading="lazy" decoding="async"></p>
+<p>經過這麼多的努力後，我們的 Docker Image 也順利從 1.01GB 下降到 58.9MB，<strong>減少了超過 94% 的體積</strong>，並且可以明顯感受到 build Image 的速度上升不少。</p>
+<hr>
+<h2 id="七使用-distroless-讓正式環境更加安全">七、使用 Distroless 讓正式環境更加安全<a class="h-anchor" href="#%e4%b8%83%e4%bd%bf%e7%94%a8-distroless-%e8%ae%93%e6%ad%a3%e5%bc%8f%e7%92%b0%e5%a2%83%e6%9b%b4%e5%8a%a0%e5%ae%89%e5%85%a8" aria-label="這個段落的連結"></a></h2>
+<p>儘管上面我們已經使用 Alpine 讓 Docker Image 變得這麼小，但在文章的最後我想再提供讀者另一個選擇， 那就是「Distroless」！</p>
+<p>先讓我們用它來 Build 一個 Docker Image。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">AS</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">builder</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install --production<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 改成用 Distroless</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">gcr.io/distroless/nodejs</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> --from<span style="color:#ff7b72;font-weight:bold">=</span>builder /usr/src/app .<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;index.js&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-07.webp" width="1400" height="312" alt="七、使用 Distroless 讓正式環境更加安全（圖 7）" loading="lazy" decoding="async"></p>
+<p>如果單純從結果來看，它在體積上(162MB)並沒有什麼優勢，但如果你嘗試用 Shell 打開它，會發現 Shell 根本不存在！換而言之，它的安全性相對更高，可以考慮使用它來做正式環境的部署。</p>
+<p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-08.webp" width="1400" height="164" alt="七、使用 Distroless 讓正式環境更加安全（圖 8）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>以上就是筆者優化 Docker Image 體積的步驟啦！如果文中有表達不清晰、錯誤的部分再煩請告知，感謝您的閱讀。</p>
+</blockquote>
+<p>參考資源：<a href="https://cnodejs.org/topic/5cada94fdad66d658e40782c">Node.js docker 鏡像體積優化實踐</a>、<a href="https://www.techug.com/post/3-simple-tricks-for-smaller-docker-images/">三個技巧，將Docker鏡像體積減小90%</a></p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>帶你將 Node.js Web App 給 Docker 化，並用 Kubernetes 部署的超簡單範例</title>
+      <link>https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/</link>
+      <pubDate>Fri, 21 Jan 2022 10:28:04 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>公司很早就導入了 Kubernetes（K8s），主要是為了自動化部署以及管理、監測多台機器上的 Container，在遇到高併發情境時可以自動擴展。過去我都是以輔助者的角色跟 DevOps 說我希望有哪些功能，所以便藉著寫這篇文章的機會來初探這個已經成為業界潮流的技術。</description>
+      <content:encoded><![CDATA[<p>公司很早就導入了 Kubernetes（K8s），主要是為了自動化部署以及管理、監測多台機器上的 Container，在遇到高併發情境時可以自動擴展。過去我都是以輔助者的角色跟 DevOps 說我希望有哪些功能，所以便藉著寫這篇文章的機會來初探這個已經成為業界潮流的技術。</p>
+<p><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-01.webp" width="1400" height="740" alt="帶你將 Node.js Web App 給 Docker 化，並用 Kubernetes 部署的超簡單範例（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>文章大綱
+一、安裝 Docker、kubectl、minikube 等工具
+  ➤ 安裝 Docker
+  ➤ 安裝 kubectl
+  ➤ 安裝 minikube
+二、建立 Node.js Web App
+  ➤ 建立「package.json」
+  ➤ 建立「server.js」
+  ➤ 運行 Node.js Web App
+三、將 Node.js Web App 給 Docker 化
+  ➤ 建立「Dockerfile」
+  ➤ 建立「.dockerignore」
+  ➤ 製作 Docker Image
+  ➤ 印出建立的 Images
+  ➤ 將建立好的 Docker Image 跑起來
+  ➤ 確認 Docker Image 運行狀態，並進入網址確認畫面如預期
+四、撰寫 K8s 使用的 yaml 檔＆部署 K8s
+  ➤ K8s 的 yaml 檔基礎說明
+  ➤ K8s 部署
+  ➤ 查看部署後 pods 狀態
+  ➤ 取得 deployment 的外部 ip，確認是否會顯示網頁
+  ➤ 刪除執行中的 K8s
+  ➤ 關閉 minikube
+</code></pre><blockquote>
+<p>本篇文章是在 Mac 的作業系統下操作的</p>
+</blockquote>
+<h2 id="一安裝-dockerkubectlminikube-等工具">一、安裝 Docker、kubectl、minikube 等工具<a class="h-anchor" href="#%e4%b8%80%e5%ae%89%e8%a3%9d-dockerkubectlminikube-%e7%ad%89%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h2>
+<h3 id="-安裝-docker">➤ 安裝 Docker<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-docker" aria-label="這個段落的連結"></a></h3>
+<p>前往<a href="https://docs.docker.com/desktop/mac/install/">官網下載 Docker 安裝檔</a>，安裝過程就是狂按下一步，這裡就不再多做介紹，下載後要把 App 打開依照步驟執行才算是完成安裝喔！</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-02.webp" width="1400" height="505" alt="這邊建議順便註冊一組 Docker 帳號，方便你日後的操作。" loading="lazy" decoding="async">
+  <figcaption>這邊建議順便註冊一組 Docker 帳號，方便你日後的操作。</figcaption>
+</figure>
+
+<h3 id="-安裝-kubectl">➤ 安裝 kubectl<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-kubectl" aria-label="這個段落的連結"></a></h3>
+<p>安裝他才能操作 K8s 喔！</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝 kubectl</span>
+</span></span><span style="display:flex;"><span>brew install kubectl
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 確認是否安裝成功</span>
+</span></span><span style="display:flex;"><span>kubectl version --client
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 查看目前 cluster 運行狀態</span>
+</span></span><span style="display:flex;"><span>kubectl get all
+</span></span></code></pre></div><h3 id="-安裝-minikube">➤ 安裝 minikube<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-minikube" aria-label="這個段落的連結"></a></h3>
+<p>這個工具可以讓你在本機(Local)架設 K8s 叢集(Cluster)喔！</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝 minikube</span>
+</span></span><span style="display:flex;"><span>brew install minikube
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 啟動 minikube，啟動 k8s cluster</span>
+</span></span><span style="display:flex;"><span>minikube start
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 查看 minikube 狀態</span>
+</span></span><span style="display:flex;"><span>minikube status
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得目前 minikube 的 IP address</span>
+</span></span><span style="display:flex;"><span>minikube ip
+</span></span></code></pre></div><hr>
+<h2 id="二建立-nodejs-web-app">二、建立 Node.js Web App<a class="h-anchor" href="#%e4%ba%8c%e5%bb%ba%e7%ab%8b-nodejs-web-app" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>你也可以直接去<a href="https://github.com/dean9703111/nodejs-docker-k8s-auto-scaling-example">筆者的 github</a>，直接將專案 Clone 到本機來做測試。</p>
+</blockquote>
+<h3 id="-建立packagejson">➤ 建立「package.json」<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8bpackagejson" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;name&#34;</span>: <span style="color:#a5d6ff">&#34;docker_web_app&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;version&#34;</span>: <span style="color:#a5d6ff">&#34;1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;description&#34;</span>: <span style="color:#a5d6ff">&#34;Node.js on Docker&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;author&#34;</span>: <span style="color:#a5d6ff">&#34;Dean Lin&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;main&#34;</span>: <span style="color:#a5d6ff">&#34;server.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;scripts&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;start&#34;</span>: <span style="color:#a5d6ff">&#34;node server.js&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;dependencies&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;express&#34;</span>: <span style="color:#a5d6ff">&#34;^4.17.2&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/dba0f27584d5c0d7f778aa7cacb1d4b3" rel="noopener">node_web_app.json</a>（GitHub Gist）</p>
+<h3 id="-建立serverjs">➤ 建立「server.js」<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8bserverjs" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a5d6ff">&#34;use strict&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;express&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Constants
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> PORT <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">8080</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> HOST <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;0.0.0.0&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// App
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span>app.get(<span style="color:#a5d6ff">&#34;/&#34;</span>, (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  res.send(<span style="color:#a5d6ff">&#34;Hello World&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(PORT, HOST);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">`Running on http://</span><span style="color:#a5d6ff">${</span>HOST<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">:</span><span style="color:#a5d6ff">${</span>PORT<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/0e82ccc37a3ae3cb68e78e047464c1ec" rel="noopener">node_web_app.js</a>（GitHub Gist）</p>
+<h3 id="-運行-nodejs-web-app">➤ 運行 Node.js Web App<a class="h-anchor" href="#-%e9%81%8b%e8%a1%8c-nodejs-web-app" aria-label="這個段落的連結"></a></h3>
+<p>在終端機先輸入<code>yarn</code>將套件安裝，再輸入<code>yarn start</code>確認專案可以運行。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-03.webp" width="1292" height="390" alt="如果你是 Clone 筆者專案，記得要 cd 進入 docker_web_app 裡面再安裝＆執行喔！" loading="lazy" decoding="async">
+  <figcaption>如果你是 Clone 筆者專案，記得要 cd 進入 docker_web_app 裡面再安裝＆執行喔！</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-04.webp" width="1334" height="796" alt="看到 Hello World 就恭喜完成第一步嚕" loading="lazy" decoding="async">
+  <figcaption>看到 Hello World 就恭喜完成第一步嚕</figcaption>
+</figure>
+
+<hr>
+<h2 id="三將-nodejs-web-app-給-docker-化">三、將 Node.js Web App 給 Docker 化<a class="h-anchor" href="#%e4%b8%89%e5%b0%87-nodejs-web-app-%e7%b5%a6-docker-%e5%8c%96" aria-label="這個段落的連結"></a></h2>
+<h3 id="-建立dockerfile">➤ 建立「Dockerfile」<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8bdockerfile" aria-label="這個段落的連結"></a></h3>
+<p>填寫製作 Docker Image 時需要參考的環境＆指令。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node:14</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Create app directory</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Install app dependencies</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># A wildcard is used to ensure both package.json AND package-lock.json are copied</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># where available (npm@5+)</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package*.json ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># If you are building your code for production</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># RUN npm ci --only=production</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Bundle app source</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> . .<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">8080</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [ <span style="color:#a5d6ff">&#34;node&#34;</span>, <span style="color:#a5d6ff">&#34;server.js&#34;</span> ]<span style="color:#f85149">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/b4ed238746412ea272addb3e7667c1ee" rel="noopener">Dockerfile</a>（GitHub Gist）</p>
+<h3 id="-建立dockerignore">➤ 建立「.dockerignore」<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8bdockerignore" aria-label="這個段落的連結"></a></h3>
+<p>填寫製作 Docker Image 時不想要複製的檔案。</p>
+<pre tabindex="0"><code>node_modules
+npm-debug.log
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/346e2e3876af9dbd6e8ee568b1b72bc5" rel="noopener">.dockerignore</a>（GitHub Gist）</p>
+<h3 id="-製作-docker-image">➤ 製作 Docker Image<a class="h-anchor" href="#-%e8%a3%bd%e4%bd%9c-docker-image" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 登入 Docker</span>
+</span></span><span style="display:flex;"><span>docker login
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># ！如果 Docker app沒有開啟就執行下面步驟會報錯！</span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 Docker Image</span>
+</span></span><span style="display:flex;"><span>docker build . -t &lt;your username&gt;/node-web-app
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 筆者範例指令</span>
+</span></span><span style="display:flex;"><span>docker build . -t babydragon9703111/node-web-app
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-05.webp" width="1400" height="336" alt="製作 Docker Image（圖 5）" loading="lazy" decoding="async"></p>
+<h3 id="-印出建立的-images">➤ 印出建立的 Images<a class="h-anchor" href="#-%e5%8d%b0%e5%87%ba%e5%bb%ba%e7%ab%8b%e7%9a%84-images" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker images
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-06.webp" width="1400" height="199" alt="印出建立的 Images（圖 6）" loading="lazy" decoding="async"></p>
+<h3 id="-將建立好的-docker-image-跑起來">➤ 將建立好的 Docker Image 跑起來<a class="h-anchor" href="#-%e5%b0%87%e5%bb%ba%e7%ab%8b%e5%a5%bd%e7%9a%84-docker-image-%e8%b7%91%e8%b5%b7%e4%be%86" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 裡面填寫的 port 是本地端要跑的（對外 port）</span>
+</span></span><span style="display:flex;"><span>docker run -p <span style="color:#ff7b72;font-weight:bold">[</span>port<span style="color:#ff7b72;font-weight:bold">]</span>:8080 -d &lt;your username&gt;/node-web-app
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 筆者範例指令</span>
+</span></span><span style="display:flex;"><span>docker run -p 8080:8080 -d babydragon9703111/node-web-app
+</span></span></code></pre></div><h3 id="-確認-docker-image-運行狀態並進入網址確認畫面如預期">➤ 確認 Docker Image 運行狀態，並進入網址確認畫面如預期<a class="h-anchor" href="#-%e7%a2%ba%e8%aa%8d-docker-image-%e9%81%8b%e8%a1%8c%e7%8b%80%e6%85%8b%e4%b8%a6%e9%80%b2%e5%85%a5%e7%b6%b2%e5%9d%80%e7%a2%ba%e8%aa%8d%e7%95%ab%e9%9d%a2%e5%a6%82%e9%a0%90%e6%9c%9f" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Get container ID</span>
+</span></span><span style="display:flex;"><span>docker ps
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Print app output</span>
+</span></span><span style="display:flex;"><span>docker logs &lt;container id&gt;
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-07.webp" width="1400" height="264" alt="確認 Docker Image 運行狀態，並進入網址確認畫面如預期（圖 7）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-08.webp" width="1334" height="796" alt="看到 Hello World 就距離成功非常接近嚕！" loading="lazy" decoding="async">
+  <figcaption>看到 Hello World 就距離成功非常接近嚕！</figcaption>
+</figure>
+
+<hr>
+<h2 id="四撰寫-k8s-使用的-yaml-檔部署-k8s">四、撰寫 K8s 使用的 yaml 檔＆部署 K8s<a class="h-anchor" href="#%e5%9b%9b%e6%92%b0%e5%af%ab-k8s-%e4%bd%bf%e7%94%a8%e7%9a%84-yaml-%e6%aa%94%e9%83%a8%e7%bd%b2-k8s" aria-label="這個段落的連結"></a></h2>
+<h3 id="-k8s-的-yaml-檔基礎說明">➤ K8s 的 yaml 檔基礎說明<a class="h-anchor" href="#-k8s-%e7%9a%84-yaml-%e6%aa%94%e5%9f%ba%e7%a4%8e%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>apiVersion</strong>：API 版本，需要依照 kind 的物件來決定 version。</li>
+<li><strong>kind</strong>：建立的物件。</li>
+<li><strong>metadata</strong>：描述物件及標籤。</li>
+<li><strong>spec</strong>：物件要的功能。</li>
+</ul>
+<p>建立<code>nodetest-k8s.yaml</code>來做測試範例，裡面的 image 等相關資訊記得算成自己的</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">apiVersion</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">v1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">kind</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">Service</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">metadata</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">name</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">node-app-service</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">spec</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">selector</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">app</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">node-web-app</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>- <span style="color:#7ee787">protocol</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#34;TCP&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">port</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">8080</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">targetPort</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">8080</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">type</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">LoadBalancer</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">---</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">apiVersion</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">apps/v1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">kind</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">Deployment</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">metadata</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">name</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">node-web-app</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">spec</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">selector</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">matchLabels</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">app</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">node-web-app</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">replicas</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">3</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">template</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">metadata</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">labels</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span><span style="color:#7ee787">app</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">node-web-app</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">spec</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">containers</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span>- <span style="color:#7ee787">name</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">node-web-app</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">          </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">babydragon9703111/node-web-app:latest</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">          </span><span style="color:#7ee787">imagePullPolicy</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">Always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">          </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span>- <span style="color:#7ee787">containerPort</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">8080</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/fbdb562caf70b78ee7801d377c546e12" rel="noopener">nodetest-k8s.yaml</a>（GitHub Gist）</p>
+<h3 id="-k8s-部署">➤ K8s 部署<a class="h-anchor" href="#-k8s-%e9%83%a8%e7%bd%b2" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 啟動 k8s cluster</span>
+</span></span><span style="display:flex;"><span>minikube start
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 執行部署</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f nodetest-k8s.yaml
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-09.webp" width="1400" height="545" alt="K8s 部署（圖 9）" loading="lazy" decoding="async"></p>
+<h3 id="-查看部署後-pods-狀態">➤ 查看部署後 pods 狀態<a class="h-anchor" href="#-%e6%9f%a5%e7%9c%8b%e9%83%a8%e7%bd%b2%e5%be%8c-pods-%e7%8b%80%e6%85%8b" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 此指令會查 default namespace 的資源</span>
+</span></span><span style="display:flex;"><span>kubectl get pods
+</span></span></code></pre></div><p>因為我們在 spec 的 replicas 的值設為 3，所以會產生 3 個 pods。</p>
+<p><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-10.webp" width="1400" height="231" alt="查看部署後 pods 狀態（圖 10）" loading="lazy" decoding="async"></p>
+<h3 id="-取得-deployment-的外部-ip確認是否會顯示網頁">➤ 取得 deployment 的外部 ip，確認是否會顯示網頁<a class="h-anchor" href="#-%e5%8f%96%e5%be%97-deployment-%e7%9a%84%e5%a4%96%e9%83%a8-ip%e7%a2%ba%e8%aa%8d%e6%98%af%e5%90%a6%e6%9c%83%e9%a1%af%e7%a4%ba%e7%b6%b2%e9%a0%81" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code>minikube service node-app-service --url
+</code></pre><figure class="figure"><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-11.webp" width="1400" height="649" alt="如果網頁有正確顯示就大功告成啦～" loading="lazy" decoding="async">
+  <figcaption>如果網頁有正確顯示就大功告成啦～</figcaption>
+</figure>
+
+<h3 id="-刪除執行中的-k8s">➤ 刪除執行中的 K8s<a class="h-anchor" href="#-%e5%88%aa%e9%99%a4%e5%9f%b7%e8%a1%8c%e4%b8%ad%e7%9a%84-k8s" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 指定刪除剛剛建立的 K8s</span>
+</span></span><span style="display:flex;"><span>kubectl delete -f nodetest-k8s.yaml
+</span></span></code></pre></div><p>剛下達指令刪除時，在 STATUS 的部分會顯示 Terminating，過一段時間就會消失嚕～</p>
+<p><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-12.webp" width="1400" height="301" alt="刪除執行中的 K8s（圖 12）" loading="lazy" decoding="async"></p>
+<h3 id="-關閉-minikube">➤ 關閉 minikube<a class="h-anchor" href="#-%e9%97%9c%e9%96%89-minikube" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code># 如果沒關閉的話，你會發現電腦燙燙的，CPU 居高不下
+minikube delete
+</code></pre><p><img src="https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/images/nodejs-docker-kubernetes-deploy-13.webp" width="769" height="116" alt="關閉 minikube（圖 13）" loading="lazy" decoding="async"></p>
+<hr>
+<blockquote class="pullquote"><p>以上就是 Node.js X Docker X Kubernetes 超簡單範例啦！希望讀者可以透過這篇文章對這些技術有基礎認識～</p>
+</blockquote>
+<blockquote class="pullquote"><p>如果想更近一步了解 K8s Auto Scaling 的技術，歡迎閱讀筆者寫的這篇文章：「<a href="https://deanlin.net/blog/202201/kubernetes-autoscaling-local/">模擬 K8s Auto Scaling（可在 Local 端測試）</a>」</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub</title>
+      <link>https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/</link>
+      <pubDate>Thu, 08 Apr 2021 14:28:48 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟。</description>
+      <content:encoded><![CDATA[<p>每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟；整體操作流程個人感覺非常簡單，大家不要被新的技術嚇到了，通常新技術的門檻比想像的更低一點。</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01.webp" width="1400" height="786" alt="在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>一、事先準備
+ ➤ 創建 Nuxt.js 專案
+ ➤ 下載 &amp; 安裝 Docker
+二、在 local 把 Nuxt.js 專案 Build 成 Docker Image
+ ➤ 撰寫 dockerfile &amp; .dockerignore
+ ➤ 把 Nuxt.js 專案 build 成 Docker Image
+三、將 Docker Image 發佈到 dockerhub 上面
+</code></pre><h2 id="一事先準備">一、事先準備<a class="h-anchor" href="#%e4%b8%80%e4%ba%8b%e5%85%88%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h2>
+<h3 id="-創建-nuxtjs-專案">➤ 創建 Nuxt.js 專案<a class="h-anchor" href="#-%e5%89%b5%e5%bb%ba-nuxtjs-%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>如果你已經有 Nuxt.js 的專案可以跳過下面的操作流程</p>
+</blockquote>
+<p><strong>STEP 1：</strong>創建一個 Nuxt.js 專案</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app nuxtjs-tutorial
+</span></span></code></pre></div><p>在創建過程中會問你一些問題，你可以參考筆者的選擇：</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-02.webp" width="1400" height="555" alt="創建 Nuxt.js 專案（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2：</strong>讓 Nuxt.js 專案跑起來</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ cd nuxtjs-tutorial 
+</span></span><span style="display:flex;"><span>$ yarn dev
+</span></span></code></pre></div><figure class="figure"><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-03.webp" width="1400" height="1149" alt="看到這樣的狀況就是跑起來成功嚕" loading="lazy" decoding="async">
+  <figcaption>看到這樣的狀況就是跑起來成功嚕</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-04.webp" width="1400" height="775" alt="開啟 http://localhost:3000/ 可以順利看到畫面了喔！" loading="lazy" decoding="async">
+  <figcaption>開啟 <a href="http://localhost:3000/">http://localhost:3000/</a> 可以順利看到畫面了喔！</figcaption>
+</figure>
+
+<h3 id="-下載--安裝-docker">➤ 下載 &amp; 安裝 Docker<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89--%e5%ae%89%e8%a3%9d-docker" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1：</strong>下載 Docker</p>
+<p><strong>前往官網<a href="https://docs.docker.com/docker-for-mac/install/">下載 Docker 安裝檔</a></strong></p>
+<blockquote>
+<p>安裝過程就是狂按下一步，就不在多做介紹，下載後要把 App 打開依照步驟執行才算是完成安裝喔！</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-05.webp" width="1184" height="437" alt="下載 &amp; 安裝 Docker（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2：</strong>註冊 Docker</p>
+<p>在官網<a href="https://hub.docker.com/signup">註冊 docker 帳號</a></p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-06.webp" width="1184" height="866" alt="下載 &amp; 安裝 Docker（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3：</strong>在 local 端登入 docker</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ docker login
+</span></span></code></pre></div><p>輸入剛剛註冊的帳號密碼</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-07.webp" width="1400" height="179" alt="下載 &amp; 安裝 Docker（圖 7）" loading="lazy" decoding="async"></p>
+<h2 id="二在-local-把-nuxtjs-專案-build-成-docker-image">二、在 local 把 Nuxt.js 專案 Build 成 docker image<a class="h-anchor" href="#%e4%ba%8c%e5%9c%a8-local-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image" aria-label="這個段落的連結"></a></h2>
+<h3 id="-撰寫-dockerfile--dockerignore">➤ 撰寫 dockerfile &amp; .dockerignore<a class="h-anchor" href="#-%e6%92%b0%e5%af%ab-dockerfile--dockerignore" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1：先用指令建立這兩個檔案</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ touch dockerfile
+</span></span><span style="display:flex;"><span>$ touch .dockerignore
+</span></span></code></pre></div><p><strong>STEP 2：撰寫 </strong>dockerfile</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># node 運行環境</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node:12.19.0</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 存放image的目錄</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> mkdir -p /app<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> . /app<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 如果需要相關的環境變數請自行調整路徑</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#COPY ./env/.prod-env /app/env/.prod-env</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 對外的port</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">ENV</span> HOST 0.0.0.0 <span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝套件並build專案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> yarn<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> yarn build<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 執行專案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [ <span style="color:#a5d6ff">&#34;yarn&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span> ]<span style="color:#f85149">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/647663b391da8292d80089d445f3e7e6" rel="noopener">dockerfile</a>（GitHub Gist）</p>
+<p><strong>STEP 2：撰寫 </strong>.dockerignore</p>
+<pre tabindex="0"><code>npm-debug.log
+node_modules
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/3d2509de3aba92d14d42b530c2e654ed" rel="noopener">.dockerignore</a>（GitHub Gist）</p>
+<h3 id="-把-nuxtjs-專案-build-成-docker-image">➤ 把 Nuxt.js 專案 build 成 Docker Image<a class="h-anchor" href="#-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1</strong>：Build Docker Image</p>
+<p>在專案目錄下輸入指令後耐心等待打包，<strong>docker_example</strong> 是這個 image 的名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker build -t docker_example .
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-08.webp" width="1400" height="510" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>：Run Docker Image</p>
+<p>輸入指令確認 image 是否成功</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -it — rm -p 80:3000 docker_example
+</span></span></code></pre></div><blockquote>
+<p>特別注意『80 是對外 port，3000 是 container 的 port』，<strong>docker_example </strong>就是剛剛建立的 image 名稱</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-09.webp" width="1400" height="469" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 9）" loading="lazy" decoding="async"></p>
+<p>上圖 172.xx.xx.x:3000 的網址點開來是沒有畫面的，因為我們已經透過指令改變對外 port 到 80 了，在網址列上輸入 <a href="http://localhost/">http://localhost/</a> 就能成功看到供果嚕～</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-10.webp" width="1226" height="792" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 10）" loading="lazy" decoding="async"></p>
+<h2 id="三將-docker-image-發佈到-dockerhub-上面">三、將 Docker Image 發佈到 dockerhub 上面<a class="h-anchor" href="#%e4%b8%89%e5%b0%87-docker-image-%e7%99%bc%e4%bd%88%e5%88%b0-dockerhub-%e4%b8%8a%e9%9d%a2" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：給剛剛建立的 Image 一個 tag，username 是你 Doacker 的帳戶，xxximage是你希望這個 Image 在 dockerhub 上呈現的名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker tag docker_example username/xxximage
+</span></span></code></pre></div><p><strong>STEP 2</strong>：列出目前存在的 Images</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker images
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-11.webp" width="1400" height="144" alt="三、將 Docker Image 發佈到 dockerhub 上面（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：把這個 Image 丟到 dockerhub 的 repositories</p>
+<blockquote>
+<p>這個 push 的過程會根據你產生 Image 的大小決定，通常要等一段時間</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker push username/xxximage
+</span></span></code></pre></div><p><strong>STEP 4</strong>：在自己的 Docker 帳戶上看到剛剛上傳的 Docker Image</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-12.webp" width="1217" height="273" alt="三、將 Docker Image 發佈到 dockerhub 上面（圖 12）" loading="lazy" decoding="async"></p>
+<p>之後要部署這個 Docker Image 到其他 Server 就只需要輸入下面指令就能獲得嚕～</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker pull username/xxximage
+</span></span></code></pre></div><hr>
+<p>希望這篇文章有幫助到使用 Mac 開發 Nuxt.js 專案的朋友們～</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>JQuery｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/jquery/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Fri, 05 Jun 2020 16:03:36 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/jquery/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>嫌Google Form太醜？那就把他當後台吧XD</title>
+      <link>https://deanlin.net/blog/202006/google-form-as-backend/</link>
+      <pubDate>Fri, 05 Jun 2020 16:03:36 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/google-form-as-backend/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>Google Form &   Google sheet & HTML & github 結合應用</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-01.webp" width="1400" height="714" alt="嫌Google Form太醜？那就把他當後台吧XD（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>為什麼撰寫這篇文章</p>
+</blockquote>
+<p>常常使用Google Form當問卷的你是否覺得Google Form有點太過制式化，或者說讓人覺得用Google Form有點誠意不足</p>
+<p>但自己撰寫網頁問卷還要花錢買(租)一台Server放網頁跟建立資料庫，才能讓大家進來這個網頁填寫問卷，我覺得這樣一點都不划算，因為我只是想要讓這個問卷看起來有質感，不是Google Form而已XD</p>
+<h2 id="於是我就誕生一個想法">於是我就誕生一個想法<a class="h-anchor" href="#%e6%96%bc%e6%98%af%e6%88%91%e5%b0%b1%e8%aa%95%e7%94%9f%e4%b8%80%e5%80%8b%e6%83%b3%e6%b3%95" aria-label="這個段落的連結"></a></h2>
+<p>為什麼不要讓Google Form乖乖當後台就好，我放一個靜態網頁到Github上面就能省去過去在Server上面的花費</p>
+<blockquote>
+<p>文章目標</p>
+</blockquote>
+<ol>
+<li>如何把Google Form的功能抽出來在一般靜態網頁使用</li>
+<li>可全客製化自己心目中漂亮的表單(內文使用Bootstrap 4為範例)</li>
+<li>讓你了解撰寫網頁會遇到的問題(謹以本範例為說明)</li>
+</ol>
+<blockquote>
+<p><strong><em>本文章使用到的技術：</em></strong></p>
+</blockquote>
+<ol>
+<li>前端:static web(Bootstrap 4)</li>
+<li>後端:Google Form</li>
+<li>資料庫:Google Sheets</li>
+</ol>
+<blockquote>
+<p>Demo區讓你搶先體驗</p>
+</blockquote>
+<p><a href="https://dean9703111.github.io/customer_feedback_form/index.html">DEMO網頁</a> (看完文章後你可以自己客製化一個)</p>
+<p><a href="https://docs.google.com/forms/d/e/1FAIpQLSeijRuLDQE62gbapDYgd_3pbmg7GyWY1CWPVeaEK-TiLDKzPw/viewform">Google Form</a> (他其實才是執行動作的本體)</p>
+<p><a href="https://docs.google.com/spreadsheets/d/1aZyvHnajaVjdNBaUT1Md-Y9nYW8O_rdPnMmN5WFrdO4/edit?usp=sharing">Google Sheets</a> (資料最終儲存的地方)</p>
+<blockquote>
+<p>專案原始碼</p>
+</blockquote>
+<p><a href="https://github.com/dean9703111/customer_feedback_form">Github Source code</a> (如果實作上遇到問題可以參考)</p>
+<h2 id="step-1--7-建立google-form表單">STEP 1 / 7: 建立Google Form表單<a class="h-anchor" href="#step-1--7-%e5%bb%ba%e7%ab%8bgoogle-form%e8%a1%a8%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<p>先建立一個<a href="https://www.google.com.tw/intl/zh-TW/forms/about/">Google Form</a>，選取個人的即可：</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-02.webp" width="1400" height="741" alt="STEP 1 / 7: 建立Google Form表單（圖 2）" loading="lazy" decoding="async"></p>
+<p>您可以按造自己的需求建立一個簡單的表單：</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-03.webp" width="1400" height="1132" alt="STEP 1 / 7: 建立Google Form表單（圖 3）" loading="lazy" decoding="async"></p>
+<h2 id="step-2--7-抽出google-form表單裡面的元素">STEP 2 / 7: 抽出Google Form表單裡面的元素<a class="h-anchor" href="#step-2--7-%e6%8a%bd%e5%87%bagoogle-form%e8%a1%a8%e5%96%ae%e8%a3%a1%e9%9d%a2%e7%9a%84%e5%85%83%e7%b4%a0" aria-label="這個段落的連結"></a></h2>
+<p>建立好表單後進入預覽模式</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-04.webp" width="1400" height="151" alt="STEP 2 / 7: 抽出Google Form表單裡面的元素（圖 4）" loading="lazy" decoding="async"></p>
+<p>接下來進入網頁的開發者模式(按下F12)，選擇Elements檢視網頁元素，然後搜尋”entry”，這些name的標籤是之後會使用的參數欄位，請把他們複製起來</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-05.webp" width="1400" height="734" alt="STEP 2 / 7: 抽出Google Form表單裡面的元素（圖 5）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>2021/2/26 更新，朋友提醒新版的 ”entry” 已經轉移到了 &lt;input type=”hidden” name=”entry.xxx&quot; value=””&gt; 的位置，大家操作時注意一下</p>
+</blockquote>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-06.webp" width="1400" height="739" alt="位置轉移惹" loading="lazy" decoding="async">
+  <figcaption>位置轉移惹</figcaption>
+</figure>
+
+<p>輸入必填欄位資料按下送出(submit)按鈕後複製上面的網址，這個網址是之後網頁用來發送訊息的url</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-07.webp" width="1400" height="192" alt="網址會長的像:https://docs.google.com/forms/這些是你自己的網址/formResponse" loading="lazy" decoding="async">
+  <figcaption>網址會長的像:<a href="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeijRuLDQE62gbapDYgd_3pbmg7GyWY1CWPVeaEK-TiLDKzPw/formResponse">https://docs.google.com/forms/這些是你自己的網址/formResponse</a></figcaption>
+</figure>
+
+<h2 id="step-3--7-選一個你喜歡的表單模板">STEP 3 / 7: 選一個你喜歡的表單模板<a class="h-anchor" href="#step-3--7-%e9%81%b8%e4%b8%80%e5%80%8b%e4%bd%a0%e5%96%9c%e6%ad%a1%e7%9a%84%e8%a1%a8%e5%96%ae%e6%a8%a1%e6%9d%bf" aria-label="這個段落的連結"></a></h2>
+<p>在這裡我提供一些大家可以直接使用的<a href="https://www.mockplus.com/blog/post/bootstrap-form-template">表單模板</a>，大家可以去找自己喜歡的，接下來我直接說明細節，完整的程式碼可以在<a href="https://github.com/dean9703111/customer_feedback_form">這裡下載</a></p>
+<p>因為我設計的這份問卷裡面需要填寫：姓名、email、評分、您的建議，並且需要要以form表單傳送，所以會有html結構如下(您的結構可能跟我有些許不同)：</p>
+<pre tabindex="0"><code>&lt;form id=&#34;google-form&#34; class=&#34;contact100-form validate-form&#34;&gt;
+        &lt;span class=&#34;contact100-form-title&#34;&gt;
+          餐後回饋
+        &lt;/span&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;first-name&#34;&gt;姓名 *&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100 validate-input&#34; data-validate=&#34;姓名為必填&#34;&gt;
+          &lt;input id=&#34;name&#34; class=&#34;input100&#34; type=&#34;text&#34; placeholder=&#34;王大明&#34;&gt;
+          &lt;span class=&#34;focus-input100&#34;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;email&#34;&gt;email&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100&#34;&gt;
+          &lt;input id=&#34;email&#34; class=&#34;input100&#34; type=&#34;text&#34; placeholder=&#34;Eg. example@email.com&#34;&gt;
+          &lt;span class=&#34;focus-input100&#34;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;email&#34;&gt;評分(最高五分) *&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100 validate-input&#34; data-validate=&#34;煩請評分&#34;&gt;
+          &lt;select class=&#34;form-control&#34; id=&#34;score&#34; style=&#34;border: 0px;&#34;&gt;
+            &lt;option&gt;1&lt;/option&gt;
+            &lt;option&gt;2&lt;/option&gt;
+            &lt;option&gt;3&lt;/option&gt;
+            &lt;option&gt;4&lt;/option&gt;
+            &lt;option&gt;5&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+
+        &lt;label class=&#34;label-input100&#34; for=&#34;message&#34;&gt;您的建議&lt;/label&gt;
+        &lt;div class=&#34;wrap-input100&#34; data-validate=&#34;Message is required&#34;&gt;
+          &lt;textarea id=&#34;message&#34; class=&#34;input100&#34; placeholder=&#34;Write us a message&#34;&gt;&lt;/textarea&gt;
+          &lt;span class=&#34;focus-input100&#34;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&#34;container-contact100-form-btn&#34;&gt;
+          &lt;button class=&#34;contact100-form-btn&#34;&gt;
+            送出
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/form&gt;
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/fe560b714307b9f4e52df4114ebd270c" rel="noopener">form_elements</a>（GitHub Gist）</p>
+<p>但請記得在&lt;form&gt;、&lt;input&gt;、&lt;select&gt;這些tag裡面設定id，這樣後續在jquery裡面才能抓到相應的元素</p>
+<h2 id="step-4--7-將google-form表單裡抽出的元素放進去html網頁">STEP 4 / 7: 將Google Form表單裡抽出的元素放進去HTML網頁<a class="h-anchor" href="#step-4--7-%e5%b0%87google-form%e8%a1%a8%e5%96%ae%e8%a3%a1%e6%8a%bd%e5%87%ba%e7%9a%84%e5%85%83%e7%b4%a0%e6%94%be%e9%80%b2%e5%8e%bbhtml%e7%b6%b2%e9%a0%81" aria-label="這個段落的連結"></a></h2>
+<p>Google Form建立好了，網頁元素也都建立完成後就是將兩者bind在一起，以下是用jquery抓取html元素，並使用ajax將這個訊息送出，程式細節情看註解</p>
+<blockquote>
+<p>記得在要 把 jquery 引入&lt;script&gt;裡面，我朋友卡在這個問題很久 XD</p>
+</blockquote>
+<pre tabindex="0"><code>&lt;script&gt;
+    $(&#39;#google-form&#39;).submit(function (e) {
+      //在這裡我們要先擋掉form默認事件
+      e.preventDefault();
+
+      if ($(&#39;#name&#39;).val() &amp;&amp; $(&#39;#score&#39;).val()) {//需要先確認必填欄位是否填寫
+        $.ajax({
+          // url為Google Form按下submit的aciotn
+          url: &#34;https://docs.google.com/forms/d/e/1FAIpQLSeijRuLDQE62gbapDYgd_3pbmg7GyWY1CWPVeaEK-TiLDKzPw/formResponse&#34;,
+          crossDomain: true,//解決跨網域CORS的問題
+          data: {// entry.xxxxx 這些需要填寫您表單裡面的值，與其相互對應
+            &#34;entry.2040133429&#34;: $(&#39;#name&#39;).val(),
+            &#34;entry.304089069&#34;: $(&#39;#email&#39;).val(),
+            &#34;entry.207113062&#34;: $(&#39;#score&#39;).val(),
+            &#34;entry.1310220291&#34;: $(&#39;#message&#39;).val()
+          },
+          type: &#34;POST&#34;, //因為是要進行insert的動作，故事用POST
+          dataType: &#34;JSONP&#34;,
+          complete: function () {
+            //完成後把這些欄位清空
+            $(&#39;#name&#39;).val(&#39;&#39;)
+            $(&#39;#email&#39;).val(&#39;&#39;)
+            $(&#39;#score&#39;).val(&#39;&#39;)
+            $(&#39;#message&#39;).val(&#39;&#39;)
+            //最後跳轉到感謝的頁面
+            window.location.replace(&#34;thank.html&#34;);
+          }
+        });
+      }
+    });
+  &lt;/script&gt;
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/726895bb8b6902f16b26e8254b954e03" rel="noopener">bind-html-googeForm</a>（GitHub Gist）</p>
+<h2 id="step-5--7測試是否正常運作">STEP 5 / 7:測試是否正常運作<a class="h-anchor" href="#step-5--7%e6%b8%ac%e8%a9%a6%e6%98%af%e5%90%a6%e6%ad%a3%e5%b8%b8%e9%81%8b%e4%bd%9c" aria-label="這個段落的連結"></a></h2>
+<p>你可以直接開啟html檔(點擊兩下就會跳出網頁了)，輸入數值後按下送出(如果你使用我的程式會看到如下成果)</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-08.webp" width="1400" height="1280" alt="STEP 5 / 7:測試是否正常運作（圖 8）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-09.webp" width="1400" height="734" alt="STEP 5 / 7:測試是否正常運作（圖 9）" loading="lazy" decoding="async"></p>
+<p>接下來去Google Form的Responses區域看看是否資訊正常進入</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-10.webp" width="1400" height="1131" alt="STEP 5 / 7:測試是否正常運作（圖 10）" loading="lazy" decoding="async"></p>
+<p>到這裡就能確認你的程式正常運作了(撒花～)</p>
+<h2 id="step-6--7登入github帳戶並上傳你的專案">STEP 6 / 7:登入github帳戶，並上傳你的專案<a class="h-anchor" href="#step-6--7%e7%99%bb%e5%85%a5github%e5%b8%b3%e6%88%b6%e4%b8%a6%e4%b8%8a%e5%82%b3%e4%bd%a0%e7%9a%84%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>github帳戶的創建應該很多地方都有教學，這裡我就簡化這個步驟，說明最簡單上傳的方式</p>
+<p>登入帳號後選擇Repositories，在按下New新增一個</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-11.webp" width="1400" height="227" alt="STEP 6 / 7:登入github帳戶，並上傳你的專案（圖 11）" loading="lazy" decoding="async"></p>
+<p>填寫一些基礎資訊，這裡需要特別注意的是你必須要選擇Public，不然你這個專案是無法讓大家在網路上觀看的</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-12.webp" width="1400" height="1083" alt="STEP 6 / 7:登入github帳戶，並上傳你的專案（圖 12）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-13.webp" width="1400" height="401" alt="選擇上傳存在的檔案" loading="lazy" decoding="async">
+  <figcaption>選擇上傳存在的檔案</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-14.webp" width="1400" height="696" alt="直接把整個資料夾拖拉進去就好了" loading="lazy" decoding="async">
+  <figcaption>直接把整個資料夾拖拉進去就好了</figcaption>
+</figure>
+
+<h2 id="step-7--7將專案開放給大家連線">STEP 7 / 7:將專案開放給大家連線<a class="h-anchor" href="#step-7--7%e5%b0%87%e5%b0%88%e6%a1%88%e9%96%8b%e6%94%be%e7%b5%a6%e5%a4%a7%e5%ae%b6%e9%80%a3%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
+<p>接下來要對這個專案做一些設定，先點擊最右側的Settings</p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-15.webp" width="1400" height="173" alt="STEP 7 / 7:將專案開放給大家連線（圖 15）" loading="lazy" decoding="async"></p>
+<p>找到Source的位置，選擇master branch後，上方就會出現連結了</p>
+<p>不過要注意這個連結是這個專案的根目錄，如果要導向到你的網頁需要設定路徑喔：</p>
+<p>EX:</p>
+<p>根目錄 <a href="https://dean9703111.github.io/test/">https://dean9703111.github.io/test/</a></p>
+<p>實體檔案位置 <a href="https://dean9703111.github.io/test/">https://dean9703111.github.io/test/</a><strong><em>index.html</em></strong></p>
+<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-16.webp" width="1400" height="739" alt="STEP 7 / 7:將專案開放給大家連線（圖 16）" loading="lazy" decoding="async"></p>
+<p>做到這裡順利的話就能分享連結給朋友炫耀自己的表單啦～</p>
+<p>如果在實作的過程中遇到任何問題歡迎在下方留言</p>
+<p><strong>參考資源</strong>：<a href="https://colorlib.com/wp/template/contact-form-v17/">Bootstrap form templete</a>、<a href="https://codepen.io/JacobLett/pen/vyegPV">Bootstrap thank you page</a>、</p>
+<p><a href="https://hackernoon.com/create-websites-using-google-forms-49a19cc8beb8">Create websites using Google Forms</a></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

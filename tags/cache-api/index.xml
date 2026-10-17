@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Cache API｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/cache-api/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 19 Oct 2022 12:29:58 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/cache-api/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間</title>
+      <link>https://deanlin.net/blog/202210/nodejs-redis-api-cache/</link>
+      <pubDate>Wed, 19 Oct 2022 12:29:58 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202210/nodejs-redis-api-cache/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>現在使用者對網站的要求越來越高，即使你的內容做得很棒，但如果頁面載入時間超過 3 秒，使用者可能在被你的內容吸引前就離開了網站。如果你做的是電子商務系統，這個「痛點」會更為明顯，一但讓客戶等太久，公司就會流失大筆訂單…</description>
+      <content:encoded><![CDATA[<p>現在使用者對網站的要求越來越高，即使你的內容做得很棒，但如果頁面載入時間超過 3 秒，使用者可能在被你的內容吸引前就離開了網站。</p>
+<p>如果你做的是電子商務系統，這個「痛點」會更為明顯，一但讓客戶等太久，公司就會流失大筆訂單。</p>
+<p>為了解決這個問題，我們可以將資料設計成「快取」，這樣不但能大幅減少查詢資料的回傳時間（毫秒級別），還能有效降低後端資料庫的存取壓力。</p>
+<p><img src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-01.webp" width="1400" height="732" alt="在 Node.js 使用 Redis 來 Cache API 的回傳資料，以減少查詢資料的回傳時間（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>本篇文章將以：「Node.js X Koa X Redis」作為範例解說；如果你完全沒接觸過 Redis，可以先參考<a href="https://deanlin.net/blog/202108/install-redis-on-macos/">這篇文章</a>安裝環境。</p>
+</blockquote>
+<h2 id="應用場景說明">應用場景說明<a class="h-anchor" href="#%e6%87%89%e7%94%a8%e5%a0%b4%e6%99%af%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
+<p>如果今天要設計一款「等公車」的服務，那你勢必要串接「第三方 API」來獲取即時訊息。</p>
+<p>但有時第三方 API 的回傳時間並不理想，甚至有存取次數的限制；如果我們想降低第三方 API 存取次數，並減少使用者等待的回傳時間，我們可以針對資料做「快取（Cache）」設計。</p>
+<p>等公車這個服務有幾個特點：</p>
+<ol>
+<li>「公車到站時間」對所有使用者來說都是一樣的。</li>
+<li>公車即將抵達的時間以「分鐘」來顯示，所以我們存取的第三方 API 的頻率不用太高。</li>
+<li>公車的線路非常多，但不會每條線路都有剛好使用者在查。</li>
+</ol>
+<p>我們可以根據特點來設計資料更新的方案：</p>
+<ol>
+<li>我們並不需要輪詢所有的路線，因為很多資料我們就算取得，也沒有使用者會需要。</li>
+<li>因為即將抵達的時間以「分鐘」顯示，所以我們只要把更新的頻率設計在 1 分鐘以下即可（ex：5 秒鐘）。</li>
+<li>更新的策略可以採取「若 Redis 有資料就直接採用，若無則呼叫第三方 API 獲取資料」。</li>
+</ol>
+<blockquote>
+<p>筆者之前有分享過用 Redis 解決「商品秒殺」的應用，有興趣的讀者可以參考<a href="https://deanlin.net/blog/202108/nodejs-redis-flash-sale-concurrency/">這篇文章</a>。</p>
+</blockquote>
+<hr>
+<h2 id="專案環境設置">專案環境設置<a class="h-anchor" href="#%e5%b0%88%e6%a1%88%e7%92%b0%e5%a2%83%e8%a8%ad%e7%bd%ae" aria-label="這個段落的連結"></a></h2>
+<p>這個小專案我們會使用到如下套件：</p>
+<ul>
+<li>koa：可以理解為 Express.js 的精簡版後端框架。</li>
+<li>@koa/router：路由器設定用的，看起來會比較直觀。</li>
+<li>ioredis：與 Redis 連線、溝通的套件。</li>
+<li>axios：HTTP 請求工具，我們透過它來 Call API。</li>
+</ul>
+<p>使用如下指令便可「建立專案資料夾＆初始化專案＆安裝套件」：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir redis-cache-example
+</span></span><span style="display:flex;"><span>cd redis-cache-example
+</span></span><span style="display:flex;"><span>npm init -y
+</span></span><span style="display:flex;"><span>npm install --save koa @koa/router ioredis axios
+</span></span></code></pre></div><hr>
+<h2 id="找個方便使用的第三方-api">找個方便使用的第三方 API<a class="h-anchor" href="#%e6%89%be%e5%80%8b%e6%96%b9%e4%be%bf%e4%bd%bf%e7%94%a8%e7%9a%84%e7%ac%ac%e4%b8%89%e6%96%b9-api" aria-label="這個段落的連結"></a></h2>
+<p>本專案的主要目的，是讓大家理解如何將 API 回傳的資料快取。</p>
+<p>所以這邊筆者選擇<a href="https://jsonplaceholder.typicode.com/">JSONPlaceholder</a>的服務，他有提供虛擬的 RESTful API（重點是不用申請 Key 方便很多）。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-02.webp" width="1400" height="1027" alt="https://jsonplaceholder.typicode.com/todos" loading="lazy" decoding="async">
+  <figcaption><a href="https://jsonplaceholder.typicode.com/todos">https://jsonplaceholder.typicode.com/todos</a></figcaption>
+</figure>
+
+<p>上圖是 API 的回傳格式，大家可以看到，每個物件都有「id」的欄位，我們的程式會使用到這個參數來做 Demo（最多只有到 200，超過會回傳錯誤訊息）。</p>
+<hr>
+<h2 id="專案程式">專案程式<a class="h-anchor" href="#%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>本篇文章的目的是讓讀者理解 Redis 對效能有多大的提升，因此程式架構超級簡單，大概分成三個部分：</p>
+<ol>
+<li>將相關套件引入（koa、@koa/router、ioredis、axios）</li>
+<li>Redis 資料庫連線</li>
+<li>Get Method 的 RESTful API</li>
+</ol>
+<p>而在 Get Method 存取 Redis 資料庫的邏輯為：</p>
+<ol>
+<li>先去 Redis 確認是否有快取，如果有就直接回傳。</li>
+<li>如果 Redis 沒資料，就要 Call API，並將第一次獲得的資料儲存到 Redis 裡面（資料過期時間設定為 5 秒鐘）。</li>
+</ol>
+<p>為了方便讀者實作，筆者下面直接提供完整程式，你只要在專案資料夾下新增 <code>index.js</code>，然後複製貼上程式即可：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Koa <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;koa&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Router <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@koa/router&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Redis <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;ioredis&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> axios <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;axios&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Koa();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> router <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Router();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> redis <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Redis({
+</span></span><span style="display:flex;"><span>  host<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;127.0.0.1&#39;</span>,
+</span></span><span style="display:flex;"><span>  port<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">6379</span>,
+</span></span><span style="display:flex;"><span>  password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>redis.on(<span style="color:#a5d6ff">&#34;error&#34;</span>, <span style="color:#ff7b72">function</span> (error) {
+</span></span><span style="display:flex;"><span>  console.error(error);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>router.get(<span style="color:#a5d6ff">&#39;/todos/:id&#39;</span>, <span style="color:#ff7b72">async</span> ctx =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> cacheTodos <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> redis.get(<span style="color:#a5d6ff">`todos:</span><span style="color:#a5d6ff">${</span>ctx.params.id<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (cacheTodos) {
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#a5d6ff">&#34;從 Redis 獲得資料&#34;</span>);
+</span></span><span style="display:flex;"><span>      ctx.body <span style="color:#ff7b72;font-weight:bold">=</span> JSON.parse(cacheTodos);
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 呼叫 API
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> response <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> axios.get(<span style="color:#a5d6ff">`https://jsonplaceholder.typicode.com/todos/</span><span style="color:#a5d6ff">${</span>ctx.params.id<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>);
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#34;將第一次獲得的資料儲存到 Redis&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 把 API 回傳結果放入 Redis，並設定 5 秒的過期時間（Expire Time）
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> redis.set(<span style="color:#a5d6ff">`todos:</span><span style="color:#a5d6ff">${</span>ctx.params.id<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>, JSON.stringify(response.data), <span style="color:#a5d6ff">&#34;EX&#34;</span>, <span style="color:#a5d6ff">5</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ctx.body <span style="color:#ff7b72;font-weight:bold">=</span> response.data;
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    ctx.body <span style="color:#ff7b72;font-weight:bold">=</span> err;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.use(router.routes());
+</span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/c3cc905908e578703631d482641106cc" rel="noopener">redis-cache.js</a>（GitHub Gist）</p>
+<hr>
+<h2 id="測試程式確認結果是否符合預期">測試程式，確認結果是否符合預期<a class="h-anchor" href="#%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f%e7%a2%ba%e8%aa%8d%e7%b5%90%e6%9e%9c%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f" aria-label="這個段落的連結"></a></h2>
+<p>STEP 1：先在終端機輸入 <code>redis-server</code>，啟動 Redis Server。</p>
+<p><img src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-03.webp" width="1400" height="1098" alt="測試程式，確認結果是否符合預期（圖 3）" loading="lazy" decoding="async"></p>
+<p>STEP 2：輸入 <code>node index.js</code> 運行專案。</p>
+<p>STEP 3：打開 POSTMAN，實際體驗有了 Redis Cache API 的資料後，減少了多少回傳時間。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-04.webp" width="1246" height="631" alt="第一次存取 API，需要等待「626ms」才會回傳。" loading="lazy" decoding="async">
+  <figcaption>第一次存取 API，需要等待「626ms」才會回傳。</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-05.webp" width="1246" height="631" alt="第二次因為資料已經儲存到 Redis，我們等待的時間縮減為「4ms」，是毫秒級的回傳！" loading="lazy" decoding="async">
+  <figcaption>第二次因為資料已經儲存到 Redis，我們等待的時間縮減為「4ms」，是毫秒級的回傳！</figcaption>
+</figure>
+
+<p>如果想感受差異，可以看看下面筆者錄製的 Gif，裡面也有呈現過 5 秒就要重新抓取資料的邏輯。</p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-06.webp" width="960" height="317" aria-label="測試程式，確認結果是否符合預期（圖 6）" data-gifv>
+    <source src="https://deanlin.net/blog/202210/nodejs-redis-api-cache/images/nodejs-redis-api-cache-06.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<hr>
+<h2 id="結語">結語<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>本篇文章的重點在於「Cache 的思路」，Redis 只是協助我們達成目標的工具，即使改用 Memcached 也能達到相同目的。</p>
+<p>希望這個簡單的範例讓大家對 Redis 的應用有更近一步的認識，也歡迎大家留言分享自己的應用喔！</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

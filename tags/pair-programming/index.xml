@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Pair Programming｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/pair-programming/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 24 Feb 2022 13:50:10 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/pair-programming/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>讓開發團隊更好協作的方式 — 下班有約系列文</title>
+      <link>https://deanlin.net/blog/202202/better-dev-team-collaboration/</link>
+      <pubDate>Thu, 24 Feb 2022 13:50:10 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202202/better-dev-team-collaboration/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>前面兩篇文章分享了工程師容易卡住的問題、常犯的錯誤，而這篇文章會聚焦在「協作」這個部分，提供一些方法讓開發團隊發揮更穩定的效能。</description>
+      <content:encoded><![CDATA[<p>前面兩篇文章分享了工程師容易卡住的問題、常犯的錯誤，而這篇文章會聚焦在「協作」這個部分，提供一些方法讓開發團隊發揮更穩定的效能。</p>
+<p><img src="https://deanlin.net/blog/202202/better-dev-team-collaboration/images/better-dev-team-collaboration-01.webp" width="1400" height="745" alt="讓開發團隊更好協作的方式 — 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+➤ 可以一起遵守的 Coding Style
+➤ 使用相同的程式碼 Format 工具
+➤ 沒有明確 Git Flow 機制會發生什麼事？
+➤ 制定團隊 Git Flow 的規則
+</code></pre><h2 id="-可以一起遵守的-coding-style">➤ 可以一起遵守的 Coding Style<a class="h-anchor" href="#-%e5%8f%af%e4%bb%a5%e4%b8%80%e8%b5%b7%e9%81%b5%e5%ae%88%e7%9a%84-coding-style" aria-label="這個段落的連結"></a></h2>
+<p>即使是有經驗的工程師，在同一個專案中也很常不小心有多種命名的風格，下面列出幾個建議：</p>
+<ul>
+<li><strong>變數與函式：</strong>都用小駝峰式（camelCase）的命名，ex：downloadDoc、deleteDoc。</li>
+<li><strong>常數命名：</strong>會建議使用全大寫英文命名，字詞間使用下底線（_）連接，ex：VUE_APP_ROOT_API。</li>
+<li><strong>少用簡寫或自己發明縮寫：</strong>就算是本人，幾個月後也會忘記自己當時創造的東西。</li>
+<li><strong>不要拼錯英文單字：</strong>當程式結構越來越大，我們會透過搜尋來找答案，如果你拼錯就會造成大家的困惑。</li>
+<li><strong>字串單引號、雙引號統一：</strong>儘管在 JavaScript 中兩者皆可運行，但在閱讀體驗上就會有點不舒服。</li>
+</ul>
+<h2 id="-使用相同的程式碼-format-工具">➤ 使用相同的程式碼 Format 工具<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8%e7%9b%b8%e5%90%8c%e7%9a%84%e7%a8%8b%e5%bc%8f%e7%a2%bc-format-%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h2>
+<p>其實上面的問題大部分可以透過「工具」來解決，但必須律定團隊使用「統一」的工具。</p>
+<p>如果團隊沒有統一的工具，會導致你每次在更新專案時，明明只更新一行，但<strong>因為每個人 Format 工具不同導致在 Merge Branch 時看起來幾乎是重寫</strong>。</p>
+<p>這邊推薦使用 VSCode Extensions 的 <a href="https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode">Prettier</a>，他支援大部分程式語言的 Format；當然知名的 <a href="https://eslint.org/">ESLint</a> 也是團隊協作時的好選擇。</p>
+<blockquote>
+<p>不同 Format 工具的斷行字數、單引號、雙引號、結尾有沒有「;」…的習慣都不一樣，如果大家不統一，你看 diff 時會覺得很崩潰並且浪費時間。</p>
+</blockquote>
+<h2 id="-沒有明確-git-flow-機制會發生什麼事">➤ 沒有明確 Git Flow 機制會發生什麼事？<a class="h-anchor" href="#-%e6%b2%92%e6%9c%89%e6%98%8e%e7%a2%ba-git-flow-%e6%a9%9f%e5%88%b6%e6%9c%83%e7%99%bc%e7%94%9f%e4%bb%80%e9%ba%bc%e4%ba%8b" aria-label="這個段落的連結"></a></h2>
+<p>如果沒有一套基礎簡單的規則，你可能會遇到以下障礙：</p>
+<ul>
+<li><strong>Deploy（部署）沒有基準</strong>：正式機、測試機要用哪個 Branch？如果每次都不一樣，那遲早都會出事。</li>
+<li><strong>花很多時間在 Merge Branch（合併分支）上</strong>：如果不是從同一條 Branch 分支出去，那在 Merge 時很容易出現各種衝突需要解決。</li>
+<li><strong>難以從 Branch 追蹤作業進度</strong>：有些人會只用一條 Branch 從頭做到尾，造成單純看這個分支無法理解他到底完成了哪些功能。</li>
+<li><strong>無法理解的 commit 內容</strong>：每個人都有自己的 commit 風格，導致追溯歷史時很難找到節點。</li>
+<li><strong>任務交接時的困擾</strong>：有些人沒有定期 push 的習慣，喜歡累積非常多的 commit 再一次 push；這樣如果他突然請假，或剛好在忙其他事情時，職務代理人並無法協助處理他的任務，甚至重工浪費時間。</li>
+</ul>
+<h2 id="-制定團隊-git-flow-的規則">➤ 制定團隊 Git Flow 的規則<a class="h-anchor" href="#-%e5%88%b6%e5%ae%9a%e5%9c%98%e9%9a%8a-git-flow-%e7%9a%84%e8%a6%8f%e5%89%87" aria-label="這個段落的連結"></a></h2>
+<p>下面是筆者團隊在各個 Branch 的規則：</p>
+<h3 id="-master">🏷️ Master<a class="h-anchor" href="#-master" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>功能</strong>：部署到正式機的 branch</li>
+<li><strong>Merge request</strong>：由資深工程師或是技術主管審核</li>
+</ul>
+<h3 id="-develop">🏷️ Develop<a class="h-anchor" href="#-develop" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>功能</strong>：部署到測試機的 branch</li>
+<li><strong>Merge request</strong>：由資深工程師或是技術主管審核</li>
+</ul>
+<h3 id="-feature">🏷️ Feature<a class="h-anchor" href="#-feature" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>命名方式</strong>：依功能命名，如果有任務編號的話一同附上，方便日後追蹤</li>
+<li><strong>基礎規則</strong>：原則上都是從 Develop 分支出去，每個 Feature 的功能盡量細分到可以在一天內完成</li>
+</ul>
+<h3 id="-hotfix">🏷️ Hotfix<a class="h-anchor" href="#-hotfix" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>命名方式</strong>：依功能命名，如果有任務編號的話一同附上，方便日後追蹤</li>
+<li><strong>基礎規則</strong>：原則上是為了解決正式機上面的緊急 Bug，因此通常是從 Master 分支出去；完成修改後再合併回 Master、Develop</li>
+</ul>
+<h3 id="-release">🏷️ Release<a class="h-anchor" href="#-release" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>命名方式</strong>：依釋出的版本命名</li>
+<li><strong>基礎規則</strong>：當有一個大版本準備部署到正式機，為了保證系統穩定性，會先從 Develop 分支 Release 的版本</li>
+</ul>
+<p>以及其他希望大家一起遵守的細節：</p>
+<ul>
+<li>完成 Feature 時要 push 一版，並通知協作夥伴確認功能。</li>
+<li>如果該 Feature branch 已經 merge 回 develop，且不會再使用該 branch，就需要把它給 delete 掉，避免線上有太多分支，會不清楚哪一個才是有在作用的。</li>
+<li>每天下班前至少要 push 一版，讓管理者容易掌握進度。</li>
+<li>commit 可以用「新增功能、變更功能、修補 Bug」作為 title 的分類，然後將調整的內容條列式寫入 description，這樣其他人在 Code Review 時可以知道重點，範例如下：</li>
+</ul>
+<pre tabindex="0"><code>### title
+修補 Bug：解決職員列表 issues
+### description
+1. 解決排序無效 bug
+2. 在「異常」欄位增加是否為 null 的判斷，避免字串切割異常
+3. 解決 pagination 參數沒有傳送到的問題
+</code></pre><blockquote>
+<p>筆者認為「簡單、易懂」為第一優先，中英文表達都可以。</p>
+</blockquote>
+<hr>
+<blockquote class="pullquote"><p>相信還有很多可以讓開發團隊協作更愉快的工具與方法，期待大家的留言分享～</p>
+</blockquote>
+<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202202/better-dev-team-collaboration/images/better-dev-team-collaboration-02.webp" width="1400" height="319" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<pre tabindex="0"><code>下班有約系列文
+▋ [前端]新手工程師容易卡住的問題
+▋ [前端＆後端]工程師常犯的錯誤
+▋ 讓開發團隊更好協作的方式(本篇)
+▋ 談談 Pair Programing
+▋ 談談工程師的話語權
+▋ 出社會後，新鮮人要及早知道的 5 件事
+▋ 面試的性向測驗竟然準到讓人心裡發寒？
+▋ 反其道而行的任務分配
+▋ 現在的 Daily Scrum 真的適合團隊嗎？
+▋ 用低成本也能請到好員工？資深 HR 不想告訴你的秘密！
+</code></pre>]]></content:encoded>
+    </item>
+    <item>
+      <title>談談 Pair Programing —下班有約系列文</title>
+      <link>https://deanlin.net/blog/202111/pair-programming/</link>
+      <pubDate>Fri, 26 Nov 2021 17:29:46 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202111/pair-programming/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>前幾天跟一位給了我很多幫助的學長一起吃晚餐，因為同為資訊工程領域，所以聊天的話題也不免轉移到程式方面；其中談到 Pair Programing 的話題時，我覺得學長的見解很棒，因此趁記憶猶新時記錄下來，也許未來筆者也會在自己的公司試行看看。</description>
+      <content:encoded><![CDATA[<p>前幾天跟一位給了我很多幫助的學長一起吃晚餐，因為同為資訊工程領域，所以聊天的話題也不免轉移到程式方面；其中談到 Pair Programing 的話題時，我覺得學長的見解很棒，因此趁記憶猶新時記錄下來，也許未來筆者也會在自己的公司試行看看。</p>
+<p><img src="https://deanlin.net/blog/202111/pair-programming/images/pair-programming-01.webp" width="1400" height="787" alt="談談 Pair Programing —下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>文章大綱
+一、 Code Review 這件事
+  ➤ 時機點
+  ➤ 由誰來 Review？
+二、 網頁一開始並沒有前後端之分
+  ➤ 在過去，每個人都是全端
+  ➤ 分前後端，是為讓專業更專業
+  ➤ 網頁工程師應該都要是全端
+三、 談談 Pair Programing
+  ➤ 什麼是 Pair Programing？
+  ➤ 更好的 Code Review 機制
+  ➤ 讓團隊每個人都變成全端
+  ➤ 可能會遇到的問題
+</code></pre><h2 id="一-code-review-這件事">一、 Code Review 這件事<a class="h-anchor" href="#%e4%b8%80-code-review-%e9%80%99%e4%bb%b6%e4%ba%8b" aria-label="這個段落的連結"></a></h2>
+<h3 id="-時機點">➤ 時機點<a class="h-anchor" href="#-%e6%99%82%e6%a9%9f%e9%bb%9e" aria-label="這個段落的連結"></a></h3>
+<p>筆者通常是在 Git Commit、Merge Request 的時機去做 Code Review 這件事，因為過去做的習以為常，所以沒有去思考這樣做到底有沒有意義。</p>
+<p>跟學長討論的過程中，我們發現在這個時間點做 Code Review，往往只能看到<code>很片面的程式邏輯</code>，因此通常僅能對 Coding Style 提出建議，對整體專案的架構幫助並不大；而且通常只有在新同事入職時會認真看，過一段時間後就會放鬆然後隨便了。</p>
+<h3 id="-由誰來-review">➤ 由誰來 Review？<a class="h-anchor" href="#-%e7%94%b1%e8%aa%b0%e4%be%86-review" aria-label="這個段落的連結"></a></h3>
+<p>往往是由在公司待比較久的資深工程師來做這件事情，從邏輯上看起來沒有什麼問題；但實際上資深工程師給出的建議，在很多時候新人是無法理解原因的，他只是根據建議做修改，<code>並沒有了解為什麼要這樣做，所以下次可能還是會犯相同的錯誤</code>。</p>
+<p>我們不能期待一個新人在剛入職時，就有向前輩提出問題、追根究底的勇氣；但前輩看到他一再犯下相同的錯誤時會去想：「我不是已經交了他很多次了，為什麼還是學不會？」</p>
+<p>如果讀者也有相同的經驗，也許我們自己要做一些調整。</p>
+<hr>
+<h2 id="二-網頁一開始並沒有前後端之分">二、 網頁一開始並沒有前後端之分<a class="h-anchor" href="#%e4%ba%8c-%e7%b6%b2%e9%a0%81%e4%b8%80%e9%96%8b%e5%a7%8b%e4%b8%a6%e6%b2%92%e6%9c%89%e5%89%8d%e5%be%8c%e7%ab%af%e4%b9%8b%e5%88%86" aria-label="這個段落的連結"></a></h2>
+<h3 id="-在過去每個人都是全端">➤ 在過去，每個人都是全端<a class="h-anchor" href="#-%e5%9c%a8%e9%81%8e%e5%8e%bb%e6%af%8f%e5%80%8b%e4%ba%ba%e9%83%bd%e6%98%af%e5%85%a8%e7%ab%af" aria-label="這個段落的連結"></a></h3>
+<p>在十幾年前，網頁並沒有明確的將工作劃分成前後端，當時的工程師基本上同時具備網頁切版、資料庫設計、伺服器架設…等技能。</p>
+<h3 id="-分前後端是為讓專業更專業">➤ 分前後端，是為讓專業更專業<a class="h-anchor" href="#-%e5%88%86%e5%89%8d%e5%be%8c%e7%ab%af%e6%98%af%e7%82%ba%e8%ae%93%e5%b0%88%e6%a5%ad%e6%9b%b4%e5%b0%88%e6%a5%ad" aria-label="這個段落的連結"></a></h3>
+<p>隨著網頁技術的蓬勃發展，每年都會推出大量的新技術，一個工程師很難在各個領域都即時跟上；也因此工作的內容有更明確的劃分，像是前後端分離、Devops、UIUX…等概念與技術也應運而生。</p>
+<h3 id="-網頁工程師應該都要是全端">➤ 網頁工程師應該都要是全端<a class="h-anchor" href="#-%e7%b6%b2%e9%a0%81%e5%b7%a5%e7%a8%8b%e5%b8%ab%e6%87%89%e8%a9%b2%e9%83%bd%e8%a6%81%e6%98%af%e5%85%a8%e7%ab%af" aria-label="這個段落的連結"></a></h3>
+<p>無論工作的內容是前端還是後端，筆者個人認為都應該要具備全端的知識水平；你不用在全部領域都做到專家的等級，但至少你要能夠看得懂對方寫的 Code，並具備基礎的維護能力。</p>
+<hr>
+<h2 id="三-談談-pair-programing">三、 談談 Pair Programing<a class="h-anchor" href="#%e4%b8%89-%e8%ab%87%e8%ab%87-pair-programing" aria-label="這個段落的連結"></a></h2>
+<h3 id="-什麼是-pair-programing">➤ 什麼是 Pair Programing？<a class="h-anchor" href="#-%e4%bb%80%e9%ba%bc%e6%98%af-pair-programing" aria-label="這個段落的連結"></a></h3>
+<p>這是雙方看同一個螢幕，經過彼此交流來共同開發的一個機制；筆者曾經寫一篇文章說明過去 Pair Programing 遇到的問題、有什麼工具可以讓我們在 Pair Programing 有更高的效率，有興趣的朋友可以參考：<a href="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/">連結</a>。</p>
+<h3 id="-更好的-code-review-機制">➤ 更好的 Code Review 機制<a class="h-anchor" href="#-%e6%9b%b4%e5%a5%bd%e7%9a%84-code-review-%e6%a9%9f%e5%88%b6" aria-label="這個段落的連結"></a></h3>
+<p>比起等對方寫好後來做 Code Review，Pair Programing 可以<code>更即時</code>的知道對方是從哪個角度出發來寫這個程式的。</p>
+<p>剛入職的同事如果是透過 Pair Programing 來做開發，他可以更快速地融入團隊，並在短時間內將技術提升至團隊平均開發水平；這個過程中前輩也能對新人的技術有更高的掌握度，並作出合適的提點。</p>
+<h3 id="-讓團隊每個人都變成全端">➤ 讓團隊每個人都變成全端<a class="h-anchor" href="#-%e8%ae%93%e5%9c%98%e9%9a%8a%e6%af%8f%e5%80%8b%e4%ba%ba%e9%83%bd%e8%ae%8a%e6%88%90%e5%85%a8%e7%ab%af" aria-label="這個段落的連結"></a></h3>
+<p>在談話的過程中，學長認為前後端的劃分雖然有必要；<code>但不管是前端還是後端，應該都要具備全端的能力</code>，因此我向學長問道：「可是很多人就是以前端/後端工程師的身份入職，他們真的對另外一個領域完全不熟悉啊；先不論他們是否願意學習，就算願意學習，他們手上的專案也會 Delay，這些成本也要納入考量吧？」</p>
+<p>關於這個問題，學長的觀點是這樣的：「不管前後端，程式的邏輯都是一樣的，只是應用的地方不同而已；學習的成本一定有，但沒有你想像的那麼高，原則上 1 個禮拜就能夠具備基礎的開發能力；先跟老闆溝通好，專案 Delay 一個禮拜沒你想的那麼嚴重。」</p>
+<p>聽到變成全端的時間成本，我真的不太理解為何會這麼短，於是我拋出問題：「一個禮拜？不可能吧？這怎麼可能做到？有更具體的做法嗎？」</p>
+<p>面對我的質疑，學長回答是：「我這邊是用 Pair Programing 達成的，兩個工程師輪流寫，強迫他跨出舒適圈；這個舒適圈一但跨出，旁邊又有一個可以隨時解惑的老師，相信我，人類的學習潛能遠比你認知的還要強大。」</p>
+<blockquote>
+<p>上面是學長在自己公司實踐的成果，筆者尚未在自己的公司實踐；但我相信這個作法一定可以提升團隊整體的程式水平以及歸屬感。</p>
+</blockquote>
+<h3 id="-可能會遇到的問題">➤ 可能會遇到的問題<a class="h-anchor" href="#-%e5%8f%af%e8%83%bd%e6%9c%83%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><strong>沒有合適的教練</strong><br>就算有工程師願意學，也需要團隊裡面有人願意一起陪練；最佳的陪練就是「資深全端工程師」，因為他前後端都懂，所以在面對問題時可以更全面地給出解答，<code>但能做到並願意這樣做的人，市場上應該不會太多</code>。</li>
+<li><strong>時間成本、成效因人而異</strong><br>每個人的資質與領悟力不同，對原本領域的鑽研深度也不一樣；這些個體化的差異可能會讓你在推行這個政策的時候結果不如預期。</li>
+</ol>
+<hr>
+<blockquote class="pullquote"><p>文章僅是提出不同的觀點以及作法，是否適合自己的團隊、具體如何導入；筆者認為需要自己去評估，如果你有自己的想法或不同的見解，也歡迎在底下留言。</p>
+</blockquote>
+<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202111/pair-programming/images/pair-programming-02.webp" width="1400" height="319" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<pre tabindex="0"><code>下班有約系列文
+▋ [前端]新手工程師容易卡住的問題
+▋ [前端＆後端]工程師常犯的錯誤
+▋ 讓開發團隊更好協作的方式
+▋ 談談 Pair Programing(本篇)
+▋ 談談工程師的話語權
+▋ 出社會後，新鮮人要及早知道的 5 件事
+▋ 面試的性向測驗竟然準到讓人心裡發寒？
+▋ 反其道而行的任務分配
+▋ 現在的 Daily Scrum 真的適合團隊嗎？
+▋ 用低成本也能請到好員工？資深 HR 不想告訴你的秘密！
+</code></pre>]]></content:encoded>
+    </item>
+    <item>
+      <title>使用 Visual Studio Live Share 來即時共同開發 — Pair programming</title>
+      <link>https://deanlin.net/blog/202106/vscode-live-share-pair-programming/</link>
+      <pubDate>Mon, 21 Jun 2021 17:52:13 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202106/vscode-live-share-pair-programming/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>在遠端工作後，我們使用 Teams、Skype、Google meet…</description>
+      <content:encoded><![CDATA[<p>在遠端工作後，我們使用 Teams、Skype、Google meet 來完成日常的會議，但如果使用上述工具來討論專案中的程式碼並不方便，因為所有使用者都聚焦在同一個畫面上；但看到問題時只能用口頭表達：「去app資料架下面找出xxxController，第30行的程式邏輯有問題。」這樣的表達方式欠缺效率且容易帶有情緒；所以今天向大家介紹一款共同開發超棒的工具。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-01.webp" width="1400" height="785" alt="圖片來源：Visual Studio官網" loading="lazy" decoding="async">
+  <figcaption>圖片來源：<a href="https://visualstudio.microsoft.com/zh-hant/services/live-share/?fbclid=IwAR3B2oFFd4kuofFKVm5qh7r5T-QCdOXSSta87b87jBhGGTdob4Ztl3Gp6-U">Visual Studio官網</a></figcaption>
+</figure>
+
+<pre tabindex="0"><code>一、我們現在協作時遇到了哪些困境？
+二、這個工具能給我們開發帶來什麼樣的幫助？
+三、安裝套件＆登入使用者
+四、使用方式
+</code></pre><h2 id="一我們現在協作時遇到了哪些困境">一、我們現在協作時遇到了哪些困境？<a class="h-anchor" href="#%e4%b8%80%e6%88%91%e5%80%91%e7%8f%be%e5%9c%a8%e5%8d%94%e4%bd%9c%e6%99%82%e9%81%87%e5%88%b0%e4%ba%86%e5%93%aa%e4%ba%9b%e5%9b%b0%e5%a2%83" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>使用螢幕分享做 Debug 時，需要依靠大腦來做運算邏輯，想要看哪一支檔案與程式也要靠口述，非常不方便</li>
+<li>有些程式（Teams），不只螢幕分享來能直接控制對方的電腦做操作，但同一時間只允許一人做操作</li>
+<li>就算團隊使用 git 版控，你切到對方有 Bug 的 branch 時可能無法順利重現問題發生（很多套件版本及環境參數設定不同）</li>
+<li>因為無法完全模擬對方程式運作環境導致 Debug 時困難重重</li>
+</ul>
+<h2 id="二這個工具能給我們開發帶來什麼樣的幫助">二、這個工具能給我們開發帶來什麼樣的幫助？<a class="h-anchor" href="#%e4%ba%8c%e9%80%99%e5%80%8b%e5%b7%a5%e5%85%b7%e8%83%bd%e7%b5%a6%e6%88%91%e5%80%91%e9%96%8b%e7%99%bc%e5%b8%b6%e4%be%86%e4%bb%80%e9%ba%bc%e6%a8%a3%e7%9a%84%e5%b9%ab%e5%8a%a9" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>對方能夠很清楚理解自己現在講述的程式在哪個檔案的哪個位置，不再雞同鴨講</li>
+<li>雙方能自由瀏覽專案下的資料夾與程式，無需依靠口述</li>
+<li>可以模擬對方的環境進行程式編譯，更清楚問題發生點</li>
+<li>雙方的游標顏色不同，方便討論時不會產生誤會</li>
+</ul>
+<h2 id="三安裝套件登入使用者">三、安裝套件＆登入使用者<a class="h-anchor" href="#%e4%b8%89%e5%ae%89%e8%a3%9d%e5%a5%97%e4%bb%b6%e7%99%bb%e5%85%a5%e4%bd%bf%e7%94%a8%e8%80%85" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>下面的步驟及操作可能會隨著 VScode 改版而有所不同，僅供參考</p>
+</blockquote>
+<p><strong>SETP 1</strong>：在 VScode 的 EXTENSION 分頁搜尋「Live Share」，點擊「install」即可完成安裝</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-02.webp" width="1400" height="658" alt="三、安裝套件＆登入使用者（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 2</strong>：安裝完後會在左下角多出「LIVE SHARE」的icon</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-03.webp" width="514" height="664" alt="三、安裝套件＆登入使用者（圖 3）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-04.webp" width="1296" height="862" alt="三、安裝套件＆登入使用者（圖 4）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 3</strong>：第一次按「Share」時，會要求你登入 GitHub 或是 Microsoft 的帳號</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-05.webp" width="1296" height="862" alt="三、安裝套件＆登入使用者（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 4</strong>：這裡我選擇登入Github，基本上就是一路按接受授權的過程</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-06.webp" width="1400" height="573" alt="三、安裝套件＆登入使用者（圖 6）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-07.webp" width="1400" height="1429" alt="三、安裝套件＆登入使用者（圖 7）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 5</strong>：註冊成功後，你就會看到以下畫面</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-08.webp" width="1300" height="668" alt="三、安裝套件＆登入使用者（圖 8）" loading="lazy" decoding="async"></p>
+<h2 id="四使用方式">四、使用方式<a class="h-anchor" href="#%e5%9b%9b%e4%bd%bf%e7%94%a8%e6%96%b9%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>完成安裝＆登入的步驟後，下面提供本機模擬的操作方式</p>
+</blockquote>
+<h3 id="-自己跟自己的連線模擬操作">➤ 自己跟自己的連線，模擬操作<a class="h-anchor" href="#-%e8%87%aa%e5%b7%b1%e8%b7%9f%e8%87%aa%e5%b7%b1%e7%9a%84%e9%80%a3%e7%b7%9a%e6%a8%a1%e6%93%ac%e6%93%8d%e4%bd%9c" aria-label="這個段落的連結"></a></h3>
+<p><strong>SETP 1</strong>：在本機用 VScode 開啟一個資料夾或是專案</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-09.webp" width="1286" height="856" alt="自己跟自己的連線，模擬操作（圖 9）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 2</strong>：點擊「Share」做分享，此時你會得到一組邀請連結</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-10.webp" width="945" height="856" alt="自己跟自己的連線，模擬操作（圖 10）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 3</strong>：此時開用「New Windows」開啟一個空的 VScode，點擊「Join」加入</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-11.webp" width="1020" height="761" alt="自己跟自己的連線，模擬操作（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 4</strong>：加入後加入後便可以開始共同開發嚕</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-12.webp" width="1174" height="855" alt="自己跟自己的連線，模擬操作（圖 12）" loading="lazy" decoding="async"></p>
+<p>當 Join 的人對檔案操作時，Share 的人可以看到他的操作</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-13.webp" width="1400" height="681" alt="自己跟自己的連線，模擬操作（圖 13）" loading="lazy" decoding="async"></p>
+<h3 id="-了解-share-的人跟-join-的人正在操作的畫面">➤ 了解 Share 的人跟 Join 的人正在操作的畫面<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3-share-%e7%9a%84%e4%ba%ba%e8%b7%9f-join-%e7%9a%84%e4%ba%ba%e6%ad%a3%e5%9c%a8%e6%93%8d%e4%bd%9c%e7%9a%84%e7%95%ab%e9%9d%a2" aria-label="這個段落的連結"></a></h3>
+<p>按下右上角的「圖釘」，就是「Follow Participant」觀看對方現在操作的檔案</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-14.webp" width="915" height="395" alt="了解 Share 的人跟 Join 的人正在操作的畫面（圖 14）" loading="lazy" decoding="async"></p>
+<h3 id="-直接在對方的環境下執行程式了解問題">➤ 直接在對方的環境下執行程式了解問題<a class="h-anchor" href="#-%e7%9b%b4%e6%8e%a5%e5%9c%a8%e5%b0%8d%e6%96%b9%e7%9a%84%e7%92%b0%e5%a2%83%e4%b8%8b%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f%e4%ba%86%e8%a7%a3%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>Join的人可以直接在終端機下指令，了解程式執行狀況</p>
+<p><img src="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/images/vscode-live-share-pair-programming-15.webp" width="1354" height="826" alt="直接在對方的環境下執行程式了解問題（圖 15）" loading="lazy" decoding="async"></p>
+<hr>
+<blockquote class="pullquote"><p>本篇文章只是很簡略地讓大家了解如何使用「Live Share」這款套件，更多的功能就讓大家<a href="https://visualstudio.microsoft.com/zh-hant/services/live-share/?fbclid=IwAR3B2oFFd4kuofFKVm5qh7r5T-QCdOXSSta87b87jBhGGTdob4Ztl3Gp6-U">直接去官網</a>了解吧！</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

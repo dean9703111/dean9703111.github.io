@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Apps Script｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/apps-script/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 10 Aug 2022 13:56:49 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/apps-script/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>免費！提交 Google 表單後，系統自動寄送客製化 email，宣傳效果 Up！</title>
+      <link>https://deanlin.net/blog/202208/google-forms-auto-email/</link>
+      <pubDate>Wed, 10 Aug 2022 13:56:49 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202208/google-forms-auto-email/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>有時我們希望使用者提交 Google 表單後，可以提供給他更多資訊（ex：活動詳細內容、宣傳廣告、友站連結…）；但 Google 表單只有在「設定 → 簡報 → 確認訊息」給你用純文字的方式表達，除了傳送內容受限制外，許多使用者在提交表單後會下意識的關閉網頁…</description>
+      <content:encoded><![CDATA[<p>有時我們希望使用者提交 Google 表單後，可以提供給他更多資訊（ex：活動詳細內容、宣傳廣告、友站連結…）；但 Google 表單只有在「設定 → 簡報 → 確認訊息」給你用純文字的方式表達，除了傳送內容受限制外，許多使用者在提交表單後會下意識的關閉網頁，根本沒注意到裡面寫了些什麼。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-01.webp" width="1400" height="731" alt="免費！提交 Google 表單後，系統自動寄送客製化 email，宣傳效果 Up！（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="前言需求來自於實務">前言：需求來自於實務<a class="h-anchor" href="#%e5%89%8d%e8%a8%80%e9%9c%80%e6%b1%82%e4%be%86%e8%87%aa%e6%96%bc%e5%af%a6%e5%8b%99" aria-label="這個段落的連結"></a></h2>
+<p>其實會想做這個功能，是因為不久前<a href="https://www.tenlong.com.tw/products/9786263331525">出版書籍</a>後，陸續有人填寫 Google 表單回傳自己的心得。</p>
+<p>而我這次有給填寫表單的讀者「30 分鐘免費諮詢」的回饋，但因為把諮詢的報名連結放在 Google 表單「確認訊息」的位置，導致有些讀者根本沒注意到它的存在，因此便想透過自動寄送 email，來解決這個囧境。</p>
+<blockquote>
+<p>你也可以先<a href="https://forms.gle/ADvarze9bKrwyUGV6">體驗看看筆者完成的 Demo</a>，只要填寫電子郵件，並在「是否願意收到電子報」的欄位選擇「是」，提交後便會收到自動發送的郵件嚕！</p>
+</blockquote>
+<hr>
+<h2 id="step-1-產生-html-email">STEP 1 ：產生 HTML email<a class="h-anchor" href="#step-1-%e7%94%a2%e7%94%9f-html-email" aria-label="這個段落的連結"></a></h2>
+<p>其實這個步驟並非必需，但為了讓寄送的 email 有基礎的質感，筆者還是決定製作一個 HTML email。</p>
+<p>看到 HTML 先別慌，現在網路上有非常多的資源，只要拖拉點選，一行程式碼都不用寫就能產生出來，這邊筆者是使用 <a href="https://beefree.io/">Beefree</a> 這個網站提供的服務，在這裡有擁有豐富的版型供你選擇（雖然筆者還是選用空白模板）。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-02.webp" width="1400" height="736" alt="STEP 1 ：產生 HTML email（圖 2）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-03.webp" width="1400" height="697" alt="STEP 1 ：產生 HTML email（圖 3）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<p>它的使用非常方便，你甚至可以在不註冊的狀態下製作自己的 HTML email；<strong>不過如果你擔心自己會失手關閉網頁，還是建議註冊登入。</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-04.webp" width="1400" height="998" alt="這個是 Beefree 的 UI 操作畫面" loading="lazy" decoding="async">
+  <figcaption>這個是 Beefree 的 UI 操作畫面</figcaption>
+</figure>
+
+<p>在完成 HTML email 後，點擊右上角的 Download 會獲得一個壓縮檔，解壓縮後你會看到裡面的「beefree-xxx.html」檔，筆者建議重新命名成「email-content.html」方便辨識（這個 HTML 在後面的步驟會用到，請妥善保存）。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-05.webp" width="1400" height="927" alt="STEP 1 ：產生 HTML email（圖 5）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>備註：</strong></p>
+<p>1. 免費版在最下面會有 Beefree 的 Logo，它可以在下載後透過編輯 HTML 來刪除。</p>
+<p>2. 如果有使用到圖片，建議先上傳到 Imgur，再把產生連結貼回來（ex：https://i.imgur.com/Oonq5Gy.jpg），詳細流程這邊不再贅述。</p>
+</blockquote>
+<hr>
+<h2 id="setp-2建立-google-表單">SETP 2：建立 Google 表單<a class="h-anchor" href="#setp-2%e5%bb%ba%e7%ab%8b-google-%e8%a1%a8%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<p>建立表單的步驟我就不再示範了，需要注意的是「電子郵件（email）」這個欄位需要設定為必填，不然你也沒有寄信的對象啊！</p>
+<p>為了驗證 Google 表單的參數可以作為邏輯判斷使用，我這邊再新增一個「是否願意收到電子報」的問題，依照回答的「是/否」來決定要不要寄送 email。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-06.webp" width="1400" height="975" alt="SETP 2：建立 Google 表單（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="setp-3從-google-表單產生-google-試算表">SETP 3：從 Google 表單產生 Google 試算表<a class="h-anchor" href="#setp-3%e5%be%9e-google-%e8%a1%a8%e5%96%ae%e7%94%a2%e7%94%9f-google-%e8%a9%a6%e7%ae%97%e8%a1%a8" aria-label="這個段落的連結"></a></h2>
+<p>在「回覆」的 Tab 中，點擊「Google 試算表」的 icon 便會跳出建立 Google 試算表的詢問視窗。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-07.webp" width="1400" height="461" alt="SETP 3：從 Google 表單產生 Google 試算表（圖 7）" loading="lazy" decoding="async"></p>
+<p>下面是自動產生的 Google 試算表。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-08.webp" width="1400" height="774" alt="SETP 3：從 Google 表單產生 Google 試算表（圖 8）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step-4從-google-試算表建立-apps-script">STEP 4：從 Google 試算表建立 Apps Script<a class="h-anchor" href="#step-4%e5%be%9e-google-%e8%a9%a6%e7%ae%97%e8%a1%a8%e5%bb%ba%e7%ab%8b-apps-script" aria-label="這個段落的連結"></a></h2>
+<p>點擊工具列的「擴充功能」，再點擊「Apps Script」便會產生嚕！</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-09.webp" width="1400" height="329" alt="STEP 4：從 Google 試算表建立 Apps Script（圖 9）" loading="lazy" decoding="async"></p>
+<p>在 Apps Script 裡面用「新增檔案」建立一個 HTML，並將 STEP 1 產生的 HTML 程式碼貼回去。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-10.webp" width="1232" height="666" alt="STEP 4：從 Google 試算表建立 Apps Script（圖 10）" loading="lazy" decoding="async"></p>
+<p>接著要撰寫 Apps Script 裡面的程式邏輯（程式碼.gs）。</p>
+<p>我們要先抓取 Google Form 裡面提交的值，如果「是否願意收到電子報」的值為「否」，我們就跳出函式；若為「是」，我們便將 HTML email 寄出（相關注意事項請看備註描述）。</p>
+<pre tabindex="0"><code>function onSubmit(datas) {
+  
+  // 取得提交的值（你的欄位名稱可能與我不同）
+  var data = datas.namedValues;
+  var replyEmail = data[&#39;電子郵件地址&#39;][0];
+  var isReceiveEDM = data[&#39;是否願意收到電子報&#39;][0];
+
+  if (isReceiveEDM === &#39;否&#39;){
+    // 如果拒絕收到電子報就直接結束
+    return;
+  }
+
+  // 取得上傳的 HTML 檔
+  var edmHTML = HtmlService.createTemplateFromFile(&#39;email-content&#39;);
+  
+  // 設定HTML裡的變數
+  edmHTML.data = data;
+  
+  // 產出成要發送的 HTML
+  var output = edmHTML.evaluate().getContent();
+
+  // 發送信件
+  MailApp.sendEmail({
+    to: replyEmail,
+    subject: &#34;[系統發送] 感謝您填寫「Dean Lin 的回饋表單」&#34;,
+    htmlBody: output
+  });
+}
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/36e9cb9e237c53936ed751d5fb986fae" rel="noopener">email-response.gs</a>（GitHub Gist）</p>
+<hr>
+<h2 id="step-5設定觸發條件">STEP 5：設定觸發條件<a class="h-anchor" href="#step-5%e8%a8%ad%e5%ae%9a%e8%a7%b8%e7%99%bc%e6%a2%9d%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>在上面的步驟完成後，我們要將 Google 表單的事件與剛剛撰寫的程式綁定；因此我們要到左側的功能列，點擊「觸發條件」。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-11.webp" width="777" height="286" alt="STEP 5：設定觸發條件（圖 11）" loading="lazy" decoding="async"></p>
+<p>接著點擊右下角的「新增觸發條件」。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-12.webp" width="1400" height="892" alt="STEP 5：設定觸發條件（圖 12）" loading="lazy" decoding="async"></p>
+<p>觸發條件可以參考筆者在紅框的選擇，完成後按右下角的「儲存即可」。</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-13.webp" width="1400" height="1076" alt="STEP 5：設定觸發條件（圖 13）" loading="lazy" decoding="async"></p>
+<p>接下來 Google 會跳出一堆需要你授權的彈窗，順序大概是「選擇帳戶 → 驗證 app → 允許 app 權限」。</p>
+<div class="gallery-row cols-3">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-14.webp" width="584" height="497" alt="STEP 5：設定觸發條件（圖 14）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-15.webp" width="584" height="591" alt="STEP 5：設定觸發條件（圖 15）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-16.webp" width="584" height="617" alt="STEP 5：設定觸發條件（圖 16）" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<hr>
+<h2 id="final測試發信">Final：測試發信<a class="h-anchor" href="#final%e6%b8%ac%e8%a9%a6%e7%99%bc%e4%bf%a1" aria-label="這個段落的連結"></a></h2>
+<p>終於走到最後一步惹 🤣</p>
+<p>我們來<a href="https://forms.gle/ADvarze9bKrwyUGV6">填寫 Google 表單</a>，確認是否會順利自動寄信。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-17.webp" width="748" height="766" alt="如果選擇「否」就不會收到郵件喔！" loading="lazy" decoding="async">
+  <figcaption>如果選擇「否」就不會收到郵件喔！</figcaption>
+</figure>
+
+<p>如果收到 email，就大功告成嚕！</p>
+<p><img src="https://deanlin.net/blog/202208/google-forms-auto-email/images/google-forms-auto-email-18.webp" width="1400" height="1132" alt="Final：測試發信（圖 18）" loading="lazy" decoding="async"></p>
+<p>教學到這邊就結束啦～希望大家按照步驟都能順利完成，提供更多的資訊給目標 TA，讓宣傳效果 Up Up！</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

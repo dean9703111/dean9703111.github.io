@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Vue的基本常識｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="雖然用了一段時間的Vue，但自認對他的了解還不夠深刻，於是讀了一些大神文章，依照自己的理解做了整理筆記，希望大家都能吸收這些基本常識。">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202007/vue-basics/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="Vue的基本常識">
+  <meta property="og:description" content="雖然用了一段時間的Vue，但自認對他的了解還不夠深刻，於是讀了一些大神文章，依照自己的理解做了整理筆記，希望大家都能吸收這些基本常識。">
+  <meta property="og:url" content="https://deanlin.net/blog/202007/vue-basics/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-07-10T17:10:11&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:06:40&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Vue.js">
+  <meta property="article:tag" content="Vuex">
+  <meta property="og:image" content="https://deanlin.net/blog/202007/vue-basics/images/vue-basics-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="Vue的基本常識">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202007/vue-basics/images/vue-basics-og.jpg">
+  <meta name="twitter:title" content="Vue的基本常識">
+  <meta name="twitter:description" content="雖然用了一段時間的Vue，但自認對他的了解還不夠深刻，於是讀了一些大神文章，依照自己的理解做了整理筆記，希望大家都能吸收這些基本常識。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202007/vue-basics/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:06:40+08:00","datePublished":"2020-07-10T17:10:11+08:00","description":"雖然用了一段時間的Vue，但自認對他的了解還不夠深刻，於是讀了一些大神文章，依照自己的理解做了整理筆記，希望大家都能吸收這些基本常識。","headline":"Vue的基本常識","image":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202007/vue-basics/images/vue-basics-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Vue.js, Vuex","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202007/vue-basics/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/vue%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%B8%B8%E8%AD%98-3d4425e4e12f"],"timeRequired":"PT7M","url":"https://deanlin.net/blog/202007/vue-basics/","wordCount":3096},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202007/vue-basics/","name":"Vue的基本常識","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">Vue的基本常識</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-07-10">2020.07.10</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 7 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#spasingle-page-application%e7%b0%a1%e6%98%93%e8%aa%aa%e6%98%8e">SPA，single page application簡易說明</a></li><li class="is-sub"><a href="#%e5%84%aa%e9%bb%9e">優點：</a></li><li class="is-sub"><a href="#%e7%bc%ba%e9%bb%9e">缺點：</a></li><li><a href="#v-if%e8%88%87v-show%e7%9a%84%e5%8d%80%e5%88%a5">v-if與v-show的區別</a></li><li><a href="#vue-parent-component--child-component%e7%89%b9%e6%80%a7">Vue parent component , child component特性</a></li><li><a href="#computed-vs-watch">Computed VS Watch</a></li><li><a href="#%e7%b5%a6object-array%e6%96%b0%e7%9a%84valuevue%e8%a6%81%e5%a6%82%e4%bd%95%e5%81%b5%e6%b8%ac">給object array新的value，vue要如何偵測</a></li><li><a href="#vue%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f">Vue的生命週期</a></li><li><a href="#parent-component--child-component-life-cycle">Parent component &amp; Child component life cycle</a></li><li class="is-sub"><a href="#component-mounted">Component mounted</a></li><li class="is-sub"><a href="#child-component-update">Child component update</a></li><li class="is-sub"><a href="#parent-component-update">Parent component update</a></li><li class="is-sub"><a href="#destroyed">Destroyed</a></li><li><a href="#vue%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f%e4%b8%ad%e5%8f%af%e4%bb%a5%e5%81%9a%e7%95%b0%e6%ad%a5%e8%ab%8b%e6%b1%82">Vue的生命週期中可以做異步請求</a></li><li><a href="#%e4%bb%80%e9%ba%bc%e9%9a%8e%e6%ae%b5%e5%8f%af%e4%bb%a5%e5%b0%8ddom%e6%93%8d%e4%bd%9c">什麼階段可以對DOM操作</a></li><li><a href="#parent-component%e5%a6%82%e4%bd%95%e7%9b%a3%e8%81%bdchild-component%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f">Parent component如何監聽Child component的生命週期</a></li><li><a href="#keep-alive%e7%9a%84%e4%bd%9c%e7%94%a8">Keep-alive的作用</a></li><li><a href="#%e7%82%ba%e4%bb%80%e9%ba%bccomponent%e4%b8%ad%e7%9a%84data%e6%98%af%e4%b8%80%e5%80%8b%e5%87%bd%e6%95%b8%e7%84%b6%e5%be%8creturn%e4%b8%80%e5%80%8bobject%e8%80%8cnew-vue%e5%8d%bb%e5%8f%af%e4%bb%a5%e7%9b%b4%e6%8e%a5%e6%98%af%e4%b8%80%e5%80%8bobject">為什麼component中的data是一個函數，然後return一個object，而new Vue卻可以直接是一個object</a></li><li><a href="#v-model%e5%8e%9f%e7%90%86">v-model原理</a></li><li><a href="#vue-component%e9%96%93communicate-%e6%96%b9%e5%bc%8f">Vue component間communicate 方式</a></li><li><a href="#vuex-%e6%a6%82%e5%bf%b5">Vuex 概念</a></li><li><a href="#ssr%e5%84%aa%e7%bc%ba%e9%bb%9e">SSR優缺點</a></li><li class="is-sub"><a href="#%e5%84%aa%e9%bb%9e-1">優點：</a></li><li class="is-sub"><a href="#%e7%bc%ba%e9%bb%9e-1">缺點：</a></li><li><a href="#vue-router%e7%a8%ae%e9%a1%9e">vue-router種類</a></li><li><a href="#mvvm%e6%98%af%e4%bb%80%e9%ba%bc">MVVM是什麼</a></li><li><a href="#virtual-dom%e5%84%aa%e7%bc%ba%e9%bb%9e">Virtual DOM優缺點</a></li><li class="is-sub"><a href="#%e5%84%aa%e9%bb%9e-2">優點：</a></li><li class="is-sub"><a href="#%e7%bc%ba%e9%bb%9e-2">缺點：</a></li><li><a href="#vue%e4%b8%adkey%e7%9a%84%e4%bd%9c%e7%94%a8">Vue中Key的作用</a></li><li><a href="#vue%e5%8f%af%e8%80%83%e6%85%ae%e5%84%aa%e5%8c%96%e9%a0%85%e7%9b%ae">Vue可考慮優化項目</a></li><li class="is-sub"><a href="#coding%e9%83%a8%e5%88%86">coding部分</a></li><li class="is-sub"><a href="#webpack%e9%83%a8%e5%88%86">Webpack部分</a></li><li class="is-sub"><a href="#web%e9%83%a8%e5%88%86">web部分</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>雖然用了一段時間的Vue，但自認對他的了解還不夠深刻，於是讀了一些大神文章，依照自己的理解做了整理筆記，希望大家都能吸收這些基本常識。</p>
+<p><img src="/blog/202007/vue-basics/images/vue-basics-01.webp" srcset="/blog/202007/vue-basics/images/vue-basics-01_hu_185b1cd7e07860e0.webp 720w, /blog/202007/vue-basics/images/vue-basics-01.webp 1280w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1280" height="720" alt="Vue的基本常識（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="spasingle-page-application簡易說明">SPA，single page application簡易說明<a class="h-anchor" href="#spasingle-page-application%e7%b0%a1%e6%98%93%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>他會在一開始init web page時就把html, js, css這些需要的load完，因此在換頁時只需要load新頁面所需要的元件，基本上是用router-link的方式來完成換頁功能</p>
+</blockquote>
+<h3 id="優點">優點：<a class="h-anchor" href="#%e5%84%aa%e9%bb%9e" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>使用者體驗良好，省去每次刷新頁面的等待，大幅減少loading相同元素的耗能</li>
+<li>基於上一個原因，server的壓力也減少許多</li>
+<li>前後端分離，前端專心處理渲染，後端專心處理數據</li>
+</ul>
+<h3 id="缺點">缺點：<a class="h-anchor" href="#%e7%bc%ba%e9%bb%9e" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>第一次loading時間較長</li>
+<li>因為是單頁瀏覽，所以不支援上一頁/下一頁功能</li>
+<li>SEO難度高，因為所有內容都在同一頁</li>
+</ul>
+<hr>
+<h2 id="v-if與v-show的區別">v-if與v-show的區別<a class="h-anchor" href="#v-if%e8%88%87v-show%e7%9a%84%e5%8d%80%e5%88%a5" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>v-if是根據條件是否成立來決定渲染/銷毀</li>
+<li>v-show是無條件渲染，他就是一個css的display的功能</li>
+</ul>
+<blockquote>
+<p>如果你使用場景偶爾才切換條件就使用v-if，可以減少資源浪費；但如果需要高頻率切換就使用v-show吧</p>
+</blockquote>
+<hr>
+<h2 id="vue-parent-component--child-component特性">Vue parent component , child component特性<a class="h-anchor" href="#vue-parent-component--child-component%e7%89%b9%e6%80%a7" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>Parent component可以透過props傳遞到child component，而child component如果想要傳遞變更事件及資料就需要用$emit來觸發parent的事件</p>
+</blockquote>
+<p>如果你想要在child 變更props，請這樣操作：</p>
+<p>這個props傳入一個initial value，child component會希望可以操作這個init value，如果想要做這個操作，你需要在child component裡面新增data的屬性，並給予props的initial value</p>
+<pre tabindex="0"><code>props: [&#39;initialValue&#39;],
+data: function () {
+    return {
+        counter: this.initialValue
+    }
+}
+</code></pre><p>這個props傳入一個origin value，child component想要對他做一個換算或是變更，這樣建議用computed</p>
+<pre tabindex="0"><code>props: [&#39;size&#39;],
+computed: {
+    normalizedSize: function () {
+        return this.size.trim().toLowerCase()
+    }
+}
+</code></pre><hr>
+<h2 id="computed-vs-watch">Computed VS Watch<a class="h-anchor" href="#computed-vs-watch" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>Computed是用來計算的，有緩存的特性，只有裡面依賴的參數調整時才會觸發，且一定有計算完的回傳值</li>
+<li>Watch主要是觀察數據變更，比較常用來做一些消耗相對多resourcec或是非同步運算的事情(ex:call api)</li>
+</ul>
+<hr>
+<h2 id="給object-array新的valuevue要如何偵測">給object array新的value，vue要如何偵測<a class="h-anchor" href="#%e7%b5%a6object-array%e6%96%b0%e7%9a%84valuevue%e8%a6%81%e5%a6%82%e4%bd%95%e5%81%b5%e6%b8%ac" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>因為javascript限制，下面兩個範例是vue無法偵測的，需要進行修正：</p>
+</blockquote>
+<pre tabindex="0"><code>//vm.items[indexOfItem] = newValue
+vm.$set(vm.items, indexOfItem, newValue)
+//vm.items.length = newLength
+vm.items.splice(newLength)
+</code></pre><hr>
+<h2 id="vue的生命週期">Vue的生命週期<a class="h-anchor" href="#vue%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>Component初始化-&gt;屬性綁定&amp;編譯templete-&gt;掛載dom-&gt;渲染更新…-&gt;銷毀</p>
+</blockquote>
+<hr>
+<h2 id="parent-component--child-component-life-cycle">Parent component &amp; Child component life cycle<a class="h-anchor" href="#parent-component--child-component-life-cycle" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>基本原則就是父親開始動作後兒子才能動作，兒子動作完畢後，父親才會正式停下來</p>
+</blockquote>
+<h3 id="component-mounted">Component mounted<a class="h-anchor" href="#component-mounted" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>父 beforeCreate -&gt; 父 created -&gt; 父 beforeMount -&gt; 子 beforeCreate -&gt; 子 created -&gt; 子 beforeMount -&gt; 子 mounted -&gt; 父 mounted</li>
+</ul>
+<h3 id="child-component-update">Child component update<a class="h-anchor" href="#child-component-update" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>父 beforeUpdate -&gt; 子 beforeUpdate -&gt; 子 updated -&gt; 父 updated</li>
+</ul>
+<h3 id="parent-component-update">Parent component update<a class="h-anchor" href="#parent-component-update" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>父 beforeUpdate -&gt; 父 updated</li>
+</ul>
+<h3 id="destroyed">Destroyed<a class="h-anchor" href="#destroyed" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>父 beforeDestroy -&gt; 子 beforeDestroy -&gt; 子 destroyed -&gt; 父 destroyed</li>
+</ul>
+<hr>
+<h2 id="vue的生命週期中可以做異步請求">Vue的生命週期中可以做異步請求<a class="h-anchor" href="#vue%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f%e4%b8%ad%e5%8f%af%e4%bb%a5%e5%81%9a%e7%95%b0%e6%ad%a5%e8%ab%8b%e6%b1%82" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>created、beforeMounted、mounted都可以，因為data已經存在，可以去做相關的操作，但建議在created階段操作：</p>
+</blockquote>
+<ul>
+<li>可更早取得server端數據，減少頁面loading時間</li>
+<li>ssr不支援beforeMounted、mounted，放在created可保持程式邏輯一致性(如果前後端分離通常是在client端做渲染較不會有這個問題)</li>
+</ul>
+<hr>
+<h2 id="什麼階段可以對dom操作">什麼階段可以對DOM操作<a class="h-anchor" href="#%e4%bb%80%e9%ba%bc%e9%9a%8e%e6%ae%b5%e5%8f%af%e4%bb%a5%e5%b0%8ddom%e6%93%8d%e4%bd%9c" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>在mounted階段可以對DOM操作，這個階段已經完成整個頁面的component了</p>
+</blockquote>
+<hr>
+<h2 id="parent-component如何監聽child-component的生命週期">Parent component如何監聽Child component的生命週期<a class="h-anchor" href="#parent-component%e5%a6%82%e4%bd%95%e7%9b%a3%e8%81%bdchild-component%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>用$emit的方式</li>
+</ol>
+<pre tabindex="0"><code>// Parent.vue
+&lt;Child @mounted=”doSomething”/&gt;
+// Child.vue
+mounted() { this.$emit(“mounted”); }
+</code></pre><p>2. 用@hook方式(較推薦)</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Parent.vue
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72;font-weight:bold">&lt;</span>Child <span style="color:#f85149">@</span>hook<span style="color:#ff7b72;font-weight:bold">:</span>mounted<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#f85149">”</span>doSomething<span style="color:#f85149">”</span> <span style="color:#ff7b72;font-weight:bold">&gt;&lt;</span><span style="color:#f85149">/Child&gt;</span>
+</span></span><span style="display:flex;"><span>doSomething() {
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#f85149">‘</span>父组件监听到 mounted 钩子函数 <span style="color:#f85149">…’</span>);
+</span></span><span style="display:flex;"><span>},
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Child.vue
+</span></span></span><span style="display:flex;"><span>mounted(){
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#f85149">‘</span>子组件触发 mounted 钩子函数 <span style="color:#f85149">…’</span>);
+</span></span><span style="display:flex;"><span>},
+</span></span></code></pre></div><hr>
+<h2 id="keep-alive的作用">Keep-alive的作用<a class="h-anchor" href="#keep-alive%e7%9a%84%e4%bd%9c%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>keep-alive是 Vue 的原生元件，專門做為 Cache 的解決方案，避免頁面中的組件重新被渲染。<a href="https://medium.com/%E4%B8%80%E5%80%8B%E5%B0%8F%E5%B0%8F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E9%9A%A8%E6%89%8B%E7%AD%86%E8%A8%98/vue-%E8%81%B0%E6%98%8E%E4%BD%BF%E7%94%A8-keep-alive-%E9%81%94%E5%88%B0-cache-%E7%9B%AE%E7%9A%84-691cfb3c8bf0">詳細可參考</a></p>
+</blockquote>
+<hr>
+<h2 id="為什麼component中的data是一個函數然後return一個object而new-vue卻可以直接是一個object">為什麼component中的data是一個函數，然後return一個object，而new Vue卻可以直接是一個object<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bccomponent%e4%b8%ad%e7%9a%84data%e6%98%af%e4%b8%80%e5%80%8b%e5%87%bd%e6%95%b8%e7%84%b6%e5%be%8creturn%e4%b8%80%e5%80%8bobject%e8%80%8cnew-vue%e5%8d%bb%e5%8f%af%e4%bb%a5%e7%9b%b4%e6%8e%a5%e6%98%af%e4%b8%80%e5%80%8bobject" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>因為component是要用來重複使用的，如果data是一個object這樣component之間會資料錯亂，而當他是一個函數的時候就可以完成區隔</p>
+<p>而new Vue則不會重複使用，所以沒有被引用的問題</p>
+</blockquote>
+<pre tabindex="0"><code>// data
+data() {
+    return {
+        message: “子组件”,
+        childName:this.name
+    }
+}
+// new Vue
+new Vue({
+    el: ‘#app’,
+    router,
+    template: ‘&lt;App/&gt;’,
+    components: {App}
+})
+</code></pre><hr>
+<h2 id="v-model原理">v-model原理<a class="h-anchor" href="#v-model%e5%8e%9f%e7%90%86" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>v-model主要是在input, select, textarea這些元素中建立雙向綁定的工具，他會在不同元素中拋出不一樣的事件：</p>
+</blockquote>
+<ul>
+<li>text 和 textarea 元素使用 value 屬性和 input 事件；</li>
+<li>checkbox 和 radio 使用 checked 屬性和 change 事件；</li>
+<li>select 字段将 value 作為 prop 並將 change 作為事件。</li>
+</ul>
+<hr>
+<h2 id="vue-component間communicate-方式">Vue component間communicate 方式<a class="h-anchor" href="#vue-component%e9%96%93communicate-%e6%96%b9%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>props / $emit 父子component通信</li>
+<li><a href="https://blog.csdn.net/zhouzuoluo/article/details/81097339">ref 與 $parent / $children</a> 父子component通信</li>
+<li>EventBus ($emit / $on) 你可以把它當成全域的事件，只要有監聽便可接收，但請在destory該component前也要把監聽事件destory掉</li>
+<li><a href="https://medium.com/@bebebobohaha/vue-eventbus-%E4%BA%8B%E4%BB%B6%E7%B8%BD%E7%B7%9A-9673e04f6a5f">EventBus 事件總線</a></li>
+<li>Vuex，你可以把他想像成一個網站暫存的store，你可以更改及存取state</li>
+</ul>
+<hr>
+<h2 id="vuex-概念">Vuex 概念<a class="h-anchor" href="#vuex-%e6%a6%82%e5%bf%b5" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>核心為store，用來存取state；可使用mutation提交的方式來過改變state資料</p>
+</blockquote>
+<hr>
+<h2 id="ssr優缺點">SSR優缺點<a class="h-anchor" href="#ssr%e5%84%aa%e7%bc%ba%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<h3 id="優點-1">優點：<a class="h-anchor" href="#%e5%84%aa%e9%bb%9e-1" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>好的SEO，因為網頁已經再server side組裝完成，所以搜尋引擎能直接抓到渲染好的頁面</li>
+<li>首頁加載快速，因為都由server side轉換完成了</li>
+</ul>
+<h3 id="缺點-1">缺點：<a class="h-anchor" href="#%e7%bc%ba%e9%bb%9e-1" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>更多的開發條件限制：像是life cycle渲染階段只能用beforeCreate、created</li>
+<li>server負擔更重：因為都是server side作轉換，所以負擔更重，cache的設計更加顯得重要</li>
+</ul>
+<hr>
+<h2 id="vue-router種類">vue-router種類<a class="h-anchor" href="#vue-router%e7%a8%ae%e9%a1%9e" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>hash, history, abstract(default)</p>
+</blockquote>
+<hr>
+<h2 id="mvvm是什麼">MVVM是什麼<a class="h-anchor" href="#mvvm%e6%98%af%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>由Model-View-ViewModel組成</p>
+</blockquote>
+<ul>
+<li>Model: 由後端接口api return 回來的資料(ex: json data)</li>
+</ul>
+<pre tabindex="0"><code>{ “url”: “/your/server/data/api”, “res”: { “success”: true, “name”: “IoveC”, “domain”: “www.cnblogs.com&#34; } }
+</code></pre><ul>
+<li>View: 前端UI介面由HTML/CSS構建</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#7ee787">div</span> id<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">”app”</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#7ee787">p</span>&gt;{{message}}&lt;/<span style="color:#7ee787">p</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#7ee787">button</span> v-on:click<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">”showMessage()”</span>&gt;Click me&lt;/<span style="color:#7ee787">button</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">div</span>&gt;
+</span></span></code></pre></div><ul>
+<li>ViewModel: 前端開發人員根據api回傳的資料做二次封裝提供給View使用</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">var</span> app <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Vue({
+</span></span><span style="display:flex;"><span>el<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#f85149">‘#</span>app<span style="color:#f85149">’</span>,
+</span></span><span style="display:flex;"><span>data<span style="color:#ff7b72;font-weight:bold">:</span> { <span style="color:#8b949e;font-style:italic">// 用于描述视图状态
+</span></span></span><span style="display:flex;"><span>    message<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#f85149">‘</span>Hello Vue<span style="color:#ff7b72;font-weight:bold">!</span><span style="color:#f85149">’</span>,
+</span></span><span style="display:flex;"><span>},
+</span></span><span style="display:flex;"><span>methods<span style="color:#ff7b72;font-weight:bold">:</span> { <span style="color:#8b949e;font-style:italic">// 用于描述视图行为
+</span></span></span><span style="display:flex;"><span>    showMessage(){
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> vm <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">this</span>;
+</span></span><span style="display:flex;"><span>        alert(vm.message);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>},
+</span></span><span style="display:flex;"><span>created(){
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> vm <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">this</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Ajax 获取 Model 层的数据
+</span></span></span><span style="display:flex;"><span>    ajax({
+</span></span><span style="display:flex;"><span>        url<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#f85149">‘</span><span style="color:#ff7b72;font-weight:bold">/</span>your<span style="color:#ff7b72;font-weight:bold">/</span>server<span style="color:#ff7b72;font-weight:bold">/</span>data<span style="color:#ff7b72;font-weight:bold">/</span>api<span style="color:#f85149">’</span>,
+</span></span><span style="display:flex;"><span>        success(res){
+</span></span><span style="display:flex;"><span>            vm.message <span style="color:#ff7b72;font-weight:bold">=</span> res;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>}})
+</span></span></code></pre></div><hr>
+<h2 id="virtual-dom優缺點">Virtual DOM優缺點<a class="h-anchor" href="#virtual-dom%e5%84%aa%e7%bc%ba%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<h3 id="優點-2">優點：<a class="h-anchor" href="#%e5%84%aa%e9%bb%9e-2" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>保證基礎效能</li>
+<li>無須手動去調整DOM，增加開發效率</li>
+<li>跨平台，如果SSR，WEEX</li>
+</ul>
+<h3 id="缺點-2">缺點：<a class="h-anchor" href="#%e7%bc%ba%e9%bb%9e-2" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>無法極致優化，畢竟這些都是自動產生的</li>
+</ul>
+<hr>
+<h2 id="vue中key的作用">Vue中Key的作用<a class="h-anchor" href="#vue%e4%b8%adkey%e7%9a%84%e4%bd%9c%e7%94%a8" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>key是Vue中node節點的唯一值，透過他diff操作可更快速準確</p>
+</blockquote>
+<hr>
+<h2 id="vue可考慮優化項目">Vue可考慮優化項目<a class="h-anchor" href="#vue%e5%8f%af%e8%80%83%e6%85%ae%e5%84%aa%e5%8c%96%e9%a0%85%e7%9b%ae" aria-label="這個段落的連結"></a></h2>
+<h3 id="coding部分">coding部分<a class="h-anchor" href="#coding%e9%83%a8%e5%88%86" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>v-if/v-show使用情境區分</li>
+<li>computed/watch使用情境區分</li>
+<li>v-for記得要有key，避免使用v-if(這部分應該交由server端就完成data的filter)</li>
+<li>監聽的事件在component destroy時是否有銷毀</li>
+<li>Image lazy loading</li>
+<li>第三方插件依照需求引入</li>
+</ul>
+<h3 id="webpack部分">Webpack部分<a class="h-anchor" href="#webpack%e9%83%a8%e5%88%86" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>Webpack對圖片進行壓縮</li>
+<li>共用component規劃</li>
+<li>共用css設計</li>
+</ul>
+<h3 id="web部分">web部分<a class="h-anchor" href="#web%e9%83%a8%e5%88%86" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>gzip</li>
+<li>CND</li>
+<li>Browser cache</li>
+</ul>
+<p>參考資源：<a href="https://juejin.im/post/5d59f2a451882549be53b170#comment">https://juejin.im/post/5d59f2a451882549be53b170#comment</a></p>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2020.07.10）</span><a href="https://medium.com/dean-lin/vue%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%B8%B8%E8%AD%98-3d4425e4e12f" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/vue.js/">Vue.js</a>
+            <a class="chip chip-hash" href="/tags/vuex/">Vuex</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202007%2Fvue-basics%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202007%2Fvue-basics%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202007/vue-basics/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202007/vue-basics/" data-title="Vue的基本常識" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202006/nuxtjs-gcp-serverless/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">NUXTJS GCP serverless實戰</span></a>
+          <a class="next" href="/blog/202010/microsoft-planner-vs-lists/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">Microsoft Planner VS Microsoft Lists</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#spasingle-page-application%e7%b0%a1%e6%98%93%e8%aa%aa%e6%98%8e">SPA，single page application簡易說明</a></li><li class="is-sub"><a href="#%e5%84%aa%e9%bb%9e">優點：</a></li><li class="is-sub"><a href="#%e7%bc%ba%e9%bb%9e">缺點：</a></li><li><a href="#v-if%e8%88%87v-show%e7%9a%84%e5%8d%80%e5%88%a5">v-if與v-show的區別</a></li><li><a href="#vue-parent-component--child-component%e7%89%b9%e6%80%a7">Vue parent component , child component特性</a></li><li><a href="#computed-vs-watch">Computed VS Watch</a></li><li><a href="#%e7%b5%a6object-array%e6%96%b0%e7%9a%84valuevue%e8%a6%81%e5%a6%82%e4%bd%95%e5%81%b5%e6%b8%ac">給object array新的value，vue要如何偵測</a></li><li><a href="#vue%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f">Vue的生命週期</a></li><li><a href="#parent-component--child-component-life-cycle">Parent component &amp; Child component life cycle</a></li><li class="is-sub"><a href="#component-mounted">Component mounted</a></li><li class="is-sub"><a href="#child-component-update">Child component update</a></li><li class="is-sub"><a href="#parent-component-update">Parent component update</a></li><li class="is-sub"><a href="#destroyed">Destroyed</a></li><li><a href="#vue%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f%e4%b8%ad%e5%8f%af%e4%bb%a5%e5%81%9a%e7%95%b0%e6%ad%a5%e8%ab%8b%e6%b1%82">Vue的生命週期中可以做異步請求</a></li><li><a href="#%e4%bb%80%e9%ba%bc%e9%9a%8e%e6%ae%b5%e5%8f%af%e4%bb%a5%e5%b0%8ddom%e6%93%8d%e4%bd%9c">什麼階段可以對DOM操作</a></li><li><a href="#parent-component%e5%a6%82%e4%bd%95%e7%9b%a3%e8%81%bdchild-component%e7%9a%84%e7%94%9f%e5%91%bd%e9%80%b1%e6%9c%9f">Parent component如何監聽Child component的生命週期</a></li><li><a href="#keep-alive%e7%9a%84%e4%bd%9c%e7%94%a8">Keep-alive的作用</a></li><li><a href="#%e7%82%ba%e4%bb%80%e9%ba%bccomponent%e4%b8%ad%e7%9a%84data%e6%98%af%e4%b8%80%e5%80%8b%e5%87%bd%e6%95%b8%e7%84%b6%e5%be%8creturn%e4%b8%80%e5%80%8bobject%e8%80%8cnew-vue%e5%8d%bb%e5%8f%af%e4%bb%a5%e7%9b%b4%e6%8e%a5%e6%98%af%e4%b8%80%e5%80%8bobject">為什麼component中的data是一個函數，然後return一個object，而new Vue卻可以直接是一個object</a></li><li><a href="#v-model%e5%8e%9f%e7%90%86">v-model原理</a></li><li><a href="#vue-component%e9%96%93communicate-%e6%96%b9%e5%bc%8f">Vue component間communicate 方式</a></li><li><a href="#vuex-%e6%a6%82%e5%bf%b5">Vuex 概念</a></li><li><a href="#ssr%e5%84%aa%e7%bc%ba%e9%bb%9e">SSR優缺點</a></li><li class="is-sub"><a href="#%e5%84%aa%e9%bb%9e-1">優點：</a></li><li class="is-sub"><a href="#%e7%bc%ba%e9%bb%9e-1">缺點：</a></li><li><a href="#vue-router%e7%a8%ae%e9%a1%9e">vue-router種類</a></li><li><a href="#mvvm%e6%98%af%e4%bb%80%e9%ba%bc">MVVM是什麼</a></li><li><a href="#virtual-dom%e5%84%aa%e7%bc%ba%e9%bb%9e">Virtual DOM優缺點</a></li><li class="is-sub"><a href="#%e5%84%aa%e9%bb%9e-2">優點：</a></li><li class="is-sub"><a href="#%e7%bc%ba%e9%bb%9e-2">缺點：</a></li><li><a href="#vue%e4%b8%adkey%e7%9a%84%e4%bd%9c%e7%94%a8">Vue中Key的作用</a></li><li><a href="#vue%e5%8f%af%e8%80%83%e6%85%ae%e5%84%aa%e5%8c%96%e9%a0%85%e7%9b%ae">Vue可考慮優化項目</a></li><li class="is-sub"><a href="#coding%e9%83%a8%e5%88%86">coding部分</a></li><li class="is-sub"><a href="#webpack%e9%83%a8%e5%88%86">Webpack部分</a></li><li class="is-sub"><a href="#web%e9%83%a8%e5%88%86">web部分</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202007%2Fvue-basics%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202007%2Fvue-basics%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202007/vue-basics/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202007/vue-basics/" data-title="Vue的基本常識" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-01_hu_138e309ac338f3a4.webp" srcset="/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-01_hu_b938d4c0927d43b3.webp 240w, /blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-01_hu_5751fd94f292b172.webp 480w, /blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-01_hu_8c00a9e85fb33578.webp 800w, /blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-01_hu_138e309ac338f3a4.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202104/vue-vuex-vuetify-nuxt-explained/">5 分鐘帶你搞懂 Vue、Vuex、Vuetify、Nuxt.js 之間的關係</a></h3>
+    <p class="card-desc">有了框架後做什麼都很方便，但因為太方便導致有時連工具負責哪一塊都功能有點霧颯颯，如果你搞不太懂 Vue、Veux、Vuetify、Nuxt.js 之間的關係、具體各自負責什麼事情的話可以參考這篇文章釐清自己的觀念喔！</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-04-01">2021.04.01</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADwAwCdASoYAAwAPw1op0emIyGYBABjEMT0gGM&#43;EsZ0K6xn0yX7UkYAAP7qcZJIJ57BmRDmFcrMGNoRV8gGDWw&#43;Zz/3ZzZ3aaCl7gUaYNgAAA==" alt="" width="24" height="12"><img src="/images/post/202501/hugo6-set-up-google-search-console/cover_hu_b5e15df62493a699.webp" srcset="/images/post/202501/hugo6-set-up-google-search-console/cover_hu_dc77916d4432cc52.webp 240w, /images/post/202501/hugo6-set-up-google-search-console/cover_hu_5721931de7545604.webp 480w, /images/post/202501/hugo6-set-up-google-search-console/cover_hu_7b14cdc6dc9d8f68.webp 800w, /images/post/202501/hugo6-set-up-google-search-console/cover_hu_b5e15df62493a699.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="624" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/hugo/">Hugo 自架站</a></div>
+
+    <h3 class="card-title"><a href="/blog/202501/hugo6-set-up-google-search-console/">[Hugo自架站-6]設定 Google Search Console，讓自己的網站可以被搜尋</a></h3>
+    <p class="card-desc">這篇文章要教大家如何設定 Google Search Console，以及上傳網站的 Sitemap（網站地圖），讓自己的網站可以被搜尋。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2025-01-21">2025.01.21</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAwBACdASoYAAwAPw1mpkemIqGYBABjEMT0gGFAEtJ9sfLbjpr1OEWCZAAA/udjuLnAndhp3PEqtreMZmqNrl5fqYGUc6GM8Rdwr5wYKOknvec9mm&#43;AGWTa5Q6UmWS69LR1e8JmAAA=" alt="" width="24" height="12"><img src="/images/post/202501/hugo5-install-google-analytics-to-track-website-traffic/cover_hu_c5a99c087afa5c60.webp" srcset="/images/post/202501/hugo5-install-google-analytics-to-track-website-traffic/cover_hu_e1124a81d8ddfc7c.webp 240w, /images/post/202501/hugo5-install-google-analytics-to-track-website-traffic/cover_hu_69f0cd90fd32ecac.webp 480w, /images/post/202501/hugo5-install-google-analytics-to-track-website-traffic/cover_hu_c62ede966d2d4fcd.webp 800w, /images/post/202501/hugo5-install-google-analytics-to-track-website-traffic/cover_hu_c5a99c087afa5c60.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="625" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/hugo/">Hugo 自架站</a></div>
+
+    <h3 class="card-title"><a href="/blog/202501/hugo5-install-google-analytics-to-track-website-traffic/">[Hugo自架站-5]安裝 Google Analytics 追蹤網頁的流量與成效</a></h3>
+    <p class="card-desc">如果想知道訪客的行為和網站的成效，就要安裝 Google Analytics（GA）。Google Analytics 是一個功能強大的免費工具，可以讓你了解訪客的來源、行為，以及網站上的哪些內容最受歡迎。如果你想持續優化網站的 SEO，GA 就像一個指南針，告訴你正確的執行方向！</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2025-01-20">2025.01.20</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>2 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202007/vue-basics/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Email｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/email/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Tue, 09 Jun 2020 09:59:21 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/email/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Gitlab 安裝以及我曾經遇到的坑</title>
+      <link>https://deanlin.net/blog/202006/gitlab-installation-pitfalls/</link>
+      <pubDate>Tue, 09 Jun 2020 09:59:21 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/gitlab-installation-pitfalls/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>Gitlab被各大企業廣泛地用於專案管理上，他可以追蹤每個project的進度設定milestone開sprint、分配不同team相互的權限，甚至在同一個project裡面也能有不同角色的權限區分，CI/CD等功能也能很方便地去實現。</description>
+      <content:encoded><![CDATA[<p>Gitlab被各大企業廣泛地用於專案管理上，他可以追蹤每個project的進度設定milestone開sprint、分配不同team相互的權限，甚至在同一個project裡面也能有不同角色的權限區分，CI/CD等功能也能很方便地去實現。</p>
+<p>因為過去在使用的路上遇到各式各樣的問題，我把相關經驗整合在這裡，希望看到文章的朋友可以順利跨過這些難關，如果我的文章幫你解決問題歡迎多按幾次拍手。</p>
+<p>此Gitlab安裝時的ubuntu版本為16.4，指令如有不同，請自行google，如果你願意，也非常歡迎回覆在下方分享您的經驗。</p>
+<blockquote>
+<p>建議硬體需求</p>
+</blockquote>
+<p>RAM至少4GB，以百人公司規模來說建議8GB以上大家使用上會順暢很多(如果你用官方建議2GB可能會連安裝都卡住，這部分有親自體驗過)</p>
+<h2 id="安裝前置作業">安裝前置作業<a class="h-anchor" href="#%e5%ae%89%e8%a3%9d%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>因為git在連線時需要使用ssh連線進行安全性驗證 所以需要openssh-server ca-certificates</li>
+<li>gitlab支援寄信通知或是驗證功能所以需要信箱伺服器支援需要postfix</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl openssh-server ca-certificates postfix
+</span></span><span style="display:flex;"><span>sudo apt-get install curl openssh-server ca-certificates postfix
+</span></span></code></pre></div><h2 id="安裝gitlab">安裝gitlab<a class="h-anchor" href="#%e5%ae%89%e8%a3%9dgitlab" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>gitlab下載目前運行版本指令</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -s https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+</span></span><span style="display:flex;"><span>sudo apt-get install gitlab-ce<span style="color:#ff7b72;font-weight:bold">=</span>11.1.4-ce.0
+</span></span></code></pre></div><p>2. 單純下載封包</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wget — content-disposition https://packages.gitlab.com/gitlab/gitlab-ce/packages/ubuntu/trusty/gitlab-ce_11.1.4-ce.0_amd64.deb/download.deb
+</span></span></code></pre></div><blockquote>
+<p>建議要備份下載的deb檔案到自己的硬碟，如果日後災難復原時會用上，像我是備份到公司的NAS Server上面</p>
+</blockquote>
+<h2 id="gitlab環境配置">gitlab環境配置<a class="h-anchor" href="#gitlab%e7%92%b0%e5%a2%83%e9%85%8d%e7%bd%ae" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo gitlab-ctl reconfigure
+</span></span></code></pre></div><p>如果環境沒問題，上面這個指令會順順的過去；<strong><em>但如果做了版本升級或是降級，所有的環境都可能會產生或大或小的bug</em></strong>，官方並沒有提供一個很健全的解決方案，建議未來的使用者除非很有把握不然建議不要隨意升級。</p>
+<blockquote>
+<p>筆者在之後新版的gitlab有更新成功，但是舊版直接升級會遇到許多問題整理部份如下</p>
+</blockquote>
+<p>Gitlab 500 Error: PG::ConnectionBad:</p>
+<p><a href="https://gitlab.com/gitlab-org/omnibus-gitlab/issues/1637">https://gitlab.com/gitlab-org/omnibus-gitlab/issues/1637</a></p>
+<p>/opt/gitlab/embedded/bin/bundle:23:in `&lt;main&gt;’</p>
+<p><a href="https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3185">https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3185</a></p>
+<blockquote>
+<p>輸入以下指令可獲得版本資訊:</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo gitlab-rake gitlab:env:info
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202006/gitlab-installation-pitfalls/images/gitlab-installation-pitfalls-01.webp" width="661" height="562" alt="gitlab環境配置（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="設定對外網址">設定對外網址<a class="h-anchor" href="#%e8%a8%ad%e5%ae%9a%e5%b0%8d%e5%a4%96%e7%b6%b2%e5%9d%80" aria-label="這個段落的連結"></a></h2>
+<p>輸入下面指令後尋找external_url，將其修改成自己的url與開放的port</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/gitlab/gitlab.rb
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>external_url <span style="color:#a5d6ff">&#39;https://domain.com&#39;</span><span style="color:#ff7b72;font-weight:bold">.</span>  <span style="color:#79c0ff">//</span><span style="color:#f85149">你自己的</span>url
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>registry_nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;redirect_http_to_https&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">true</span>   <span style="color:#79c0ff">//</span><span style="color:#f85149">是否自動轉址為</span>https
+</span></span><span style="display:flex;"><span>mattermost_nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;redirect_http_to_https&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;enable&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;redirect_http_to_https&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;redirect_http_to_https_port&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">80</span>
+</span></span><span style="display:flex;"><span>nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;ssl_certificate&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;/etc/your_path/ssl/gitlab.xxxxx.com.crt&#34;</span>   <span style="color:#79c0ff">//</span><span style="color:#f85149">如果你的</span>gitlab為https請設定ssl的路徑
+</span></span><span style="display:flex;"><span>nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;ssl_certificate_key&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;/etc/your_path/ssl/gitlab.xxxxx.com.key&#34;</span>
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/8cfb4e440691d49a32f37be832d27329" rel="noopener">gitlab.rb</a>（GitHub Gist）</p>
+<blockquote>
+<p>每次修改過這個檔記得要重新配置才會生效</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo gitlab-ctl reconfigure
+</span></span></code></pre></div><p>(到這一部已經可以使用gitlab了，但是如果要寄信相關還要做如下設定)</p>
+<h2 id="寄信相關設定">寄信相關設定<a class="h-anchor" href="#%e5%af%84%e4%bf%a1%e7%9b%b8%e9%97%9c%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/gitlab/gitlab.rb
+</span></span></code></pre></div><p>把下面這些貼到最下面後sudo gitlab-ctl reconfigure就生效了</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#79c0ff">//</span><span style="color:#f85149">下面的是</span>email信箱設定(<span style="color:#f85149">此為</span>gmail範例)
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_enable&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_address&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;smtp.gmail.com&#34;</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_port&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">587</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_user_name&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;your@gmail.com&#34;</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_password&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;your_password&#34;</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_domain&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;smtp.gmail.com&#34;</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_authentication&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;login&#34;</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_enable_starttls_auto&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_tls&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">false</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_openssl_verify_mode&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;peer&#39;</span> <span style="color:#8b949e;font-style:italic"># Can be: &#39;none&#39;, &#39;peer&#39;, &#39;client_once&#39;, &#39;fail_if_no_peer_cert&#39;, see http://api.rubyonrails.org/classes/ActionMailer/Base.html</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_ca_path&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;/etc/ssl/certs&#34;</span>
+</span></span><span style="display:flex;"><span>gitlab_rails<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;smtp_ca_file&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;/etc/ssl/certs/ca-certificates.crt&#34;</span>
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/16b5ea24384f6fe888cd99722b832ba3" rel="noopener">gitlab_gmail.rb</a>（GitHub Gist）</p>
+<p>可下指令測試是否設定成功</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo gitlab-rails console
+</span></span><span style="display:flex;"><span>Notify.test_email<span style="color:#ff7b72;font-weight:bold">(</span>‘email@example.com’, ‘test’, ‘test’<span style="color:#ff7b72;font-weight:bold">)</span>.deliver_now
+</span></span></code></pre></div><p>但是當gitlab的server有設定雙網卡（同時有內網以及外網）的時候就有可能出現email無法寄送的狀況，這個時候你要確定你外網的優先權必須要高於內網。</p>
+<p>看mail錯誤log</p>
+<pre tabindex="0"><code>vi /var/log/mail.log
+</code></pre><p>改mail postfix設定</p>
+<pre tabindex="0"><code>vi /etc/postfix/main.cf
+postfix reload
+</code></pre><h2 id="ssh對外設定">ssh對外設定<a class="h-anchor" href="#ssh%e5%b0%8d%e5%a4%96%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<p>如果你對外網址的22 port已經被其他專案佔用了（ex:我公司），所以要將預設ssh的22 port改為轉址的223 port(或是其他你希望的)，一樣是在sudo vi /etc/gitlab/gitlab.rb設定，這樣在gitlab才能用ssh下載</p>
+<pre tabindex="0"><code>gitlab_rails[‘gitlab_shell_ssh_port’] = 223
+</code></pre><h2 id="nginx設定">nginx設定<a class="h-anchor" href="#nginx%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span>nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;enable&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;redirect_http_to_https&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;redirect_http_to_https_port&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">80</span>
+</span></span><span style="display:flex;"><span>nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;ssl_certificate&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;/etc/your_path/ssl/gitlab.xxxxx.com.crt&#34;</span>   <span style="color:#79c0ff">//</span><span style="color:#f85149">如果你的</span>gitlab為https請設定ssl的路徑
+</span></span><span style="display:flex;"><span>nginx<span style="color:#ff7b72;font-weight:bold">[</span><span style="color:#a5d6ff">&#39;ssl_certificate_key&#39;</span><span style="color:#ff7b72;font-weight:bold">]</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;/etc/your_path/ssl/gitlab.xxxxx.com.key&#34;</span>
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d2485274a4609b5f8ceef16b2db507cc" rel="noopener">gitlab_nginx.rb</a>（GitHub Gist）</p>
+<h2 id="讓gitlab可通內網外網">讓Gitlab可通內網外網<a class="h-anchor" href="#%e8%ae%93gitlab%e5%8f%af%e9%80%9a%e5%85%a7%e7%b6%b2%e5%a4%96%e7%b6%b2" aria-label="這個段落的連結"></a></h2>
+<p>在gitlab分配兩張網卡後需要完成以下步驟</p>
+<blockquote>
+<p>先看新增的網卡名稱</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd /proc/sys/net/ipv4/conf
+</span></span></code></pre></div><p>確認完網卡後將他們編輯加入</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/network/interfaces
+</span></span><span style="display:flex;"><span>auto ethXXX
+</span></span><span style="display:flex;"><span>iface ethXXX inet dhcp
+</span></span></code></pre></div><p>改完後</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /etc/init.d/networking restart
+</span></span></code></pre></div><p>用ifconfig查看是不是抓到</p>
+<blockquote>
+<p>設定路由可以透過閘道連通</p>
+</blockquote>
+<p>sudo /sbin/route add 10.1.1.1(目標內網ip) gw 10.1.1.254(內網閘道) dev ens192(網卡)</p>
+<blockquote>
+<p>設定NAS上此共享資料夾必須符合NFS設定可參閱這篇文章</p>
+</blockquote>
+<p><a href="http://blog.xuite.net/tolarku/blog/495291815-Qnap&#43;%E8%A8%AD%E5%AE%9A&#43;NFS&#43;%E5%88%86%E4%BA%AB%E8%A8%AD%E5%AE%9A&#43;-&#43;nfs&#43;export">http://blog.xuite.net/tolarku/blog/495291815-Qnap+%E8%A8%AD%E5%AE%9A+NFS+%E5%88%86%E4%BA%AB%E8%A8%AD%E5%AE%9A+-+nfs+export</a></p>
+<blockquote>
+<p>確認是否可連通，並觀看有哪些資料夾</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt install nfs-common
+</span></span><span style="display:flex;"><span>showmount -e 10.1.1.1<span style="color:#ff7b72;font-weight:bold">(</span>目標內網ip<span style="color:#ff7b72;font-weight:bold">)</span>
+</span></span></code></pre></div><blockquote>
+<p>將NAS上的共享資料夾掛載到ubuntu上面</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mount -t nfs 10.1.1.1<span style="color:#ff7b72;font-weight:bold">(</span>目標內網ip<span style="color:#ff7b72;font-weight:bold">)</span>:ServerGit /home/your_path/gitlab_backup
+</span></span></code></pre></div><blockquote>
+<p>確認是否掛載</p>
+</blockquote>
+<pre tabindex="0"><code>df -h
+</code></pre><h2 id="gitlab定時自動備份到nas的設定">gitlab定時自動備份到NAS的設定<a class="h-anchor" href="#gitlab%e5%ae%9a%e6%99%82%e8%87%aa%e5%8b%95%e5%82%99%e4%bb%bd%e5%88%b0nas%e7%9a%84%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<p>在/etc/gitlab/gitlab.rb設定gitlab的備份路徑</p>
+<pre tabindex="0"><code>gitlab_rails[‘backup_path’]=”/home/your_path/gitlab_backup/”
+</code></pre><p>每個月1日創建本月的資料夾的script</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#79c0ff">now_month</span><span style="color:#ff7b72;font-weight:bold">=</span>”<span style="color:#ff7b72">$(</span>date +’%Y%m’<span style="color:#ff7b72">)</span>”
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#echo “$now_month”</span>
+</span></span><span style="display:flex;"><span>cd /home/your_path/gitlab_backup
+</span></span><span style="display:flex;"><span>mkdir <span style="color:#79c0ff">$now_month</span>
+</span></span></code></pre></div><p>將產生的backup檔案轉移到月份資料夾底下的script,並刪除比較久的資料</p>
+<pre tabindex="0"><code>mv /home/your_path/gitlab_backup/*.tar /home/your_path/gitlab_backup/$(date +’%Y%m’)
+find /home/your_path/gitlab_backup/$(date +’%Y%m’) -name “*gitlab_backup.tar” -mtime +3 -exec rm -rf {} \;
+find /home/your_path/gitlab_backup/$(date “+%Y%m” -d ‘1 month ago’) -name “*gitlab_backup.tar” -mtime +3 -exec rm -rf {} \;
+</code></pre><p>排程設定</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo crontab -e
+</span></span><span style="display:flex;"><span><span style="color:#a5d6ff">1</span> <span style="color:#a5d6ff">0</span> <span style="color:#a5d6ff">1</span> * * sh /home/your_path/script/mkdir.sh
+</span></span><span style="display:flex;"><span><span style="color:#a5d6ff">1</span> <span style="color:#a5d6ff">1</span> * * * /opt/gitlab/bin/gitlab-rake gitlab:backup:create
+</span></span><span style="display:flex;"><span><span style="color:#a5d6ff">1</span> <span style="color:#a5d6ff">2</span> * * * sh /home/your_path/script/mv_to_month.sh
+</span></span></code></pre></div><blockquote class="pullquote"><p>Gitlab 的學問博大精深，希望這篇文章讓初學者上手時更加輕鬆。</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

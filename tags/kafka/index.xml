@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Kafka｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/kafka/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 23 Nov 2022 23:11:29 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/kafka/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況</title>
+      <link>https://deanlin.net/blog/202211/trace-kafka-with-jaeger/</link>
+      <pubDate>Wed, 23 Nov 2022 23:11:29 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202211/trace-kafka-with-jaeger/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。</description>
+      <content:encoded><![CDATA[<p>我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。</p>
+<p>而且會用到 Kafka 的系統，大多以微服務（Microservices）為主；若沒有搭配合適的追蹤系統，我們很難排查 Consumer 收到消息後發生的錯誤。</p>
+<p><img src="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01.webp" width="1400" height="726" alt="透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>這篇文章以實作和邏輯講解為主，如果想了解 Jaeger 這個分布式追蹤系統，請參考<a href="https://deanlin.net/blog/202211/distributed-tracing-jaeger-opentelemetry/">連結</a>；想了解 Kafka 這個分布式消息串流平台，請參考<a href="https://deanlin.net/blog/202211/what-is-kafka/">連結1</a>、<a href="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/">連結2</a></p>
+</blockquote>
+<p>建議讀者直接到<a href="https://github.com/dean9703111/kafka-jaeger-demo">筆者的 Github</a> Clone 一份下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。</p>
+<pre tabindex="0"><code>大綱
+
+一、自定義追蹤的 Parent &amp; Child 關聯（Manually propagating span context）
+二、使用 Kafka 作為傳遞資料的轉運站
+三、在 Local 建立 Node.js 專案來達成目標
+四、啟動專案，透過 Jaeger UI 確認 Trace 路徑是否符合預期
+</code></pre><h2 id="ㄧ自定義追蹤的-parent--child-關聯manually-propagating-span-context">ㄧ、自定義追蹤的 Parent &amp; Child 關聯（Manually propagating span context）<a class="h-anchor" href="#%e3%84%a7%e8%87%aa%e5%ae%9a%e7%be%a9%e8%bf%bd%e8%b9%a4%e7%9a%84-parent--child-%e9%97%9c%e8%81%afmanually-propagating-span-context" aria-label="這個段落的連結"></a></h2>
+<p>其實 OpenTelemetry 有提供許多 Instrumentation 的方案，如：</p>
+<ul>
+<li><a href="https://www.npmjs.com/package/@opentelemetry/instrumentation-http">@opentelemetry/instrumentation-http</a></li>
+<li><a href="https://www.npmjs.com/package/@opentelemetry/instrumentation-grpc">@opentelemetry/instrumentation-grpc</a></li>
+<li><a href="https://www.npmjs.com/package/opentelemetry-instrumentation-kafkajs">opentelemetry-instrumentation-kafkajs</a></li>
+</ul>
+<p>透過上面的套件可以自動產生追蹤紀錄，但有時我們只需要追蹤特定路徑，而使用上面的套件會產生許多不需要的資訊，還容易產生效能瓶頸。</p>
+<blockquote>
+<p>比如使用「instrumentation-http」這款套件時，它會把所有 http 相關的操作都記錄下來，但我們實際上只關心其中的幾個路徑。</p>
+</blockquote>
+<p>因此在某些情況下，自定義追蹤的 Parent &amp; Child 關聯是有必要的；下面筆者擷取關鍵的程式碼來做說明：</p>
+<h3 id="-透過-w3ctracecontextpropagator-把-span-資訊-inject-到-carrier">➤ 透過 W3CTraceContextPropagator 把 span 資訊 inject 到 carrier<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-%e6%8a%8a-span-%e8%b3%87%e8%a8%8a-inject-%e5%88%b0-carrier" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">&#39;example&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> carrier <span style="color:#ff7b72;font-weight:bold">=</span> {};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> propagator <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> W3CTraceContextPropagator();
+</span></span><span style="display:flex;"><span>propagator.inject(
+</span></span><span style="display:flex;"><span>    api.trace.setSpanContext(api.context.active(), span.spanContext()),
+</span></span><span style="display:flex;"><span>    carrier,
+</span></span><span style="display:flex;"><span>    api.defaultTextMapSetter,
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>span.end()
+</span></span></code></pre></div><h3 id="-透過-w3ctracecontextpropagator-extract-carrier-資訊使其成為能使用的-context">➤ 透過 W3CTraceContextPropagator extract carrier 資訊，使其成為能使用的 Context<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-extract-carrier-%e8%b3%87%e8%a8%8a%e4%bd%bf%e5%85%b6%e6%88%90%e7%82%ba%e8%83%bd%e4%bd%bf%e7%94%a8%e7%9a%84-context" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> propagator <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> W3CTraceContextPropagator();
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 解析 carrier
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> parentCtx <span style="color:#ff7b72;font-weight:bold">=</span> propagator.extract(api.context.active(), carrier, api.defaultTextMapGetter);
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 設定 parent 關聯
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">`report_consumer`</span>, <span style="color:#79c0ff">undefined</span>, parentCtx);
+</span></span><span style="display:flex;"><span>span.end()
+</span></span></code></pre></div><hr>
+<h2 id="二使用-kafka-作為傳遞資料的轉運站">二、使用 Kafka 作為傳遞資料的轉運站<a class="h-anchor" href="#%e4%ba%8c%e4%bd%bf%e7%94%a8-kafka-%e4%bd%9c%e7%82%ba%e5%82%b3%e9%81%9e%e8%b3%87%e6%96%99%e7%9a%84%e8%bd%89%e9%81%8b%e7%ab%99" aria-label="這個段落的連結"></a></h2>
+<p>假使今天有個功能是「產出報表」，但它的執行時間長達「3 分鐘」；我想正常的使用者是不會等一隻 API 回傳等這麼久，針對這個議題，我們不妨改個思路：</p>
+<p><strong>SETP 1</strong>：在報表的 Table 新增一個「status」欄位，用來表達報表建立的狀況（init、processing、done、fail）。</p>
+<p><strong>SETP 2</strong>：前端呼叫產出報表的 API 時</p>
+<ul>
+<li>在報表的 Table 新增初始資訊，並將 Status 設定為「init」。</li>
+<li>將相關資訊透過 Producer 塞入 Kafka。</li>
+</ul>
+<p><strong>SETP 3</strong>：前端收到 API 回傳的報表 id 後</p>
+<ul>
+<li>透過 Consumer 監聽報表執行的狀況；可以用報表的 id 作為 Topic 命名邏輯，ex：reports/{id}。</li>
+</ul>
+<p><strong>SETP 4</strong>：監聽產出報表的 Consumer 從 Kafka 收到命令後</p>
+<ul>
+<li>透過 id 從資料庫撈出對應的報表資訊，將 Status 設定為「processing」。</li>
+<li>呼叫相關服務產出報表，如果其中一個服務發生錯誤，就將 Status 設定為「fail」。</li>
+<li>如果報表順利產出，就將 Status 設定為「done」。</li>
+</ul>
+<blockquote>
+<p>對 Status 的任何變動，都會透過 Producer 將資訊傳遞到 <strong>reports/{id} </strong>這個 Topic，讓前端監聽的的 Consumer 可以作出對應的變動。</p>
+</blockquote>
+<p>上面是比較完整的業務邏輯，建議讀者可以自行實做看看，下面筆者就單純示範透過 Kafka 傳遞 carrier 資訊的部分：</p>
+<h3 id="-在-producer-的-value-放上-carrier-的資訊記得要轉為字串">➤ 在 Producer 的 value 放上 carrier 的資訊（記得要轉為字串）<a class="h-anchor" href="#-%e5%9c%a8-producer-%e7%9a%84-value-%e6%94%be%e4%b8%8a-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a%e8%a8%98%e5%be%97%e8%a6%81%e8%bd%89%e7%82%ba%e5%ad%97%e4%b8%b2" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">await</span> producer.connect()
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> producer
+</span></span><span style="display:flex;"><span>  .send({
+</span></span><span style="display:flex;"><span>    topic,
+</span></span><span style="display:flex;"><span>    messages<span style="color:#ff7b72;font-weight:bold">:</span> Array({
+</span></span><span style="display:flex;"><span>      key<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`report`</span>,
+</span></span><span style="display:flex;"><span>      value<span style="color:#ff7b72;font-weight:bold">:</span> JSON.stringify(carrier)
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>  });
+</span></span></code></pre></div><h3 id="-從-consumer-收到的-message-中取出-carrier-的資訊">➤ 從 Consumer 收到的 message 中取出 carrier 的資訊<a class="h-anchor" href="#-%e5%be%9e-consumer-%e6%94%b6%e5%88%b0%e7%9a%84-message-%e4%b8%ad%e5%8f%96%e5%87%ba-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">await</span> consumer.connect()
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> consumer.subscribe({ topic, fromBeginning<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span> })
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> consumer.run({
+</span></span><span style="display:flex;"><span>  eachMessage<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#ff7b72">async</span> ({ topic, partition, message }) =&gt; {
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#34;topic:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> topic <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#34;  message:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> message.value)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> carrier <span style="color:#ff7b72;font-weight:bold">=</span> JSON.parse(message.value)
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><hr>
+<h2 id="三在-local-建立-nodejs-專案來達成目標">三、在 Local 建立 Node.js 專案來達成目標<a class="h-anchor" href="#%e4%b8%89%e5%9c%a8-local-%e5%bb%ba%e7%ab%8b-nodejs-%e5%b0%88%e6%a1%88%e4%be%86%e9%81%94%e6%88%90%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<p>專案的目標就如同標題，我們要透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況。</p>
+<p><strong>STEP 1</strong>：建立專案、安裝必要套件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir -p kafka-jaeger-demo
+</span></span><span style="display:flex;"><span>cd kafka-jaeger-demo
+</span></span><span style="display:flex;"><span>mkdir -p deploy/kafkaCluster/kraft
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>npm init -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>npm install --save @opentelemetry/api
+</span></span><span style="display:flex;"><span>npm install --save @opentelemetry/resources
+</span></span><span style="display:flex;"><span>npm install --save @opentelemetry/semantic-conventions
+</span></span><span style="display:flex;"><span>npm install --save @opentelemetry/sdk-trace-base
+</span></span><span style="display:flex;"><span>npm install --save @opentelemetry/exporter-jaeger
+</span></span><span style="display:flex;"><span>npm install --save axios
+</span></span><span style="display:flex;"><span>npm install --save express
+</span></span><span style="display:flex;"><span>npm install --save kafkajs
+</span></span></code></pre></div><p><strong>SETP 2</strong>：新增「docker-compose.yml」貼上如下程式，並將 docker 啟動。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;2.0&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">services</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">jaeger</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">jaegertracing/all-in-one:1.38</span><span style="color:#6e7681"> </span><span style="color:#8b949e;font-style:italic"># 當時用 1.39 或 latest 有出現一些 bug，故選用此版本</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">environment</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">COLLECTOR_ZIPKIN_HOST_PORT=:9411</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;5775:5775/udp&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;6831:6831/udp&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;6832:6832/udp&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;5778:5778&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;16686:16686&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;14250:14250&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;14268:14268&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;14269:14269&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;9411:9411&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">kafka</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;bitnami/kafka:latest&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#39;9092:9092&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">environment</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_ENABLE_KRAFT=yes</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_PROCESS_ROLES=broker,controller</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_BROKER_ID=1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9093</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">ALLOW_PLAINTEXT_LISTENER=yes</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span><span style="color:#8b949e;font-style:italic"># 這是設定資料要存在哪路的路徑</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">./deploy/kafkaCluster/kraft:/bitnami/kafka:rw</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p>接著輸入指令拉下並啟動 Kafka &amp; Jaeger 環境。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker-compose up -d
+</span></span></code></pre></div><p><strong>STEP 3</strong>：新增「tracing.js」貼上如下程式，基本上就是「Opentelemetry」的基礎運用。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a5d6ff">&#39;use strict&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> opentelemetry <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/api&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Resource } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/resources&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { SemanticResourceAttributes } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/semantic-conventions&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { BasicTracerProvider, BatchSpanProcessor } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/sdk-trace-base&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { JaegerExporter } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/exporter-jaeger&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>module.exports <span style="color:#ff7b72;font-weight:bold">=</span> (serviceName) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> provider <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> BasicTracerProvider({
+</span></span><span style="display:flex;"><span>        resource<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#ff7b72">new</span> Resource({
+</span></span><span style="display:flex;"><span>            [SemanticResourceAttributes.SERVICE_NAME]<span style="color:#ff7b72;font-weight:bold">:</span> serviceName,
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> exporter;
+</span></span><span style="display:flex;"><span>    exporter <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> JaegerExporter({ endpoint<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;http://127.0.0.1:14268/api/traces&#34;</span> });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    provider.addSpanProcessor(<span style="color:#ff7b72">new</span> BatchSpanProcessor(exporter));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Initialize the OpenTelemetry APIs to use the NodeTracerProvider bindings
+</span></span></span><span style="display:flex;"><span>    provider.register();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> opentelemetry.trace.getTracer(<span style="color:#a5d6ff">&#39;my-service-tracer&#39;</span>);
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p><strong>STEP 4</strong>：新增「service.js」貼上如下程式；我們在這裡建立供使用者呼叫的 API（/api/report），當 API 被呼叫後會開始追蹤，並透過 Producer 將資料塞入 Kafka。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> api <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/api&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> tracer <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;./tracing&#39;</span>)(<span style="color:#a5d6ff">&#39;service&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;express&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> PORT <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;8080&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Kafka, logLevel } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;kafkajs&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> kafka <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Kafka({
+</span></span><span style="display:flex;"><span>  logLevel<span style="color:#ff7b72;font-weight:bold">:</span> logLevel.ERROR,
+</span></span><span style="display:flex;"><span>  brokers<span style="color:#ff7b72;font-weight:bold">:</span> [<span style="color:#a5d6ff">`localhost:9092`</span>],
+</span></span><span style="display:flex;"><span>  clientId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;example-producer&#39;</span>,
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> producer <span style="color:#ff7b72;font-weight:bold">=</span> kafka.producer()
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> topic <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;report&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { W3CTraceContextPropagator } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/core&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> report(parentSpan) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> ctx <span style="color:#ff7b72;font-weight:bold">=</span> api.trace.setSpan(
+</span></span><span style="display:flex;"><span>      api.context.active(),
+</span></span><span style="display:flex;"><span>      parentSpan
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">&#39;report_producer&#39;</span>, <span style="color:#79c0ff">undefined</span>, ctx);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> carrier <span style="color:#ff7b72;font-weight:bold">=</span> {};
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> propagator <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> W3CTraceContextPropagator();
+</span></span><span style="display:flex;"><span>    propagator.inject(
+</span></span><span style="display:flex;"><span>      api.trace.setSpanContext(api.context.active(), span.spanContext()),
+</span></span><span style="display:flex;"><span>      carrier,
+</span></span><span style="display:flex;"><span>      api.defaultTextMapSetter,
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> producer.connect()
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> producer
+</span></span><span style="display:flex;"><span>      .send({
+</span></span><span style="display:flex;"><span>        topic,
+</span></span><span style="display:flex;"><span>        messages<span style="color:#ff7b72;font-weight:bold">:</span> Array({
+</span></span><span style="display:flex;"><span>          key<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`report`</span>,
+</span></span><span style="display:flex;"><span>          value<span style="color:#ff7b72;font-weight:bold">:</span> JSON.stringify(carrier)
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>      });
+</span></span><span style="display:flex;"><span>    span.end()
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>    console.log(e)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">throw</span> e
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>app.get(<span style="color:#a5d6ff">&#34;/api/report&#34;</span>, <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">&#39;report_request&#39;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> result <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> report(span)
+</span></span><span style="display:flex;"><span>    span.end()
+</span></span><span style="display:flex;"><span>    res.send(result);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>    res.send(e);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(parseInt(PORT, <span style="color:#a5d6ff">10</span>), () =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">`Service listening for requests on http://localhost:</span><span style="color:#a5d6ff">${</span>PORT<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p><strong>STEP 5</strong>：新增「consumer.js」貼上如下程式；專門監聽「report」這個 Topic，在收到 message 後會開始後續的處理（有刻意設計一個執行錯誤的結果）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> api <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/api&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> tracer <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;./tracing&#39;</span>)(<span style="color:#a5d6ff">&#39;consumer&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { W3CTraceContextPropagator } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/core&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Kafka, logLevel } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;kafkajs&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> kafka <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Kafka({
+</span></span><span style="display:flex;"><span>  logLevel<span style="color:#ff7b72;font-weight:bold">:</span> logLevel.INFO,
+</span></span><span style="display:flex;"><span>  brokers<span style="color:#ff7b72;font-weight:bold">:</span> [<span style="color:#a5d6ff">`localhost:9092`</span>],
+</span></span><span style="display:flex;"><span>  clientId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;example-consumer&#39;</span>,
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> topic <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;report&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> consumer <span style="color:#ff7b72;font-weight:bold">=</span> kafka.consumer({ groupId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;test-group&#39;</span> })
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> run <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> consumer.connect()
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> consumer.subscribe({ topic, fromBeginning<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span> })
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> consumer.run({
+</span></span><span style="display:flex;"><span>    eachMessage<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#ff7b72">async</span> ({ topic, partition, message }) =&gt; {
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#a5d6ff">&#34;topic:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> topic <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#34;  message:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> message.value)
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">const</span> carrier <span style="color:#ff7b72;font-weight:bold">=</span> JSON.parse(message.value)
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">const</span> propagator <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> W3CTraceContextPropagator();
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">const</span> parentCtx <span style="color:#ff7b72;font-weight:bold">=</span> propagator.extract(api.context.active(), carrier, api.defaultTextMapGetter);
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">if</span> (topic <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;report&#34;</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">`report_consumer`</span>, <span style="color:#79c0ff">undefined</span>, parentCtx);
+</span></span><span style="display:flex;"><span>        report(span)
+</span></span><span style="display:flex;"><span>        span.end()
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> report(parentSpan) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> parentCtx <span style="color:#ff7b72;font-weight:bold">=</span> api.trace.setSpan(
+</span></span><span style="display:flex;"><span>    api.context.active(),
+</span></span><span style="display:flex;"><span>    parentSpan
+</span></span><span style="display:flex;"><span>  );
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">&#39;handle_report&#39;</span>, <span style="color:#79c0ff">undefined</span>, parentCtx);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">let</span> i <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>; i <span style="color:#ff7b72;font-weight:bold">&lt;</span> <span style="color:#a5d6ff">10</span>; i<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>    doWork(span, i);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  span.end();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> doWork(parentSpan, i) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> parentCtx <span style="color:#ff7b72;font-weight:bold">=</span> api.trace.setSpan(
+</span></span><span style="display:flex;"><span>    api.context.active(),
+</span></span><span style="display:flex;"><span>    parentSpan
+</span></span><span style="display:flex;"><span>  );
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">`doWork:</span><span style="color:#a5d6ff">${</span>i<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>, <span style="color:#79c0ff">undefined</span>, parentCtx);
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 讓每個執行的時間不一樣
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">let</span> i <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>; i <span style="color:#ff7b72;font-weight:bold">&lt;=</span> Math.floor(Math.random() <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">40000000</span>); i<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// empty
+</span></span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (i <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">5</span>) { <span style="color:#8b949e;font-style:italic">// 產生錯誤訊息
+</span></span></span><span style="display:flex;"><span>    span.recordException(<span style="color:#ff7b72">new</span> Error(<span style="color:#a5d6ff">`doWork:</span><span style="color:#a5d6ff">${</span>i<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> error`</span>));
+</span></span><span style="display:flex;"><span>    span.setStatus({ code<span style="color:#ff7b72;font-weight:bold">:</span> api.SpanStatusCode.ERROR, message<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;Something wrong!&#34;</span> });
+</span></span><span style="display:flex;"><span>    span.addEvent(<span style="color:#a5d6ff">&#39;log&#39;</span>, {
+</span></span><span style="display:flex;"><span>      <span style="color:#a5d6ff">&#39;log.severity&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;error&#39;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a5d6ff">&#39;log.message&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;doWork:${i} error&#39;</span>
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  span.end();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>run().<span style="color:#ff7b72">catch</span>(e =&gt; console.error(<span style="color:#a5d6ff">`[example/consumer] </span><span style="color:#a5d6ff">${</span>e.message<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>, e))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> errorTypes <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;unhandledRejection&#39;</span>, <span style="color:#a5d6ff">&#39;uncaughtException&#39;</span>]
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> signalTraps <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;SIGTERM&#39;</span>, <span style="color:#a5d6ff">&#39;SIGINT&#39;</span>, <span style="color:#a5d6ff">&#39;SIGUSR2&#39;</span>]
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 收到無法處理錯誤時的處理
+</span></span></span><span style="display:flex;"><span>errorTypes.forEach(type =&gt; {
+</span></span><span style="display:flex;"><span>  process.on(type, <span style="color:#ff7b72">async</span> e =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#a5d6ff">`process.on </span><span style="color:#a5d6ff">${</span>type<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>      console.error(e)
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">await</span> consumer.disconnect()
+</span></span><span style="display:flex;"><span>      process.exit(<span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (_) {
+</span></span><span style="display:flex;"><span>      process.exit(<span style="color:#a5d6ff">1</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 收到中斷訊號時的處理
+</span></span></span><span style="display:flex;"><span>signalTraps.forEach(type =&gt; {
+</span></span><span style="display:flex;"><span>  process.once(type, <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">await</span> consumer.disconnect()
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">finally</span> {
+</span></span><span style="display:flex;"><span>      process.kill(process.pid, type)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><hr>
+<h2 id="四啟動專案透過-jaeger-ui-確認-trace-路徑是否符合預期">四、啟動專案，透過 Jaeger UI 確認 Trace 路徑是否符合預期<a class="h-anchor" href="#%e5%9b%9b%e5%95%9f%e5%8b%95%e5%b0%88%e6%a1%88%e9%80%8f%e9%81%8e-jaeger-ui-%e7%a2%ba%e8%aa%8d-trace-%e8%b7%af%e5%be%91%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>建議使用有分頁功能的終端機（如 iTerm2），這樣比較好觀察與操作。</p>
+</blockquote>
+<p><strong>STEP 1</strong>：在專案根目錄下輸入 <code>node service.js</code> 啟動 Service。</p>
+<p><strong>STEP 2</strong>：在終端機貼上指令 <code>curl http://localhost:8080/api/report</code> 來呼叫 API。</p>
+<p><strong>STEP 3</strong>：在專案根目錄下輸入 <code>node consumer.js</code> 啟動監聽模式；這邊提醒一下，如果監聽不存在的 Topic 會報錯。</p>
+<p><img src="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-02.webp" width="1400" height="1058" alt="四、啟動專案，透過 Jaeger UI 確認 Trace 路徑是否符合預期（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 4</strong>：到 Jaeger UI 上（<a href="http://localhost:16686/search">http://localhost:16686/search</a>）確認 Trace 路徑是否符合預期。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-03.webp" width="1400" height="728" alt="上面是呼叫 API 時留下的紀錄" loading="lazy" decoding="async">
+  <figcaption>上面是呼叫 API 時留下的紀錄</figcaption>
+</figure>
+
+<p>下圖「report_producer」跟「report_consumer」之間的空白，就是資料在 Kafka 轉運站傳遞的時間。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-04.webp" width="1400" height="596" alt="我們可以看到 trace 中每個 span 執行的狀況（這邊能看到錯誤是出現在 dowork5 的 span 上）" loading="lazy" decoding="async">
+  <figcaption>我們可以看到 trace 中每個 span 執行的狀況（這邊能看到錯誤是出現在 dowork5 的 span 上）</figcaption>
+</figure>
+
+<blockquote class="pullquote"><p>範例到這裡告一段落，希望文中 Jaeger 與 Kafka 的組合應用，有幫讀者打開不一樣的思路。</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>手把手帶你建立 Node.js 專案 ＆ Kafka 環境，透過實作了解 Kafka 的運行邏輯</title>
+      <link>https://deanlin.net/blog/202211/nodejs-kafka-hands-on/</link>
+      <pubDate>Sun, 20 Nov 2022 22:46:53 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202211/nodejs-kafka-hands-on/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>本篇文章將會帶大家一步步建立 Node.js 專案 ＆ Kafka 環境，透過具體實踐來了解 Kafka 的運行邏輯。</description>
+      <content:encoded><![CDATA[<p>在<a href="https://deanlin.net/blog/202211/what-is-kafka/">上篇文章</a>中，筆者帶大家了解 Kafka 這門技術的使用情境、優點，以及它具體是如何解決問題的。</p>
+<p>而本篇文章將會帶大家一步步建立 Node.js 專案 ＆ Kafka 環境，透過具體實踐來了解 Kafka 的運行邏輯。</p>
+<p><img src="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01.webp" width="1400" height="739" alt="手把手帶你建立 Node.js 專案 ＆ Kafka 環境，透過實作了解 Kafka 的運行邏輯（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+ㄧ、手把手帶你建立 Node.js 專案 ＆ Kafka 環境
+二、啟動專案，了解 Kafka 的運行邏輯
+  ➤ 1 個 Producer VS 1 個 Consumer
+  ➤ Kafka 持久化驗證
+  ➤ 1 個 Partition 的數據只允許 Consumer Group 中的某個 Consumer 消費
+  ➤ 2 個 Partition VS 2 個 Consumer
+</code></pre><h2 id="ㄧ手把手帶你建立-nodejs-專案--kafka-環境">ㄧ、手把手帶你建立 Node.js 專案 ＆ Kafka 環境<a class="h-anchor" href="#%e3%84%a7%e6%89%8b%e6%8a%8a%e6%89%8b%e5%b8%b6%e4%bd%a0%e5%bb%ba%e7%ab%8b-nodejs-%e5%b0%88%e6%a1%88--kafka-%e7%92%b0%e5%a2%83" aria-label="這個段落的連結"></a></h2>
+<p><a href="https://deanlin.net/blog/202211/what-is-kafka/">上一篇文章</a>講了這麼多理論，下面就建立一個 Node.js 專案，來實際了解 Kafka 的運作邏輯吧！</p>
+<blockquote>
+<p>如果懶得按照步驟執行，可以直接到<a href="https://github.com/dean9703111/kafka-demo">筆者的 Github</a> Clone 一份下來。<br>筆者 local 的 Node.js 版本為 v18.12.0。</p>
+</blockquote>
+<p><strong>SETP 1</strong>：建立專案、安裝 kafkajs 套件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm init -f
+</span></span><span style="display:flex;"><span>npm install --save kafkajs
+</span></span></code></pre></div><p><strong>SETP 2</strong>：建立儲存 Kafka 數據的資料夾（這是下一步「docker-compose.yml」裏面「volumes」的路徑）</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir -p deploy/kafkaCluster/kraft
+</span></span></code></pre></div><p><strong>SETP 3</strong>：新增「docker-compose.yml」貼上如下程式。</p>
+<blockquote>
+<p>這裡筆者選用不依賴 zookeeper 的 Kafka 版本（KRaft），過去主流會使用 zookeeper 來保存消息，但 Kafka 官方表示在不久後就不再支援 zookeeper，故筆者做此選擇，至於 KRaft 本身有哪些優勢，感興趣的朋友可以參考<a href="https://www.cnblogs.com/smartloli/p/16430041.html">連結</a>。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#34;3&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">services</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">kafka</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;bitnami/kafka:latest&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#39;9092:9092&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">environment</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_ENABLE_KRAFT=yes</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_PROCESS_ROLES=broker,controller</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_BROKER_ID=1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_NODE_ID=1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9093</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">ALLOW_PLAINTEXT_LISTENER=yes</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span><span style="color:#8b949e;font-style:italic"># 這是設定資料要存在哪路的路徑</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">./deploy/kafkaCluster/kraft:/bitnami/kafka:rw</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p><strong>SETP 4</strong>：輸入以下指令把 Kafka 的 Docker 拉下來並執行，你可以把這個 Docker 想像成 Kafka Cluster 中的 Broker。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker-compose up -d
+</span></span></code></pre></div><p><strong>SETP 5</strong>：新增「producer.js」貼上如下程式，我們會透過它每隔 2 秒產生消息到指定的 topic。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Kafka, CompressionTypes, logLevel } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;kafkajs&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> kafka <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Kafka({
+</span></span><span style="display:flex;"><span>  logLevel<span style="color:#ff7b72;font-weight:bold">:</span> logLevel.ERROR,
+</span></span><span style="display:flex;"><span>  brokers<span style="color:#ff7b72;font-weight:bold">:</span> [<span style="color:#a5d6ff">`localhost:9092`</span>],
+</span></span><span style="display:flex;"><span>  clientId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;example-producer&#39;</span>,
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> topic <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;topic-test&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> numPartitions <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">2</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> crateTopic <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> (topic) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> admin <span style="color:#ff7b72;font-weight:bold">=</span> kafka.admin();
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> admin.connect();
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> topics <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> admin.listTopics();
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (<span style="color:#ff7b72;font-weight:bold">!</span>topics.includes(topic)) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> admin.createTopics({
+</span></span><span style="display:flex;"><span>      topics<span style="color:#ff7b72;font-weight:bold">:</span> [{
+</span></span><span style="display:flex;"><span>        topic<span style="color:#ff7b72;font-weight:bold">:</span> topic,
+</span></span><span style="display:flex;"><span>        numPartitions<span style="color:#ff7b72;font-weight:bold">:</span> numPartitions
+</span></span><span style="display:flex;"><span>      }],
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fetchTopicOffsets <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> admin.fetchTopicOffsets(<span style="color:#a5d6ff">&#39;topic-test&#39;</span>)
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">`Crate topic:</span><span style="color:#a5d6ff">${</span>topic<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> successful!`</span>)
+</span></span><span style="display:flex;"><span>    console.log(fetchTopicOffsets)
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> admin.disconnect();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> producer <span style="color:#ff7b72;font-weight:bold">=</span> kafka.producer()
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> getRandomNumber <span style="color:#ff7b72;font-weight:bold">=</span> () =&gt; Math.round(Math.random(<span style="color:#a5d6ff">10</span>) <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> createMessage <span style="color:#ff7b72;font-weight:bold">=</span> (num, partition <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>) =&gt; ({
+</span></span><span style="display:flex;"><span>  key<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`key-</span><span style="color:#a5d6ff">${</span>num<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>,
+</span></span><span style="display:flex;"><span>  value<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`value-</span><span style="color:#a5d6ff">${</span>num<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">-</span><span style="color:#a5d6ff">${</span><span style="color:#ff7b72">new</span> Date().toISOString()<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>,
+</span></span><span style="display:flex;"><span>  partition<span style="color:#ff7b72;font-weight:bold">:</span> partition
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> sendMessage <span style="color:#ff7b72;font-weight:bold">=</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> producer
+</span></span><span style="display:flex;"><span>    .send({
+</span></span><span style="display:flex;"><span>      topic,
+</span></span><span style="display:flex;"><span>      compression<span style="color:#ff7b72;font-weight:bold">:</span> CompressionTypes.GZIP,
+</span></span><span style="display:flex;"><span>      messages<span style="color:#ff7b72;font-weight:bold">:</span> Array(createMessage(getRandomNumber()))
+</span></span><span style="display:flex;"><span>      <span style="color:#8b949e;font-style:italic">// 用來測試 kafka 多個 Partition 與 Consumer 的關係
+</span></span></span><span style="display:flex;"><span>      <span style="color:#8b949e;font-style:italic">// messages: Array(createMessage(getRandomNumber(), 0), createMessage(getRandomNumber(), 1))
+</span></span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    .then(console.log)
+</span></span><span style="display:flex;"><span>    .<span style="color:#ff7b72">catch</span>(e =&gt; console.error(<span style="color:#a5d6ff">`[example/producer] </span><span style="color:#a5d6ff">${</span>e.message<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>, e))
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> run <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> crateTopic(topic);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> producer.connect()
+</span></span><span style="display:flex;"><span>  setInterval(sendMessage, <span style="color:#a5d6ff">2000</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>run().<span style="color:#ff7b72">catch</span>(e =&gt; console.error(<span style="color:#a5d6ff">`[example/producer] </span><span style="color:#a5d6ff">${</span>e.message<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>, e))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> errorTypes <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;unhandledRejection&#39;</span>, <span style="color:#a5d6ff">&#39;uncaughtException&#39;</span>]
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> signalTraps <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;SIGTERM&#39;</span>, <span style="color:#a5d6ff">&#39;SIGINT&#39;</span>, <span style="color:#a5d6ff">&#39;SIGUSR2&#39;</span>]
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 收到無法處理錯誤時的處理
+</span></span></span><span style="display:flex;"><span>errorTypes.forEach(type =&gt; {
+</span></span><span style="display:flex;"><span>  process.on(type, <span style="color:#ff7b72">async</span> e =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#a5d6ff">`process.on </span><span style="color:#a5d6ff">${</span>type<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>      console.error(e)
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">await</span> consumer.disconnect()
+</span></span><span style="display:flex;"><span>      process.exit(<span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (_) {
+</span></span><span style="display:flex;"><span>      process.exit(<span style="color:#a5d6ff">1</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 收到中斷訊號時的處理
+</span></span></span><span style="display:flex;"><span>signalTraps.forEach(type =&gt; {
+</span></span><span style="display:flex;"><span>  process.once(type, <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">await</span> consumer.disconnect()
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">finally</span> {
+</span></span><span style="display:flex;"><span>      process.kill(process.pid, type)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><p><strong>SETP 6</strong>：新增「consumer.js」貼上如下程式，我們透過它模擬消費者消費特定 topic 的消息。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Kafka, logLevel } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;Kafkajs&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Kafka <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Kafka({
+</span></span><span style="display:flex;"><span>  logLevel<span style="color:#ff7b72;font-weight:bold">:</span> logLevel.INFO,
+</span></span><span style="display:flex;"><span>  brokers<span style="color:#ff7b72;font-weight:bold">:</span> [<span style="color:#a5d6ff">`localhost:9092`</span>],
+</span></span><span style="display:flex;"><span>  clientId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;example-consumer&#39;</span>,
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> topic <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;topic-test&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> consumer <span style="color:#ff7b72;font-weight:bold">=</span> Kafka.consumer({ groupId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;test-group&#39;</span> })
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 用來測試 Kafka 持久化
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// const consumer = Kafka.consumer({ groupId: &#39;test-group2&#39; })
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> run <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> consumer.connect()
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> consumer.subscribe({ topic, fromBeginning<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span> })
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> consumer.run({
+</span></span><span style="display:flex;"><span>    eachMessage<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#ff7b72">async</span> ({ topic, partition, message }) =&gt; {
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">const</span> prefix <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>topic<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">[</span><span style="color:#a5d6ff">${</span>partition<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> | </span><span style="color:#a5d6ff">${</span>message.offset<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">] / </span><span style="color:#a5d6ff">${</span>message.timestamp<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#a5d6ff">`- </span><span style="color:#a5d6ff">${</span>prefix<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> </span><span style="color:#a5d6ff">${</span>message.key<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">#</span><span style="color:#a5d6ff">${</span>message.value<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>run().<span style="color:#ff7b72">catch</span>(e =&gt; console.error(<span style="color:#a5d6ff">`[example/consumer] </span><span style="color:#a5d6ff">${</span>e.message<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>, e))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> errorTypes <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;unhandledRejection&#39;</span>, <span style="color:#a5d6ff">&#39;uncaughtException&#39;</span>]
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> signalTraps <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;SIGTERM&#39;</span>, <span style="color:#a5d6ff">&#39;SIGINT&#39;</span>, <span style="color:#a5d6ff">&#39;SIGUSR2&#39;</span>]
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 收到無法處理錯誤時的處理
+</span></span></span><span style="display:flex;"><span>errorTypes.forEach(type =&gt; {
+</span></span><span style="display:flex;"><span>  process.on(type, <span style="color:#ff7b72">async</span> e =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#a5d6ff">`process.on </span><span style="color:#a5d6ff">${</span>type<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>      console.error(e)
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">await</span> consumer.disconnect()
+</span></span><span style="display:flex;"><span>      process.exit(<span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (_) {
+</span></span><span style="display:flex;"><span>      process.exit(<span style="color:#a5d6ff">1</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 收到中斷訊號時的處理
+</span></span></span><span style="display:flex;"><span>signalTraps.forEach(type =&gt; {
+</span></span><span style="display:flex;"><span>  process.once(type, <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">await</span> consumer.disconnect()
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">finally</span> {
+</span></span><span style="display:flex;"><span>      process.kill(process.pid, type)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><hr>
+<h2 id="二啟動專案了解-kafka-的運行邏輯">二、啟動專案，了解 Kafka 的運行邏輯<a class="h-anchor" href="#%e4%ba%8c%e5%95%9f%e5%8b%95%e5%b0%88%e6%a1%88%e4%ba%86%e8%a7%a3-kafka-%e7%9a%84%e9%81%8b%e8%a1%8c%e9%82%8f%e8%bc%af" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>建議使用有分頁功能的終端機（如 iTerm2），這樣比較好觀察與操作。</p>
+</blockquote>
+<h3 id="-1-個-producer-vs-1-個-consumer">➤ 1 個 Producer VS 1 個 Consumer<a class="h-anchor" href="#-1-%e5%80%8b-producer-vs-1-%e5%80%8b-consumer" aria-label="這個段落的連結"></a></h3>
+<p>在專案根目錄下輸入 <code>node producer.js</code> 模擬「生產者傳送消息」，並在另一個分頁輸入 <code>node consumer.js</code> 模擬「消費者消費消息」。</p>
+<p>透過下面的 Gif 大家可以看到消息傳送＆消費的過程。</p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-02.webp" width="960" height="625" aria-label="1 個 Producer VS 1 個 Consumer（圖 2）" data-gifv>
+    <source src="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-02.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<blockquote>
+<p>確認消息可以順利生產與消費後，記得透過「Crontrol + C」將程式關閉。</p>
+</blockquote>
+<h3 id="-kafka-持久化驗證">➤ Kafka 持久化驗證<a class="h-anchor" href="#-kafka-%e6%8c%81%e4%b9%85%e5%8c%96%e9%a9%97%e8%ad%89" aria-label="這個段落的連結"></a></h3>
+<p>這邊我們再做一個<strong>持久化</strong>的實驗，我們把「consumer.js」裏面 groupId 的值改為「test-group2」，來確認是否可以重新消費過去的消息。</p>
+<p>通過下圖我們可以得知 Kafka 的資料是持久化的，不會因為有消費者消費而消失；因此擴張的時候，只需要增加消費者來處理資料即可。</p>
+<p><img src="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-03.webp" width="1400" height="659" alt="Kafka 持久化驗證（圖 3）" loading="lazy" decoding="async"></p>
+<h3 id="-1-個-partition-的數據只允許-consumer-group-中的某個-consumer-消費">➤ 1 個 Partition 的數據只允許 Consumer Group 中的某個 Consumer 消費<a class="h-anchor" href="#-1-%e5%80%8b-partition-%e7%9a%84%e6%95%b8%e6%93%9a%e5%8f%aa%e5%85%81%e8%a8%b1-consumer-group-%e4%b8%ad%e7%9a%84%e6%9f%90%e5%80%8b-consumer-%e6%b6%88%e8%b2%bb" aria-label="這個段落的連結"></a></h3>
+<p>接著我們來驗證，在 Producer 的 Partition 只有 1 個的情境下，是不是相同的 group_id 下只會有一個 consumer 進行消費；這次要開啟 3 個分頁，1 個模擬生產者，2 個模擬消費者。</p>
+<p>透過下面的 Gif，大家可以看到在同一個 Consumer Group 中，的確只會有一個 Consumer 進行消費。</p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-04.webp" width="960" height="551" aria-label="1 個 Partition 的數據只允許 Consumer Group 中的某個 Consumer 消費（圖 4）" data-gifv>
+    <source src="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-04.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<h3 id="-2-個-partition-vs-2-個-consumer">➤ 2 個 Partition VS 2 個 Consumer<a class="h-anchor" href="#-2-%e5%80%8b-partition-vs-2-%e5%80%8b-consumer" aria-label="這個段落的連結"></a></h3>
+<p>先前有說到 Partition 數量最好與 Consumer 的數量相等，這樣效率才會最高（一個人一個碗）；這裡一樣是開啟 3 個分頁，1 個模擬生產者，2 個模擬消費者；同時對「producer.js」裡面的程式做微調如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 將原本的註解
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// messages: Array(createMessage(getRandomNumber())),
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 解開下面的註解，測試 Kafka 多個 Partition 與 Consumer 的關係
+</span></span></span><span style="display:flex;"><span>messages<span style="color:#ff7b72;font-weight:bold">:</span> Array(createMessage(getRandomNumber(),<span style="color:#a5d6ff">0</span>),createMessage(getRandomNumber(),<span style="color:#a5d6ff">1</span>)),
+</span></span></code></pre></div><p>透過下面的 Gif，可以觀察到在 2 個 Partition VS 2 個 Consumer 時，消息會均勻的分配。</p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-05.webp" width="960" height="551" aria-label="2 個 Partition VS 2 個 Consumer（圖 5）" data-gifv>
+    <source src="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-05.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<hr>
+<p>在文章的最後，筆者想分享一段話：「只透過文字是無法理解一門技術的，需要透過實作才有辦法拼出技術的全貌。」</p>
+<p>今天的文章就分享到這裡，筆者之後再找時間分享更深入的組合應用，也歡迎讀者分享自己的使用心得，希望藉助彼此的經驗，讓我們一起在工程師的道路走得更遠。</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>正在為大數據所苦嗎？帶你了解 Kafka 這個分布式消息串流平台，以及它能解決什麼問題！</title>
+      <link>https://deanlin.net/blog/202211/what-is-kafka/</link>
+      <pubDate>Sun, 20 Nov 2022 21:47:34 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202211/what-is-kafka/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>如果推出的 Web 系統受到市場親睞，那隨著使用者成長，勢必會更高頻率的呼叫 api 與存取資料庫；假使我們沒有設計任何的緩衝機制，那資料庫不堪重負也只是時間問題。 而且隨著公司規模的擴張，接下來可能會有專門的團隊來分析使用者行為，公司高層與投資人會想看具體的業務狀況…</description>
+      <content:encoded><![CDATA[<p>如果推出的 Web 系統受到市場親睞，那隨著使用者成長，勢必會更高頻率的呼叫 api 與存取資料庫；假使我們沒有設計任何的緩衝機制，那資料庫不堪重負也只是時間問題。</p>
+<p>而且隨著公司規模的擴張，接下來可能會有專門的團隊來分析使用者行為，公司高層與投資人會想看具體的業務狀況，系統需要建立即時監控系統，甚至要整合外部資源…如果資料串流沒設計好，系統架構就會變成下面這張圖。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202211/what-is-kafka/images/what-is-kafka-01.webp" width="520" height="519" alt="image from link" loading="lazy" decoding="async">
+  <figcaption>image from <a href="https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying">link</a></figcaption>
+</figure>
+
+<p>如果你覺得這個畫面很可怕，那不妨花點時間了解 Kafka 這門技術；本篇文章會帶讀者了解它的精神，以及選擇它的理由。</p>
+<p><img src="https://deanlin.net/blog/202211/what-is-kafka/images/what-is-kafka-02.webp" width="1400" height="739" alt="正在為大數據所苦嗎？帶你了解 Kafka 這個分布式消息串流平台，以及它能解決什麼問題！（圖 2）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+一、Kafka 具體能解決哪些問題，為什麼能解決？
+二、Kafka 的基礎架構與階層關係
+三、Kafka 為什麼吞吐量大？
+四、Redis 也能夠處理 Pub/Sub，為什麼要用 Kafka？
+</code></pre><blockquote>
+<p>本篇文章是筆者揉合許多大神的經驗後，再用自己理解的話語表達出來，相關的資源放在最下方，有興趣的讀者可以參考看看。</p>
+</blockquote>
+<h2 id="一kafka-具體能解決哪些問題為什麼能解決">一、Kafka 具體能解決哪些問題，為什麼能解決？<a class="h-anchor" href="#%e4%b8%80kafka-%e5%85%b7%e9%ab%94%e8%83%bd%e8%a7%a3%e6%b1%ba%e5%93%aa%e4%ba%9b%e5%95%8f%e9%a1%8c%e7%82%ba%e4%bb%80%e9%ba%bc%e8%83%bd%e8%a7%a3%e6%b1%ba" aria-label="這個段落的連結"></a></h2>
+<p><strong><em>Kafka 可以讓資料以合適的時機出現在合適的地方，你可以把它想像成消息隊列（Message queue），生產者（Producer）會往隊列結尾塞東西，消費者（Consumer）從隊列依次拿東西。</em></strong></p>
+<p>如果看完上面的解釋還是一頭霧水，相信下面「送包裹」的案例能幫你理解。</p>
+<h3 id="困境描述">困境描述：<a class="h-anchor" href="#%e5%9b%b0%e5%a2%83%e6%8f%8f%e8%bf%b0" aria-label="這個段落的連結"></a></h3>
+<p>如果住在沒有管理員的公寓，包裹在上班時間送到你家門口，你就只能跟貨運司機說聲抱歉，因為沒人在家只能請他下次再送。</p>
+<h3 id="解決方案">解決方案：<a class="h-anchor" href="#%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<p>因為不是每個人都住在有管理員幫忙收包裹的大樓，為了解決這個問題，市場提出一個<strong>解決方案：「超商取貨」</strong>；從此以後，貨運司機不用跟你聯繫，把包裹送到超商即可，而你也不用在家裡等司機送貨，自己有時間的時候再去取貨就好。</p>
+<p>「Kafka」就是扮演上述解法中「超商」的角色，這個方案的優勢在於：</p>
+<ul>
+<li><strong>降低耦合性</strong>：如果收貨人不在家，那司機就算送到門口也沒人取貨，因此這趟運送的實際效益為「0」；改成超商取貨後，司機只管把包裹送到指定超商即可，不再依賴收貨人是否在現場。</li>
+<li><strong>非同步機制</strong>：就算收貨人在家，司機到樓下後也要等人下來領包裹（有些人還慢吞吞，或提出各種奧客需求），這個等待期間司機也沒辦法繼續送貨，整個流程都被卡住了；但改成超商取貨後，司機把包裹送到超商就可以直接跑下一家，完全不用等待。</li>
+<li><strong>避免高峰期</strong>：假使有人趁著雙 11 在不同平台訂貨，會造成送包裹的單位不同；如果他們剛好在同個時間到你家門口，收貨人在面對一堆等待簽收的司機時容易手忙腳亂。而超商取貨時，儘管包裹的數量是一樣的，但你可以舒服的領取。</li>
+</ul>
+<hr>
+<h2 id="二kafka-的基礎架構與階層關係">二、Kafka 的基礎架構與階層關係<a class="h-anchor" href="#%e4%ba%8ckafka-%e7%9a%84%e5%9f%ba%e7%a4%8e%e6%9e%b6%e6%a7%8b%e8%88%87%e9%9a%8e%e5%b1%a4%e9%97%9c%e4%bf%82" aria-label="這個段落的連結"></a></h2>
+<p>透過上面的故事，大家應該對 Kafka 消息轉發者（Message broker）的定位更為理解，下面再說明一下它的基礎架構與階層關係：</p>
+<pre tabindex="0"><code>[Producer]  [Kafka cluster]                         [Consumer]
+              ├── Broker1                           
+Producer0-&gt;   │     ├── Topic A
+              │     │     ├── Partition0(Leader)  -&gt; Consumer Group A
+              │     └── Topic B                         ├── Consumer0
+              │           └── Partition0(Follower)      └── Consumer1
+              └── Broker2
+                    ├── Topic A
+                    │     ├── Partition0(Follower)
+                    └── Topic B
+Producer1-&gt;               └── Partition0(Leader)  -&gt; Consumer Group B
+                                                        ├── Consumer0
+                                                        └── Consumer1
+</code></pre><ul>
+<li><strong>Producer</strong>：生產者，為消息的入口。</li>
+<li><strong>Kafka cluster</strong>：Kafka 的集群，通常會有多個 Broker。</li>
+<li><strong>Broker</strong>：Kafka 的實體，可以把它想像成每個 Broker 對應一台 Server。</li>
+<li><strong>Topic</strong>：消息的主題，有點像是資料庫的 Table。</li>
+<li><strong>Partition</strong>：Topic 的分區，一個 Topic 可以有多個分區。</li>
+<li><strong>Replication</strong>：你在架構上會發現有些 Partition 是 Leader，有些是 Follower，當 Leader 故障時 Follower 就會上位；且 Leader 跟 Follower 會在不同的機器上，避免故障後一起陣亡。</li>
+<li><strong>Consumer</strong>：消費者，為消息的出口。</li>
+<li><strong>Consumer Group</strong>：可以將多個消費者組成一個消費群組，在 Kafka 的設計中，一個 Partition 的數據只允許消費群組中的某個消費者消費，消費群組中的消費者可以消費同一個 Topic 不同 Partition 的數據。</li>
+</ul>
+<p>通常狀態下，<strong>一個 Consumer Group 下的 Consumer 數量，建議與 Partition 的數量相同</strong>；下面我們把 Partition 當成一碗飯，Consumer 比喻為一個人，這樣會更好理解為何要這樣設計：</p>
+<ul>
+<li>可以出現一個人吃多碗飯的情況（但會吃太飽）。</li>
+<li>不能出現多個人吃一碗飯的情況（禁止搶飯吃）。</li>
+<li>如果人比飯碗多，那就得有人餓著。</li>
+<li><strong>一人一碗，剛剛好（理想設計）。</strong></li>
+</ul>
+<hr>
+<h2 id="三kafka-為什麼速度快吞吐量大">三、Kafka 為什麼速度快、吞吐量大？<a class="h-anchor" href="#%e4%b8%89kafka-%e7%82%ba%e4%bb%80%e9%ba%bc%e9%80%9f%e5%ba%a6%e5%bf%ab%e5%90%9e%e5%90%90%e9%87%8f%e5%a4%a7" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li><strong>順序讀寫</strong>：Kafka 將資料寫到硬碟上，通常我們都會覺得硬碟的讀寫效能不理想；但效能是否理想，是取決於<code>順序讀寫 or 隨機讀寫</code>，無論硬碟還是記憶體都是如此，有時硬碟順序讀寫的效能甚至高於記憶體隨機讀寫。</li>
+</ul>
+<figure class="figure"><img src="https://deanlin.net/blog/202211/what-is-kafka/images/what-is-kafka-03.webp" width="585" height="322" alt="image from link" loading="lazy" decoding="async">
+  <figcaption>image from <a href="https://deliveryimages.acm.org/10.1145/1570000/1563874/jacobs3.jpg">link</a></figcaption>
+</figure>
+
+<ul>
+<li><strong>零拷貝</strong>：從 Producer 到 Broker，Kafka 採用 mmap 的方式把資料持久化到硬碟（從 2 次 CPU 拷貝減為 1 次）；從 Broker 到 Consumer，Kafka 採用 sendFile 的方式發送硬碟資料（零拷貝）。</li>
+<li><strong>批量發送</strong>：Producer 在發送消息時，可以等消息到固定數量後再一次發送（假設網路頻寬為 10MB/s，一次傳送 10MB 的消息會比 1KB 的消息分 10,000 次傳送快很多）。</li>
+<li><strong>批量壓縮</strong>：有時系統的瓶頸不在 CPU 或是硬碟，而是在網路 IO；針對這個問題，我們可以在批量發送的基礎上，一次對多筆消息進行批量壓縮，以此降低 IO 負擔。</li>
+</ul>
+<blockquote>
+<p>Kafka 的訊息傳送是基於 TCP 協定，擁有比 HTTP 更好的效能，並且比 UDP 更加安全。</p>
+</blockquote>
+<hr>
+<h2 id="四redis-也能處理-pubsub為什麼要用-kafka">四、Redis 也能處理 Pub/Sub，為什麼要用 Kafka？<a class="h-anchor" href="#%e5%9b%9bredis-%e4%b9%9f%e8%83%bd%e8%99%95%e7%90%86-pubsub%e7%82%ba%e4%bb%80%e9%ba%bc%e8%a6%81%e7%94%a8-kafka" aria-label="這個段落的連結"></a></h2>
+<p>筆者在網路上看到一個很有趣的<a href="https://zhuanlan.zhihu.com/p/68052232">比喻</a>，在這裡做個分享：</p>
+<p>老闆有個好消息要告訴大家，有兩個辦法:</p>
+<ol>
+<li><strong>到每個座位上挨個兒告訴每個人</strong>。什麼？張三去上廁所了？那張三就只能錯過好消息了！</li>
+<li><strong>老闆把消息寫到黑板上，誰想知道就來看一下</strong>。什麼？張三請假了？沒關係，我一周之後才擦掉，總會看見的！什麼？張三請假兩週？那就算了，我反正只保留一周，不然其他好消息沒地方寫了。</li>
+</ol>
+<p>Redis 用第一種辦法，Kafka 用第二種辦法。</p>
+<ul>
+<li>Redis 是記憶體資料庫，它提供的 Pub/Sub 是將消息儲存於記憶體中，如果消息不用長久保存，並且消費速度快，那 Redis 很好用。</li>
+<li>Kafka 將資料儲存於硬碟上，為消息提供了持久化的服務，這樣的設定對消費者來說很好，他可以按造順序消費，也可以重新消費過去的消息（不過硬碟容量有限，還是會使用「空間 or 時間」作為淘汰策略）。</li>
+</ul>
+<blockquote>
+<p>Redis 也能將資料持久化，但並不是那麼的可靠。</p>
+</blockquote>
+<hr>
+<p>希望這篇文章的內容有讓讀者初步了解 Kafka 的應用，<a href="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/">下一篇文章</a>筆者會帶大家建立 Node.js 專案 ＆ Kafka 環境，透過<a href="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/">具體的實踐</a>來了解 Kafka 的運行邏輯。</p>
+<p>參考文件：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/68052232">再过半小时，你就能明白Kafka的工作原理了</a></li>
+<li><a href="https://www.cnblogs.com/smartloli/p/16430041.html">Kafka KRaft模式探索</a></li>
+<li><a href="https://blog.csdn.net/liuzhenghui666666/article/details/106467057">Kafka解决了什么问题?(CSDN)</a></li>
+<li><a href="https://www.zhihu.com/question/53331259">Kafka解决了什么问题?(知乎)</a></li>
+<li><a href="https://kafka.js.org/">KafkaJS</a></li>
+</ol>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

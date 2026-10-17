@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="今天這篇文章，筆者會用一個簡易的「登入頁面」，來介紹 @vue/test-utils 這款套件的常用功能（ex：getComponent、setValue、wrapper.vm、trigger button、Vue Router）">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202301/vue-test-utils-examples/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils">
+  <meta property="og:description" content="今天這篇文章，筆者會用一個簡易的「登入頁面」，來介紹 @vue/test-utils 這款套件的常用功能（ex：getComponent、setValue、wrapper.vm、trigger button、Vue Router）">
+  <meta property="og:url" content="https://deanlin.net/blog/202301/vue-test-utils-examples/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2023-01-19T13:58:02&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T22:05:38&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Vuetify">
+  <meta property="article:tag" content="Unit Testing">
+  <meta property="article:tag" content="Vue Test Utils">
+  <meta property="article:tag" content="TypeScript">
+  <meta property="article:tag" content="Example">
+  <meta property="og:image" content="https://deanlin.net/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-og.jpg">
+  <meta property="og:image:width" content="1148">
+  <meta property="og:image:height" content="599">
+  <meta property="og:image:alt" content="透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-og.jpg">
+  <meta name="twitter:title" content="透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils">
+  <meta name="twitter:description" content="今天這篇文章，筆者會用一個簡易的「登入頁面」，來介紹 @vue/test-utils 這款套件的常用功能（ex：getComponent、setValue、wrapper.vm、trigger button、Vue Router）">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202301/vue-test-utils-examples/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T22:05:38+08:00","datePublished":"2023-01-19T13:58:02+08:00","description":"今天這篇文章，筆者會用一個簡易的「登入頁面」，來介紹 @vue/test-utils 這款套件的常用功能（ex：getComponent、setValue、wrapper.vm、trigger button、Vue Router）","headline":"透過實際案例了解在 Vuetify（Vite \u0026 TypeScript）中如何運用 @vue/test-utils","image":{"@type":"ImageObject","height":599,"url":"https://deanlin.net/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-og.jpg","width":1148},"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"前端單元測試","url":"https://deanlin.net/series/frontend-testing/"}],"keywords":"Vuetify, Unit Testing, Vue Test Utils, TypeScript, Example","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202301/vue-test-utils-examples/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E9%80%8F%E9%81%8E%E5%AF%A6%E9%9A%9B%E6%A1%88%E4%BE%8B%E4%BA%86%E8%A7%A3%E5%9C%A8-vuetify-vite-typescript-%E4%B8%AD%E5%A6%82%E4%BD%95%E9%81%8B%E7%94%A8-vue-test-utils-bcbeecbfc33b"],"timeRequired":"PT6M","url":"https://deanlin.net/blog/202301/vue-test-utils-examples/","wordCount":2536},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202301/vue-test-utils-examples/","name":"透過實際案例了解在 Vuetify（Vite \u0026 TypeScript）中如何運用 @vue/test-utils","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils</h1>
+      <p class="article-lede">今天這篇文章，筆者會用一個簡易的「登入頁面」，來介紹 @vue/test-utils 這款套件的常用功能（ex：getComponent、setValue、wrapper.vm、trigger button、Vue Router）</p>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2023-01-19">2023.01.19</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 6 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・前端單元測試 <b>5</b>/ 5</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e3%84%a7%e5%be%9e%e6%b8%ac%e8%a9%a6%e7%9a%84%e8%a7%92%e5%ba%a6%e4%be%86%e8%a8%ad%e8%a8%88%e9%a0%81%e9%9d%a2%e8%a6%8f%e6%a0%bc">ㄧ、從測試的角度來設計頁面規格</a></li><li class="is-sub"><a href="#-%e5%9f%ba%e7%a4%8e%e5%85%83%e4%bb%b6%e5%8a%9f%e8%83%bd">➤ 基礎元件功能</a></li><li class="is-sub"><a href="#-%e6%b8%ac%e8%a9%a6%e9%8c%af%e8%aa%a4%e7%9a%84-emailpassword-%e6%83%85%e5%a2%83">➤ 測試錯誤的 Email、Password 情境</a></li><li class="is-sub"><a href="#-%e6%9c%83%e8%ae%93%e5%85%83%e4%bb%b6%e5%b1%ac%e6%80%a7%e6%94%b9%e8%ae%8a%e7%9a%84%e8%a1%8c%e7%82%ba">➤ 會讓元件屬性改變的行為</a></li><li class="is-sub"><a href="#-%e7%99%bb%e5%85%a5%e5%8a%9f%e8%83%bd">➤ 登入功能</a></li><li><a href="#%e4%ba%8c%e6%92%b0%e5%af%ab%e7%99%bb%e5%85%a5%e9%a0%81%e7%a8%8b%e5%bc%8f">二、撰寫登入頁程式</a></li><li><a href="#%e4%b8%89%e5%be%9e%e6%b8%ac%e8%a9%a6%e6%a1%88%e4%be%8b%e4%ba%86%e8%a7%a3-vuetest-utils-%e5%b8%b8%e7%94%a8%e7%9a%84%e5%8a%9f%e8%83%bd">三、從測試案例了解 @vue/test-utils 常用的功能</a></li><li class="is-sub"><a href="#-%e6%b8%ac%e8%a9%a6%e6%aa%94%e6%a1%88%e5%88%9d%e5%a7%8b%e8%a8%ad%e5%ae%9a">▶︎ 測試檔案初始設定</a></li><li class="is-sub"><a href="#-%e7%94%a8-get-%e6%89%be%e5%87%ba%e5%85%83%e7%b4%a0element%e4%b8%a6%e7%a2%ba%e8%aa%8d%e6%98%af%e6%9c%89%e9%a1%af%e7%a4%ba%e5%9c%a8%e7%95%ab%e9%9d%a2%e4%b8%8a%e7%9a%84isvisible">▶︎ 用 get 找出元素（element），並確認是有顯示在畫面上的（isVisible）</a></li><li class="is-sub"><a href="#-%e9%80%8f%e9%81%8e-getcomponent-%e5%8f%96%e5%87%ba%e5%85%83%e4%bb%b6%e4%b8%a6%e6%8c%87%e5%ae%9ainput%e4%be%86-setvalue">▶︎ 透過 getComponent 取出元件，並指定「input」來 setValue</a></li><li class="is-sub"><a href="#-%e5%9c%a8%e8%bc%b8%e5%85%a5%e6%a1%86%e8%bc%b8%e5%85%a5%e5%be%8c%e7%94%a8-wrappervmxxx-%e7%a2%ba%e5%ae%9a-data-%e7%9a%84%e6%9c%89%e6%88%90%e5%8a%9f%e5%af%ab%e5%85%a5">▶︎ 在輸入框輸入後，用 wrapper.vm.xxx 確定 data 的有成功寫入</a></li><li class="is-sub"><a href="#-%e5%8f%96%e5%be%97%e5%85%83%e7%b4%a0%e7%9a%84-attributes%e7%a2%ba%e8%aa%8d%e8%a8%ad%e5%ae%9a%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f">▶︎ 取得元素的 attributes，確認設定符合預期</a></li><li class="is-sub"><a href="#-%e6%a8%a1%e6%93%ac%e4%bd%bf%e7%94%a8%e8%80%85%e9%bb%9e%e6%93%8a%e8%bc%b8%e5%85%a5%e6%a1%86focus%e8%bc%b8%e5%85%a5%e6%96%87%e5%ad%97%e7%84%b6%e5%be%8c%e9%9b%a2%e9%96%8bblur%e7%9a%84%e5%8b%95%e4%bd%9c%e4%b8%a6%e7%a2%ba%e8%aa%8d%e6%93%8d%e4%bd%9c%e9%8c%af%e8%aa%a4%e6%99%82%e8%83%bd%e6%8d%95%e6%8d%89%e9%a0%90%e6%9c%9f%e7%9a%84-error-message">▶︎ 模擬使用者點擊輸入框（focus）輸入文字，然後離開（blur）的動作；並確認操作錯誤時，能捕捉預期的 error message</a></li><li class="is-sub"><a href="#-%e4%bd%bf%e7%94%a8%e8%80%85%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%b5%b1%e6%99%82%e5%85%83%e4%bb%b6%e7%9a%84-attributes-%e5%a6%82%e9%a0%90%e6%9c%9f%e6%94%b9%e8%ae%8aexemailpassword-%e5%a1%ab%e5%af%ab%e6%ad%a3%e7%a2%ba%e7%99%bb%e5%85%a5%e6%8c%89%e9%88%95-disabled-%e7%a7%bb%e9%99%a4">▶︎ 使用者操作系統時，元件的 attributes 如預期改變（ex：Email、Password 填寫正確，登入按鈕 Disabled 移除）</a></li><li class="is-sub"><a href="#-%e6%a8%a1%e6%93%ac%e4%bd%bf%e7%94%a8%e8%80%85-trigger-button-%e4%ba%8b%e4%bb%b6%e8%a7%80%e5%af%9f%e9%a0%81%e9%9d%a2%e6%98%af%e5%90%a6%e5%a6%82%e9%a0%90%e6%9c%9f%e8%b7%b3%e8%bd%89vue-router">▶︎ 模擬使用者 trigger button 事件，觀察頁面是否如預期跳轉（Vue Router）</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p><a href="/blog/202301/vuetify-vite-unit-testing/">上一篇文章中</a>，我們成功在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing。</p>
+<p>今天這篇文章，筆者會用一個簡易的「登入頁面」，來介紹 @vue/test-utils 這款套件的常用功能：</p>
+<ul>
+<li>用 <strong>get</strong> 找出元素（element）</li>
+<li>用 <strong>getComponent</strong> 找出元件（component）</li>
+<li>用 <strong>setValue</strong> 模擬使用者對元件（component）輸入值</li>
+<li>透過 <strong>wrapper.vm</strong> 取得 data 資訊</li>
+<li>取得元素（element）的 <strong>attributes</strong> 屬性</li>
+<li>模擬使用者點擊輸入框（<strong>focus</strong>）輸入文字，然後離開（<strong>blur</strong>）的動作</li>
+<li>當操作錯誤時，能捕捉預期的 <strong>error message</strong></li>
+<li>確認使用者操作系統時，元件的 <strong>attributes</strong> 如預期改變（ex： disabled、type）</li>
+<li>當元素採用 v-show 策略時，用 <strong>isVisible</strong> 進行判斷</li>
+<li>模擬使用者 <strong>trigger button</strong> 事件</li>
+<li>使用 <strong>Vue Router</strong> 時，頁面是否如預期跳轉</li>
+</ul>
+<p><img src="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-01.webp" srcset="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-01_hu_f38f48ae413b1552.webp 720w, /blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-01.webp 1148w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1148" height="599" alt="透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+ㄧ、從測試的角度來設計頁面規格
+二、撰寫登入頁程式
+三、從測試案例了解 @vue/test-utils 常用的功能
+  ▶︎ 測試檔案初始設定
+  ▶︎ 用 get 找出元素（element），並確認是有顯示在畫面上的（isVisible）
+  ▶︎ 透過 getComponent 取出元件，並指定「input」來 setValue
+  ▶︎ 在輸入框輸入後，用 wrapper.vm.xxx 確定 data 的有成功寫入
+  ▶︎ 取得元素的 attributes，確認設定符合預期
+  ▶︎ 模擬使用者點擊輸入框（focus）輸入文字，然後離開（blur）的動作
+  ▶︎ 使用者操作系統時，元件的 attributes 如預期改變
+  ▶︎ 模擬使用者 trigger button 事件，觀察頁面是否如預期跳轉（Vue Router）
+</code></pre><blockquote>
+<p><em>讀者可以直接到<a href="https://github.com/dean9703111/-vuetify-vite-ts-test-exmaples">筆者的 Github</a>，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。</em></p>
+</blockquote>
+<h2 id="ㄧ從測試的角度來設計頁面規格">ㄧ、從測試的角度來設計頁面規格<a class="h-anchor" href="#%e3%84%a7%e5%be%9e%e6%b8%ac%e8%a9%a6%e7%9a%84%e8%a7%92%e5%ba%a6%e4%be%86%e8%a8%ad%e8%a8%88%e9%a0%81%e9%9d%a2%e8%a6%8f%e6%a0%bc" aria-label="這個段落的連結"></a></h2>
+<p>在<a href="/blog/202301/frontend-testing-roadmap/">第一篇文章</a>有談到 TDD（Test-Driven Development），測試驅動開發。</p>
+<p>假使我們要設計一個登入頁，可以訂製如下規格：</p>
+<h3 id="-基礎元件功能">➤ 基礎元件功能<a class="h-anchor" href="#-%e5%9f%ba%e7%a4%8e%e5%85%83%e4%bb%b6%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>確認 email、password、LoginBtn 元素存在</li>
+<li>確認 Email 輸入框可以填資料</li>
+<li>確認 Password 輸入框可以填資料</li>
+<li>Email、Password 輸入後，data 對應的 formData 有存入相應的值</li>
+<li>預設 Password 輸入框的 type 為 password，不直接顯示</li>
+</ul>
+<h3 id="-測試錯誤的-emailpassword-情境">➤ 測試錯誤的 Email、Password 情境<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e9%8c%af%e8%aa%a4%e7%9a%84-emailpassword-%e6%83%85%e5%a2%83" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>當 Email 沒有填寫時，跳出 Required 的錯誤訊息</li>
+<li>當 Email 格式錯誤時，跳出相關錯誤訊息</li>
+<li>當 Password 沒有填寫時，跳出 Required 的錯誤訊息</li>
+<li>當 Password 字數不滿 8 位時，跳出相關錯誤訊息</li>
+</ul>
+<h3 id="-會讓元件屬性改變的行為">➤ 會讓元件屬性改變的行為<a class="h-anchor" href="#-%e6%9c%83%e8%ae%93%e5%85%83%e4%bb%b6%e5%b1%ac%e6%80%a7%e6%94%b9%e8%ae%8a%e7%9a%84%e8%a1%8c%e7%82%ba" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>當 Email、Password 未填寫時，登入按鈕為 Disabled</li>
+<li>當 Email、Password 格式錯誤時，登入按鈕為 Disabled</li>
+<li>當 Email、Password 格式正確時，登入按鈕可點擊</li>
+<li>點擊顯示 Password 的 icon 時，type 會轉換成 text</li>
+</ul>
+<h3 id="-登入功能">➤ 登入功能<a class="h-anchor" href="#-%e7%99%bb%e5%85%a5%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>輸入錯誤的帳號密碼，會彈出警視窗</li>
+<li>確認 Router 可以順利導向</li>
+</ul>
+<blockquote>
+<p>上面訂的規格，就是我們後續要測試的情境。</p>
+</blockquote>
+<hr>
+<h2 id="二撰寫登入頁程式">二、撰寫登入頁程式<a class="h-anchor" href="#%e4%ba%8c%e6%92%b0%e5%af%ab%e7%99%bb%e5%85%a5%e9%a0%81%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>在 views 資料夾下新增「Login.vue」來做登入頁，幾個重點說一下：</p>
+<ul>
+<li>使用 dataset（ex：data-test=”xxx”）來做標記，因為 id 或 class 通常都是因為其他用途而存在的，要是 coding 中不小心動到 id 或是 class 會造成測試不通過</li>
+<li>在 v-text-field 有設計「rules」來做校驗</li>
+<li>「valid」影響輸入按鈕是否能按，「pwshow」是密碼是否顯示，「loginFail」決定登入失敗的錯誤訊息是否顯示</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#7ee787">template</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#7ee787">div</span> class<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;d-flex align-center flex-column&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#7ee787">v-card</span> width<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;400&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#7ee787">v-container</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#7ee787">v-form</span> v-model<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;valid&#34;</span> lazy-validation&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#7ee787">v-alert</span>
+</span></span><span style="display:flex;"><span>            v-show<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;loginFail&#34;</span>
+</span></span><span style="display:flex;"><span>            type<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;error&#34;</span>
+</span></span><span style="display:flex;"><span>            class<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;mb-4&#34;</span>
+</span></span><span style="display:flex;"><span>            data-test<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;loginAlert&#34;</span>
+</span></span><span style="display:flex;"><span>          &gt;
+</span></span><span style="display:flex;"><span>            You are entering an incorrect email and/or password.
+</span></span><span style="display:flex;"><span>          &lt;/<span style="color:#7ee787">v-alert</span>&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#7ee787">v-text-field</span>
+</span></span><span style="display:flex;"><span>            v-model<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;formData.email&#34;</span>
+</span></span><span style="display:flex;"><span>            :rules<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;emailRules&#34;</span>
+</span></span><span style="display:flex;"><span>            label<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;Email&#34;</span>
+</span></span><span style="display:flex;"><span>            required
+</span></span><span style="display:flex;"><span>            data-test<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;email&#34;</span>
+</span></span><span style="display:flex;"><span>          &gt;&lt;/<span style="color:#7ee787">v-text-field</span>&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#7ee787">v-text-field</span>
+</span></span><span style="display:flex;"><span>            v-model<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;formData.password&#34;</span>
+</span></span><span style="display:flex;"><span>            :append-icon<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;pwShow ? &#39;mdi-eye&#39; : &#39;mdi-eye-off&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>            :rules<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;[rules.required, rules.min]&#34;</span>
+</span></span><span style="display:flex;"><span>            :type<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;pwShow ? &#39;text&#39; : &#39;password&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>            name<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;input-10-1&#34;</span>
+</span></span><span style="display:flex;"><span>            label<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;Password&#34;</span>
+</span></span><span style="display:flex;"><span>            hint<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;At least 8 characters&#34;</span>
+</span></span><span style="display:flex;"><span>            counter
+</span></span><span style="display:flex;"><span>            <span style="color:#f85149">@</span>click:append<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;pwShow = !pwShow&#34;</span>
+</span></span><span style="display:flex;"><span>            data-test<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;password&#34;</span>
+</span></span><span style="display:flex;"><span>          &gt;&lt;/<span style="color:#7ee787">v-text-field</span>&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#7ee787">v-spacer</span>&gt;&lt;/<span style="color:#7ee787">v-spacer</span>&gt;
+</span></span><span style="display:flex;"><span>          &lt;<span style="color:#7ee787">v-btn</span>
+</span></span><span style="display:flex;"><span>            x-large
+</span></span><span style="display:flex;"><span>            block
+</span></span><span style="display:flex;"><span>            :disabled<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;!valid&#34;</span>
+</span></span><span style="display:flex;"><span>            color<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;success&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f85149">@</span>click<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;login&#34;</span>
+</span></span><span style="display:flex;"><span>            data-test<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;loginBtn&#34;</span>
+</span></span><span style="display:flex;"><span>          &gt;
+</span></span><span style="display:flex;"><span>            Login
+</span></span><span style="display:flex;"><span>          &lt;/<span style="color:#7ee787">v-btn</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#7ee787">v-form</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;/<span style="color:#7ee787">v-container</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#7ee787">v-card</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#7ee787">div</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">template</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#7ee787">script</span> setup&gt;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { ref, reactive } from <span style="color:#a5d6ff">&#34;vue&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> router from <span style="color:#a5d6ff">&#34;@/router&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> valid <span style="color:#ff7b72;font-weight:bold">=</span> ref(<span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> pwShow <span style="color:#ff7b72;font-weight:bold">=</span> ref(<span style="color:#79c0ff">false</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> loginFail <span style="color:#ff7b72;font-weight:bold">=</span> ref(<span style="color:#79c0ff">false</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> formData <span style="color:#ff7b72;font-weight:bold">=</span> reactive({
+</span></span><span style="display:flex;"><span>  email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> emailRules <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>  (v) =&gt; <span style="color:#ff7b72;font-weight:bold">!!</span>v <span style="color:#ff7b72;font-weight:bold">||</span> <span style="color:#a5d6ff">&#34;Required&#34;</span>,
+</span></span><span style="display:flex;"><span>  (v) =&gt; <span style="color:#ff7b72;font-weight:bold">/</span>.<span style="color:#ff7b72;font-weight:bold">+</span><span style="color:#f85149">@</span>.<span style="color:#ff7b72;font-weight:bold">+</span><span style="color:#f85149">\</span>..<span style="color:#ff7b72;font-weight:bold">+</span><span style="color:#f85149">/.test(v) || &#34;E-mail must be valid&#34;,</span>
+</span></span><span style="display:flex;"><span>];
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> rules <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  required<span style="color:#ff7b72;font-weight:bold">:</span> (value) =&gt; <span style="color:#ff7b72;font-weight:bold">!!</span>value <span style="color:#ff7b72;font-weight:bold">||</span> <span style="color:#a5d6ff">&#34;Required&#34;</span>,
+</span></span><span style="display:flex;"><span>  min<span style="color:#ff7b72;font-weight:bold">:</span> (v) =&gt; (v <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> v.length <span style="color:#ff7b72;font-weight:bold">&gt;=</span> <span style="color:#a5d6ff">8</span>) <span style="color:#ff7b72;font-weight:bold">||</span> <span style="color:#a5d6ff">&#34;Min 8 characters&#34;</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> login <span style="color:#ff7b72;font-weight:bold">=</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 這邊只是為了方便理解，實際上應該要呼叫 api
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (
+</span></span><span style="display:flex;"><span>    formData.email <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;baoboa@mail.com&#34;</span> <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>    formData.password <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;baobaocute&#34;</span>
+</span></span><span style="display:flex;"><span>  ) {
+</span></span><span style="display:flex;"><span>    router.push(<span style="color:#a5d6ff">&#34;/home&#34;</span>);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>    loginFail.value <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">true</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">script</span>&gt;
+</span></span></code></pre></div><p>完成後在終端機輸入 <code>yarn dev</code>，然後進入網址：<a href="http://localhost:3000/">http://localhost:3000</a></p>
+<p><img src="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-02.webp" srcset="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-02_hu_8366c079aacf5a7d.webp 720w, /blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="586" alt="二、撰寫登入頁程式（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>我這邊有調整「src/router/index.ts」，將 Login 的 path 設定為「/」，讀者可以<a href="https://github.com/dean9703111/vuetify-vite-ts-test-exmaples/blob/master/src/router/index.ts">參考 Github</a>。</p>
+</blockquote>
+<hr>
+<h2 id="三從測試案例了解-vuetest-utils-常用的功能">三、從測試案例了解 @vue/test-utils 常用的功能<a class="h-anchor" href="#%e4%b8%89%e5%be%9e%e6%b8%ac%e8%a9%a6%e6%a1%88%e4%be%8b%e4%ba%86%e8%a7%a3-vuetest-utils-%e5%b8%b8%e7%94%a8%e7%9a%84%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>這邊會取幾個測試案例來做解說，完成的範例請參考<a href="https://github.com/dean9703111/-vuetify-vite-ts-test-exmaples">筆者的 Github</a>（順手點個 Star 會讓筆者會開心一整天）。</p>
+<h3 id="-測試檔案初始設定">▶︎ 測試檔案初始設定<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e6%aa%94%e6%a1%88%e5%88%9d%e5%a7%8b%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<p>我們在 views 資料夾下新增「test」資料夾，並新增「Login.spec.ts」的測試檔案：</p>
+<ul>
+<li>透過 import 引入我們會使用到的方法</li>
+<li>這邊透過 beforeEach 來初始化我們要測試 Login.vue</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { describe, it, expect, beforeEach, vi } from <span style="color:#a5d6ff">&#34;vitest&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { mount, VueWrapper } from <span style="color:#a5d6ff">&#34;@vue/test-utils&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> Login from <span style="color:#a5d6ff">&#34;../Login.vue&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> vuetify from <span style="color:#a5d6ff">&#34;@/plugins/vuetify&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> router from <span style="color:#a5d6ff">&#34;@/router&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> wrapper<span style="color:#ff7b72;font-weight:bold">:</span> VueWrapper<span style="color:#ff7b72;font-weight:bold">&lt;</span>any<span style="color:#ff7b72;font-weight:bold">&gt;</span>;
+</span></span><span style="display:flex;"><span>beforeEach(<span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  wrapper <span style="color:#ff7b72;font-weight:bold">=</span> mount(Login, {
+</span></span><span style="display:flex;"><span>    global<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>      plugins<span style="color:#ff7b72;font-weight:bold">:</span> [vuetify, router],
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-用-get-找出元素element並確認是有顯示在畫面上的isvisible">▶︎ 用 get 找出元素（element），並確認是有顯示在畫面上的（isVisible）<a class="h-anchor" href="#-%e7%94%a8-get-%e6%89%be%e5%87%ba%e5%85%83%e7%b4%a0element%e4%b8%a6%e7%a2%ba%e8%aa%8d%e6%98%af%e6%9c%89%e9%a1%af%e7%a4%ba%e5%9c%a8%e7%95%ab%e9%9d%a2%e4%b8%8a%e7%9a%84isvisible" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>find 也可以達到一樣的效果，但沒找到時並不會回傳錯誤訊息。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;確認 Email、Password、LoginBtn 元素存在&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  expect(wrapper.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>).isVisible()).toBe(<span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>  expect(wrapper.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#39;[data-test=&#34;password&#34;]&#39;</span>).isVisible()).toBe(<span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>  expect(wrapper.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#39;[data-test=&#34;loginBtn&#34;]&#39;</span>).isVisible()).toBe(<span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-透過-getcomponent-取出元件並指定input來-setvalue">▶︎ 透過 getComponent 取出元件，並指定「input」來 setValue<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-getcomponent-%e5%8f%96%e5%87%ba%e5%85%83%e4%bb%b6%e4%b8%a6%e6%8c%87%e5%ae%9ainput%e4%be%86-setvalue" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>因為 Vuetify 的 v-text-field 是 div 層，所以需要再透過 get 往下找到 input 這個元素。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;確認 Email 輸入框可以填資料&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> emailInput <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>).<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> emailInput.setValue(<span style="color:#a5d6ff">&#34;test@mail.com&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(emailInput.element.value).toBe(<span style="color:#a5d6ff">&#34;test@mail.com&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-在輸入框輸入後用-wrappervmxxx-確定-data-的有成功寫入">▶︎ 在輸入框輸入後，用 wrapper.vm.xxx 確定 data 的有成功寫入<a class="h-anchor" href="#-%e5%9c%a8%e8%bc%b8%e5%85%a5%e6%a1%86%e8%bc%b8%e5%85%a5%e5%be%8c%e7%94%a8-wrappervmxxx-%e7%a2%ba%e5%ae%9a-data-%e7%9a%84%e6%9c%89%e6%88%90%e5%8a%9f%e5%af%ab%e5%85%a5" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;Email、Password 輸入後，data 對應的 formData 有寫入相應的值&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> formData <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>    email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;test@mail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;qazwsx1234&#34;</span>,
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> emailInput <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>).<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> emailInput.setValue(formData.email);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> passwordInput <span style="color:#ff7b72;font-weight:bold">=</span> wrapper
+</span></span><span style="display:flex;"><span>    .getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;password&#34;]&#39;</span>)
+</span></span><span style="display:flex;"><span>    .<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> passwordInput.setValue(formData.password);
+</span></span><span style="display:flex;"><span>  expect(wrapper.vm.formData).toEqual(formData);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-取得元素的-attributes確認設定符合預期">▶︎ 取得元素的 attributes，確認設定符合預期<a class="h-anchor" href="#-%e5%8f%96%e5%be%97%e5%85%83%e7%b4%a0%e7%9a%84-attributes%e7%a2%ba%e8%aa%8d%e8%a8%ad%e5%ae%9a%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;預設 Password 輸入框的 type 為 password，不直接顯示&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> password <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;password&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  expect(password.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).attributes().<span style="color:#ff7b72">type</span>).toBe(<span style="color:#a5d6ff">&#34;password&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-模擬使用者點擊輸入框focus輸入文字然後離開blur的動作並確認操作錯誤時能捕捉預期的-error-message">▶︎ 模擬使用者點擊輸入框（focus）輸入文字，然後離開（blur）的動作；並確認操作錯誤時，能捕捉預期的 error message<a class="h-anchor" href="#-%e6%a8%a1%e6%93%ac%e4%bd%bf%e7%94%a8%e8%80%85%e9%bb%9e%e6%93%8a%e8%bc%b8%e5%85%a5%e6%a1%86focus%e8%bc%b8%e5%85%a5%e6%96%87%e5%ad%97%e7%84%b6%e5%be%8c%e9%9b%a2%e9%96%8bblur%e7%9a%84%e5%8b%95%e4%bd%9c%e4%b8%a6%e7%a2%ba%e8%aa%8d%e6%93%8d%e4%bd%9c%e9%8c%af%e8%aa%a4%e6%99%82%e8%83%bd%e6%8d%95%e6%8d%89%e9%a0%90%e6%9c%9f%e7%9a%84-error-message" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-03.webp" srcset="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-03_hu_ed735fb6fb21c2af.webp 720w, /blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-03.webp 1226w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1226" height="766" alt="︎ 模擬使用者點擊輸入框（focus）輸入文字，然後離開（blur）的動作；並確認操作錯誤時，能捕捉預期的 error message（圖 3）" loading="lazy" decoding="async"></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;當 Email 沒有填寫時，跳出 Required 的錯誤訊息&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> email <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;focus&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(<span style="color:#a5d6ff">&#34;123&#34;</span>); <span style="color:#8b949e;font-style:italic">//先隨便塞值
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(<span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;blur&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> emailErrorMsg <span style="color:#ff7b72;font-weight:bold">=</span> email.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;.v-messages__message&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(emailErrorMsg.text()).toEqual(<span style="color:#a5d6ff">&#34;Required&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-使用者操作系統時元件的-attributes-如預期改變exemailpassword-填寫正確登入按鈕-disabled-移除">▶︎ 使用者操作系統時，元件的 attributes 如預期改變（ex：Email、Password 填寫正確，登入按鈕 Disabled 移除）<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8%e8%80%85%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%b5%b1%e6%99%82%e5%85%83%e4%bb%b6%e7%9a%84-attributes-%e5%a6%82%e9%a0%90%e6%9c%9f%e6%94%b9%e8%ae%8aexemailpassword-%e5%a1%ab%e5%af%ab%e6%ad%a3%e7%a2%ba%e7%99%bb%e5%85%a5%e6%8c%89%e9%88%95-disabled-%e7%a7%bb%e9%99%a4" aria-label="這個段落的連結"></a></h3>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-04.webp" width="626" height="348" aria-label="︎ 使用者操作系統時，元件的 attributes 如預期改變（ex：Email、Password 填寫正確，登入按鈕 Disabled 移除）（圖 4）" data-gifv>
+    <source src="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-04.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;當 Email、Password 格式正確時，登入按鈕可點擊&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> loginBtn <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#39;[data-test=&#34;loginBtn&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  expect(loginBtn.attributes().disabled).toBeDefined();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> formData <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>    email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baoboa@mail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baobaocute&#34;</span>,
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> email <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;focus&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(formData.email);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;blur&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> password <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;password&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.trigger(<span style="color:#a5d6ff">&#34;focus&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(formData.password);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.trigger(<span style="color:#a5d6ff">&#34;blur&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  expect(loginBtn.attributes().disabled).toBeUndefined();
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><h3 id="-模擬使用者-trigger-button-事件觀察頁面是否如預期跳轉vue-router">▶︎ 模擬使用者 trigger button 事件，觀察頁面是否如預期跳轉（Vue Router）<a class="h-anchor" href="#-%e6%a8%a1%e6%93%ac%e4%bd%bf%e7%94%a8%e8%80%85-trigger-button-%e4%ba%8b%e4%bb%b6%e8%a7%80%e5%af%9f%e9%a0%81%e9%9d%a2%e6%98%af%e5%90%a6%e5%a6%82%e9%a0%90%e6%9c%9f%e8%b7%b3%e8%bd%89vue-router" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>it(<span style="color:#a5d6ff">&#34;確認 Router 可以順利導向&#34;</span>, <span style="color:#ff7b72">async</span> () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> formData <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>    email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baoboa@mail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baobaocute&#34;</span>,
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> email <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;email&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;focus&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(formData.email);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> email.trigger(<span style="color:#a5d6ff">&#34;blur&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> password <span style="color:#ff7b72;font-weight:bold">=</span> wrapper.getComponent(<span style="color:#a5d6ff">&#39;[data-test=&#34;password&#34;]&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.trigger(<span style="color:#a5d6ff">&#34;focus&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#34;input&#34;</span>).setValue(formData.password);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> password.trigger(<span style="color:#a5d6ff">&#34;blur&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 使用真實的 Router 測試時，若想要捕捉 Push 的行為，須透過 vi.spyOn 來模擬 router.push
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> spyPush <span style="color:#ff7b72;font-weight:bold">=</span> vi.spyOn(router, <span style="color:#a5d6ff">&#34;push&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> wrapper.<span style="color:#ff7b72">get</span>(<span style="color:#a5d6ff">&#39;[data-test=&#34;loginBtn&#34;]&#39;</span>).trigger(<span style="color:#a5d6ff">&#34;click&#34;</span>);
+</span></span><span style="display:flex;"><span>  expect(spyPush).toHaveBeenCalledTimes(<span style="color:#a5d6ff">1</span>);
+</span></span><span style="display:flex;"><span>  expect(spyPush).toHaveBeenCalledWith(<span style="color:#a5d6ff">&#34;/home&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>在文章的最後，筆者也放一下所有測試的結果圖（可透過套件 or 指令 <code>yarn test</code> 執行）：</p>
+<p><img src="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-05.webp" srcset="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-05_hu_52cbf5147e2516b.webp 720w, /blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-05.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1192" alt="︎ 模擬使用者 trigger button 事件，觀察頁面是否如預期跳轉（Vue Router）（圖 5）" loading="lazy" decoding="async"></p>
+<p>今天的文章就分享到這邊，我們下次再見～</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/2680ca82395e" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">單元測試系列文</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-card-01_hu_ef2384f40f02a8f4.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2023.01.19）</span><a href="https://medium.com/dean-lin/%E9%80%8F%E9%81%8E%E5%AF%A6%E9%9A%9B%E6%A1%88%E4%BE%8B%E4%BA%86%E8%A7%A3%E5%9C%A8-vuetify-vite-typescript-%E4%B8%AD%E5%A6%82%E4%BD%95%E9%81%8B%E7%94%A8-vue-test-utils-bcbeecbfc33b" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/vuetify/">Vuetify</a>
+            <a class="chip chip-hash" href="/tags/unit-testing/">Unit Testing</a>
+            <a class="chip chip-hash" href="/tags/vue-test-utils/">Vue Test Utils</a>
+            <a class="chip chip-hash" href="/tags/typescript/">TypeScript</a>
+            <a class="chip chip-hash" href="/tags/example/">Example</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202301%2Fvue-test-utils-examples%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202301%2Fvue-test-utils-examples%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202301/vue-test-utils-examples/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202301/vue-test-utils-examples/" data-title="透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/frontend-testing/">前端單元測試</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>5</b> 篇・共 5 篇</p>
+          </div>
+          <ol class="steps">
+            <li>
+              <a href="/blog/202301/frontend-testing-roadmap/"><span class="n">01</span><span>想幫前端專案導入測試框架？也許我的想法與學習地圖能給你一點方向</span></a>
+            </li>
+            <li>
+              <a href="/blog/202301/jest-unit-testing-typescript/"><span class="n">02</span><span>認識 Jest 測試框架，開始動手寫單元測試（TypeScript）</span></a>
+            </li>
+            <li>
+              <a href="/blog/202301/jest-advanced-mock-setup-teardown/"><span class="n">03</span><span>Jest 框架進階應用（describe、Setup and Teardown、Mock function）</span></a>
+            </li>
+            <li>
+              <a href="/blog/202301/vuetify-vite-unit-testing/"><span class="n">04</span><span>在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">05</span><span>透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+          </ol>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202301/vuetify-vite-unit-testing/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing</span></a>
+          <a class="next" href="/blog/202301/what-is-chatgpt/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">ChatGPT 是在夯什麼？一文帶你了解他的能力範圍，以及對我們有什麼實際幫助</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e3%84%a7%e5%be%9e%e6%b8%ac%e8%a9%a6%e7%9a%84%e8%a7%92%e5%ba%a6%e4%be%86%e8%a8%ad%e8%a8%88%e9%a0%81%e9%9d%a2%e8%a6%8f%e6%a0%bc">ㄧ、從測試的角度來設計頁面規格</a></li><li class="is-sub"><a href="#-%e5%9f%ba%e7%a4%8e%e5%85%83%e4%bb%b6%e5%8a%9f%e8%83%bd">➤ 基礎元件功能</a></li><li class="is-sub"><a href="#-%e6%b8%ac%e8%a9%a6%e9%8c%af%e8%aa%a4%e7%9a%84-emailpassword-%e6%83%85%e5%a2%83">➤ 測試錯誤的 Email、Password 情境</a></li><li class="is-sub"><a href="#-%e6%9c%83%e8%ae%93%e5%85%83%e4%bb%b6%e5%b1%ac%e6%80%a7%e6%94%b9%e8%ae%8a%e7%9a%84%e8%a1%8c%e7%82%ba">➤ 會讓元件屬性改變的行為</a></li><li class="is-sub"><a href="#-%e7%99%bb%e5%85%a5%e5%8a%9f%e8%83%bd">➤ 登入功能</a></li><li><a href="#%e4%ba%8c%e6%92%b0%e5%af%ab%e7%99%bb%e5%85%a5%e9%a0%81%e7%a8%8b%e5%bc%8f">二、撰寫登入頁程式</a></li><li><a href="#%e4%b8%89%e5%be%9e%e6%b8%ac%e8%a9%a6%e6%a1%88%e4%be%8b%e4%ba%86%e8%a7%a3-vuetest-utils-%e5%b8%b8%e7%94%a8%e7%9a%84%e5%8a%9f%e8%83%bd">三、從測試案例了解 @vue/test-utils 常用的功能</a></li><li class="is-sub"><a href="#-%e6%b8%ac%e8%a9%a6%e6%aa%94%e6%a1%88%e5%88%9d%e5%a7%8b%e8%a8%ad%e5%ae%9a">▶︎ 測試檔案初始設定</a></li><li class="is-sub"><a href="#-%e7%94%a8-get-%e6%89%be%e5%87%ba%e5%85%83%e7%b4%a0element%e4%b8%a6%e7%a2%ba%e8%aa%8d%e6%98%af%e6%9c%89%e9%a1%af%e7%a4%ba%e5%9c%a8%e7%95%ab%e9%9d%a2%e4%b8%8a%e7%9a%84isvisible">▶︎ 用 get 找出元素（element），並確認是有顯示在畫面上的（isVisible）</a></li><li class="is-sub"><a href="#-%e9%80%8f%e9%81%8e-getcomponent-%e5%8f%96%e5%87%ba%e5%85%83%e4%bb%b6%e4%b8%a6%e6%8c%87%e5%ae%9ainput%e4%be%86-setvalue">▶︎ 透過 getComponent 取出元件，並指定「input」來 setValue</a></li><li class="is-sub"><a href="#-%e5%9c%a8%e8%bc%b8%e5%85%a5%e6%a1%86%e8%bc%b8%e5%85%a5%e5%be%8c%e7%94%a8-wrappervmxxx-%e7%a2%ba%e5%ae%9a-data-%e7%9a%84%e6%9c%89%e6%88%90%e5%8a%9f%e5%af%ab%e5%85%a5">▶︎ 在輸入框輸入後，用 wrapper.vm.xxx 確定 data 的有成功寫入</a></li><li class="is-sub"><a href="#-%e5%8f%96%e5%be%97%e5%85%83%e7%b4%a0%e7%9a%84-attributes%e7%a2%ba%e8%aa%8d%e8%a8%ad%e5%ae%9a%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f">▶︎ 取得元素的 attributes，確認設定符合預期</a></li><li class="is-sub"><a href="#-%e6%a8%a1%e6%93%ac%e4%bd%bf%e7%94%a8%e8%80%85%e9%bb%9e%e6%93%8a%e8%bc%b8%e5%85%a5%e6%a1%86focus%e8%bc%b8%e5%85%a5%e6%96%87%e5%ad%97%e7%84%b6%e5%be%8c%e9%9b%a2%e9%96%8bblur%e7%9a%84%e5%8b%95%e4%bd%9c%e4%b8%a6%e7%a2%ba%e8%aa%8d%e6%93%8d%e4%bd%9c%e9%8c%af%e8%aa%a4%e6%99%82%e8%83%bd%e6%8d%95%e6%8d%89%e9%a0%90%e6%9c%9f%e7%9a%84-error-message">▶︎ 模擬使用者點擊輸入框（focus）輸入文字，然後離開（blur）的動作；並確認操作錯誤時，能捕捉預期的 error message</a></li><li class="is-sub"><a href="#-%e4%bd%bf%e7%94%a8%e8%80%85%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%b5%b1%e6%99%82%e5%85%83%e4%bb%b6%e7%9a%84-attributes-%e5%a6%82%e9%a0%90%e6%9c%9f%e6%94%b9%e8%ae%8aexemailpassword-%e5%a1%ab%e5%af%ab%e6%ad%a3%e7%a2%ba%e7%99%bb%e5%85%a5%e6%8c%89%e9%88%95-disabled-%e7%a7%bb%e9%99%a4">▶︎ 使用者操作系統時，元件的 attributes 如預期改變（ex：Email、Password 填寫正確，登入按鈕 Disabled 移除）</a></li><li class="is-sub"><a href="#-%e6%a8%a1%e6%93%ac%e4%bd%bf%e7%94%a8%e8%80%85-trigger-button-%e4%ba%8b%e4%bb%b6%e8%a7%80%e5%af%9f%e9%a0%81%e9%9d%a2%e6%98%af%e5%90%a6%e5%a6%82%e9%a0%90%e6%9c%9f%e8%b7%b3%e8%bd%89vue-router">▶︎ 模擬使用者 trigger button 事件，觀察頁面是否如預期跳轉（Vue Router）</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202301%2Fvue-test-utils-examples%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202301%2Fvue-test-utils-examples%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202301/vue-test-utils-examples/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202301/vue-test-utils-examples/" data-title="透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADQAwCdASoYAA0APw1oqEemIyIYBABjEMT0gAA1dUVmIYIdrEzRgAAA/vDcQTbYxxJE4&#43;xi9BOn/AYUBfikZksr7b7h0HBG&#43;MOdJyrnHiFkaJ5T5/GZ3DTO4VuyuiJaOgAAAA==" alt="" width="24" height="13"><img src="/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01_hu_e4dae2cb277358e2.webp" srcset="/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01_hu_28204e60aba5c7a1.webp 240w, /blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01_hu_c207ef0464f27634.webp 480w, /blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01_hu_122f0be8dd61d3de.webp 800w, /blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01_hu_e4dae2cb277358e2.webp 1148w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1148" height="598" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/frontend-testing/">前端單元測試</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/vuetify-vite-unit-testing/">在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing</a></h3>
+    <p class="card-desc">這篇文章會先帶大家建立 Vuetify 的初始環境（Vue3 & Vite & TypeScript），並導入「Vue Test Utils」這款測試工具。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-19">2023.01.19</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAACQBACdASoYAA0APw1mp0emIqGYBABjEMTyAE6ZQAHr8Z/DZIgP84tTjf2Y5MAA/tum0rfdz87dbuaaQ7KGaSfWJOwKroXwvGOag&#43;LjcoWtYE6OJlCBZiziRgPbQ6HDPrFFPUzI&#43;N55&#43;z6QPrnSBwEfkITk/NSllzP0cXZJU4AAAA==" alt="" width="24" height="13"><img src="/blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_5c72c7a3b350bf1.webp" srcset="/blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_2bc9ca599af2fd6b.webp 240w, /blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_6dc10f3cc59770b8.webp 480w, /blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_729125b30fe63eb2.webp 800w, /blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_5c72c7a3b350bf1.webp 1150w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1150" height="602" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/frontend-testing/">前端單元測試</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/frontend-testing-roadmap/">想幫前端專案導入測試框架？也許我的想法與學習地圖能給你一點方向</a></h3>
+    <p class="card-desc">筆者自首，過去我只撰寫後端測試，總是忽略前端測試的重要性。 當初會這樣，是因為經手的專案規格變動頻繁，感覺測試寫完沒多久就要棄用；但近期與業界的朋友聊天時，他們跟我強調了 TDD（Test-Driven Development），也就是「測試驅動開發」的概念。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-19">2023.01.19</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAAAQBACdASoYAAwAPw1qqEgmIyIYBABjEMT0gGJsE5sOwd73TgPCSxKnOAD&#43;y&#43;WZf0sBryPAoKGy/J&#43;Y8qquAxxlUYVvFv&#43;Yd/rlQQ1vM&#43;w55PJE5PtkCQ/Fe6UOOzTiYosCXzTKvCFv78lgAAA=" alt="" width="24" height="12"><img src="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-01_hu_cfdf06058cc85857.webp" srcset="/blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-01_hu_ae1f5ef7b7f9ce74.webp 240w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-01_hu_c315566546b3cb8e.webp 480w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-01_hu_add36cc8858a6544.webp 800w, /blog/202301/jest-advanced-mock-setup-teardown/images/jest-advanced-mock-setup-teardown-01_hu_cfdf06058cc85857.webp 1150w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1150" height="597" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/frontend-testing/">前端單元測試</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/jest-advanced-mock-setup-teardown/">Jest 框架進階應用（describe、Setup and Teardown、Mock function）</a></h3>
+    <p class="card-desc">一個功能底下可能有很多函式，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-19">2023.01.19</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>5 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202301/vue-test-utils-examples/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

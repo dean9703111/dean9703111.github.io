@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Distroless｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/distroless/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 01 Sep 2022 18:34:28 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/distroless/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>實測有效！手把手帶你將 Docker Image 體積減少 90%</title>
+      <link>https://deanlin.net/blog/202209/reduce-docker-image-size/</link>
+      <pubDate>Thu, 01 Sep 2022 18:34:28 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202209/reduce-docker-image-size/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>Docker Image 體積越大，那部署要花的時間就越長；假如每個版本都有好幾 GB，那並不是一個理想的狀態；因此筆者開始動手實作，想看看到底能將 Docker Image 的體積縮小多少！</description>
+      <content:encoded><![CDATA[<p>Docker Image 體積越大，那部署要花的時間就越長；假如每個版本都有好幾 GB，那並不是一個理想的狀態；因此筆者開始動手實作，想看看到底能將 Docker Image 的體積縮小多少！</p>
+<p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-01.webp" width="1400" height="734" alt="實測有效！手把手帶你將 Docker Image 體積減少 90%（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+ㄧ、先初始化一個簡易的 Node.js 專案
+二、撰寫 Dockefile，了解優化前體積有多大
+三、使用 Node.js 的 Alpine 版本
+四、正式環境下，不需要安裝 devDependencies 的套件
+五、如果我們只使用最基礎的 Alpine，然後 Node.js 自己安裝呢？
+六、採用多階段構建，取用上個階段產生的結果
+七、使用 Distroless 讓正式環境更加安全
+</code></pre><h2 id="ㄧ先初始化一個簡易的-nodejs-專案">ㄧ、先初始化一個簡易的 Node.js 專案<a class="h-anchor" href="#%e3%84%a7%e5%85%88%e5%88%9d%e5%a7%8b%e5%8c%96%e4%b8%80%e5%80%8b%e7%b0%a1%e6%98%93%e7%9a%84-nodejs-%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立資料夾</span>
+</span></span><span style="display:flex;"><span>mkdir docker-test
+</span></span><span style="display:flex;"><span>cd docker-test
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 初始化應用</span>
+</span></span><span style="display:flex;"><span>npm init
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝 express</span>
+</span></span><span style="display:flex;"><span>npm install express --save
+</span></span></code></pre></div><p>初始化後的 package.json 大概會長這樣（scripts 的 start 筆者有微調）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;name&#34;</span>: <span style="color:#a5d6ff">&#34;docker-test&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;version&#34;</span>: <span style="color:#a5d6ff">&#34;1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;description&#34;</span>: <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;main&#34;</span>: <span style="color:#a5d6ff">&#34;index.js&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;scripts&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;start&#34;</span>: <span style="color:#a5d6ff">&#34;node index.js&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;author&#34;</span>: <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;license&#34;</span>: <span style="color:#a5d6ff">&#34;ISC&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;dependencies&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;express&#34;</span>: <span style="color:#a5d6ff">&#34;^4.18.1&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>接著我們新增一個「index.js」的檔案，並貼上如下程式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express()
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> port <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">3000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.get(<span style="color:#a5d6ff">&#39;/&#39;</span>, (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  res.send(<span style="color:#a5d6ff">&#39;Hello World!&#39;</span>)
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(port, () =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">`Example app listening on port </span><span style="color:#a5d6ff">${</span>port<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><p>為了實測不同情境打包的影響，我們安裝一個儲存在「devDependencies」的套件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm install eslint -save-dev
+</span></span></code></pre></div><hr>
+<h2 id="二撰寫-dockefile了解優化前體積有多大">二、撰寫 Dockefile，了解優化前體積有多大<a class="h-anchor" href="#%e4%ba%8c%e6%92%b0%e5%af%ab-dockefile%e4%ba%86%e8%a7%a3%e5%84%aa%e5%8c%96%e5%89%8d%e9%ab%94%e7%a9%8d%e6%9c%89%e5%a4%9a%e5%a4%a7" aria-label="這個段落的連結"></a></h2>
+<p>這邊我們就先用最簡易的方式寫 Dockerfile：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 運行的資料夾</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 移動所需檔案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝套件</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 提供服務的接口</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;npm&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p>接下來輸入 <code>docker build -t docker-test .</code> 就可以建立 Docker Image（docker-test 是名稱）。</p>
+<p>然後輸入 <code>docker images</code> ，確認剛剛建立的 Docker Image 是否存在；從下圖我們可以看到<strong>優化前的 Image 大小高達 1.01GB</strong>。</p>
+<p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-02.webp" width="1400" height="123" alt="二、撰寫 Dockefile，了解優化前體積有多大（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="三使用-nodejs-的-alpine-版本">三、使用 Node.js 的 Alpine 版本<a class="h-anchor" href="#%e4%b8%89%e4%bd%bf%e7%94%a8-nodejs-%e7%9a%84-alpine-%e7%89%88%e6%9c%ac" aria-label="這個段落的連結"></a></h2>
+<p>Node.js Alpine 版本的 Image 體積會遠小於完整的 Node.js Image，現在我們修改一下 Dockerfile：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 使用 Alpine 版本 </span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node:alpine</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;npm&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p>輸入 <code>docker build -t docker-test-alpine .</code> 來建立 Image，完成後輸入 <code>docker images</code> 看看 build 出來的 Image 體積是否改變。</p>
+<p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-03.webp" width="1400" height="168" alt="三、使用 Node.js 的 Alpine 版本（圖 3）" loading="lazy" decoding="async"></p>
+<p>從上圖我們可以看到，Alpine 的版本讓它的體積從 1.01GB 下降到了 189MB，整整少了 812MB！</p>
+<hr>
+<h2 id="四正式環境下不需要安裝-devdependencies-的套件">四、正式環境下，不需要安裝 devDependencies 的套件<a class="h-anchor" href="#%e5%9b%9b%e6%ad%a3%e5%bc%8f%e7%92%b0%e5%a2%83%e4%b8%8b%e4%b8%8d%e9%9c%80%e8%a6%81%e5%ae%89%e8%a3%9d-devdependencies-%e7%9a%84%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>通常一個專案會安裝一些 devDependencies 的套件，但這些套件只需要在開發環境中輔助使用，在正式環境下並沒有安裝的必要。</p>
+<p>我們調整一下 Dockerfile 安裝套件的指令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node:alpine</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 只安裝 dependencies 的套件</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install --production<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;npm&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-04.webp" width="1400" height="210" alt="四、正式環境下，不需要安裝 devDependencies 的套件（圖 4）" loading="lazy" decoding="async"></p>
+<p>在上圖我們可以看到體積又變小了，果然還有優化的空間（少了 12MB）。</p>
+<hr>
+<h2 id="五如果我們只使用最基礎的-alpine然後-nodejs-自己安裝呢">五、如果我們只使用最基礎的 Alpine，然後 Node.js 自己安裝呢？<a class="h-anchor" href="#%e4%ba%94%e5%a6%82%e6%9e%9c%e6%88%91%e5%80%91%e5%8f%aa%e4%bd%bf%e7%94%a8%e6%9c%80%e5%9f%ba%e7%a4%8e%e7%9a%84-alpine%e7%84%b6%e5%be%8c-nodejs-%e8%87%aa%e5%b7%b1%e5%ae%89%e8%a3%9d%e5%91%a2" aria-label="這個段落的連結"></a></h2>
+<p>剛剛我們使用的是 Node.js 的 Alpine 版本，如果更極端一點，只使用最基礎的 Alpine，然後自己額外安裝 Node.js 會有什麼樣的結果呢？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 使用最基礎的 Alpine</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">alpine:latest</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 自己安裝 Node.js &amp; npm</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> apk add --no-cache --update nodejs npm<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install --production<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;npm&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-05.webp" width="1400" height="247" alt="五、如果我們只使用最基礎的 Alpine，然後 Node.js 自己安裝呢？（圖 5）" loading="lazy" decoding="async"></p>
+<p>沒想到這個操作把整包 Image 的體積壓的更低了（從 177MB 降到 64.7MB）。</p>
+<hr>
+<h2 id="六採用多階段構建取用上個階段產生的結果">六、採用多階段構建，取用上個階段產生的結果<a class="h-anchor" href="#%e5%85%ad%e6%8e%a1%e7%94%a8%e5%a4%9a%e9%9a%8e%e6%ae%b5%e6%a7%8b%e5%bb%ba%e5%8f%96%e7%94%a8%e4%b8%8a%e5%80%8b%e9%9a%8e%e6%ae%b5%e7%94%a2%e7%94%9f%e7%9a%84%e7%b5%90%e6%9e%9c" aria-label="這個段落的連結"></a></h2>
+<p>Docker Image 你可以先想想成疊疊樂，在這之中多執行一次「RUN」就會多疊一層；而在 Docker 的世界中可以允許有多個「FROM」，但只會取用最後一個「FROM」所建立的 Image。</p>
+<p>在了解上面的概念後，我們就可以把「安裝」的步驟放在第一個「FROM」裡面執行，然後第二個 FROM 就只是單純地把第一層安裝好的結果搬過去即可，用 Dockerfile 實現會長這樣：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">alpine:latest</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">AS</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">builder</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> apk add --no-cache --update nodejs npm<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 先完成安裝</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install --production<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">alpine:latest</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> apk add --no-cache --update nodejs npm<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 把安裝好的全部移過去</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> --from<span style="color:#ff7b72;font-weight:bold">=</span>builder /usr/src/app .<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;npm&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-06.webp" width="1400" height="267" alt="六、採用多階段構建，取用上個階段產生的結果（圖 6）" loading="lazy" decoding="async"></p>
+<p>經過這麼多的努力後，我們的 Docker Image 也順利從 1.01GB 下降到 58.9MB，<strong>減少了超過 94% 的體積</strong>，並且可以明顯感受到 build Image 的速度上升不少。</p>
+<hr>
+<h2 id="七使用-distroless-讓正式環境更加安全">七、使用 Distroless 讓正式環境更加安全<a class="h-anchor" href="#%e4%b8%83%e4%bd%bf%e7%94%a8-distroless-%e8%ae%93%e6%ad%a3%e5%bc%8f%e7%92%b0%e5%a2%83%e6%9b%b4%e5%8a%a0%e5%ae%89%e5%85%a8" aria-label="這個段落的連結"></a></h2>
+<p>儘管上面我們已經使用 Alpine 讓 Docker Image 變得這麼小，但在文章的最後我想再提供讀者另一個選擇， 那就是「Distroless」！</p>
+<p>先讓我們用它來 Build 一個 Docker Image。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">AS</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">builder</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> package.json index.js ./<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> npm install --production<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 改成用 Distroless</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">gcr.io/distroless/nodejs</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/usr/src/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> --from<span style="color:#ff7b72;font-weight:bold">=</span>builder /usr/src/app .<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [<span style="color:#a5d6ff">&#34;index.js&#34;</span>]<span style="color:#f85149">
+</span></span></span></code></pre></div><p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-07.webp" width="1400" height="312" alt="七、使用 Distroless 讓正式環境更加安全（圖 7）" loading="lazy" decoding="async"></p>
+<p>如果單純從結果來看，它在體積上(162MB)並沒有什麼優勢，但如果你嘗試用 Shell 打開它，會發現 Shell 根本不存在！換而言之，它的安全性相對更高，可以考慮使用它來做正式環境的部署。</p>
+<p><img src="https://deanlin.net/blog/202209/reduce-docker-image-size/images/reduce-docker-image-size-08.webp" width="1400" height="164" alt="七、使用 Distroless 讓正式環境更加安全（圖 8）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>以上就是筆者優化 Docker Image 體積的步驟啦！如果文中有表達不清晰、錯誤的部分再煩請告知，感謝您的閱讀。</p>
+</blockquote>
+<p>參考資源：<a href="https://cnodejs.org/topic/5cada94fdad66d658e40782c">Node.js docker 鏡像體積優化實踐</a>、<a href="https://www.techug.com/post/3-simple-tricks-for-smaller-docker-images/">三個技巧，將Docker鏡像體積減小90%</a></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

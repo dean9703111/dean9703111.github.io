@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Seeder｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/seeder/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Fri, 13 May 2022 15:14:28 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/seeder/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>初探 sequelize，在 Node.js 快速建立 Migration、Seeder（ MySQL）</title>
+      <link>https://deanlin.net/blog/202205/sequelize-migration-seeder/</link>
+      <pubDate>Fri, 13 May 2022 15:14:28 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202205/sequelize-migration-seeder/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>最近在尋找 Node.js 裡面方便操作 Migration、Seeder 的套件，逛著逛著發現 sequelize 在 GitHub 上擁有超高人氣；抱著踩雷的心態來嘗試，於是便寫了這篇 sequelize 的筆記，希望可以幫助到第一次使用 sequelize 的朋友們。</description>
+      <content:encoded><![CDATA[<p>最近在尋找 Node.js 裡面方便操作 Migration、Seeder 的套件，逛著逛著發現 sequelize 在 GitHub 上擁有超高人氣；抱著踩雷的心態來嘗試，於是便寫了這篇 sequelize 的筆記，希望可以幫助到第一次使用 sequelize 的朋友們。</p>
+<ul>
+<li><strong>我能學到什麼</strong> 🤔：sequelize 基礎使用方式。</li>
+<li><strong>我能學會嗎</strong> 🤔：筆者從零開始建立專案，並附上詳細的指令與說明，相信大家都能學得開心。</li>
+<li><strong>文章目標</strong> 🤩：建立一個有使用者（user）、訂單（order）、購買貨物（item）的資料庫，設計 Table 彼此的關連性，透過 Query 確認資料。</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-01.webp" width="1238" height="658" alt="初探 sequelize，在 Node.js 快速建立 Migration、Seeder（ MySQL）（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+一、初始化專案
+二、透過 Config 建立 DB
+三、用 Migration 建立 Table
+四、用 Seeder 建立假資料(Dummy Data)
+五、簡易 Query
+</code></pre><blockquote>
+<p>大家也可以<a href="https://github.com/dean9703111/sequelize-mysql-migration-seeder">直接 Clone 筆者 GitHub 上的專案</a>來了解喔。（如果順便按個 Star更好😀）</p>
+</blockquote>
+<h2 id="ㄧ初始化專案">ㄧ、初始化專案<a class="h-anchor" href="#%e3%84%a7%e5%88%9d%e5%a7%8b%e5%8c%96%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：建立專案資料夾</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir sequelize-demo <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> cd  sequelize-demo
+</span></span><span style="display:flex;"><span>npm init
+</span></span></code></pre></div><p><strong>STEP 2</strong>：安裝 sequelize</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm install -g sequelize-cli
+</span></span><span style="display:flex;"><span>npm install --save sequelize
+</span></span></code></pre></div><p><strong>STEP 3</strong>：安裝你想使用的 DB（本篇文章以 MySQL 為範例）</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm install --save mysql2 <span style="color:#8b949e;font-style:italic">#本篇文章</span>
+</span></span><span style="display:flex;"><span>npm install --save pg pg-hstore <span style="color:#8b949e;font-style:italic"># Postgres</span>
+</span></span><span style="display:flex;"><span>npm install --save mariadb
+</span></span><span style="display:flex;"><span>npm install --save sqlite3
+</span></span><span style="display:flex;"><span>npm install --save tedious <span style="color:#8b949e;font-style:italic"># Microsoft SQL Server</span>
+</span></span></code></pre></div><hr>
+<h2 id="二透過-config-建立-db">二、透過 Config 建立 DB<a class="h-anchor" href="#%e4%ba%8c%e9%80%8f%e9%81%8e-config-%e5%bb%ba%e7%ab%8b-db" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：用指令初始化相關設定檔</p>
+<pre tabindex="0"><code>sequelize init
+</code></pre><p><strong>STEP 2</strong>：調整 sequelize 的 <code>config/config.json</code> 檔</p>
+<p>預設使用的環境都是<code>development</code>，記得調整成自己的 DB 登入參數</p>
+<pre tabindex="0"><code>&#34;development&#34;: {
+    &#34;username&#34;: &#34;root&#34;,
+    &#34;password&#34;: &#34;baobaoverycute&#34;,
+    &#34;database&#34;: &#34;sequelize_demo&#34;,
+    &#34;host&#34;: &#34;127.0.0.1&#34;,
+    &#34;dialect&#34;: &#34;mysql&#34;
+  },
+</code></pre><p><strong>STEP 3</strong>：依照剛剛設定的 <code>config/config.json</code> 來建立 DB</p>
+<pre tabindex="0"><code>sequelize db:create
+</code></pre><p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-02.webp" width="1400" height="299" alt="二、透過 Config 建立 DB（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>如果想要移除該 DB，可透過指令： <code>sequelize db:drop</code></p>
+</blockquote>
+<hr>
+<h2 id="三用-migration-建立-table">三、用 Migration 建立 Table<a class="h-anchor" href="#%e4%b8%89%e7%94%a8-migration-%e5%bb%ba%e7%ab%8b-table" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：新增所需 Tables &amp; 基礎欄位</p>
+<p>根據文章目標，我們需要建立 3 個 Tables：使用者（user）、訂單（order）、購買貨物（item）</p>
+<pre tabindex="0"><code>sequelize model:generate --name user --attributes name:string,mail:string
+sequelize model:generate --name order --attributes user_id:integer,total_price:integer
+sequelize model:generate --name item --attributes order_id:integer,price:integer
+</code></pre><blockquote>
+<p>如果沒有填寫「attributes」的參數會無法建立 Table。</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-03.webp" width="1400" height="318" alt="三、用 Migration 建立 Table（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>：前往 migrations 的資料夾，設計 Table 間的關聯性</p>
+<p>調整 order Table，建立 user_id 與 user 的關聯性（一個 user 會對應到多筆 order）</p>
+<pre tabindex="0"><code>user_id: {
+    type: Sequelize.INTEGER,
+    references: {
+        model: &#39;users&#39;,
+        key: &#39;id&#39;
+    },
+},
+</code></pre><p>調整 item Table，建立 order_id 與 item 的關聯性（一個 order 會對應到多筆 item）</p>
+<pre tabindex="0"><code>oder_id: {
+    type: Sequelize.INTEGER,
+    references: {
+        model: &#39;orders&#39;,
+        key: &#39;id&#39;
+    },
+},
+</code></pre><p><strong>STEP 3</strong>：修改完成之後，就可以下指令建立剛剛設定的 Table 啦～</p>
+<pre tabindex="0"><code>sequelize db:migrate
+</code></pre><p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-04.webp" width="1400" height="546" alt="三、用 Migration 建立 Table（圖 4）" loading="lazy" decoding="async"></p>
+<p>下圖是用 MySQLWorkbench 產生的 ER Diagram</p>
+<p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-05.webp" width="1400" height="1022" alt="三、用 Migration 建立 Table（圖 5）" loading="lazy" decoding="async"></p>
+<p>如果想要回溯 migration 可用如下指令：</p>
+<ul>
+<li>退一個版本：<code>sequelize db:migrate:undo</code></li>
+<li>退到初始狀態：<code>sequelize db:migrate:undo:all</code></li>
+<li>退到指定版本：<code>sequelize db:migrate:undo:all &ndash;to XXXXXXXXXXXXXX-create-user.js</code></li>
+</ul>
+<hr>
+<h2 id="四用-seeder-建立假資料dummy-data">四、用 Seeder 建立假資料(Dummy Data)<a class="h-anchor" href="#%e5%9b%9b%e7%94%a8-seeder-%e5%bb%ba%e7%ab%8b%e5%81%87%e8%b3%87%e6%96%99dummy-data" aria-label="這個段落的連結"></a></h2>
+<p><strong>目標</strong>：建立 100 個使用者（user），每個使用者有 10 筆訂單（order），每筆訂單下面有 10 個貨物（item）。</p>
+<p><strong>STEP 1</strong>：先建立 Seeder 檔案</p>
+<pre tabindex="0"><code>sequelize seed:generate --name demo-user
+sequelize seed:generate --name demo-order
+sequelize seed:generate --name demo-item
+</code></pre><p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-06.webp" width="1400" height="313" alt="四、用 Seeder 建立假資料(Dummy Data)（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>：建立各自 Seeder 資料產生的邏輯，下面以 order 舉例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a5d6ff">&#34;use strict&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>module.exports <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">async</span> up(queryInterface, Sequelize) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">function</span> getRandomInt(max) {
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">return</span> Math.floor(Math.random() <span style="color:#ff7b72;font-weight:bold">*</span> max);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 100 個使用者，每個使用者有 10 筆訂單（order）
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">var</span> orderArray <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">let</span> i <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">1</span>; i <span style="color:#ff7b72;font-weight:bold">&lt;=</span> <span style="color:#a5d6ff">100</span>; i<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">let</span> j <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">1</span>; j <span style="color:#ff7b72;font-weight:bold">&lt;=</span> <span style="color:#a5d6ff">10</span>; j<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> order <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>          user_id<span style="color:#ff7b72;font-weight:bold">:</span> i,
+</span></span><span style="display:flex;"><span>          total_price<span style="color:#ff7b72;font-weight:bold">:</span> Math.floor(Math.random() <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>),
+</span></span><span style="display:flex;"><span>          createdAt<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#ff7b72">new</span> Date(),
+</span></span><span style="display:flex;"><span>          updatedAt<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#ff7b72">new</span> Date(),
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>        orderArray.push(order);
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> queryInterface.bulkInsert(<span style="color:#a5d6ff">&#34;Orders&#34;</span>, orderArray);
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">async</span> down(queryInterface, Sequelize) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> queryInterface.bulkDelete(<span style="color:#a5d6ff">&#34;Orders&#34;</span>, <span style="color:#79c0ff">null</span>, {});
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/1c59dbb3e507a3de6c6bfab4e3ead327" rel="noopener">sequelize-order.js</a>（GitHub Gist）</p>
+<p><strong>STEP 3</strong>：執行 Seeder</p>
+<p>執行單個 Seeder</p>
+<pre tabindex="0"><code>sequelize db:seed --seed my_seeder_file.js
+</code></pre><p>執行全部 Seeder</p>
+<pre tabindex="0"><code>sequelize db:seed:all
+</code></pre><p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-07.webp" width="1400" height="560" alt="四、用 Seeder 建立假資料(Dummy Data)（圖 7）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 4</strong>：前往 DB ，確認資料是否有正確寫入：</p>
+<p>建立 100 個使用者（users）。</p>
+<p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-08.webp" width="1308" height="658" alt="四、用 Seeder 建立假資料(Dummy Data)（圖 8）" loading="lazy" decoding="async"></p>
+<p>建立 100 個使用者（users），每個使用者有 10 筆訂單（orders），共 1000 筆資料。</p>
+<p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-09.webp" width="1308" height="658" alt="四、用 Seeder 建立假資料(Dummy Data)（圖 9）" loading="lazy" decoding="async"></p>
+<p>建立 100 個使用者（users），每個使用者有 10 筆訂單（orders），每筆訂單下面有 10 個貨物（items），共 10000 筆資料。</p>
+<p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-10.webp" width="1308" height="700" alt="四、用 Seeder 建立假資料(Dummy Data)（圖 10）" loading="lazy" decoding="async"></p>
+<p>取消執行的 Seeder 可用如下指令：</p>
+<ul>
+<li>取消最近的 Seeder：<code>sequelize db:seed:undo</code></li>
+<li>取消指定的 Seeder：<code>sequelize db:seed:undo &ndash;seed my_seeder_file.js</code></li>
+<li>取消全部 Seeder：<code>sequelize db:seed:undo:all</code></li>
+</ul>
+<hr>
+<h2 id="五簡易-query">五、簡易 Query<a class="h-anchor" href="#%e4%ba%94%e7%b0%a1%e6%98%93-query" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：在專案資料夾下建立一個 <code>row-queries-exmaple.js</code> 的檔案。</p>
+<p><strong>STEP 2</strong>：將如下程式複製貼上，這是一個簡單 Raw Queries；會找出 price 低於 50 的 5 筆購買貨物，以及對應的使用者。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { sequelize } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./models&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { QueryTypes } <span style="color:#ff7b72;font-weight:bold">=</span> sequelize;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> rawQueries() {
+</span></span><span style="display:flex;"><span>  console.time(<span style="color:#a5d6ff">&#34;rawQueries&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> sequelize.query(<span style="color:#a5d6ff">&#34;SELECT users.name, items.price FROM users\
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">         LEFT JOIN orders ON orders.user_id = users.id\
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">         LEFT JOIN items ON items.order_id = orders.id\
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">         WHERE items.price &lt; 50 LIMIT 5&#34;</span>, { type<span style="color:#ff7b72;font-weight:bold">:</span> QueryTypes.SELECT });
+</span></span><span style="display:flex;"><span>  console.log(JSON.stringify(results, <span style="color:#79c0ff">null</span>, <span style="color:#a5d6ff">2</span>));
+</span></span><span style="display:flex;"><span>  console.timeEnd(<span style="color:#a5d6ff">&#34;rawQueries&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>rawQueries();
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/78f3d7405983a6f5888550b67bf8dbee" rel="noopener">sequelize-raw-queries.js</a>（GitHub Gist）</p>
+<p><strong>STEP 3</strong>：在終端機輸入：<code>node row-queries-exmaple.js</code></p>
+<p>下圖即可看到看到搜尋結果、程式執行時間。</p>
+<p><img src="https://deanlin.net/blog/202205/sequelize-migration-seeder/images/sequelize-migration-seeder-11.webp" width="1400" height="962" alt="五、簡易 Query（圖 11）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>如果你想要知道 Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能（performance）上的差異，<a href="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/">可以參考這篇文章</a>。</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,991 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Database｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/database/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Sat, 25 May 2024 17:55:38 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/database/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MongoDB 與 MySQL 建立 Index 對 Read/Write 的效能影響</title>
+      <link>https://deanlin.net/blog/202405/mongodb-vs-mysql-index-performance/</link>
+      <pubDate>Sat, 25 May 2024 17:55:38 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202405/mongodb-vs-mysql-index-performance/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>儘管網路上有許多資料顯示 MongoDB 建立 Index 後的效能比 MySQL 好，但這篇文章我想要透過程式來驗證兩者的寫入、讀取、資料大小差異。</description>
+      <content:encoded><![CDATA[<p><a href="https://deanlin.net/blog/202405/database-bottlenecks/">上篇文章</a>分享了朋友遇到資料庫瓶頸的案例，收到許多網友的熱情回饋。</p>
+<p>其中有個留言很有意思：「如果在 MongoDB 建立 Index，那麼資料寫入的速度會比 MySQL 快很多嗎（有建立相同 Index 的情況下）？」</p>
+<p>儘管網路上有許多資料顯示 MongoDB 建立 Index 後的效能比 MySQL 好，但這篇文章我想要透過程式來驗證兩者寫入、讀取、資料大小的差異。</p>
+<p><img src="https://deanlin.net/blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01.webp" width="1400" height="787" alt="MongoDB 與 MySQL 建立 Index 對 Read/Write 的效能影響（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>非常建議看到最後，因為測試結果可能跟你想的不一樣。</p>
+</blockquote>
+<pre tabindex="0"><code>文章大綱
+
+▋ 測試參數說明
+▋ 前置作業 1 ── docker image pull
+▋ 前置作業 2 ── 安裝 Python 相關套件
+▋ Script 設計說明
+▋ MySQL 測試方案
+▋ MongoDB 測試方案 1 ── 單筆資料的 Index 設計
+▋ MongoDB 測試方案 2 ── Time Series Collection
+▋ MongoDB 測試方案 3 ── Embedded Documents
+▋ 結論：想象跟實際的落差
+</code></pre><h2 id="-測試參數說明">測試參數說明<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e5%8f%83%e6%95%b8%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
+<p>這邊我以<a href="https://deanlin.net/blog/202405/database-bottlenecks/">上一篇</a>談到的商品統計圖表來做設計，因為主要比對效能上的差異，所以用的資料量級比較小（否則某些情境會跑到天荒地老）。</p>
+<ul>
+<li>商品種類: 2000 筆</li>
+<li>統計頻率: 1 分鐘</li>
+<li>時間長度: 8 小時</li>
+<li>總資料量: 96 萬筆（2000 * 8 * 60）</li>
+<li>電腦規格: Apple M1 Max</li>
+</ul>
+<hr>
+<h2 id="-前置作業-1--docker-image-pull">前置作業 1 ── docker image pull<a class="h-anchor" href="#-%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad-1--docker-image-pull" aria-label="這個段落的連結"></a></h2>
+<p>如果你有興趣，可以跟著文章步驟一起實作，為求公平，我這邊使用最新版的 MongoDB 跟 MySQL 來做測試（當然也可以直接滑到最後看實驗結果）。</p>
+<p>我也有把文章的 Code 推到 <a href="https://github.com/dean9703111/mongodb-mysql-index-performance">Github</a> 讓大家參考。</p>
+<p>如果有使用 Docker，可以使用下面的 <code>docker-compose.yaml</code> 取的對應的資源。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;1.1&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">services</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">mongodb</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">mongodb/mongodb-community-server:latest</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">container_name</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">mongodb</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;27017:27017&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">mongodb_data:/data/db</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">networks</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">mynetwork</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">mongo-express</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">mongo-express:latest</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">container_name</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">mongo-express</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;8081:8081&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">environment</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">ME_CONFIG_MONGODB_SERVER</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">mongodb</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">ME_CONFIG_BASICAUTH_USERNAME</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">root</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">ME_CONFIG_BASICAUTH_PASSWORD</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">example</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">networks</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">mynetwork</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">mysql</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">mysql/mysql-server:latest</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">container_name</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">mysql</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;3306:3306&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">environment</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">MYSQL_ROOT_PASSWORD</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">example</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">MYSQL_DATABASE</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">exampledb</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">mysql_data:/var/lib/mysql</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">./mysql-conf.d:/etc/mysql/conf.d</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">networks</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">mynetwork</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">phpmyadmin</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">phpmyadmin/phpmyadmin:latest</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">container_name</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">phpmyadmin</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">depends_on</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">mysql</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;8080:80&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">environment</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">PMA_HOST</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">mysql</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">PMA_PORT</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">3306</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">networks</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">mynetwork</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">mongodb_data</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">mysql_data</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">networks</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">mynetwork</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">driver</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">bridge</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p>下面是對應的 GUI 連結:</p>
+<ul>
+<li><strong>phpMyAdmin</strong>（帳號:root、密碼:example）: <a href="http://localhost:8080">http://localhost:8080</a></li>
+<li><strong>Mongo Express</strong>（帳號:root、密碼:example）: <a href="http://localhost:8081">http://localhost:8081</a></li>
+</ul>
+<hr>
+<h2 id="-前置作業-2--安裝-python-相關套件">前置作業 2 ── 安裝 Python 相關套件<a class="h-anchor" href="#-%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad-2--%e5%ae%89%e8%a3%9d-python-%e7%9b%b8%e9%97%9c%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>我使用的 Python 版本為: 3.10.14</p>
+<p>這邊我使用 Python 來撰寫測試用的 Script，若你尚未安裝，可以直接去官網下載: <a href="https://www.python.org/downloads/">https://www.python.org/downloads/</a></p>
+<p>執行下面指令便可安裝專安會用到的套件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pip install pymysql pymongo cryptography
+</span></span></code></pre></div><hr>
+<h2 id="-script-設計說明">Script 設計說明<a class="h-anchor" href="#-script-%e8%a8%ad%e8%a8%88%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
+<p>我總共寫了 4 個測試腳本，MySQL 1 個，MongoDB 3 個，基本上每個腳本都會做如下任務，差別在於資料結構設計不同。</p>
+<ol>
+<li>與資料庫（MySQL/MongoDB）建立連線</li>
+<li>建立 Table/Collection，並在「商品名稱(product_name)、紀錄時間(timestamp)」的欄位加上 index</li>
+<li>寫入資料，模擬為期 8 小時、1 分鐘寫入 2000 筆資料的情境。</li>
+<li>查詢效能測試，會亂數產生 100 次不同參數的搜尋條件。</li>
+<li>印出寫入時間/寫入總量/平均查詢時間</li>
+</ol>
+<hr>
+<h2 id="-mysql-測試方案">MySQL 測試方案<a class="h-anchor" href="#-mysql-%e6%b8%ac%e8%a9%a6%e6%96%b9%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>MySQL 版本: 8.0.32</p>
+<p>這個腳本沒什麼特別的，只是在「商品名稱(product_name)、紀錄時間(timestamp)」加上了 index。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">pymysql</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">random</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">time</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">datetime</span> <span style="color:#ff7b72">import</span> datetime, timedelta
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># MySQL 連接設定</span>
+</span></span><span style="display:flex;"><span>conn <span style="color:#ff7b72;font-weight:bold">=</span> pymysql<span style="color:#ff7b72;font-weight:bold">.</span>connect(
+</span></span><span style="display:flex;"><span>    host<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;localhost&#39;</span>,
+</span></span><span style="display:flex;"><span>    user<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;root&#39;</span>,
+</span></span><span style="display:flex;"><span>    password<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;example&#39;</span>,
+</span></span><span style="display:flex;"><span>    database<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;exampledb&#39;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>cursor <span style="color:#ff7b72;font-weight:bold">=</span> conn<span style="color:#ff7b72;font-weight:bold">.</span>cursor()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 DB 和 Table</span>
+</span></span><span style="display:flex;"><span>sql_commands <span style="color:#ff7b72;font-weight:bold">=</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;CREATE DATABASE IF NOT EXISTS exampledb;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;USE exampledb;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    CREATE TABLE IF NOT EXISTS product_stats (
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        product_name VARCHAR(255),
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        timestamp DATETIME,
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        data TEXT,
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">        INDEX idx_product_name_timestamp (product_name, timestamp)
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    );
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">    &#34;&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;TRUNCATE product_stats;&#34;</span>
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 執行 SQL 指令</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> command <span style="color:#ff7b72;font-weight:bold">in</span> sql_commands:
+</span></span><span style="display:flex;"><span>    cursor<span style="color:#ff7b72;font-weight:bold">.</span>execute(command)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>conn<span style="color:#ff7b72;font-weight:bold">.</span>commit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 寫入資料</span>
+</span></span><span style="display:flex;"><span>start_time <span style="color:#ff7b72;font-weight:bold">=</span> datetime<span style="color:#ff7b72;font-weight:bold">.</span>now()
+</span></span><span style="display:flex;"><span>insert_batch_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">2000</span>  <span style="color:#8b949e;font-style:italic"># 每批次寫入數據量</span>
+</span></span><span style="display:flex;"><span>product_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">2000</span> <span style="color:#8b949e;font-style:italic"># 要測試的商品總量</span>
+</span></span><span style="display:flex;"><span>total_records <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>  <span style="color:#8b949e;font-style:italic"># 紀錄寫入的數據總量</span>
+</span></span><span style="display:flex;"><span>time_range <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">8</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">60</span> <span style="color:#8b949e;font-style:italic"># 總時間 8 hours</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 開始計時</span>
+</span></span><span style="display:flex;"><span>insert_start_time <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立數據並批量寫入</span>
+</span></span><span style="display:flex;"><span>batch <span style="color:#ff7b72;font-weight:bold">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> minute <span style="color:#ff7b72;font-weight:bold">in</span> range(time_range):
+</span></span><span style="display:flex;"><span>    timestamp <span style="color:#ff7b72;font-weight:bold">=</span> start_time <span style="color:#ff7b72;font-weight:bold">+</span> timedelta(minutes<span style="color:#ff7b72;font-weight:bold">=</span>minute)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">for</span> i <span style="color:#ff7b72;font-weight:bold">in</span> range(product_size):  <span style="color:#8b949e;font-style:italic"># 每分鐘要寫入的商品紀錄</span>
+</span></span><span style="display:flex;"><span>        product_name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;商品名稱</span><span style="color:#a5d6ff">{</span>i<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#34;</span>  <span style="color:#8b949e;font-style:italic"># 模擬 product_size 種不同商品</span>
+</span></span><span style="display:flex;"><span>        stats <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;統計資料</span><span style="color:#a5d6ff">{</span>i<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#34;</span>
+</span></span><span style="display:flex;"><span>        batch<span style="color:#ff7b72;font-weight:bold">.</span>append((product_name, timestamp, stats))
+</span></span><span style="display:flex;"><span>        total_records <span style="color:#ff7b72;font-weight:bold">+=</span> <span style="color:#a5d6ff">1</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic"># 批量寫入</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> len(batch) <span style="color:#ff7b72;font-weight:bold">&gt;=</span> insert_batch_size:
+</span></span><span style="display:flex;"><span>            cursor<span style="color:#ff7b72;font-weight:bold">.</span>executemany(
+</span></span><span style="display:flex;"><span>                <span style="color:#a5d6ff">&#34;INSERT INTO product_stats (product_name, timestamp, data) VALUES (</span><span style="color:#a5d6ff">%s</span><span style="color:#a5d6ff">, </span><span style="color:#a5d6ff">%s</span><span style="color:#a5d6ff">, </span><span style="color:#a5d6ff">%s</span><span style="color:#a5d6ff">)&#34;</span>,
+</span></span><span style="display:flex;"><span>                batch
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>            conn<span style="color:#ff7b72;font-weight:bold">.</span>commit()
+</span></span><span style="display:flex;"><span>            batch <span style="color:#ff7b72;font-weight:bold">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 寫入剩餘的數據</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> batch:
+</span></span><span style="display:flex;"><span>    cursor<span style="color:#ff7b72;font-weight:bold">.</span>executemany(
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;INSERT INTO product_stats (product_name, timestamp, data) VALUES (</span><span style="color:#a5d6ff">%s</span><span style="color:#a5d6ff">, </span><span style="color:#a5d6ff">%s</span><span style="color:#a5d6ff">, </span><span style="color:#a5d6ff">%s</span><span style="color:#a5d6ff">)&#34;</span>,
+</span></span><span style="display:flex;"><span>        batch
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    conn<span style="color:#ff7b72;font-weight:bold">.</span>commit()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 計時結束</span>
+</span></span><span style="display:flex;"><span>insert_end_time <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 查詢效能測試</span>
+</span></span><span style="display:flex;"><span>query_times <span style="color:#ff7b72;font-weight:bold">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> _ <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">100</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic"># 隨機生成查詢的時間區間</span>
+</span></span><span style="display:flex;"><span>    start_timestamp <span style="color:#ff7b72;font-weight:bold">=</span> start_time <span style="color:#ff7b72;font-weight:bold">+</span> timedelta(minutes<span style="color:#ff7b72;font-weight:bold">=</span>random<span style="color:#ff7b72;font-weight:bold">.</span>randint(<span style="color:#a5d6ff">0</span>, time_range<span style="color:#ff7b72;font-weight:bold">-</span><span style="color:#a5d6ff">30</span>))  <span style="color:#8b949e;font-style:italic"># 最大值為 - 30 為 30 分鐘</span>
+</span></span><span style="display:flex;"><span>    end_timestamp <span style="color:#ff7b72;font-weight:bold">=</span> start_timestamp <span style="color:#ff7b72;font-weight:bold">+</span> timedelta(minutes<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">30</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic"># 查詢多筆商品名稱在特定時間範圍內的資料</span>
+</span></span><span style="display:flex;"><span>    product_names <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;商品名稱</span><span style="color:#a5d6ff">{</span>random<span style="color:#ff7b72;font-weight:bold">.</span>randint(<span style="color:#a5d6ff">1</span>, product_size)<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#34;</span> <span style="color:#ff7b72">for</span> _ <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">10</span>)]  <span style="color:#8b949e;font-style:italic"># 隨機查詢 10 個商品</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic"># 使用 IN 進行多商品名稱查詢</span>
+</span></span><span style="display:flex;"><span>    format_strings <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;,&#39;</span><span style="color:#ff7b72;font-weight:bold">.</span>join([<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;&#39;</span><span style="color:#a5d6ff">{</span>name<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#39;&#34;</span> <span style="color:#ff7b72">for</span> name <span style="color:#ff7b72;font-weight:bold">in</span> product_names])
+</span></span><span style="display:flex;"><span>    query <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;SELECT * FROM product_stats WHERE product_name IN (</span><span style="color:#a5d6ff">{</span>format_strings<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">) AND timestamp BETWEEN &#39;</span><span style="color:#a5d6ff">{</span>start_timestamp<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#39; AND &#39;</span><span style="color:#a5d6ff">{</span>end_timestamp<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic"># 執行查詢</span>
+</span></span><span style="display:flex;"><span>    start_query <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>    cursor<span style="color:#ff7b72;font-weight:bold">.</span>execute(query)
+</span></span><span style="display:flex;"><span>    rows <span style="color:#ff7b72;font-weight:bold">=</span> cursor<span style="color:#ff7b72;font-weight:bold">.</span>fetchall()
+</span></span><span style="display:flex;"><span>    end_query <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>    query_times<span style="color:#ff7b72;font-weight:bold">.</span>append(end_query <span style="color:#ff7b72;font-weight:bold">-</span> start_query)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;MySQL 寫入時間: </span><span style="color:#a5d6ff">{</span>insert_end_time <span style="color:#ff7b72;font-weight:bold">-</span> insert_start_time<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 秒&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;MySQL 寫入總量: </span><span style="color:#a5d6ff">{</span>total_records<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 條&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 計算平均查詢時間</span>
+</span></span><span style="display:flex;"><span>average_query_time <span style="color:#ff7b72;font-weight:bold">=</span> sum(query_times) <span style="color:#ff7b72;font-weight:bold">/</span> len(query_times)
+</span></span><span style="display:flex;"><span>print(<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;MySQL 平均查詢時間: </span><span style="color:#a5d6ff">{</span>average_query_time<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 秒&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cursor<span style="color:#ff7b72;font-weight:bold">.</span>close()
+</span></span><span style="display:flex;"><span>conn<span style="color:#ff7b72;font-weight:bold">.</span>close()
+</span></span></code></pre></div><p>下面為 MySQL 測試結果:</p>
+<ul>
+<li><strong>寫入時間</strong>: 11.6187 秒</li>
+<li><strong>平均查詢時間</strong>: 0.0058 秒</li>
+<li><strong>資料大小</strong>: 151.4 MB</li>
+</ul>
+<hr>
+<h2 id="-mongodb-測試方案-1--單筆資料的-index-設計">MongoDB 測試方案 1 ── 單筆資料的 Index 設計<a class="h-anchor" href="#-mongodb-%e6%b8%ac%e8%a9%a6%e6%96%b9%e6%a1%88-1--%e5%96%ae%e7%ad%86%e8%b3%87%e6%96%99%e7%9a%84-index-%e8%a8%ad%e8%a8%88" aria-label="這個段落的連結"></a></h2>
+<p>MongoDB 版本: 7.0.9</p>
+<p>這個腳本是可以直接與 MySQL 比對的版本，因為都是採 row data 的概念，僅在「商品名稱(product_name)、紀錄時間(timestamp)」加上了 index。數據格式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;product_name&#34;</span> : <span style="color:#a5d6ff">&#34;商品名稱2&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;timestamp&#34;</span> : <span style="color:#f85149">ISODate(</span><span style="color:#a5d6ff">&#34;2024-05-25T15:24:46.492+0000&#34;</span><span style="color:#f85149">)</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;data&#34;</span> : <span style="color:#a5d6ff">&#34;統計資料2&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pymongo</span> <span style="color:#ff7b72">import</span> MongoClient, ASCENDING
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">random</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">time</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">datetime</span> <span style="color:#ff7b72">import</span> datetime, timedelta
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># MongoDB 連接設置</span>
+</span></span><span style="display:flex;"><span>client <span style="color:#ff7b72;font-weight:bold">=</span> MongoClient(<span style="color:#a5d6ff">&#39;mongodb://localhost:27017/&#39;</span>)
+</span></span><span style="display:flex;"><span>db <span style="color:#ff7b72;font-weight:bold">=</span> client<span style="color:#ff7b72;font-weight:bold">.</span>testdb
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 清空集合並創建新集合</span>
+</span></span><span style="display:flex;"><span>db<span style="color:#ff7b72;font-weight:bold">.</span>product_stats<span style="color:#ff7b72;font-weight:bold">.</span>drop()
+</span></span><span style="display:flex;"><span>db<span style="color:#ff7b72;font-weight:bold">.</span>create_collection(<span style="color:#a5d6ff">&#39;product_stats&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 加入 index</span>
+</span></span><span style="display:flex;"><span>db<span style="color:#ff7b72;font-weight:bold">.</span>product_stats<span style="color:#ff7b72;font-weight:bold">.</span>create_index([(<span style="color:#a5d6ff">&#34;product_name&#34;</span>, ASCENDING), (<span style="color:#a5d6ff">&#34;timestamp&#34;</span>, ASCENDING)])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 寫入數據</span>
+</span></span><span style="display:flex;"><span>start_time <span style="color:#ff7b72;font-weight:bold">=</span> datetime<span style="color:#ff7b72;font-weight:bold">.</span>now()
+</span></span><span style="display:flex;"><span>insert_batch_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">2000</span>  <span style="color:#8b949e;font-style:italic"># 每批次寫入數據量</span>
+</span></span><span style="display:flex;"><span>product_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">2000</span> <span style="color:#8b949e;font-style:italic"># 要測試的商品總量</span>
+</span></span><span style="display:flex;"><span>total_records <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>  <span style="color:#8b949e;font-style:italic"># 記錄寫入的數據總量</span>
+</span></span><span style="display:flex;"><span>time_range <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">8</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">60</span> <span style="color:#8b949e;font-style:italic"># 總時間 8 hours</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 開始計時</span>
+</span></span><span style="display:flex;"><span>insert_start_time <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立數據並批量寫入</span>
+</span></span><span style="display:flex;"><span>batch <span style="color:#ff7b72;font-weight:bold">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> minute <span style="color:#ff7b72;font-weight:bold">in</span> range(time_range):  <span style="color:#8b949e;font-style:italic"># 8 小時</span>
+</span></span><span style="display:flex;"><span>    timestamp <span style="color:#ff7b72;font-weight:bold">=</span> start_time <span style="color:#ff7b72;font-weight:bold">+</span> timedelta(minutes<span style="color:#ff7b72;font-weight:bold">=</span>minute)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">for</span> i <span style="color:#ff7b72;font-weight:bold">in</span> range(product_size):  <span style="color:#8b949e;font-style:italic"># 每分鐘要寫入的商品紀錄</span>
+</span></span><span style="display:flex;"><span>        product_name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;商品名稱</span><span style="color:#a5d6ff">{</span>i<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#34;</span>  <span style="color:#8b949e;font-style:italic"># 模擬 product_size 種不同商品</span>
+</span></span><span style="display:flex;"><span>        stats <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;統計資料</span><span style="color:#a5d6ff">{</span>i<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#34;</span>
+</span></span><span style="display:flex;"><span>        batch<span style="color:#ff7b72;font-weight:bold">.</span>append({
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;product_name&#34;</span>: product_name,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;timestamp&#34;</span>: timestamp,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;data&#34;</span>: stats
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>        total_records <span style="color:#ff7b72;font-weight:bold">+=</span> <span style="color:#a5d6ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic"># 批量寫入</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> len(batch) <span style="color:#ff7b72;font-weight:bold">&gt;=</span> insert_batch_size:
+</span></span><span style="display:flex;"><span>            db<span style="color:#ff7b72;font-weight:bold">.</span>product_stats<span style="color:#ff7b72;font-weight:bold">.</span>insert_many(batch)
+</span></span><span style="display:flex;"><span>            batch<span style="color:#ff7b72;font-weight:bold">.</span>clear()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 寫入剩餘的數據</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> batch:
+</span></span><span style="display:flex;"><span>    db<span style="color:#ff7b72;font-weight:bold">.</span>product_stats<span style="color:#ff7b72;font-weight:bold">.</span>insert_many(batch)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 計時結束</span>
+</span></span><span style="display:flex;"><span>insert_end_time <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 查詢效能測試</span>
+</span></span><span style="display:flex;"><span>query_times <span style="color:#ff7b72;font-weight:bold">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> _ <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">100</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic"># 隨機生成查詢的時間區間</span>
+</span></span><span style="display:flex;"><span>    start_timestamp <span style="color:#ff7b72;font-weight:bold">=</span> start_time <span style="color:#ff7b72;font-weight:bold">+</span> timedelta(minutes<span style="color:#ff7b72;font-weight:bold">=</span>random<span style="color:#ff7b72;font-weight:bold">.</span>randint(<span style="color:#a5d6ff">0</span>, time_range<span style="color:#ff7b72;font-weight:bold">-</span><span style="color:#a5d6ff">30</span>))  <span style="color:#8b949e;font-style:italic"># 最大值為 - 30 為 30 分鐘</span>
+</span></span><span style="display:flex;"><span>    end_timestamp <span style="color:#ff7b72;font-weight:bold">=</span> start_timestamp <span style="color:#ff7b72;font-weight:bold">+</span> timedelta(minutes<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">30</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    product_names <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;商品名稱</span><span style="color:#a5d6ff">{</span>random<span style="color:#ff7b72;font-weight:bold">.</span>randint(<span style="color:#a5d6ff">1</span>, product_size)<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#34;</span> <span style="color:#ff7b72">for</span> _ <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">10</span>)]  <span style="color:#8b949e;font-style:italic"># 隨機查詢 10 個商品</span>
+</span></span><span style="display:flex;"><span>    query <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;product_name&#34;</span>: {<span style="color:#a5d6ff">&#34;$in&#34;</span>: product_names},
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;timestamp&#34;</span>: {<span style="color:#a5d6ff">&#34;$gt&#34;</span>: start_timestamp, <span style="color:#a5d6ff">&#34;$lte&#34;</span>: end_timestamp}
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic"># 執行查詢</span>
+</span></span><span style="display:flex;"><span>    start_query <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>    result <span style="color:#ff7b72;font-weight:bold">=</span> db<span style="color:#ff7b72;font-weight:bold">.</span>product_stats<span style="color:#ff7b72;font-weight:bold">.</span>find(query)
+</span></span><span style="display:flex;"><span>    end_query <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>    query_times<span style="color:#ff7b72;font-weight:bold">.</span>append(end_query <span style="color:#ff7b72;font-weight:bold">-</span> start_query)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;MongoDB 寫入時間: </span><span style="color:#a5d6ff">{</span>insert_end_time <span style="color:#ff7b72;font-weight:bold">-</span> insert_start_time<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 秒&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;MongoDB 寫入總量: </span><span style="color:#a5d6ff">{</span>total_records<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 條&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 計算平均查詢時間</span>
+</span></span><span style="display:flex;"><span>average_query_time <span style="color:#ff7b72;font-weight:bold">=</span> sum(query_times) <span style="color:#ff7b72;font-weight:bold">/</span> len(query_times)
+</span></span><span style="display:flex;"><span>print(<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;MongoDB 平均查詢時間: </span><span style="color:#a5d6ff">{</span>average_query_time<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 秒&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>client<span style="color:#ff7b72;font-weight:bold">.</span>close()
+</span></span></code></pre></div><p>下面為 MongoDB 測試方案 1 的結果:</p>
+<ul>
+<li><strong>寫入時間</strong>: 6.8597 秒</li>
+<li><strong>平均查詢時間</strong>: 6.3467e-06 秒</li>
+<li><strong>資料大小</strong>: 97.8 MB</li>
+</ul>
+<hr>
+<h2 id="-mongodb-測試方案-2--time-series-collection">MongoDB 測試方案 2 ── Time Series Collection<a class="h-anchor" href="#-mongodb-%e6%b8%ac%e8%a9%a6%e6%96%b9%e6%a1%88-2--time-series-collection" aria-label="這個段落的連結"></a></h2>
+<p>第二個方案則是採用 MongoDB Time Series Collection 的設計，設定如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;product_stats&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">timeseries={</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;timeField&#34;</span>: <span style="color:#a5d6ff">&#34;timestamp&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;metaField&#34;</span>: <span style="color:#a5d6ff">&#34;product_name&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;granularity&#34;</span>: <span style="color:#a5d6ff">&#34;minutes&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span><span style="color:#f85149">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pymongo</span> <span style="color:#ff7b72">import</span> MongoClient, ASCENDING
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">random</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> <span style="color:#ff7b72">time</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">datetime</span> <span style="color:#ff7b72">import</span> datetime, timedelta
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># MongoDB 連接設置</span>
+</span></span><span style="display:flex;"><span>client <span style="color:#ff7b72;font-weight:bold">=</span> MongoClient(<span style="color:#a5d6ff">&#39;mongodb://localhost:27017/&#39;</span>)
+</span></span><span style="display:flex;"><span>db <span style="color:#ff7b72;font-weight:bold">=</span> client<span style="color:#ff7b72;font-weight:bold">.</span>testdb
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 清空集合並創建新集合</span>
+</span></span><span style="display:flex;"><span>db<span style="color:#ff7b72;font-weight:bold">.</span>product_stats<span style="color:#ff7b72;font-weight:bold">.</span>drop()
+</span></span><span style="display:flex;"><span>db<span style="color:#ff7b72;font-weight:bold">.</span>create_collection(
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;product_stats&#34;</span>,
+</span></span><span style="display:flex;"><span>    timeseries<span style="color:#ff7b72;font-weight:bold">=</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;timeField&#34;</span>: <span style="color:#a5d6ff">&#34;timestamp&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;metaField&#34;</span>: <span style="color:#a5d6ff">&#34;product_name&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;granularity&#34;</span>: <span style="color:#a5d6ff">&#34;minutes&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 寫入數據</span>
+</span></span><span style="display:flex;"><span>start_time <span style="color:#ff7b72;font-weight:bold">=</span> datetime<span style="color:#ff7b72;font-weight:bold">.</span>now()
+</span></span><span style="display:flex;"><span>insert_batch_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">2000</span>  <span style="color:#8b949e;font-style:italic"># 每批次寫入數據量</span>
+</span></span><span style="display:flex;"><span>product_size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">2000</span> <span style="color:#8b949e;font-style:italic"># 要測試的商品總量</span>
+</span></span><span style="display:flex;"><span>total_records <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>  <span style="color:#8b949e;font-style:italic"># 記錄寫入的數據總量</span>
+</span></span><span style="display:flex;"><span>time_range <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">8</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">60</span> <span style="color:#8b949e;font-style:italic"># 總時間 8 hours</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 開始計時</span>
+</span></span><span style="display:flex;"><span>insert_start_time <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立數據並批量寫入</span>
+</span></span><span style="display:flex;"><span>batch <span style="color:#ff7b72;font-weight:bold">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> minute <span style="color:#ff7b72;font-weight:bold">in</span> range(time_range):  <span style="color:#8b949e;font-style:italic"># 8 小時</span>
+</span></span><span style="display:flex;"><span>    timestamp <span style="color:#ff7b72;font-weight:bold">=</span> start_time <span style="color:#ff7b72;font-weight:bold">+</span> timedelta(minutes<span style="color:#ff7b72;font-weight:bold">=</span>minute)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">for</span> i <span style="color:#ff7b72;font-weight:bold">in</span> range(product_size):  <span style="color:#8b949e;font-style:italic"># 每分鐘要寫入的商品紀錄</span>
+</span></span><span style="display:flex;"><span>        product_name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;商品名稱</span><span style="color:#a5d6ff">{</span>i<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#34;</span>  <span style="color:#8b949e;font-style:italic"># 模擬 product_size 種不同商品</span>
+</span></span><span style="display:flex;"><span>        data <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;統計資料</span><span style="color:#a5d6ff">{</span>i<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#34;</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        batch<span style="color:#ff7b72;font-weight:bold">.</span>append({
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;timestamp&#34;</span>: timestamp,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;product_name&#34;</span>: product_name,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;data&#34;</span>: data
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>        total_records <span style="color:#ff7b72;font-weight:bold">+=</span> <span style="color:#a5d6ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic"># 批量寫入</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> len(batch) <span style="color:#ff7b72;font-weight:bold">&gt;=</span> insert_batch_size:
+</span></span><span style="display:flex;"><span>            db<span style="color:#ff7b72;font-weight:bold">.</span>product_stats<span style="color:#ff7b72;font-weight:bold">.</span>insert_many(batch)
+</span></span><span style="display:flex;"><span>            batch<span style="color:#ff7b72;font-weight:bold">.</span>clear()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 寫入剩餘的數據</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> batch:
+</span></span><span style="display:flex;"><span>    db<span style="color:#ff7b72;font-weight:bold">.</span>product_stats<span style="color:#ff7b72;font-weight:bold">.</span>insert_many(batch)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 計時結束</span>
+</span></span><span style="display:flex;"><span>insert_end_time <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 查詢性能測試</span>
+</span></span><span style="display:flex;"><span>query_times <span style="color:#ff7b72;font-weight:bold">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> _ <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">100</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic"># 隨機生成查詢的時間區間</span>
+</span></span><span style="display:flex;"><span>    start_timestamp <span style="color:#ff7b72;font-weight:bold">=</span> start_time <span style="color:#ff7b72;font-weight:bold">+</span> timedelta(minutes<span style="color:#ff7b72;font-weight:bold">=</span>random<span style="color:#ff7b72;font-weight:bold">.</span>randint(<span style="color:#a5d6ff">0</span>, time_range<span style="color:#ff7b72;font-weight:bold">-</span><span style="color:#a5d6ff">30</span>))  <span style="color:#8b949e;font-style:italic"># 最大值為 - 30 為 30 分鐘</span>
+</span></span><span style="display:flex;"><span>    end_timestamp <span style="color:#ff7b72;font-weight:bold">=</span> start_timestamp <span style="color:#ff7b72;font-weight:bold">+</span> timedelta(minutes<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">30</span>)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    product_names <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;商品名稱</span><span style="color:#a5d6ff">{</span>random<span style="color:#ff7b72;font-weight:bold">.</span>randint(<span style="color:#a5d6ff">1</span>, product_size)<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#34;</span> <span style="color:#ff7b72">for</span> _ <span style="color:#ff7b72;font-weight:bold">in</span> range(<span style="color:#a5d6ff">10</span>)]  <span style="color:#8b949e;font-style:italic"># 隨機查詢 10 個商品</span>
+</span></span><span style="display:flex;"><span>    query <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;product_name&#34;</span>: {<span style="color:#a5d6ff">&#34;$in&#34;</span>: product_names},
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;timestamp&#34;</span>: {<span style="color:#a5d6ff">&#34;$gt&#34;</span>: start_timestamp, <span style="color:#a5d6ff">&#34;$lte&#34;</span>: end_timestamp}
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic"># 執行查詢</span>
+</span></span><span style="display:flex;"><span>    start_query <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>    result <span style="color:#ff7b72;font-weight:bold">=</span> db<span style="color:#ff7b72;font-weight:bold">.</span>product_stats<span style="color:#ff7b72;font-weight:bold">.</span>find(query)
+</span></span><span style="display:flex;"><span>    end_query <span style="color:#ff7b72;font-weight:bold">=</span> time<span style="color:#ff7b72;font-weight:bold">.</span>time()
+</span></span><span style="display:flex;"><span>    query_times<span style="color:#ff7b72;font-weight:bold">.</span>append(end_query <span style="color:#ff7b72;font-weight:bold">-</span> start_query)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;MongoDB Time Series Collection 寫入時間: </span><span style="color:#a5d6ff">{</span>insert_end_time <span style="color:#ff7b72;font-weight:bold">-</span> insert_start_time<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 秒&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;MongoDB Time Series Collection 寫入總量: </span><span style="color:#a5d6ff">{</span>total_records<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 條&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 計算平均查詢時間</span>
+</span></span><span style="display:flex;"><span>average_query_time <span style="color:#ff7b72;font-weight:bold">=</span> sum(query_times) <span style="color:#ff7b72;font-weight:bold">/</span> len(query_times)
+</span></span><span style="display:flex;"><span>print(<span style="color:#79c0ff">f</span><span style="color:#a5d6ff">&#34;MongoDB Time Series Collection 平均查詢時間: </span><span style="color:#a5d6ff">{</span>average_query_time<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 秒&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>client<span style="color:#ff7b72;font-weight:bold">.</span>close()
+</span></span></code></pre></div><p>下面為 MongoDB 測試方案 2 的結果:</p>
+<ul>
+<li><strong>寫入時間</strong>: 31.0204 秒</li>
+<li><strong>平均查詢時間</strong>: 6.7949e-06 秒</li>
+<li><strong>資料大小</strong>: 53.1 MB</li>
+</ul>
+<h2 id="mongodb-測試方案-3--embedded-documents">MongoDB 測試方案 3 ── Embedded Documents<a class="h-anchor" href="#mongodb-%e6%b8%ac%e8%a9%a6%e6%96%b9%e6%a1%88-3--embedded-documents" aria-label="這個段落的連結"></a></h2>
+<p>第三個方案是上篇文章的最終方案，將統計數據紀錄到商品名稱（product_name）底下，並對「商品名稱(product_name)、紀錄時間(timestamp)」加上了 index。數據格式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;_id&#34;</span> : <span style="color:#f85149">ObjectId(</span><span style="color:#a5d6ff">&#34;6651a4d6329cedfc74f40dde&#34;</span><span style="color:#f85149">)</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;product_name&#34;</span> : <span style="color:#a5d6ff">&#34;商品名稱0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;stats&#34;</span> : [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;timestamp&#34;</span> : <span style="color:#f85149">ISODate(</span><span style="color:#a5d6ff">&#34;2024-05-25T16:44:06.728+0000&#34;</span><span style="color:#f85149">)</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;data&#34;</span> : <span style="color:#a5d6ff">&#34;統計資料0&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;timestamp&#34;</span> : <span style="color:#f85149">ISODate(</span><span style="color:#a5d6ff">&#34;2024-05-25T16:45:06.728+0000&#34;</span><span style="color:#f85149">)</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;data&#34;</span> : <span style="color:#a5d6ff">&#34;統計資料0&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">...</span>
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#f85149">from</span> <span style="color:#f85149">pymongo</span> <span style="color:#f85149">import</span> <span style="color:#f85149">MongoClient,</span> <span style="color:#f85149">ASCENDING,</span> <span style="color:#f85149">UpdateOne</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">import</span> <span style="color:#f85149">random</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">import</span> <span style="color:#f85149">time</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">from</span> <span style="color:#f85149">datetime</span> <span style="color:#f85149">import</span> <span style="color:#f85149">datetime,</span> <span style="color:#f85149">timedelta</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">#</span> <span style="color:#f85149">MongoDB</span> <span style="color:#f85149">連接設置</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">client</span> <span style="color:#f85149">=</span> <span style="color:#f85149">MongoClient(&#39;mongodb:</span><span style="color:#8b949e;font-style:italic">//localhost:27017/&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">db</span> <span style="color:#f85149">=</span> <span style="color:#f85149">client.testdb</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">#</span> <span style="color:#f85149">清空集合並創建新集合</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">db.product_stats.drop()</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">db.create_collection(&#39;product_stats&#39;)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">#</span> <span style="color:#f85149">加入</span> <span style="color:#f85149">index</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">db.product_stats.create_index(</span>[<span style="color:#f85149">(</span><span style="color:#a5d6ff">&#34;product_name&#34;</span>, <span style="color:#f85149">ASCENDING)</span>, <span style="color:#f85149">(</span><span style="color:#a5d6ff">&#34;stats.timestamp&#34;</span>, <span style="color:#f85149">ASCENDING)</span>]<span style="color:#f85149">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">#</span> <span style="color:#f85149">寫入數據</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">start_time</span> <span style="color:#f85149">=</span> <span style="color:#f85149">datetime.now()</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">insert_batch_size</span> <span style="color:#f85149">=</span> <span style="color:#a5d6ff">2000</span>  <span style="color:#f85149">#</span> <span style="color:#f85149">每批次寫入數據量</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">product_size</span> <span style="color:#f85149">=</span> <span style="color:#a5d6ff">2000</span> <span style="color:#f85149">#</span> <span style="color:#f85149">要測試的商品總量</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">total_records</span> <span style="color:#f85149">=</span> <span style="color:#a5d6ff">0</span>  <span style="color:#f85149">#</span> <span style="color:#f85149">記錄寫入的數據總量</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">time_range</span> <span style="color:#f85149">=</span> <span style="color:#a5d6ff">8</span> <span style="color:#f85149">*</span> <span style="color:#a5d6ff">60</span> <span style="color:#f85149">#</span> <span style="color:#f85149">總時間</span> <span style="color:#a5d6ff">8</span> <span style="color:#f85149">hours</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">#</span> <span style="color:#f85149">開始計時</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">insert_start_time</span> <span style="color:#f85149">=</span> <span style="color:#f85149">time.time()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">#</span> <span style="color:#f85149">建立數據並批量寫入</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">product_dict</span> <span style="color:#f85149">=</span> {}
+</span></span><span style="display:flex;"><span><span style="color:#f85149">for</span> <span style="color:#f85149">minute</span> <span style="color:#f85149">in</span> <span style="color:#f85149">range(time_range):</span>  <span style="color:#f85149">#</span> <span style="color:#a5d6ff">8</span> <span style="color:#f85149">小時</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">timestamp</span> <span style="color:#f85149">=</span> <span style="color:#f85149">start_time</span> <span style="color:#f85149">+</span> <span style="color:#f85149">timedelta(minutes=minute)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">for</span> <span style="color:#f85149">i</span> <span style="color:#f85149">in</span> <span style="color:#f85149">range(product_size):</span>  <span style="color:#f85149">#</span> <span style="color:#f85149">每分鐘要寫入的商品紀錄</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">product_name</span> <span style="color:#f85149">=</span> <span style="color:#f85149">f</span><span style="color:#a5d6ff">&#34;商品名稱{i}&#34;</span>  <span style="color:#f85149">#</span> <span style="color:#f85149">模擬</span> <span style="color:#f85149">product_size</span> <span style="color:#f85149">種不同商品</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">stats</span> <span style="color:#f85149">=</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;timestamp&#34;</span>: <span style="color:#f85149">timestamp</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;data&#34;</span>: <span style="color:#f85149">f</span><span style="color:#a5d6ff">&#34;統計資料{i}&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">if</span> <span style="color:#f85149">product_name</span> <span style="color:#f85149">not</span> <span style="color:#f85149">in</span> <span style="color:#f85149">product_dict:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f85149">product_dict</span>[<span style="color:#f85149">product_name</span>] <span style="color:#f85149">=</span> []
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">product_dict</span>[<span style="color:#f85149">product_name</span>]<span style="color:#f85149">.append(stats)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">total_records</span> <span style="color:#f85149">+=</span> <span style="color:#a5d6ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">#</span> <span style="color:#f85149">批量更新</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">if</span> <span style="color:#f85149">total_records</span> <span style="color:#f85149">%</span> <span style="color:#f85149">insert_batch_size</span> <span style="color:#f85149">==</span> <span style="color:#a5d6ff">0</span><span style="color:#f85149">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f85149">operations</span> <span style="color:#f85149">=</span> [
+</span></span><span style="display:flex;"><span>                <span style="color:#f85149">UpdateOne(</span>
+</span></span><span style="display:flex;"><span>                    {<span style="color:#7ee787">&#34;product_name&#34;</span>: <span style="color:#f85149">p_name</span>},
+</span></span><span style="display:flex;"><span>                    {<span style="color:#7ee787">&#34;$push&#34;</span>: {<span style="color:#7ee787">&#34;stats&#34;</span>: {<span style="color:#7ee787">&#34;$each&#34;</span>: <span style="color:#f85149">stats_array</span>}}},
+</span></span><span style="display:flex;"><span>                    <span style="color:#f85149">upsert=True</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f85149">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f85149">for</span> <span style="color:#f85149">p_name</span>, <span style="color:#f85149">stats_array</span> <span style="color:#f85149">in</span> <span style="color:#f85149">product_dict.items()</span>
+</span></span><span style="display:flex;"><span>            ]
+</span></span><span style="display:flex;"><span>            <span style="color:#f85149">db.product_stats.bulk_write(operations)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f85149">product_dict.clear()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">#</span> <span style="color:#f85149">寫入剩餘的數據</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">if</span> <span style="color:#f85149">product_dict:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">operations</span> <span style="color:#f85149">=</span> [
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">UpdateOne(</span>
+</span></span><span style="display:flex;"><span>            {<span style="color:#7ee787">&#34;product_name&#34;</span>: <span style="color:#f85149">p_name</span>},
+</span></span><span style="display:flex;"><span>            {<span style="color:#7ee787">&#34;$push&#34;</span>: {<span style="color:#7ee787">&#34;stats&#34;</span>: {<span style="color:#7ee787">&#34;$each&#34;</span>: <span style="color:#f85149">stats_array</span>}}},
+</span></span><span style="display:flex;"><span>            <span style="color:#f85149">upsert=True</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f85149">for</span> <span style="color:#f85149">p_name</span>, <span style="color:#f85149">stats_array</span> <span style="color:#f85149">in</span> <span style="color:#f85149">product_dict.items()</span>
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">db.product_stats.bulk_write(operations)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">#</span> <span style="color:#f85149">計時結束</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">insert_end_time</span> <span style="color:#f85149">=</span> <span style="color:#f85149">time.time()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">#</span> <span style="color:#f85149">查詢性能測試</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">query_times</span> <span style="color:#f85149">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#f85149">for</span> <span style="color:#f85149">_</span> <span style="color:#f85149">in</span> <span style="color:#f85149">range(</span><span style="color:#a5d6ff">100</span><span style="color:#f85149">):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">#</span> <span style="color:#f85149">隨機生成查詢的時間區間</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">start_timestamp</span> <span style="color:#f85149">=</span> <span style="color:#f85149">start_time</span> <span style="color:#f85149">+</span> <span style="color:#f85149">timedelta(minutes=random.randint(</span><span style="color:#a5d6ff">0</span><span style="color:#f85149">,</span> <span style="color:#f85149">time_range</span><span style="color:#a5d6ff">-30</span><span style="color:#f85149">))</span>  <span style="color:#f85149">#</span> <span style="color:#f85149">最大值為</span> <span style="color:#f85149">-</span> <span style="color:#a5d6ff">30</span> <span style="color:#f85149">為</span> <span style="color:#a5d6ff">30</span> <span style="color:#f85149">分鐘</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">end_timestamp</span> <span style="color:#f85149">=</span> <span style="color:#f85149">start_timestamp</span> <span style="color:#f85149">+</span> <span style="color:#f85149">timedelta(minutes=</span><span style="color:#a5d6ff">30</span><span style="color:#f85149">)</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">product_names</span> <span style="color:#f85149">=</span> [<span style="color:#f85149">f</span><span style="color:#a5d6ff">&#34;商品名稱{random.randint(1, product_size)}&#34;</span> <span style="color:#f85149">for</span> <span style="color:#f85149">_</span> <span style="color:#f85149">in</span> <span style="color:#f85149">range(</span><span style="color:#a5d6ff">10</span><span style="color:#f85149">)</span>]  <span style="color:#f85149">#</span> <span style="color:#f85149">隨機查詢</span> <span style="color:#a5d6ff">10</span> <span style="color:#f85149">個商品</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">aggregate_query</span> <span style="color:#f85149">=</span> [
+</span></span><span style="display:flex;"><span>        {<span style="color:#7ee787">&#34;$match&#34;</span>: {<span style="color:#7ee787">&#34;product_name&#34;</span>: {<span style="color:#7ee787">&#34;$in&#34;</span>: <span style="color:#f85149">product_names</span>}}},
+</span></span><span style="display:flex;"><span>        {<span style="color:#7ee787">&#34;$unwind&#34;</span>: <span style="color:#a5d6ff">&#34;$stats&#34;</span>},
+</span></span><span style="display:flex;"><span>        {<span style="color:#7ee787">&#34;$match&#34;</span>: {<span style="color:#7ee787">&#34;stats.timestamp&#34;</span>: {<span style="color:#7ee787">&#34;$gt&#34;</span>: <span style="color:#f85149">start_timestamp</span>, <span style="color:#7ee787">&#34;$lte&#34;</span>: <span style="color:#f85149">end_timestamp</span>}}},
+</span></span><span style="display:flex;"><span>        {<span style="color:#7ee787">&#34;$project&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;_id&#34;</span>: <span style="color:#a5d6ff">0</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;product_name&#34;</span>: <span style="color:#a5d6ff">1</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;timestamp&#34;</span>: <span style="color:#a5d6ff">&#34;$stats.timestamp&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;data&#34;</span>: <span style="color:#a5d6ff">&#34;$stats.data&#34;</span>
+</span></span><span style="display:flex;"><span>        }}
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">#</span> <span style="color:#f85149">執行查詢</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">start_query</span> <span style="color:#f85149">=</span> <span style="color:#f85149">time.time()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">result</span> <span style="color:#f85149">=</span> <span style="color:#f85149">db.product_stats.aggregate(aggregate_query)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">end_query</span> <span style="color:#f85149">=</span> <span style="color:#f85149">time.time()</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f85149">query_times.append(end_query</span> <span style="color:#f85149">-</span> <span style="color:#f85149">start_query)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">print(f</span><span style="color:#a5d6ff">&#34;MongoDB 寫入時間: {insert_end_time - insert_start_time} 秒&#34;</span><span style="color:#f85149">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">print(f</span><span style="color:#a5d6ff">&#34;MongoDB 寫入總量: {total_records} 條&#34;</span><span style="color:#f85149">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">#</span> <span style="color:#f85149">計算平均查詢時間</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">average_query_time</span> <span style="color:#f85149">=</span> <span style="color:#f85149">sum(query_times)</span> <span style="color:#f85149">/</span> <span style="color:#f85149">len(query_times)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">print(f</span><span style="color:#a5d6ff">&#34;MongoDB 平均查詢時間: {average_query_time} 秒&#34;</span><span style="color:#f85149">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">client.close()</span>
+</span></span></code></pre></div><p>下面為 MongoDB 測試方案 3 的結果:</p>
+<ul>
+<li><strong>寫入時間</strong>: 166.6052 秒</li>
+<li><strong>平均查詢時間</strong>: 0.0032 秒</li>
+<li><strong>資料大小</strong>: 53.1 MB</li>
+</ul>
+<hr>
+<h2 id="-結論想象跟實際的落差">結論：想象跟實際的落差<a class="h-anchor" href="#-%e7%b5%90%e8%ab%96%e6%83%b3%e8%b1%a1%e8%b7%9f%e5%af%a6%e9%9a%9b%e7%9a%84%e8%90%bd%e5%b7%ae" aria-label="這個段落的連結"></a></h2>
+<p>下面我先用 Table 的方式，向大家展示這四個方案的測試結果:</p>
+<p><img src="https://deanlin.net/blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-02.webp" width="1028" height="284" alt="結論：想象跟實際的落差（圖 2）" loading="lazy" decoding="async"></p>
+<p>從寫入與讀取效能的角度來說，MongoDB 單筆 index 的方案就夠了；但如果想要壓縮資料大小，可以考慮 Time Series Collection 的方案。</p>
+<p>至於上一篇文章原本打算使用的 Embedded Documents 方案，在寫入效能方面真的不太好，商品種類越多效能越差，真的是沒實驗過不知道。</p>
+<p>至於 MySQL 就是一個安全牌，除非有很極致的需求，不然這個方案沒什麼大缺點。</p>
+<p>下面整理一下我這次的實驗心得吧:</p>
+<ul>
+<li>相同資料庫，在資料結構不同的狀況下，效能會有巨大差異。</li>
+<li>如果只看搜尋效率，MongoDB 大多數情境下會贏</li>
+<li>其實 MongoDB 跟 MySQL 都能處理這個案例，就看實際業務更關注哪塊的效能。</li>
+</ul>
+<p>當然小弟的實驗可能有許多考量不足的地方，歡迎各位大神留言交流，謝謝。</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/8207e2016ac8" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Database 資料庫</span>
+    <span class="lc-desc">Edit description</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-card-01_hu_4d712f34f20c7567.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文</title>
+      <link>https://deanlin.net/blog/202405/database-bottlenecks/</link>
+      <pubDate>Wed, 22 May 2024 16:17:09 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202405/database-bottlenecks/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。 今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。</description>
+      <content:encoded><![CDATA[<p>除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。</p>
+<p>今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。</p>
+<p>過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）。</p>
+<p>但隨著商品種類日漸增加（種類高達數萬），Redis 這類用記憶體（RAM）儲存資料的系統開始遇到了瓶頸。</p>
+<p>過去還可以用課金增加記憶體的方式來解決，但最新的需求是將資料保存的時限拉長到一年（統計圖表時間搜尋範圍）。</p>
+<p>而每天的資料量大約有 250MB，30 天還好說，變成 365 天成本就真的太可怕了。</p>
+<p>於是團隊就開始討論合適的遷移方案。</p>
+<p><img src="https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-01.webp" width="1144" height="642" alt="當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="方案一redis-僅保留-1-個月的資料量過期的轉移到其他資料庫">方案一：Redis 僅保留 1 個月的資料量，過期的轉移到其他資料庫<a class="h-anchor" href="#%e6%96%b9%e6%a1%88%e4%b8%80redis-%e5%83%85%e4%bf%9d%e7%95%99-1-%e5%80%8b%e6%9c%88%e7%9a%84%e8%b3%87%e6%96%99%e9%87%8f%e9%81%8e%e6%9c%9f%e7%9a%84%e8%bd%89%e7%a7%bb%e5%88%b0%e5%85%b6%e4%bb%96%e8%b3%87%e6%96%99%e5%ba%ab" aria-label="這個段落的連結"></a></h2>
+<p>最初的方案是增加一個排程腳本，每天定時將快過期的資料寫到其他資料庫保存。</p>
+<p>之所以讓 Redis 保留一個月的資料量，因為系統默認顯示當前一個月的統計資料，存取次數較高。</p>
+<p>但這麼做有許多缺點，比如：</p>
+<ul>
+<li>如果使用者搜尋的時間點跨月，那後端的程式邏輯就會比較複雜。</li>
+<li>需要同時維護兩套程式碼與資料庫，可能會造成未來隱憂（ex：版本升級、錯誤釐清）。</li>
+<li>對團隊成員的技術水平有更高的要求，可能會提升招募的難度。</li>
+</ul>
+<p>所以這個方案提出後當下就否決了。</p>
+<hr>
+<h2 id="方案二將資料遷移到關連式資料庫">方案二：將資料遷移到關連式資料庫<a class="h-anchor" href="#%e6%96%b9%e6%a1%88%e4%ba%8c%e5%b0%87%e8%b3%87%e6%96%99%e9%81%b7%e7%a7%bb%e5%88%b0%e9%97%9c%e9%80%a3%e5%bc%8f%e8%b3%87%e6%96%99%e5%ba%ab" aria-label="這個段落的連結"></a></h2>
+<p>因為大部分的團隊成員都比較熟悉關聯式資料庫（ex: MySQL）。</p>
+<p>所以大家想說要不就遷移到關聯式資料庫吧，這樣改版要花的時間成本較低。</p>
+<p>但研究了一下發現可行性較低，因為：</p>
+<ul>
+<li>如果不設計索引（index），搜尋效率會低到可怕。</li>
+<li>但設計索引（index）後，因為每分鐘要寫入大量資料，所以會影響到寫入效能。</li>
+<li>考量到未來統計報告可能需要更多資料，關聯式資料庫並不適合動態擴充欄位。</li>
+</ul>
+<hr>
+<h2 id="方案三將資料遷移到非關連式資料庫nosql">方案三：將資料遷移到非關連式資料庫（NoSQL）<a class="h-anchor" href="#%e6%96%b9%e6%a1%88%e4%b8%89%e5%b0%87%e8%b3%87%e6%96%99%e9%81%b7%e7%a7%bb%e5%88%b0%e9%9d%9e%e9%97%9c%e9%80%a3%e5%bc%8f%e8%b3%87%e6%96%99%e5%ba%abnosql" aria-label="這個段落的連結"></a></h2>
+<p>幾經考慮後，最終的方案是選擇 MongoDB 這個 NoSQL。</p>
+<p>主要原因是 MongoDB 無論在讀取、寫入，還是動態擴充欄位方面都能滿足需求。</p>
+<p>在決定使用 MongoDB 後，接下來對資料結構做了一下調整。</p>
+<p>在 Redis 中，原本將統計資料儲存在 Sorted Set 中，並使用 Hash 結構來存儲每個 timestamp 下的商品統計資料。結構如下：</p>
+<pre tabindex="0"><code>Sorted Set: timestamps
+Member: timestamp (e.g., 1620000000)
+Hash: hash:timestamp (e.g., hash:1620000000) 
+{
+    &#34;商品名稱1&#34;: &#34;統計資料1&#34;,
+    &#34;商品名稱2&#34;: &#34;統計資料2&#34;,
+    ...
+}
+</code></pre><p>然而，這樣的設計有些問題。因為實際頁面通常只顯示最多 20 筆商品的統計資料；但為了達成這個目標，我們需要先抓取區間內的 timestamp，然後再找到對應的 Key（商品名稱）。</p>
+<p>在 Redis 這麼做還 Ok，但如果轉換到 MongoDB，效率可能會不理想。</p>
+<p>因此，在遷移到 MongoDB 時重新設計了資料結構，將商品作為 collection 的主要文件，timestamp 與統計資料作為內嵌文件。</p>
+<p>新的 MongoDB 設計如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;商品名稱&#34;</span>: <span style="color:#a5d6ff">&#34;商品名稱1&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;統計資料&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;timestamp&#34;</span>: <span style="color:#a5d6ff">&#34;1620000000&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;data&#34;</span>: <span style="color:#a5d6ff">&#34;統計資料1&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;timestamp&#34;</span>: <span style="color:#a5d6ff">&#34;16200000100&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;data&#34;</span>: <span style="color:#a5d6ff">&#34;統計資料2&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在這個設計中，我們將商品名稱設為 index，以提高查詢特定商品統計資料的效率。</p>
+<blockquote>
+<p>小提醒：經過實驗後，這個資料結構並不是最理想的，詳情參考這篇文章（<a href="https://deanlin.net/blog/202405/mongodb-vs-mysql-index-performance/">MongoDB 與 MySQL 建立 Index 對 Read/Write 的效能影響</a>）</p>
+</blockquote>
+<p>另外考量到時間搜尋範圍可能很大（ex: 4 個月的趨勢），面對大範圍的資料顯示，會以小時的統計資料呈現。</p>
+<p>以上就是朋友跟我分享的資料庫遷移案例，希望對大家有幫助，如果有更好的方案，也歡迎留言分享。</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/8207e2016ac8" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Database 資料庫</span>
+    <span class="lc-desc">Edit description</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-card-01_hu_4d712f34f20c7567.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>你在 Table 建立的 Index 真的有效嗎？用範例帶你理解 Coverage Index 的意義</title>
+      <link>https://deanlin.net/blog/202108/covering-index-explained/</link>
+      <pubDate>Fri, 20 Aug 2021 18:27:40 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202108/covering-index-explained/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>我們會在 Table 中建立 Index 以增加搜尋的效率，但建立 Index 的同時也會影響到資料 insert、update、delete 的效率；所以我們在建立 Index 時需要抱持謹慎的態度，這篇文章將帶大家了解 Coverage Index (覆蓋索引)的意義。</description>
+      <content:encoded><![CDATA[<p>我們會在 Table 中建立 Index 以增加搜尋的效率，但建立 Index 的同時也會影響到資料 insert、update、delete 的效率；所以我們在建立 Index 時需要抱持謹慎的態度，這篇文章將帶大家了解 Coverage Index (覆蓋索引)的意義。</p>
+<p><img src="https://deanlin.net/blog/202108/covering-index-explained/images/covering-index-explained-01.webp" width="1001" height="566" alt="你在 Table 建立的 Index 真的有效嗎？用範例帶你理解 Coverage Index 的意義（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="setp-1建立測試用的-tmp_user-table">SETP 1：建立測試用的 tmp_user Table<a class="h-anchor" href="#setp-1%e5%bb%ba%e7%ab%8b%e6%b8%ac%e8%a9%a6%e7%94%a8%e7%9a%84-tmp_user-table" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>id 為 primary key</li>
+<li>name 為 index</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">create</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">table</span><span style="color:#6e7681"> </span>tmp_user<span style="color:#6e7681"> </span>(<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>id<span style="color:#6e7681"> </span>bigint(<span style="color:#a5d6ff">20</span>)<span style="color:#6e7681"> </span><span style="color:#ff7b72">not</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">null</span><span style="color:#6e7681"> </span>auto_increment<span style="color:#6e7681"> </span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>name<span style="color:#6e7681"> </span>varchar(<span style="color:#a5d6ff">255</span>)<span style="color:#6e7681"> </span><span style="color:#ff7b72">not</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">null</span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>password<span style="color:#6e7681"> </span>varchar(<span style="color:#a5d6ff">255</span>)<span style="color:#6e7681"> </span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#ff7b72">index</span><span style="color:#6e7681"> </span>index_name<span style="color:#6e7681"> </span>(name),<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#ff7b72">primary</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">key</span><span style="color:#6e7681"> </span>(id))<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>engine<span style="color:#ff7b72;font-weight:bold">=</span>innodb<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#ff7b72">default</span><span style="color:#6e7681"> </span>character<span style="color:#6e7681"> </span><span style="color:#ff7b72">set</span><span style="color:#ff7b72;font-weight:bold">=</span>utf8<span style="color:#6e7681"> </span><span style="color:#ff7b72">collate</span><span style="color:#ff7b72;font-weight:bold">=</span>utf8_general_ci;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">insert</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">into</span><span style="color:#6e7681"> </span>tmp_user<span style="color:#6e7681"> </span>(name,<span style="color:#6e7681"> </span>password)<span style="color:#6e7681"> </span><span style="color:#ff7b72">values</span><span style="color:#6e7681"> </span>(<span style="color:#a5d6ff">&#34;寶寶不說&#34;</span>,<span style="color:#a5d6ff">&#34;123&#34;</span>);<span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/be3ceae881d699293cae3e622b31dc1f" rel="noopener">init_user.sql</a>（GitHub Gist）</p>
+<hr>
+<h2 id="setp-2下-sql-指令了解是否使用-index">SETP 2：下 SQL 指令了解是否使用 Index<a class="h-anchor" href="#setp-2%e4%b8%8b-sql-%e6%8c%87%e4%bb%a4%e4%ba%86%e8%a7%a3%e6%98%af%e5%90%a6%e4%bd%bf%e7%94%a8-index" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>觀察最後「Extra」欄位的資訊</p>
+</blockquote>
+<p>➤ SQL A：</p>
+<pre tabindex="0"><code>select id from user_table where name= &#39;寶寶不說&#39;
+</code></pre><p><img src="https://deanlin.net/blog/202108/covering-index-explained/images/covering-index-explained-02.webp" width="1400" height="162" alt="SETP 2：下 SQL 指令了解是否使用 Index（圖 2）" loading="lazy" decoding="async"></p>
+<p>➤ SQL B：</p>
+<pre tabindex="0"><code>select password from user_table where name= &#39;寶寶不說&#39;
+</code></pre><p><img src="https://deanlin.net/blog/202108/covering-index-explained/images/covering-index-explained-03.webp" width="1400" height="162" alt="SETP 2：下 SQL 指令了解是否使用 Index（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="setp-3分析-sql-指令邏輯">SETP 3：分析 SQL 指令邏輯<a class="h-anchor" href="#setp-3%e5%88%86%e6%9e%90-sql-%e6%8c%87%e4%bb%a4%e9%82%8f%e8%bc%af" aria-label="這個段落的連結"></a></h2>
+<p>➤ SQL A 分析：</p>
+<pre tabindex="0"><code>select id from user_table where name= &#39;寶寶不說&#39;
+</code></pre><p>因為 <code>name</code> 有建立 index，所以在查詢到 <code>name</code>後可以直接與 <code>id</code> 對應返回結果；因為 name 已經覆蓋了查詢資料的需求，所以稱為 「Coverage Index」</p>
+<p>➤ SQL B 分析：</p>
+<pre tabindex="0"><code>select password from user_table where name= &#39;寶寶不說&#39;
+</code></pre><p>透過 <code>name</code>找到「寶寶不說」對應的 <code>id</code>，接著透過 <code>id</code>這個 primary key 在 Table 重新輪詢才能取得這一列的完整資料。</p>
+<hr>
+<h2 id="setp-4建立-coverage-index-優化-sql-b">SETP 4：建立 Coverage Index 優化 SQL B<a class="h-anchor" href="#setp-4%e5%bb%ba%e7%ab%8b-coverage-index-%e5%84%aa%e5%8c%96-sql-b" aria-label="這個段落的連結"></a></h2>
+<p>➤ 先將資料庫 drop 掉</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">drop</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">table</span><span style="color:#6e7681"> </span>tmp_user;<span style="color:#6e7681">
+</span></span></span></code></pre></div><p>➤ 重新建立測試資料以及「Coverage Index」</p>
+<p>為了避免用 primary key 再次從 Table 查詢的耗能，我們可以把 select 與 where 用到的欄位(name、password)做聯合索引，這樣就能夠直接使用索引查詢而不需用 primary key 重新比對，這就是「Coverage Index」的應用。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">create</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">table</span><span style="color:#6e7681"> </span>tmp_user<span style="color:#6e7681"> </span>(<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">   </span>id<span style="color:#6e7681"> </span>bigint(<span style="color:#a5d6ff">20</span>)<span style="color:#6e7681"> </span><span style="color:#ff7b72">not</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">null</span><span style="color:#6e7681"> </span>auto_increment<span style="color:#6e7681"> </span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">   </span>name<span style="color:#6e7681"> </span>varchar(<span style="color:#a5d6ff">255</span>)<span style="color:#6e7681"> </span><span style="color:#ff7b72">not</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">null</span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">   </span>password<span style="color:#6e7681"> </span>varchar(<span style="color:#a5d6ff">255</span>)<span style="color:#6e7681"> </span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">   </span><span style="color:#ff7b72">primary</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">key</span><span style="color:#6e7681"> </span>(id))<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">   </span>engine<span style="color:#ff7b72;font-weight:bold">=</span>innodb<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">   </span><span style="color:#ff7b72">default</span><span style="color:#6e7681"> </span>character<span style="color:#6e7681"> </span><span style="color:#ff7b72">set</span><span style="color:#ff7b72;font-weight:bold">=</span>utf8<span style="color:#6e7681"> </span><span style="color:#ff7b72">collate</span><span style="color:#ff7b72;font-weight:bold">=</span>utf8_general_ci;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">insert</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">into</span><span style="color:#6e7681"> </span>tmp_user<span style="color:#6e7681"> </span>(name,<span style="color:#6e7681"> </span>password)<span style="color:#6e7681"> </span><span style="color:#ff7b72">values</span><span style="color:#6e7681"> </span>(<span style="color:#a5d6ff">&#34;寶寶不說&#34;</span>,<span style="color:#a5d6ff">&#34;123&#34;</span>);<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">alter</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">table</span><span style="color:#6e7681"> </span>tmp_user<span style="color:#6e7681"> </span><span style="color:#ff7b72">add</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">index</span><span style="color:#6e7681"> </span>name_password(name,password);<span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d982a22da663e639b01c46ce199b1372" rel="noopener">coverage_example.sql</a>（GitHub Gist）</p>
+<p>➤ 再次執行 SQL B：</p>
+<pre tabindex="0"><code>explain select password from tmp_user where name = &#39;寶寶不說&#39;;
+</code></pre><p>你會發現本次的查詢就有使用到「Index」嚕～</p>
+<p><img src="https://deanlin.net/blog/202108/covering-index-explained/images/covering-index-explained-04.webp" width="1400" height="159" alt="SETP 4：建立 Coverage Index 優化 SQL B（圖 4）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="總結">總結<a class="h-anchor" href="#%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>Index 需要根據實際情境建立</li>
+<li>如果查詢會用到多個欄位，建立 Coverage Index 來優化查詢效率</li>
+<li>如果資料高達百萬筆，你的 Index 是否有效是非常重要的事情</li>
+</ol>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>MySQL Master Slave Replication 主從式架構設定教學</title>
+      <link>https://deanlin.net/blog/202103/mysql-master-slave-replication/</link>
+      <pubDate>Thu, 25 Mar 2021 16:45:58 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202103/mysql-master-slave-replication/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>Master Slave Replication 是一個 Web 工程師需要具備的基礎概念，我們可以透過這個技術有效的降低 Database server 負荷，同時給使用者提供更穩定順暢的體驗；本文除了讓你了解這個技術的原理外還會以 MySQL…</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-01.webp" width="1400" height="783" alt="MySQL Master Slave Replication 主從式架構設定教學（圖 1）" loading="lazy" decoding="async"></p>
+<p>Master Slave Replication 是一個 Web 工程師需要具備的基礎概念，我們可以透過這個技術有效的降低 Database server 負荷，同時給使用者提供更穩定順暢的體驗；本文除了讓你了解這個技術的原理外還會以 MySQL 這門資料庫語言一步步透過實作讓你理解如何實現它。</p>
+<pre tabindex="0"><code>一、30 秒認識 Master Slave Replication 是什麼
+  ∙ 為什麼需要 Master Slave Replication 的架構？
+  ∙ Master Slave Replication 為什麼能夠解決這些問題？
+  ∙ Master Slave Replication 的架構
+二、實作 MySQL Master Slave replication
+  ∙ 前置作業
+  ∙ 建立MySQL Replication
+三、驗證 Master、Slave DB 是否同步
+</code></pre><h2 id="一30-秒認識-master-slave-replication-是什麼">一、30 秒認識 Master Slave Replication 是什麼<a class="h-anchor" href="#%e4%b8%8030-%e7%a7%92%e8%aa%8d%e8%ad%98-master-slave-replication-%e6%98%af%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<h3 id="為什麼需要-master-slave-replication-的架構">為什麼需要 Master Slave Replication 的架構？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81-master-slave-replication-%e7%9a%84%e6%9e%b6%e6%a7%8b" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>網站需要面對大流量</strong>：新聞媒體類的網站無論哪個時段都會被大量的檢索，如果資料庫只用一個 server 來處理會無法負荷瞬間的高流量。</li>
+<li><strong>資料庫內容需要被分析</strong>：公司如果有資料分析部門，他們也會隨時監控資料庫的變化來產生報表，但如果跟一般使用者一樣 query 同一台 server 會使這台 server 增加不必要的負荷導致使用者體驗下降。</li>
+</ul>
+<h3 id="master-slave-replication-為什麼能夠解決這些問題">Master Slave Replication 為什麼能夠解決這些問題？<a class="h-anchor" href="#master-slave-replication-%e7%82%ba%e4%bb%80%e9%ba%bc%e8%83%bd%e5%a4%a0%e8%a7%a3%e6%b1%ba%e9%80%99%e4%ba%9b%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>主從式架構</strong>：將資料庫的 server 區分成 Master(1台) 與 Slave(N台) 兩種，Master 負責資料寫入，Slave 提供資料檢索；這樣就把壓力分散到幾台 Server 上面。</li>
+<li><strong>資料庫同步</strong>：Slave 會同步 Master 的資料，這樣除了分散 server 壓力外，資料也獲得了備份。</li>
+</ul>
+<h3 id="master-slave-replication-的架構">Master Slave Replication 的架構<a class="h-anchor" href="#master-slave-replication-%e7%9a%84%e6%9e%b6%e6%a7%8b" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>在 master 的 server 執行的 SQL command 會被記錄在 Binary Log 裡面</li>
+<li>master 將 Binary Log 傳送到 slave 的 Relay Log</li>
+<li>slave 依據 Relay Log 做資料的變更</li>
+</ol>
+<figure class="figure"><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-02.webp" width="1194" height="738" alt="Relay Log 與 Binary Log檔案格式、內容都一樣，不同在於 slave 在執行完 Relay Log 的 SQL 之後，會自己刪除當前的 Relay Log" loading="lazy" decoding="async">
+  <figcaption>Relay Log 與 Binary Log檔案格式、內容都一樣，不同在於 slave 在執行完 Relay Log 的 SQL 之後，會自己刪除當前的 Relay Log</figcaption>
+</figure>
+
+<h2 id="二實作-mysql-master-slave-replication">二、實作 MySQL Master Slave replication<a class="h-anchor" href="#%e4%ba%8c%e5%af%a6%e4%bd%9c-mysql-master-slave-replication" aria-label="這個段落的連結"></a></h2>
+<h2 id="前置作業">前置作業<a class="h-anchor" href="#%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad" aria-label="這個段落的連結"></a></h2>
+<h3 id="-準備兩台-ubuntu-server-自己實驗建議使用-vmware筆者環境配置如下">➤ 準備兩台 ubuntu server (自己實驗建議使用 VMWARE)，筆者環境配置如下<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e5%85%a9%e5%8f%b0-ubuntu-server-%e8%87%aa%e5%b7%b1%e5%af%a6%e9%a9%97%e5%bb%ba%e8%ad%b0%e4%bd%bf%e7%94%a8-vmware%e7%ad%86%e8%80%85%e7%92%b0%e5%a2%83%e9%85%8d%e7%bd%ae%e5%a6%82%e4%b8%8b" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>硬體配置一定會影響到效能，筆者只是建置一個提供實驗的環境而已</p>
+</blockquote>
+<ul>
+<li>OS version：ubuntu 16.04</li>
+<li>RAM：1G</li>
+<li>ROM：8G</li>
+</ul>
+<h3 id="-給兩台-sever-安裝-mysql">➤ 給兩台 sever 安裝 MySQL<a class="h-anchor" href="#-%e7%b5%a6%e5%85%a9%e5%8f%b0-sever-%e5%ae%89%e8%a3%9d-mysql" aria-label="這個段落的連結"></a></h3>
+<p>安裝指令如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt update
+</span></span><span style="display:flex;"><span>sudo apt install mysql-server
+</span></span></code></pre></div><p>安裝完成後你可以先登入 MySQL 看看安裝版本資訊</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mysql -u root -p
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-03.webp" width="1400" height="491" alt="給兩台 sever 安裝 MySQL（圖 3）" loading="lazy" decoding="async"></p>
+<h2 id="建立mysql-replication">建立MySQL Replication<a class="h-anchor" href="#%e5%bb%ba%e7%ab%8bmysql-replication" aria-label="這個段落的連結"></a></h2>
+<h3 id="-master-server-設定">➤ Master server 設定<a class="h-anchor" href="#-master-server-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1</strong>：設定 Master server 的 my.cnf</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/mysql/my.cnf
+</span></span></code></pre></div><pre tabindex="0"><code>[mysqld]
+# 在這裡設定已蓋過預設的127.0.0.1(只能連本機)
+bind-address = 0.0.0.0
+
+# id為唯一值，每個server不可重覆
+server-id = 1
+
+# 指定產生bin log檔案名稱，使MySQL記錄所有DB交易記錄
+log-bin=mysql-bin
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/a555262a58eb9245c7ffcbcf891791ca" rel="noopener">my.cnf</a>（GitHub Gist）</p>
+<p>儲存後，重啟 MySQL 才會生效</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /etc/init.d/mysql restart
+</span></span></code></pre></div><p><strong>STEP 2</strong>：在 Master server 建立給 Slave 複製資料的帳號</p>
+<p>登入 MySQL</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mysql -u root -p
+</span></span></code></pre></div><p>建立有 REPLICATION、SLAVE 權限的 user 帳號</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*建立使用者*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">CREATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">USER</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;account&#39;</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#a5d6ff">&#39;ip&#39;</span><span style="color:#6e7681"> </span>IDENTIFIED<span style="color:#6e7681"> </span><span style="color:#ff7b72">BY</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;password&#39;</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*給使用者權限*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">GRANT</span><span style="color:#6e7681"> </span>REPLICATION<span style="color:#6e7681"> </span>SLAVE<span style="color:#6e7681"> </span><span style="color:#ff7b72">ON</span><span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">*</span>.<span style="color:#ff7b72;font-weight:bold">*</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">TO</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;account&#39;</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#a5d6ff">&#39;ip&#39;</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*使權限生效*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span>FLUSH<span style="color:#6e7681"> </span><span style="color:#ff7b72">PRIVILEGES</span>;<span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/68f42b828e24df0209600dee7a7030c7" rel="noopener">create_slave_user.sql</a>（GitHub Gist）</p>
+<p><strong>STEP 3</strong>：備份 Master server 的 DB</p>
+<blockquote>
+<p>執行此步驟時如果系統已經上線，一定要發出公告說明系統維護時間</p>
+</blockquote>
+<p>在完成 DB Replication 前，為了保證 Master 與 Slave 的資料相同，你需要先把 DB Lock 成 read only：</p>
+<pre tabindex="0"><code>mysql&gt; FLUSH TABLES WITH READ LOCK;
+</code></pre><p>備份指令：</p>
+<pre tabindex="0"><code>mysqldump -uroot -p  --all-databases &gt; master.sql
+</code></pre><p>解除 read only：</p>
+<pre tabindex="0"><code>mysql&gt; UNLOCK TABLES;
+</code></pre><p><strong>STEP 4</strong>：檢查 Master 是否已經啟動</p>
+<pre tabindex="0"><code>mysql&gt; SHOW MASTER STATUS \G
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-04.webp" width="1142" height="330" alt="Master server 設定（圖 4）" loading="lazy" decoding="async"></p>
+<h3 id="-slave-server-設定">➤ Slave server 設定<a class="h-anchor" href="#-slave-server-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1</strong>：將剛剛備份的 <code>master.sql</code> 還原到 Slave server 的 DB</p>
+<p>先複製 master.sql 到 Slave server 的目錄下</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo scp master.sql &lt;username&gt;@&lt;IP or hostname&gt;:&lt;Destination&gt;
+</span></span></code></pre></div><p>下指令還原 DB</p>
+<pre tabindex="0"><code>mysql -u root -p — default-character-set=utf8 &lt; master.sql
+</code></pre><h3 id="step-2設定-slave-server-的-mycnf">STEP 2：設定 Slave server 的 my.cnf<a class="h-anchor" href="#step-2%e8%a8%ad%e5%ae%9a-slave-server-%e7%9a%84-mycnf" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/mysql/my.cnf
+</span></span></code></pre></div><pre tabindex="0"><code>[mysqld]
+#注意：不可與剛剛設定的 Master 重複
+server-id=2 
+
+#Slave server 的 DB 開啟唯獨避免被寫入
+read-only=on
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/54144c2099368bfc91f2681a47f9bf94" rel="noopener">slave_my.cnf</a>（GitHub Gist）</p>
+<p>儲存後，重啟 MySQL 才會生效</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /etc/init.d/mysql restart
+</span></span></code></pre></div><p><strong>STEP 3</strong>：設定 SlaveDB，指定 Master DB 登入資訊，並啟動 Replication</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/* 這裡的帳號密碼就上面 Master 設定的那組 */</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span>CHANGE<span style="color:#6e7681"> </span>MASTER<span style="color:#6e7681"> </span><span style="color:#ff7b72">TO</span><span style="color:#6e7681"> </span>MASTER_HOST<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;master_ip&#39;</span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">              </span>MASTER_USER<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;account&#39;</span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">              </span>MASTER_PASSWORD<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;password&#39;</span>;<span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/e09739d509230e0b270f7b374c8ba553" rel="noopener">setting_slave_info.sql</a>（GitHub Gist）</p>
+<p>啟動 Slave Replication：</p>
+<pre tabindex="0"><code>mysql&gt; START SLAVE;
+</code></pre><p><strong>STEP 4</strong>：檢查 replication 狀態</p>
+<pre tabindex="0"><code>SHOW SLAVE STATUS \G
+</code></pre><p>如果下圖紅框皆顯示 Yes 就代表你成功嚕！</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-05.webp" width="582" height="268" alt="STEP 2：設定 Slave server 的 my.cnf（圖 5）" loading="lazy" decoding="async"></p>
+<p>如果你看到下面這個畫面，可能是因為你的 Master MySQL 的設定有問題，最有可能是『使用者帳號、密碼錯誤』、『bind-address 沒有調整』</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-06.webp" width="582" height="268" alt="STEP 2：設定 Slave server 的 my.cnf（圖 6）" loading="lazy" decoding="async"></p>
+<h2 id="三驗證-masterslave-db-是否同步">三、驗證 Master、Slave DB 是否同步<a class="h-anchor" href="#%e4%b8%89%e9%a9%97%e8%ad%89-masterslave-db-%e6%98%af%e5%90%a6%e5%90%8c%e6%ad%a5" aria-label="這個段落的連結"></a></h2>
+<p>先在 Master 確認是不是真的有跟 Slave 串接成功</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">show</span><span style="color:#6e7681"> </span>slave<span style="color:#6e7681"> </span>hosts;<span style="color:#6e7681">
+</span></span></span></code></pre></div><p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-07.webp" width="1400" height="274" alt="三、驗證 Master、Slave DB 是否同步（圖 7）" loading="lazy" decoding="async"></p>
+<p>確認連接成功後我們在 Master server 上面新增一個 DB</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-08.webp" width="342" height="479" alt="三、驗證 Master、Slave DB 是否同步（圖 8）" loading="lazy" decoding="async"></p>
+<p>回到 Slave server 就會看到 DB 被同步過來嚕～</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-09.webp" width="342" height="217" alt="三、驗證 Master、Slave DB 是否同步（圖 9）" loading="lazy" decoding="async"></p>
+<hr>
+<p>這篇文章是針對 MySQL Master Slave Replication 做說明，但你依照上面的做法完成後還需要思考幾個問題：</p>
+<ul>
+<li>我們知道 Master server 是用來更新資料，Slave server 是用來檢索資料；但他們都是獨立的 ip，總不能每個 api 執行時都連不一樣的 ip 吧？</li>
+<li>Slave 的資料是從 Master 上複製過來的，會複製就代表會有延遲，要如何保持資料的一致性呢？</li>
+</ul>
+<pre tabindex="0"><code>如果你想深入了解上面的問題如何解決可以參考我的文章：
+👍 在 MySQL 5.7 解決主從複製的延遲問題
+👍 Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting
+</code></pre><hr>
+<p>參考資源：<a href="https://dotblogs.com.tw/eric_obay_talk/2018/10/24/160017">MySQL Master Slave replication</a>、<a href="https://ithelp.ithome.com.tw/articles/10236724">打造MySQL Replication</a></p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>0難度讓你在Server安裝設定MySQL</title>
+      <link>https://deanlin.net/blog/202006/install-mysql-on-server/</link>
+      <pubDate>Tue, 16 Jun 2020 14:28:52 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/install-mysql-on-server/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>這是一篇只要複製貼上，注意小細節就能讓你輕鬆在ubuntu server設定好MySQL的文章</description>
+      <content:encoded><![CDATA[<figure class="figure"><img src="https://deanlin.net/blog/202006/install-mysql-on-server/images/install-mysql-on-server-01.webp" width="1200" height="618" alt="海豚好可愛" loading="lazy" decoding="async">
+  <figcaption>海豚好可愛</figcaption>
+</figure>
+
+<h2 id="文章架構如下">文章架構如下：<a class="h-anchor" href="#%e6%96%87%e7%ab%a0%e6%9e%b6%e6%a7%8b%e5%a6%82%e4%b8%8b" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>安裝MySQL</li>
+<li>設定MySQL可以讓外網連線</li>
+<li>MySQL防火牆設定</li>
+<li>建立新DB</li>
+<li>新增/刪除使用者及權限</li>
+<li>列出資料庫有權限的使用者列表</li>
+<li>列出所有User權限表</li>
+<li>修改MySQL root密碼</li>
+<li>修改整體密碼規則強度</li>
+</ol>
+<h2 id="1-安裝mysql">1. 安裝MySQL<a class="h-anchor" href="#1-%e5%ae%89%e8%a3%9dmysql" aria-label="這個段落的連結"></a></h2>
+<p>在安裝MySQL的時候會問你很多問題，如果你沒有特殊需求就都用y通過，密碼強度部分需要記住自己是怎麼設定的(因為不同密碼強度的規則差異很大，詳情可以看<a href="http://n.sfs.tw/content/index/13359">這篇</a>)</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt update
+</span></span><span style="display:flex;"><span>sudo apt install mysql-server
+</span></span><span style="display:flex;"><span>sudo mysql_secure_installation
+</span></span></code></pre></div><p>安裝完成後你可以先進入MySQL看看</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mysql -u root -p
+</span></span></code></pre></div><h2 id="2-設定mysql可以讓外網連線">2. 設定MySQL可以讓外網連線<a class="h-anchor" href="#2-%e8%a8%ad%e5%ae%9amysql%e5%8f%af%e4%bb%a5%e8%ae%93%e5%a4%96%e7%b6%b2%e9%80%a3%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
+<p>如果你所架設的MySQL是允許外網或者某個特定ip做連線的，你就做以下調整</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
+</span></span><span style="display:flex;"><span>bind-address <span style="color:#ff7b72;font-weight:bold">=</span> 0.0.0.0 //這個是指誰都可以連線的意思
+</span></span><span style="display:flex;"><span>sudo su
+</span></span><span style="display:flex;"><span>service mysql restart //設定完成後要重啟才會生效
+</span></span></code></pre></div><h2 id="3-mysql防火牆設定">3. MySQL防火牆設定<a class="h-anchor" href="#3-mysql%e9%98%b2%e7%81%ab%e7%89%86%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+<p>以下為最基礎的防火牆設定，資料庫慣用的port為3306，22是給ssh登入使用的</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install ufw
+</span></span><span style="display:flex;"><span>sudo ufw enable
+</span></span><span style="display:flex;"><span>sudo ufw allow <span style="color:#a5d6ff">3306</span>
+</span></span><span style="display:flex;"><span>sudo ufw allow 22/tcp
+</span></span><span style="display:flex;"><span>sudo ufw status
+</span></span></code></pre></div><h2 id="4-建立新db">4. 建立新DB<a class="h-anchor" href="#4-%e5%bb%ba%e7%ab%8b%e6%96%b0db" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mysql -u root -p
+</span></span></code></pre></div><p>進入MySQL後你可以用指令的方式建立DB如下，如果你需要修改他默認編碼也能夠透過ALTER去做修正</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">CREATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">DATABASE</span><span style="color:#6e7681"> </span>db_name;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">ALTER</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">DATABASE</span><span style="color:#6e7681"> </span>xxx_db<span style="color:#6e7681"> </span>CHARACTER<span style="color:#6e7681"> </span><span style="color:#ff7b72">SET</span><span style="color:#6e7681"> </span>utf8<span style="color:#6e7681"> </span><span style="color:#ff7b72">COLLATE</span><span style="color:#6e7681"> </span>utf8_bin;<span style="color:#6e7681">
+</span></span></span></code></pre></div><h2 id="5-新增刪除使用者及權限">5. 新增/刪除使用者及權限<a class="h-anchor" href="#5-%e6%96%b0%e5%a2%9e%e5%88%aa%e9%99%a4%e4%bd%bf%e7%94%a8%e8%80%85%e5%8f%8a%e6%ac%8a%e9%99%90" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>新增mysql使用者及賦予權限</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>use<span style="color:#6e7681"> </span>mysql;<span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">//</span><span style="color:#f85149">進入這個資料庫</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">create</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">user</span><span style="color:#6e7681"> </span><span style="color:#f85149">‘某某人’</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#f85149">‘哪個</span>ip可以(<span style="color:#ff7b72;font-weight:bold">%</span><span style="color:#f85149">為全部</span>)<span style="color:#f85149">’</span><span style="color:#6e7681"> </span>IDENTIFIED<span style="color:#6e7681"> </span><span style="color:#ff7b72">WITH</span><span style="color:#6e7681"> </span>mysql_native_password<span style="color:#6e7681"> </span><span style="color:#ff7b72">BY</span><span style="color:#6e7681"> </span><span style="color:#f85149">‘密碼’</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CREATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">DATABASE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">`</span><span style="color:#f85149">資料庫名稱</span><span style="color:#ff7b72;font-weight:bold">`</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">grant</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">all</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">privileges</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">on</span><span style="color:#6e7681"> </span><span style="color:#f85149">資料庫名稱</span>(<span style="color:#f85149">如果沒填就是全部</span>).<span style="color:#ff7b72;font-weight:bold">*</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">to</span><span style="color:#6e7681"> </span><span style="color:#f85149">‘某某人’</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#f85149">‘哪個</span>ip可以<span style="color:#f85149">’</span><span style="color:#6e7681"> </span>identified<span style="color:#6e7681"> </span><span style="color:#ff7b72">by</span><span style="color:#6e7681"> </span><span style="color:#f85149">‘密碼’</span>;<span style="color:#6e7681">
+</span></span></span></code></pre></div><blockquote>
+<p>刪除使用者及其權限</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">REVOKE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">ALL</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">PRIVILEGES</span>,<span style="color:#6e7681"> </span><span style="color:#ff7b72">GRANT</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">OPTION</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#f85149">‘某某人’</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#f85149">‘哪個</span>ip可以(<span style="color:#ff7b72;font-weight:bold">%</span><span style="color:#f85149">為全部</span>)<span style="color:#f85149">’</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">DROP</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">USER</span><span style="color:#6e7681"> </span><span style="color:#f85149">‘某某人’</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#f85149">‘哪個</span>ip可以(<span style="color:#ff7b72;font-weight:bold">%</span><span style="color:#f85149">為全部</span>)<span style="color:#f85149">’</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>flush<span style="color:#6e7681"> </span><span style="color:#ff7b72">privileges</span>;<span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">//</span><span style="color:#f85149">刷新權限</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">select</span><span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">*</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">from</span><span style="color:#6e7681"> </span>information_schema.user_privileges;<span style="color:#ff7b72;font-weight:bold">//</span><span style="color:#f85149">確認該</span>User權限已被刪除<span style="color:#6e7681">
+</span></span></span></code></pre></div><h2 id="6-列出資料庫有權限的使用者列表">6. 列出資料庫有權限的使用者列表<a class="h-anchor" href="#6-%e5%88%97%e5%87%ba%e8%b3%87%e6%96%99%e5%ba%ab%e6%9c%89%e6%ac%8a%e9%99%90%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85%e5%88%97%e8%a1%a8" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">select</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">user</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">from</span><span style="color:#6e7681"> </span>mysql.db<span style="color:#6e7681"> </span><span style="color:#ff7b72">where</span><span style="color:#6e7681"> </span>db<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#f85149">’資料庫名稱’</span>;<span style="color:#6e7681">
+</span></span></span></code></pre></div><h2 id="7-列出所有user權限表">7. 列出所有User權限表<a class="h-anchor" href="#7-%e5%88%97%e5%87%ba%e6%89%80%e6%9c%89user%e6%ac%8a%e9%99%90%e8%a1%a8" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">select</span><span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">*</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">from</span><span style="color:#6e7681"> </span>information_schema.user_privileges;<span style="color:#6e7681">
+</span></span></span></code></pre></div><h2 id="8-修改mysql-root密碼">8. 修改mysql root密碼<a class="h-anchor" href="#8-%e4%bf%ae%e6%94%b9mysql-root%e5%af%86%e7%a2%bc" aria-label="這個段落的連結"></a></h2>
+<p>請切記要修改root的密碼，避免駭客侵入你的伺服器後可以無所忌憚的讀取你的資料</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>use<span style="color:#6e7681"> </span>mysql;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72;font-weight:bold">//</span><span style="color:#6e7681"> </span><span style="color:#f85149">先指定</span><span style="color:#6e7681"> </span>plugin<span style="color:#6e7681"> </span><span style="color:#f85149">為</span><span style="color:#6e7681"> </span>mysql_native_password<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">UPDATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">user</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">SET</span><span style="color:#6e7681"> </span>plugin<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#f85149">’</span>mysql_native_password<span style="color:#f85149">’</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">WHERE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">User</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#f85149">’</span>root<span style="color:#f85149">’</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">UPDATE</span><span style="color:#6e7681"> </span>mysql.<span style="color:#ff7b72">user</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">SET</span><span style="color:#6e7681"> </span>authentication_string<span style="color:#ff7b72;font-weight:bold">=</span>PASSWORD(<span style="color:#f85149">‘</span>password<span style="color:#f85149">’</span>)<span style="color:#6e7681"> </span><span style="color:#ff7b72">WHERE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">USER</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#f85149">’</span>root<span style="color:#f85149">’</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>FLUSH<span style="color:#6e7681"> </span><span style="color:#ff7b72">PRIVILEGES</span>;<span style="color:#6e7681">
+</span></span></span></code></pre></div><h2 id="9-修改整體密碼規則強度">9. 修改整體密碼規則強度<a class="h-anchor" href="#9-%e4%bf%ae%e6%94%b9%e6%95%b4%e9%ab%94%e5%af%86%e7%a2%bc%e8%a6%8f%e5%89%87%e5%bc%b7%e5%ba%a6" aria-label="這個段落的連結"></a></h2>
+<p>如果你在安裝時對於密碼強度的問題是隨便選的，你可以在登入MySQL後用這個指令做修正</p>
+<pre tabindex="0"><code>set global validate_password_policy=0;
+</code></pre><blockquote>
+<p>密碼強度檢查等級，0/LOW、1/MEDIUM、2/STRONG</p>
+<p>0 or LOW Length <br>1 or MEDIUM Length; numeric, lowercase/uppercase, and special characters <br>2 or STRONG Length; numeric, lowercase/uppercase, and special characters;</p>
+<p>預設是1，即MEDIUM，所以剛開始設定的密碼必須符合長度，且必須含有數字，小寫或大寫字母，特殊字元。</p>
+</blockquote>
+<p>修改密碼長度限制</p>
+<pre tabindex="0"><code>set global validate_password_length=6;
+</code></pre><blockquote>
+<p>千萬不要為了圖方便而設計複雜度太低的密碼</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

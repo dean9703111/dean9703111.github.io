@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Code Refactoring｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/code-refactoring/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 25 Jan 2023 22:01:46 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/code-refactoring/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ChatGPT Code Review、Refactoring、Comments 的能力如何？</title>
+      <link>https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/</link>
+      <pubDate>Wed, 25 Jan 2023 22:01:46 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>ChatGPT 的 Code Review 能力如何？能幫我們解釋（Explain）、重構（Refactoring）、加註解（Comments）嗎？ 這邊我們就使用上一篇 Side Project 完成的 Code，來看看 ChatGPT 的表現。</description>
+      <content:encoded><![CDATA[<p>雖然之前<a href="https://deanlin.net/blog/202301/chatgpt-line-bot-side-project-part-2/">讓 ChatGPT 寫 Side Project</a> 時遇到一些狀況，不過這很可能是因為 ChatGPT 的資料截止於 2021 年所造成的。</p>
+<p>所以今天想來試試看，如果是「已知」的 Code，ChatGPT 的 Code Review 能力如何？能幫我們解釋（Explain）、重構（Refactoring）、加註解（Comments）嗎？</p>
+<p>這邊我們就使用<a href="https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/index.js">上一篇 Side Project 完成的 Code</a>，來看看 ChatGPT 的表現。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-01.webp" width="1260" height="689" alt="ChatGPT Code Review、Refactoring、Comments 的能力如何？（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+▋ 直接把程式碼丟進 ChatGPT 會發生什麼事？
+▋ 讓 ChatGPT 用中文解釋程式（Review and explain）
+▋ 用 ChatGPT 重構程式（Refactoring）
+▋ 用 ChatGPT 幫程式碼加上註解（Comments）
+▋ 結論：用對地方就是好幫手！
+</code></pre><h2 id="直接把程式碼丟進-chatgpt-會發生什麼事">直接把程式碼丟進 ChatGPT 會發生什麼事？<a class="h-anchor" href="#%e7%9b%b4%e6%8e%a5%e6%8a%8a%e7%a8%8b%e5%bc%8f%e7%a2%bc%e4%b8%9f%e9%80%b2-chatgpt-%e6%9c%83%e7%99%bc%e7%94%9f%e4%bb%80%e9%ba%bc%e4%ba%8b" aria-label="這個段落的連結"></a></h2>
+<p>這邊我把先前的「註解」都拿掉，直接丟到 ChatGPT 看看會發生什麼事。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> line <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@line/bot-sdk&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Configuration, OpenAIApi } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;openai&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> configuration <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Configuration({
+</span></span><span style="display:flex;"><span>  apiKey<span style="color:#ff7b72;font-weight:bold">:</span> process.env.OPENAI_API_KEY,
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> openai <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> OpenAIApi(configuration);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> config <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client(config);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware(config), (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  Promise
+</span></span><span style="display:flex;"><span>    .all(req.body.events.map(handleEvent))
+</span></span><span style="display:flex;"><span>    .then((result) =&gt; res.json(result))
+</span></span><span style="display:flex;"><span>    .<span style="color:#ff7b72">catch</span>((err) =&gt; {
+</span></span><span style="display:flex;"><span>      console.error(err);
+</span></span><span style="display:flex;"><span>      res.status(<span style="color:#a5d6ff">500</span>).end();
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> handleEvent (event) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (event.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;message&#39;</span> <span style="color:#ff7b72;font-weight:bold">||</span> event.message.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;text&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> Promise.resolve(<span style="color:#79c0ff">null</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> openai.createCompletion({
+</span></span><span style="display:flex;"><span>    prompt<span style="color:#ff7b72;font-weight:bold">:</span> event.message.text,
+</span></span><span style="display:flex;"><span>    model<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;text-davinci-003&#34;</span>,
+</span></span><span style="display:flex;"><span>    max_tokens<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1000</span>
+</span></span><span style="display:flex;"><span>  }).then((completions) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span> completions.data.choices[<span style="color:#a5d6ff">0</span>].text.trim();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> client.replyMessage(event.replyToken, {
+</span></span><span style="display:flex;"><span>      type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;text&#39;</span>,
+</span></span><span style="display:flex;"><span>      text<span style="color:#ff7b72;font-weight:bold">:</span> message
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#39;Linebot is running on 3000 port&#39;</span>);
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-02.webp" width="1084" height="362" alt="直接把程式碼丟進 ChatGPT 會發生什麼事？（圖 2）" loading="lazy" decoding="async"></p>
+<p>從 ChatGPT 的回覆中，我認爲他對程式的理解非常正確；當你接手一份程式碼，而前人完全沒有寫註解時， ChatGPT 能幫你加快理解這份程式。</p>
+<hr>
+<h2 id="讓-chatgpt-用中文解釋程式review-and-explain">讓 ChatGPT 用中文解釋程式（Review and explain）<a class="h-anchor" href="#%e8%ae%93-chatgpt-%e7%94%a8%e4%b8%ad%e6%96%87%e8%a7%a3%e9%87%8b%e7%a8%8b%e5%bc%8freview-and-explain" aria-label="這個段落的連結"></a></h2>
+<p>不過有時英文讀起來有點吃力，我們可以透過下面這段 prompt，讓他改成用「中文列點」來解釋。</p>
+<pre tabindex="0"><code>Review code and explain in traditional Chinese [List of points]
+</code></pre><p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-03.webp" width="1085" height="470" alt="讓 ChatGPT 用中文解釋程式（Review and explain）（圖 3）" loading="lazy" decoding="async"></p>
+<p>ChatGPT 的解釋挺讓我驚豔的，清晰明瞭的說明每個「套件的職責」，以及程式的「功能」。</p>
+<hr>
+<h2 id="用-chatgpt-重構程式refactoring">用 ChatGPT 重構程式（Refactoring）<a class="h-anchor" href="#%e7%94%a8-chatgpt-%e9%87%8d%e6%a7%8b%e7%a8%8b%e5%bc%8frefactoring" aria-label="這個段落的連結"></a></h2>
+<p>這邊我們再用下面這段 prompt，來實驗他重構程式，以及解釋重構理念的能力如何。</p>
+<pre tabindex="0"><code>Refactoring the code and explain in traditional Chinese
+</code></pre><p>下面是 ChatGPT 重構後的程式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> line <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@line/bot-sdk&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Configuration, OpenAIApi } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;openai&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client({
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> openai <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> OpenAIApi(<span style="color:#ff7b72">new</span> Configuration({
+</span></span><span style="display:flex;"><span>  apiKey<span style="color:#ff7b72;font-weight:bold">:</span> process.env.OPENAI_API_KEY,
+</span></span><span style="display:flex;"><span>}));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware({
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>}), <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> Promise.all(req.body.events.map(handleEvent));
+</span></span><span style="display:flex;"><span>    res.json(results);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    console.error(err);
+</span></span><span style="display:flex;"><span>    res.status(<span style="color:#a5d6ff">500</span>).end();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> handleEvent <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> (event) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (event.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;message&#39;</span> <span style="color:#ff7b72;font-weight:bold">||</span> event.message.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;text&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">null</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> { data<span style="color:#ff7b72;font-weight:bold">:</span> { choices } } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> openai.createCompletion({
+</span></span><span style="display:flex;"><span>    prompt<span style="color:#ff7b72;font-weight:bold">:</span> event.message.text,
+</span></span><span style="display:flex;"><span>    model<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;text-davinci-003&#34;</span>,
+</span></span><span style="display:flex;"><span>    max_tokens<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1000</span> 
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span> choices[<span style="color:#a5d6ff">0</span>].text.trim();
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> client.replyMessage(event.replyToken, {
+</span></span><span style="display:flex;"><span>    type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;text&#39;</span>,
+</span></span><span style="display:flex;"><span>    text<span style="color:#ff7b72;font-weight:bold">:</span> message
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#39;Linebot is running on 3000 port&#39;</span>);
+</span></span></code></pre></div><p>於結尾 ChatGPT 有說明自己的重構理念：</p>
+<ol>
+<li>使用 async/await 處理 promise 鏈，使程式碼更具可讀性。</li>
+<li>把 client 和 openai 的實例化移到最上層，使程式碼更整潔。</li>
+<li>使用解構賦值提取 openai 回應中的 choices，使程式碼更簡潔。</li>
+<li>把 handleEvent 函式移到最上層，使其更易於測試。</li>
+<li>使用箭頭函式語法使程式碼更一致。</li>
+<li>使用縮寫屬性名稱使程式碼更簡潔。</li>
+</ol>
+<p>這邊我得給他拍拍手，就算筆者認真重構都很難考慮的這麼完善。</p>
+<blockquote>
+<p><strong>這次 ChatGPT 重構完的程式是可以正常運行的，這點超重要！</strong></p>
+<p>因為實務上最怕重構後功能就壞掉，不過還是建議讀者將 ChatGPT 重構完的程式測試一遍，不要百分百相信。</p>
+</blockquote>
+<p>如果你對他的說明不理解，也可以再進一步詢問他（像是我對第 6 點就看不太懂）。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-04.webp" width="1091" height="583" alt="用 ChatGPT 重構程式（Refactoring）（圖 4）" loading="lazy" decoding="async"></p>
+<p>看完 ChatGPT 的解釋後，我回頭看了一下程式碼還是覺得怪怪的，所以我再次詢問。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-05.webp" width="1073" height="268" alt="用 ChatGPT 重構程式（Refactoring）（圖 5）" loading="lazy" decoding="async"></p>
+<p>對&hellip; <strong>ChatGPT 的解釋有時不完全正確，如果發現問題可以跟進一步他討論</strong>。</p>
+<p>另外我跟他討論後，又把 line 設定 config 的部分調整回來，因為 config 應該要集中設定，而不應該分散在多個位置。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> config <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client(config);
+</span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware(config), <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// code..
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 id="用-chatgpt-幫程式碼加上註解comments">用 ChatGPT 幫程式碼加上註解（Comments）<a class="h-anchor" href="#%e7%94%a8-chatgpt-%e5%b9%ab%e7%a8%8b%e5%bc%8f%e7%a2%bc%e5%8a%a0%e4%b8%8a%e8%a8%bb%e8%a7%a3comments" aria-label="這個段落的連結"></a></h2>
+<p>寫程式總是懶得寫註解？用下面這段 prompt 就能讓 ChatGPT 幫你完成這些瑣事！</p>
+<pre tabindex="0"><code>add code comments
+</code></pre><p>下面是 ChatGPT 加上註解後的程式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> line <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@line/bot-sdk&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Configuration, OpenAIApi } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;openai&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Initialize express app
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Get config values from environment variables
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> config <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Initialize line client
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client(config);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Initialize openai api
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> openai <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> OpenAIApi(<span style="color:#ff7b72">new</span> Configuration({
+</span></span><span style="display:flex;"><span>  apiKey<span style="color:#ff7b72;font-weight:bold">:</span> process.env.OPENAI_API_KEY,
+</span></span><span style="display:flex;"><span>}));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Handle post requests to /webhook
+</span></span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware(config), <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Map handleEvent function over all events and wait for all promises to resolve
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> Promise.all(req.body.events.map(handleEvent));
+</span></span><span style="display:flex;"><span>    res.json(results);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    console.error(err);
+</span></span><span style="display:flex;"><span>    res.status(<span style="color:#a5d6ff">500</span>).end();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Handle a single event
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> handleEvent <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> (event) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// Only handle message events of type text
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (event.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;message&#39;</span> <span style="color:#ff7b72;font-weight:bold">||</span> event.message.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;text&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">null</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// Get choices from openai response
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> { data<span style="color:#ff7b72;font-weight:bold">:</span> { choices } } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> openai.createCompletion({
+</span></span><span style="display:flex;"><span>    prompt<span style="color:#ff7b72;font-weight:bold">:</span> event.message.text,
+</span></span><span style="display:flex;"><span>    model<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;text-davinci-003&#34;</span>,
+</span></span><span style="display:flex;"><span>    max_tokens<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1000</span>
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// Send the first choice as a message reply
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span> choices[<span style="color:#a5d6ff">0</span>].text.trim;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> client.replyMessage(event.replyToken, { type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;text&#39;</span>, text<span style="color:#ff7b72;font-weight:bold">:</span> message });
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Start listening on port 3000 
+</span></span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#39;Linebot is running on 3000 port&#39;</span>);
+</span></span></code></pre></div><p>以筆者的角度來看，有些註解顯得多餘，但我覺得這些註解對新手理解程式很有幫助；實務上要保留、調整、移除，就看讀者的個人需求了。</p>
+<blockquote>
+<p>如果想要移除所有註解，輸入 <code>remove code comments</code> 即可。</p>
+</blockquote>
+<hr>
+<h2 id="結論用對地方就是好幫手">結論：用對地方就是好幫手！<a class="h-anchor" href="#%e7%b5%90%e8%ab%96%e7%94%a8%e5%b0%8d%e5%9c%b0%e6%96%b9%e5%b0%b1%e6%98%af%e5%a5%bd%e5%b9%ab%e6%89%8b" aria-label="這個段落的連結"></a></h2>
+<p>由於過去請 ChatGPT 寫 Side Project 時遇到各種挫折，讓我一度懷疑 ChatGPT 的戰力，但這篇文章總算是幫他板回一城。</p>
+<p>因為目前 ChatGPT 的資料截止於 2021 年，所以面對較新的技術、工具時，他的表現有點差強人意；但在面對「已知」的事物時，他所展現的功力並不輸一名訓練有素的資深工程師，確實能增加工作效率。</p>
+<blockquote>
+<p>其實我還有請他幫我將 JavaScript 重構成 TypeScript，但他最終只轉出一份很像可以跑的程式；but&hellip;實際上跑不動，還需要自己去微調許多細節，這邊我就不放上來了，期待日後會推出更完善的版本。</p>
+</blockquote>
+<p>未來筆者會出一系列使用 ChatGPT、openAI 的文章，如果你對這個議題感興趣，可以持續關注我的文章！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-06.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+<p><strong>參考資料</strong>：</p>
+<ol>
+<li>ChatGPT Refactor 後的程式：<a href="https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/refactor-index.js">Github</a></li>
+<li>ChatGPT Refactor 並加上註解的程式：<a href="https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/commets-index.js">Github</a></li>
+</ol>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>[前端]新手工程師容易卡住的問題 — 下班有約系列文</title>
+      <link>https://deanlin.net/blog/202202/frontend-junior-pitfalls/</link>
+      <pubDate>Wed, 23 Feb 2022 10:03:38 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202202/frontend-junior-pitfalls/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>筆者跟擔任 Tech Lead 的朋友聊天時，發現我們在幫新人 Code Review、Code Refactoring、Bug Fixing時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，而今天這篇文章會針對新手工程師容易卡住的問題來做分享。</description>
+      <content:encoded><![CDATA[<p>筆者跟擔任 Tech Lead 的朋友聊天時，發現我們在幫新人 Code Review、Code Refactoring、Bug Fixing 時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，而今天這篇文章會針對新手工程師容易卡住的問題來做分享。</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-01.webp" width="1400" height="741" alt="\[前端\]新手工程師容易卡住的問題 — 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+➤ 對網頁的元件(tag)、屬性(attr)不熟悉
+➤ 對 Object、Array 以及 null、undefine、&#34;&#34; 的特性並不熟
+➤ 不了解「==」跟「===」的差異
+➤ API 傳參數時遇到各種遇到困難
+➤ 非同步(Asynchronous)/同步(Synchronous)概念混亂
+➤ 不了解程式的運作流程
+➤ 演算法能力需要加強
+➤ 看不懂 Console 吐出的錯誤
+</code></pre><h2 id="-對網頁的元件tag屬性attr不熟悉">➤ 對網頁的元件(tag)、屬性(attr)不熟悉<a class="h-anchor" href="#-%e5%b0%8d%e7%b6%b2%e9%a0%81%e7%9a%84%e5%85%83%e4%bb%b6tag%e5%b1%ac%e6%80%a7attr%e4%b8%8d%e7%86%9f%e6%82%89" aria-label="這個段落的連結"></a></h2>
+<p>通常我們對「按鈕」的認知是「button」這個元件，相關的「click」事件也是由它來觸發；但我曾經遇過下面這個案例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#7ee787">v-btn</span> color<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;grey&#34;</span> class<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;ml-4 mt-7&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#7ee787">h6</span> <span style="color:#f85149">@</span>click<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;search()&#34;</span>&gt;搜尋&lt;/<span style="color:#7ee787">h6</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">v-btn</span>&gt;
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/4a40a295f6d3211094992235066a364b" rel="noopener">err_button.html</a>（GitHub Gist）</p>
+<p>他將「click」的事件包到「h6」這個元件中，這造成有時候<strong>點擊按鈕是沒有反應的</strong>，因為 click 事件觸發的有效範圍只在「h6」裡面，而<strong>不是整個 button 的範圍</strong>。</p>
+<p>後來發現這類因為對網頁元件不熟悉而導致的 Bug 還蠻常見的，如果 Debug 遇到類似問題時，可以先到網路上查詢大家通常會用這個元件來做什麼事，可以減少烏龍事件的發生。</p>
+<blockquote>
+<p>筆者曾看過用「table」來做切版的，在電腦螢幕 Demo 時看起來一切正常，但切換到手機的瞬間就崩潰了…</p>
+</blockquote>
+<h2 id="-對-objectarray-以及-nullundefine-的特性並不熟">➤ 對 Object、Array 以及 null、undefine、”” 的特性並不熟<a class="h-anchor" href="#-%e5%b0%8d-objectarray-%e4%bb%a5%e5%8f%8a-nullundefine-%e7%9a%84%e7%89%b9%e6%80%a7%e4%b8%a6%e4%b8%8d%e7%86%9f" aria-label="這個段落的連結"></a></h2>
+<p>前端串接 API 時，通常都會接收到以 json 格式回傳的物件，但假設我們要取得的是 Array 裡面的資料，如果沒有經過驗證就直接使用很容易會產生 Bug。</p>
+<p>像下面這個範例，如果回傳的是空陣列，如果沒有先驗證「陣列長度」就直接取用就會噴錯誤。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> response <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span>console.log(response[<span style="color:#a5d6ff">0</span>].status);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/caae7f1fadb077386c91a1df48f0e190" rel="noopener">array_err.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-02.webp" width="1400" height="227" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<p>有時我們會用物件參數的值來判斷要執行哪個程式，但如果用 undefined、空字串、null 來比對，就可能造成程式沒有依照我們想的邏輯去執行。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> user <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  id<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,
+</span></span><span style="display:flex;"><span>  name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baobao&#34;</span>,
+</span></span><span style="display:flex;"><span>  email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baobao@gmail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>  status<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (status <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;執行A&#34;</span>);
+</span></span><span style="display:flex;"><span>} <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;執行B&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/c6ae5bef92b0fd1974736afc837ef9d2" rel="noopener">null_logic.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-03.webp" width="782" height="280" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<p>下面再舉例一個極端物件，大家可以不要急著往下滑看答案，先思考看看印出來會是什麼結果？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> object <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  a<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  b<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  c<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span>,
+</span></span><span style="display:flex;"><span>  d<span style="color:#ff7b72;font-weight:bold">:</span> [],
+</span></span><span style="display:flex;"><span>  e<span style="color:#ff7b72;font-weight:bold">:</span> {},
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.a) console.log(object.a);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.b) console.log(object.b);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.c) console.log(object.c);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.d) console.log(object.d);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.e) console.log(object.e);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/a8b7daca5e33156180627955c87ba3c7" rel="noopener">object_example.js</a>（GitHub Gist）</p>
+<p>從下圖你可以看到除了「陣列、物件」外，其他都不會通過喔～</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-04.webp" width="1400" height="577" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 4）" loading="lazy" decoding="async"></p>
+<hr>
+<p>又或者有時我們在處理字串時會用「include」這個函式來比對，但如果你丟進去的參數是「null、undefine」這類的也會出事喔！</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> object <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  string<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>object.string.include(<span style="color:#a5d6ff">&#34;something..&#34;</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/b4bf6ebb83058e45981b7d47aef86372" rel="noopener">include_err.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-05.webp" width="782" height="165" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 5）" loading="lazy" decoding="async"></p>
+<h2 id="-不了解跟的差異">➤ 不了解「==」跟「===」的差異<a class="h-anchor" href="#-%e4%b8%8d%e4%ba%86%e8%a7%a3%e8%b7%9f%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h2>
+<p>不知道大家有沒有想過上面提到的「undefined、null、空字串」如果用「==」跟「===」來比較會有怎麼樣的結果。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;undefined==null&#34;</span>, <span style="color:#79c0ff">undefined</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#79c0ff">null</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;undefined===null&#34;</span>, <span style="color:#79c0ff">undefined</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">null</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;null==&#39;&#39;&#34;</span>, <span style="color:#79c0ff">null</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;null===&#39;&#39;&#34;</span>, <span style="color:#79c0ff">null</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;&#39;==undefined&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#79c0ff">undefined</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;&#39;===undefined&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">undefined</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/1cd4b3426fda2774476d96f59ca98e76" rel="noopener">null_undefined_empty.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-06.webp" width="1400" height="578" alt="不了解「==」跟「===」的差異（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<p>或者像是數字、字串、布林值這類的比較，有時這類型的的錯誤也常常讓人 Bug 找半天。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;true&#39;==true&#34;</span>, <span style="color:#a5d6ff">&#34;true&#34;</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;true&#39;===true&#34;</span>, <span style="color:#a5d6ff">&#34;true&#34;</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;1==&#39;1&#39;&#34;</span>, <span style="color:#a5d6ff">1</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#a5d6ff">&#34;1&#34;</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;1===&#39;1&#39;&#34;</span>, <span style="color:#a5d6ff">1</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;1&#34;</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d1325479adeb360fedf3415766d1d18a" rel="noopener">number_boolean.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-07.webp" width="1400" height="391" alt="不了解「==」跟「===」的差異（圖 7）" loading="lazy" decoding="async"></p>
+<h2 id="-api-傳參數時遇到各種困難">➤ API 傳參數時遇到各種困難<a class="h-anchor" href="#-api-%e5%82%b3%e5%8f%83%e6%95%b8%e6%99%82%e9%81%87%e5%88%b0%e5%90%84%e7%a8%ae%e5%9b%b0%e9%9b%a3" aria-label="這個段落的連結"></a></h2>
+<p>許多新手前端儘管可以完成切版，但是在串接 API 時卻遇到非常多的困難，就算看著 API 文件，在操作 GET、POST、PUT 傳遞參數時有很高的機率傳錯格式，像是：</p>
+<ul>
+<li>POST 的參數用 Params 傳，直接變成明碼。</li>
+<li>不知道 Body 的 form-data 怎麼組成、raw 如何組成 json 格式。</li>
+<li>常常有缺少或是格式錯誤參數。</li>
+</ul>
+<p>這部分我覺得如果後端工程師願意將 Postman 的 Collection 匯出，並在 Description 寫好邏輯直接讓前端工程師來確認，就會稍微減少以上的問題。</p>
+<h2 id="-非同步asynchronous同步synchronous概念混亂">➤ 非同步(Asynchronous)/同步(Synchronous)概念混亂<a class="h-anchor" href="#-%e9%9d%9e%e5%90%8c%e6%ad%a5asynchronous%e5%90%8c%e6%ad%a5synchronous%e6%a6%82%e5%bf%b5%e6%b7%b7%e4%ba%82" aria-label="這個段落的連結"></a></h2>
+<p>以非同步(Asynchronous)來說，最常見的錯誤就是前端在呼叫 API 時，並沒有等待資料回傳就直接使用它，導致畫面渲染的時候出現各種 Bug。</p>
+<p>以同步(Synchronous)來說，有時會設計了太多不必要的等待機制，導致在某個環節卡死無法進行下一步。</p>
+<h2 id="-不了解程式的運作流程">➤ 不了解程式的運作流程<a class="h-anchor" href="#-%e4%b8%8d%e4%ba%86%e8%a7%a3%e7%a8%8b%e5%bc%8f%e7%9a%84%e9%81%8b%e4%bd%9c%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<p>新進工程師通常都要維護 Legacy code，但通常他們並不具備掌握程式運作流程的能力。</p>
+<p>這塊除了註解以及技術文件可以加快新手的熟練度外，資深工程師願意一起 Pair Programing 也是一個讓新進工程師能力大增的方式。</p>
+<blockquote>
+<p>我在實戰經驗中發現<a href="https://deanlin.net/blog/202111/pair-programming/">手把手教學（pair programing）</a>的效率比給 hint 的效率高很多，如果只給新手 hint，除發他天賦異稟，不然有大機率是有聽沒有懂。</p>
+</blockquote>
+<p>在幫忙 Debug 時，筆者也發現很多新手工程師並不瞭解自己的程式到底會怎麼跑，這個時候我們可以透過下中斷點（Breakpoint），讓程式執行的每一步慢慢地在我們眼前呈現。</p>
+<h2 id="-演算法能力需要加強">➤ 演算法能力需要加強<a class="h-anchor" href="#-%e6%bc%94%e7%ae%97%e6%b3%95%e8%83%bd%e5%8a%9b%e9%9c%80%e8%a6%81%e5%8a%a0%e5%bc%b7" aria-label="這個段落的連結"></a></h2>
+<p>很多時候一個結果是需要經過多次運算才會得到，其中可能含有複雜的 and(&amp;&amp;)、or(ll)、not(!)、大於(&gt;)、小於(&lt;)..邏輯。</p>
+<p>假設你今天要設計一個打卡系統，如果要判斷一個職員今日出勤是否有異常，在程式設計上就需要考慮到幾個基礎邏輯：</p>
+<ol>
+<li>公司是否有彈性上、下班時間</li>
+<li>該名職員上、下班打卡時間是否在彈性上、下班的區間中</li>
+<li>該名職員上班總時數是否符合公司規定</li>
+<li>在判斷上下班打卡異常時，是否有考慮到假勤</li>
+</ol>
+<p>如果上面的邏輯複雜度已經超過你的腦容量，我強列建議回歸紙筆。</p>
+<p>複雜的邏輯用紙筆寫下來會比較容易理解，這是因為大腦在面對電腦時，邏輯容易憑空想像；而用紙筆寫的時候則可以將邏輯具象化，讓大腦放慢一點腳步反而能找到解法。</p>
+<blockquote>
+<p>想提升演算法能力，推薦挑戰 LeeCode easy 等級的題目。</p>
+</blockquote>
+<h2 id="-看不懂-console-吐出的錯誤">➤ 看不懂 Console 吐出的錯誤<a class="h-anchor" href="#-%e7%9c%8b%e4%b8%8d%e6%87%82-console-%e5%90%90%e5%87%ba%e7%9a%84%e9%8c%af%e8%aa%a4" aria-label="這個段落的連結"></a></h2>
+<p>遇到問題卡關時，我們往往會先上網找答案，不管正不正確，先貼回來看看能不能動。</p>
+<p>有時候可能真的找到正確解答了，但因為兩者程式執行的環境不同而有報錯，此時很多新人會因為看不懂這個錯誤，轉而找其他的解答複製貼上。</p>
+<p>其實如果你將上面的錯誤訊息貼到 Google，就有很大的機率可以得到解答；一直尋找只靠一步就能完成的解答，有時反而是在走遠路。</p>
+<blockquote>
+<p><a href="https://stackoverflow.com/">StackOverflow </a>上面聚集各種大神，只要善用關鍵字，基本上你遇到的問題以前已經有數不清的人踩過坑了。</p>
+</blockquote>
+<h2 id="-只使用自己會的技能">➤ 只使用自己會的技能<a class="h-anchor" href="#-%e5%8f%aa%e4%bd%bf%e7%94%a8%e8%87%aa%e5%b7%b1%e6%9c%83%e7%9a%84%e6%8a%80%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>面對新的問題時，我們會習慣從大腦搜尋已經純熟技能，但有些問題是現有技能無法處理的，或者要花大量時間才能解決。</p>
+<p>以前端的 UI Component 舉例，有些人花大量的時間去創造，但往往最後產出的結果遠遠不如現成的框架、套件，甚至還會有各式各樣的 Bug。</p>
+<p>下次遇到現有技能很難解決的問題時，不妨先搜尋網路，看看是否有前輩已經提供很好的解決方案；學習新技能所花的時間，有時會比硬要用過去技能解決更省時喔～</p>
+<hr>
+<blockquote class="pullquote"><p>這篇文章只是舉出最常見的幾個問題，筆者相信還有很多點沒有提到，如果讀者有想到的話歡迎補充～</p>
+</blockquote>
+<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-08.webp" width="1400" height="319" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<pre tabindex="0"><code>下班有約系列文
+▋ [前端]新手工程師容易卡住的問題(本篇)
+▋ [前端＆後端]工程師常犯的錯誤
+▋ 讓開發團隊更好協作的方式
+▋ 談談 Pair Programing
+▋ 談談工程師的話語權
+▋ 出社會後，新鮮人要及早知道的 5 件事
+▋ 面試的性向測驗竟然準到讓人心裡發寒？
+▋ 反其道而行的任務分配
+▋ 現在的 Daily Scrum 真的適合團隊嗎？
+▋ 用低成本也能請到好員工？資深 HR 不想告訴你的秘密！
+</code></pre>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

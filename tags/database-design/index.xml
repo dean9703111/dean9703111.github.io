@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Database Design｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/database-design/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 22 May 2024 16:17:09 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/database-design/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文</title>
+      <link>https://deanlin.net/blog/202405/database-bottlenecks/</link>
+      <pubDate>Wed, 22 May 2024 16:17:09 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202405/database-bottlenecks/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。 今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。</description>
+      <content:encoded><![CDATA[<p>除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。</p>
+<p>今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。</p>
+<p>過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）。</p>
+<p>但隨著商品種類日漸增加（種類高達數萬），Redis 這類用記憶體（RAM）儲存資料的系統開始遇到了瓶頸。</p>
+<p>過去還可以用課金增加記憶體的方式來解決，但最新的需求是將資料保存的時限拉長到一年（統計圖表時間搜尋範圍）。</p>
+<p>而每天的資料量大約有 250MB，30 天還好說，變成 365 天成本就真的太可怕了。</p>
+<p>於是團隊就開始討論合適的遷移方案。</p>
+<p><img src="https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-01.webp" width="1144" height="642" alt="當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="方案一redis-僅保留-1-個月的資料量過期的轉移到其他資料庫">方案一：Redis 僅保留 1 個月的資料量，過期的轉移到其他資料庫<a class="h-anchor" href="#%e6%96%b9%e6%a1%88%e4%b8%80redis-%e5%83%85%e4%bf%9d%e7%95%99-1-%e5%80%8b%e6%9c%88%e7%9a%84%e8%b3%87%e6%96%99%e9%87%8f%e9%81%8e%e6%9c%9f%e7%9a%84%e8%bd%89%e7%a7%bb%e5%88%b0%e5%85%b6%e4%bb%96%e8%b3%87%e6%96%99%e5%ba%ab" aria-label="這個段落的連結"></a></h2>
+<p>最初的方案是增加一個排程腳本，每天定時將快過期的資料寫到其他資料庫保存。</p>
+<p>之所以讓 Redis 保留一個月的資料量，因為系統默認顯示當前一個月的統計資料，存取次數較高。</p>
+<p>但這麼做有許多缺點，比如：</p>
+<ul>
+<li>如果使用者搜尋的時間點跨月，那後端的程式邏輯就會比較複雜。</li>
+<li>需要同時維護兩套程式碼與資料庫，可能會造成未來隱憂（ex：版本升級、錯誤釐清）。</li>
+<li>對團隊成員的技術水平有更高的要求，可能會提升招募的難度。</li>
+</ul>
+<p>所以這個方案提出後當下就否決了。</p>
+<hr>
+<h2 id="方案二將資料遷移到關連式資料庫">方案二：將資料遷移到關連式資料庫<a class="h-anchor" href="#%e6%96%b9%e6%a1%88%e4%ba%8c%e5%b0%87%e8%b3%87%e6%96%99%e9%81%b7%e7%a7%bb%e5%88%b0%e9%97%9c%e9%80%a3%e5%bc%8f%e8%b3%87%e6%96%99%e5%ba%ab" aria-label="這個段落的連結"></a></h2>
+<p>因為大部分的團隊成員都比較熟悉關聯式資料庫（ex: MySQL）。</p>
+<p>所以大家想說要不就遷移到關聯式資料庫吧，這樣改版要花的時間成本較低。</p>
+<p>但研究了一下發現可行性較低，因為：</p>
+<ul>
+<li>如果不設計索引（index），搜尋效率會低到可怕。</li>
+<li>但設計索引（index）後，因為每分鐘要寫入大量資料，所以會影響到寫入效能。</li>
+<li>考量到未來統計報告可能需要更多資料，關聯式資料庫並不適合動態擴充欄位。</li>
+</ul>
+<hr>
+<h2 id="方案三將資料遷移到非關連式資料庫nosql">方案三：將資料遷移到非關連式資料庫（NoSQL）<a class="h-anchor" href="#%e6%96%b9%e6%a1%88%e4%b8%89%e5%b0%87%e8%b3%87%e6%96%99%e9%81%b7%e7%a7%bb%e5%88%b0%e9%9d%9e%e9%97%9c%e9%80%a3%e5%bc%8f%e8%b3%87%e6%96%99%e5%ba%abnosql" aria-label="這個段落的連結"></a></h2>
+<p>幾經考慮後，最終的方案是選擇 MongoDB 這個 NoSQL。</p>
+<p>主要原因是 MongoDB 無論在讀取、寫入，還是動態擴充欄位方面都能滿足需求。</p>
+<p>在決定使用 MongoDB 後，接下來對資料結構做了一下調整。</p>
+<p>在 Redis 中，原本將統計資料儲存在 Sorted Set 中，並使用 Hash 結構來存儲每個 timestamp 下的商品統計資料。結構如下：</p>
+<pre tabindex="0"><code>Sorted Set: timestamps
+Member: timestamp (e.g., 1620000000)
+Hash: hash:timestamp (e.g., hash:1620000000) 
+{
+    &#34;商品名稱1&#34;: &#34;統計資料1&#34;,
+    &#34;商品名稱2&#34;: &#34;統計資料2&#34;,
+    ...
+}
+</code></pre><p>然而，這樣的設計有些問題。因為實際頁面通常只顯示最多 20 筆商品的統計資料；但為了達成這個目標，我們需要先抓取區間內的 timestamp，然後再找到對應的 Key（商品名稱）。</p>
+<p>在 Redis 這麼做還 Ok，但如果轉換到 MongoDB，效率可能會不理想。</p>
+<p>因此，在遷移到 MongoDB 時重新設計了資料結構，將商品作為 collection 的主要文件，timestamp 與統計資料作為內嵌文件。</p>
+<p>新的 MongoDB 設計如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;商品名稱&#34;</span>: <span style="color:#a5d6ff">&#34;商品名稱1&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;統計資料&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;timestamp&#34;</span>: <span style="color:#a5d6ff">&#34;1620000000&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;data&#34;</span>: <span style="color:#a5d6ff">&#34;統計資料1&#34;</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;timestamp&#34;</span>: <span style="color:#a5d6ff">&#34;16200000100&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#7ee787">&#34;data&#34;</span>: <span style="color:#a5d6ff">&#34;統計資料2&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在這個設計中，我們將商品名稱設為 index，以提高查詢特定商品統計資料的效率。</p>
+<blockquote>
+<p>小提醒：經過實驗後，這個資料結構並不是最理想的，詳情參考這篇文章（<a href="https://deanlin.net/blog/202405/mongodb-vs-mysql-index-performance/">MongoDB 與 MySQL 建立 Index 對 Read/Write 的效能影響</a>）</p>
+</blockquote>
+<p>另外考量到時間搜尋範圍可能很大（ex: 4 個月的趨勢），面對大範圍的資料顯示，會以小時的統計資料呈現。</p>
+<p>以上就是朋友跟我分享的資料庫遷移案例，希望對大家有幫助，如果有更好的方案，也歡迎留言分享。</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/8207e2016ac8" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">Database 資料庫</span>
+    <span class="lc-desc">Edit description</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-card-01_hu_4d712f34f20c7567.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

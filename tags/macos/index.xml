@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>MacOS｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/macos/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Fri, 09 Feb 2024 21:09:20 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/macos/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>只要一張自拍照就能讓 AI 換臉整段影片！Mac M1 在本機安裝 Roop 教學</title>
+      <link>https://deanlin.net/blog/202402/roop-face-swap-mac/</link>
+      <pubDate>Fri, 09 Feb 2024 21:09:20 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202402/roop-face-swap-mac/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>原本我打算放上 Google Colab，但發現免費版執行的失敗率高得嚇人；因此寫了一篇 Mac AppleSilicon 的踩坑文件，讓大家可以輕鬆體驗這款 AI 換臉的工具（在自己電腦執行，無論效率還是便利性都高太多了）。</description>
+      <content:encoded><![CDATA[<p>原本我打算放上 Google Colab，但發現免費版執行失敗率高得嚇人；因此寫了一篇 Mac AppleSilicon 的踩坑文件，讓大家可以輕鬆體驗這款 AI 換臉工具（在自己電腦執行，無論效率還是便利性都高太多了）。</p>
+<p>文章開始前，我先總結一下體驗心得：「在 AI 的時代下，眼見不足為憑；這類換臉工具在使用上已經沒有技術壁壘，即使 0 基礎的小白也能在短時間上手。」</p>
+<p><strong>【免責聲明】：教學只是示範一種思路，沒有任何不良引導，請勿將工具用於個人學習外其他目的，使用軟體需遵守軟體相關條款協議，<a href="https://udn.com/news/story/7321/7672903">別忘記小玉已經在監獄了</a>。</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-01.webp" width="1002" height="565" alt="把我的臉合成到葉問上" loading="lazy" decoding="async">
+  <figcaption>把我的臉合成到葉問上</figcaption>
+</figure>
+
+<blockquote>
+<p><strong>小提醒</strong>：Windows 要安裝的東西可以<a href="https://github.com/s0md3v/roop/wiki/1.3-Setup-Windows">參考這篇官方文章</a>，其實跟 Mac 差不多。</p>
+</blockquote>
+<h2 id="step1-安裝-miniconda">STEP1: 安裝 Miniconda<a class="h-anchor" href="#step1-%e5%ae%89%e8%a3%9d-miniconda" aria-label="這個段落的連結"></a></h2>
+<p>進入官網選擇與自己電腦相容的 pkg 檔下載: <a href="https://docs.conda.io/en/latest/miniconda.html">https://docs.conda.io/en/latest/miniconda.html</a></p>
+<p><img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-02.webp" width="1161" height="796" alt="STEP1: 安裝 Miniconda（圖 2）" loading="lazy" decoding="async"></p>
+<p>安裝完成後進入終端機（Terminal），輸入 <code>conda config &ndash;set auto_activate_base true</code> 初始化 Conda（若要關閉輸入 <code>conda config &ndash;set auto_activate_base false</code> 即可）。</p>
+<p>再次打開終端機時，命名行前會有（base）</p>
+<p><img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-03.webp" width="525" height="106" alt="STEP1: 安裝 Miniconda（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="step2-下載-roop-專案--安裝相關套件">STEP2: 下載 Roop 專案 &amp; 安裝相關套件<a class="h-anchor" href="#step2-%e4%b8%8b%e8%bc%89-roop-%e5%b0%88%e6%a1%88--%e5%ae%89%e8%a3%9d%e7%9b%b8%e9%97%9c%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>進入終端機後，輸入 <code>git clone <a href="https://github.com/s0md3v/roop">https://github.com/s0md3v/roop</a></code> 下載專案。</p>
+<p>下載完成後進入專案目錄，將下面的內容貼到「requirements.txt」文件（這些是要安裝的套件）。</p>
+<pre tabindex="0"><code>--extra-index-url https://download.pytorch.org/whl/cu118
+
+numpy==1.23.5
+opencv-python==4.7.0.72
+onnx==1.14.0
+insightface==0.7.3
+psutil==5.9.5
+tk==0.1.0
+pillow==9.5.0
+customtkinter==5.1.3
+torch==2.0.0
+onnxruntime==1.15.0; sys_platform == &#39;darwin&#39; and platform_machine != &#39;arm64&#39;
+onnxruntime-silicon==1.13.1; sys_platform == &#39;darwin&#39; and platform_machine == &#39;arm64&#39;
+onnxruntime-gpu==1.15.0; sys_platform != &#39;darwin&#39;
+tensorflow==2.13.0rc1; sys_platform == &#39;darwin&#39;
+tensorflow==2.12.0; sys_platform != &#39;darwin&#39;
+opennsfw2==0.10.2
+protobuf==4.23.2
+tqdm==4.65.0
+</code></pre><p>然後在終端機進入 roop 資料夾，輸入 <code>pip install -r requirements.txt</code> 安裝相關套件。</p>
+<p><img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-04.webp" width="884" height="304" alt="STEP2: 下載 Roop 專案 &amp; 安裝相關套件（圖 4）" loading="lazy" decoding="async"></p>
+<p>接著可以通過 <a href="https://brew.sh/zh-tw/">homebrew</a> 安裝 ffmpeg。</p>
+<p><code>brew install ffmpeg</code></p>
+<hr>
+<h2 id="step3-執行-roof-換臉程式">STEP3: 執行 roof 換臉程式<a class="h-anchor" href="#step3-%e5%9f%b7%e8%a1%8c-roof-%e6%8f%9b%e8%87%89%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>在 roof 資料夾下執行 <code>python run.py</code>，等個幾秒鐘就會有如下的圖形介面出現（第一次執行會需要下載 500 多 MB 的資源，需等待一段時間），操作非常簡單，主要功能可以參考下圖說明。</p>
+<p><img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-05.webp" width="1192" height="1444" alt="STEP3: 執行 roof 換臉程式（圖 5）" loading="lazy" decoding="async"></p>
+<p>不過大多數人應該第一次執行時不會那麼順利，像筆者就遇到 tk 的錯誤如下：</p>
+<p><img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-06.webp" width="886" height="454" alt="STEP3: 執行 roof 換臉程式（圖 6）" loading="lazy" decoding="async"></p>
+<p>後面用 <code>brew search tk</code> 來搜尋，才發現 <code><a href="mailto:python-tk@3.10">python-tk@3.10</a></code> 沒裝，執行 <code>brew install <a href="mailto:python-tk@3.10">python-tk@3.10</a></code> 安裝後就正常了。</p>
+<p>接著又遇到 torch、torchvision 相容性問題，這部分我看考他們的<a href="https://github.com/pytorch/vision#installation">版本對照表</a>重裝就正常了</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pip uninstall torch torchvision
+</span></span><span style="display:flex;"><span>pip install <span style="color:#79c0ff">torch</span><span style="color:#ff7b72;font-weight:bold">==</span>2.0 <span style="color:#79c0ff">torchvision</span><span style="color:#ff7b72;font-weight:bold">==</span>0.15
+</span></span></code></pre></div><hr>
+<h2 id="step4-加強出圖效果與品質">STEP4: 加強出圖效果與品質<a class="h-anchor" href="#step4-%e5%8a%a0%e5%bc%b7%e5%87%ba%e5%9c%96%e6%95%88%e6%9e%9c%e8%88%87%e5%93%81%e8%b3%aa" aria-label="這個段落的連結"></a></h2>
+<p>作者表示 <a href="https://github.com/s0md3v/roop/wiki/2.-Acceleration#coreml-apple">Apple Silicon 支援 CoreML 加速</a>，執行下面指令安裝對應套件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pip uninstall onnxruntime onnxruntime-silicon
+</span></span><span style="display:flex;"><span>pip install onnxruntime-silicon<span style="color:#ff7b72;font-weight:bold">==</span>1.13.1
+</span></span></code></pre></div><p>之後執行換臉程式時結尾加上「 — execution-provider coreml」即可加速，另外想增加品質可以在結尾加上「 — frame-processor face_swapper face_enhancer」即可，<strong>完整啟動換臉的指令如下</strong>：</p>
+<p><code>python run.py &ndash;frame-processor face_swapper face_enhancer &ndash;execution-provider coreml</code></p>
+<hr>
+<h2 id="step5-看看換臉後的圖片與影片品質">STEP5: 看看換臉後的圖片與影片品質<a class="h-anchor" href="#step5-%e7%9c%8b%e7%9c%8b%e6%8f%9b%e8%87%89%e5%be%8c%e7%9a%84%e5%9c%96%e7%89%87%e8%88%87%e5%bd%b1%e7%89%87%e5%93%81%e8%b3%aa" aria-label="這個段落的連結"></a></h2>
+<p>這邊我先拿自己的照片換到葉問的電影照看看。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-07.webp" width="1192" height="1102" alt="圖片來源：葉問，僅作為教育及研究使用" loading="lazy" decoding="async">
+  <figcaption><em>圖片來源：葉問，僅作為教育及研究使用</em></figcaption>
+</figure>
+
+<p>其實我覺得效果是不錯的，會有違和感是因為我太胖了，跟身體不太吻合。</p>
+<p><img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-08.webp" width="1400" height="788" alt="STEP5: 看看換臉後的圖片與影片品質（圖 8）" loading="lazy" decoding="async"></p>
+<p>下面我再拿自己的照片跟韓團影片合成看看，不知道會不會一秒變歐巴（因為影片中有兩個人，所以我將 Many Faces 打開）。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-09.webp" width="1192" height="1102" alt="影片來源: Levitating / dsomeb Choreography &amp; Dance" loading="lazy" decoding="async">
+  <figcaption><em>影片來源: <a href="https://www.youtube.com/watch?v=Ly-Wm-hKoYU&amp;ab_channel=dsomeb">Levitating / dsomeb Choreography &amp; Dance</a></em></figcaption>
+</figure>
+
+<p>其實我覺得結果的違和感不大（自己在說），不過因為我提供的照片有眼鏡，所以有些畫面會閃。</p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-10.webp" width="960" height="540" aria-label="STEP5: 看看換臉後的圖片與影片品質（圖 10）" data-gifv>
+    <source src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-10.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<p>以上就是今天 AI 換臉的教學分享，筆者的電腦為 Mac M1 Max 32GB RAM，實測下來建議選擇 15 秒內的影片來做換臉，超過的話 RAM 可能會撐不住（超過可透過分段生成處理）。</p>
+<blockquote class="pullquote"><p>最後提醒一下大家，這個工具真的很強大，門檻也很低；我們可以拿來學習、娛樂，但千萬不要拿來做犯法的事情。</p>
+</blockquote>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202402/roop-face-swap-mac/images/roop-face-swap-mac-11.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>Apache Bench — 壓力測試好夥伴</title>
+      <link>https://deanlin.net/blog/202110/apache-bench-load-testing/</link>
+      <pubDate>Wed, 27 Oct 2021 14:01:12 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202110/apache-bench-load-testing/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>最近在測試 K8s 在大流量時 pod 的 auto scaling 機制，使用的工具是 Mac 本身內建 Apache Bench，這篇文章就來介紹它的基礎使用方式。</description>
+      <content:encoded><![CDATA[<p>最近在測試 K8s 在大流量時 pod 的 auto scaling 機制，使用的工具是 Mac 本身內建 Apache Bench，這篇文章就來介紹它的基礎使用方式。</p>
+<p><img src="https://deanlin.net/blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-01.webp" width="1400" height="789" alt="Apache Bench — 壓力測試好夥伴（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>文章大綱
+一、基礎操作
+二、理解重要回傳資訊
+三、使用 POST request
+四、測試注意事項
+</code></pre><h2 id="一基礎操作">一、基礎操作<a class="h-anchor" href="#%e4%b8%80%e5%9f%ba%e7%a4%8e%e6%93%8d%e4%bd%9c" aria-label="這個段落的連結"></a></h2>
+<p>下面是以 2 個連線數（c）建立 10 個 requests（n）來存取 Google 網址的範例。</p>
+<pre tabindex="0"><code>ab -n 10 -c 2 https://www.google.com/
+</code></pre><p>需要特別注意的是 request 數量不得低於連線數，否則會直接噴如下的錯誤：</p>
+<p><img src="https://deanlin.net/blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-02.webp" width="1400" height="145" alt="一、基礎操作（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>通常來說，requests 數量會是連線數量的 100 倍。</p>
+</blockquote>
+<hr>
+<h2 id="二理解重要回傳資訊">二、理解重要回傳資訊<a class="h-anchor" href="#%e4%ba%8c%e7%90%86%e8%a7%a3%e9%87%8d%e8%a6%81%e5%9b%9e%e5%82%b3%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
+<p>順利執行後會印出如下資訊，下面挑幾個重要資訊來做說明：</p>
+<p><img src="https://deanlin.net/blog/202110/apache-bench-load-testing/images/apache-bench-load-testing-03.webp" width="1400" height="683" alt="二、理解重要回傳資訊（圖 3）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>Concurrency Level</strong>：我們設定的連線量。</li>
+<li><strong>Failed requests/Complete requests</strong>：我們需要知道在壓力測試時失敗的百分比。</li>
+<li><strong>Requests per second</strong>：平均每秒可回應的 Request 數量。</li>
+<li><strong>Time per request</strong>：平均每個 Request 的時間。</li>
+<li><strong>Connection Times (ms)</strong>：可以從這裡觀察連線的狀況。</li>
+</ul>
+<hr>
+<h2 id="三使用-post-request">三、使用 POST request<a class="h-anchor" href="#%e4%b8%89%e4%bd%bf%e7%94%a8-post-request" aria-label="這個段落的連結"></a></h2>
+<p>有時會需要用 POST 傳送參數以及在 Header 帶入 Token 資訊，下面提供一個簡單範例：</p>
+<pre tabindex="0"><code>ab -n 10000 -c 100 -p post.txt -T application/json -H &#39;Authorization: Token your_token&#39; https://your_test_ip/
+</code></pre><ul>
+<li><strong>-p</strong>：這個是要傳送 data 的文檔路徑。</li>
+<li><strong>-T</strong>：傳送資料時的 Header 的 Content-type。</li>
+<li><strong>-H</strong>：放在 Header 的資訊。</li>
+</ul>
+<p>post.txt 裡面只需要以 json 格式呈現即可：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;username&#34;</span>:<span style="color:#a5d6ff">&#34;baobao&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;password&#34;</span>:<span style="color:#a5d6ff">&#34;baobaoverycute&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;action&#34;</span>:<span style="color:#a5d6ff">&#34;login&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h3 id="四測試注意事項">四、測試注意事項<a class="h-anchor" href="#%e5%9b%9b%e6%b8%ac%e8%a9%a6%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>連線量請不要一開始就 100 個，請由小而大遞增；否則最後的測試數據可能不準確。</li>
+<li>測試時請將 Server 與 Client 放在相同的網域；若不同網域來做測試就可能會受到頻寬影響。</li>
+<li>測試主要是為了確認 Server 可以承受的負載，盡可能避免其他干擾因素。</li>
+</ul>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>手把手帶你在 MacOS 安裝 Redis ＆Another Redis Desktop Manager</title>
+      <link>https://deanlin.net/blog/202108/install-redis-on-macos/</link>
+      <pubDate>Wed, 11 Aug 2021 22:45:09 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202108/install-redis-on-macos/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>本篇文章除了帶你安裝 Redis，更分享一個超好用的 Redis GUI 神器；整個操作流程不超過 10 分鐘，想入門 Redis 看這篇文章就對啦！</description>
+      <content:encoded><![CDATA[<p>本篇文章除了帶你安裝 Redis，更分享一個超好用的 Redis GUI 神器；整個操作流程不超過 10 分鐘，想入門 Redis 看這篇文章就對啦！</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-01.webp" width="1400" height="787" alt="手把手帶你在 MacOS 安裝 Redis ＆Another Redis Desktop Manager（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="一安裝並啟動-redis">一、安裝並啟動 Redis<a class="h-anchor" href="#%e4%b8%80%e5%ae%89%e8%a3%9d%e4%b8%a6%e5%95%9f%e5%8b%95-redis" aria-label="這個段落的連結"></a></h2>
+<p><strong>SETP 1</strong>：打開終端機輸入下面指令安裝 Homebrew（若安裝過請忽略）</p>
+<pre tabindex="0"><code>/bin/bash -c &#34;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)&#34;
+</code></pre><p><strong>SETP 2</strong>：使用 Homebrew 安裝 Redis</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install redis
+</span></span></code></pre></div><p><strong>SETP 3</strong>：啟動 Redis</p>
+<p>啟動 Server 終端機執行指令 <code>redis-server</code></p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-02.webp" width="1400" height="1045" alt="一、安裝並啟動 Redis（圖 2）" loading="lazy" decoding="async"></p>
+<p>開一個 Terminal 啟動 Client 終端機執行指令 <code>redis-cli</code> （如果沒開新的 Terminal 直接做是不行的喔！）</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-03.webp" width="572" height="144" alt="一、安裝並啟動 Redis（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 3</strong>：測試 Redis 基礎功能</p>
+<pre tabindex="0"><code>ping
+set foo bar
+get foo
+</code></pre><p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-04.webp" width="710" height="368" alt="一、安裝並啟動 Redis（圖 4）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>如果操作結果跟上圖一樣就恭喜你安裝成功嚕～</p>
+</blockquote>
+<hr>
+<h2 id="二安裝及使用-another-redis-desktop-manager">二、安裝及使用 Another Redis Desktop Manager<a class="h-anchor" href="#%e4%ba%8c%e5%ae%89%e8%a3%9d%e5%8f%8a%e4%bd%bf%e7%94%a8-another-redis-desktop-manager" aria-label="這個段落的連結"></a></h2>
+<p><strong>SETP 1</strong>：使用 Homebrew 安裝</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install --cask another-redis-desktop-manager
+</span></span></code></pre></div><p><strong>SETP 2</strong>：安裝後可以在應用程式列表看到他，但如果你的作業系統是 MacOS 10.15 以上，打開程式時會遇到如下錯誤</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-05.webp" width="836" height="370" alt="二、安裝及使用 Another Redis Desktop Manager（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 3</strong>：看到錯誤別慌張，打開「系統偏好設定」，選擇「安全性與隱私權」</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-06.webp" width="1334" height="1118" alt="二、安裝及使用 Another Redis Desktop Manager（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 4</strong>：在「一般」的分頁下，「強制打開」這個 APP</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-07.webp" width="1334" height="1138" alt="二、安裝及使用 Another Redis Desktop Manager（圖 7）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 5</strong>：在系統的警告下，鼓氣勇氣「打開」他吧！</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-08.webp" width="830" height="414" alt="二、安裝及使用 Another Redis Desktop Manager（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 6</strong>：打開後迎面而來的是簡潔有力的畫面，點擊左上角「New Connection」建立新連線</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-09.webp" width="1400" height="927" alt="二、安裝及使用 Another Redis Desktop Manager（圖 9）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 7</strong>：直接使用默認的設定即可，按下「OK」</p>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-10.webp" width="1400" height="927" alt="二、安裝及使用 Another Redis Desktop Manager（圖 10）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 8</strong>：最後進入 DB 確認剛剛建立的 key-value(foo-bar) 是否存在</p>
+<blockquote>
+<p>如果 redis 沒有選擇 DB，預設都是 0</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202108/install-redis-on-macos/images/install-redis-on-macos-11.webp" width="1099" height="727" alt="二、安裝及使用 Another Redis Desktop Manager（圖 11）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>大功告成嚕！恭喜大家踏出學習 Redis 的第一步～</p>
+</blockquote>
+<p><strong>參考資源：</strong></p>
+<ol>
+<li><a href="https://www.ioa.tw/macOS/Redis.html">macOS 上安裝 Redis</a></li>
+<li><a href="https://github.com/qishibo/AnotherRedisDesktopManager">Another Redis Desktop Manager</a></li>
+</ol>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub</title>
+      <link>https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/</link>
+      <pubDate>Thu, 08 Apr 2021 14:28:48 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟。</description>
+      <content:encoded><![CDATA[<p>每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟；整體操作流程個人感覺非常簡單，大家不要被新的技術嚇到了，通常新技術的門檻比想像的更低一點。</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01.webp" width="1400" height="786" alt="在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>一、事先準備
+ ➤ 創建 Nuxt.js 專案
+ ➤ 下載 &amp; 安裝 Docker
+二、在 local 把 Nuxt.js 專案 Build 成 Docker Image
+ ➤ 撰寫 dockerfile &amp; .dockerignore
+ ➤ 把 Nuxt.js 專案 build 成 Docker Image
+三、將 Docker Image 發佈到 dockerhub 上面
+</code></pre><h2 id="一事先準備">一、事先準備<a class="h-anchor" href="#%e4%b8%80%e4%ba%8b%e5%85%88%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h2>
+<h3 id="-創建-nuxtjs-專案">➤ 創建 Nuxt.js 專案<a class="h-anchor" href="#-%e5%89%b5%e5%bb%ba-nuxtjs-%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>如果你已經有 Nuxt.js 的專案可以跳過下面的操作流程</p>
+</blockquote>
+<p><strong>STEP 1：</strong>創建一個 Nuxt.js 專案</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app nuxtjs-tutorial
+</span></span></code></pre></div><p>在創建過程中會問你一些問題，你可以參考筆者的選擇：</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-02.webp" width="1400" height="555" alt="創建 Nuxt.js 專案（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2：</strong>讓 Nuxt.js 專案跑起來</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ cd nuxtjs-tutorial 
+</span></span><span style="display:flex;"><span>$ yarn dev
+</span></span></code></pre></div><figure class="figure"><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-03.webp" width="1400" height="1149" alt="看到這樣的狀況就是跑起來成功嚕" loading="lazy" decoding="async">
+  <figcaption>看到這樣的狀況就是跑起來成功嚕</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-04.webp" width="1400" height="775" alt="開啟 http://localhost:3000/ 可以順利看到畫面了喔！" loading="lazy" decoding="async">
+  <figcaption>開啟 <a href="http://localhost:3000/">http://localhost:3000/</a> 可以順利看到畫面了喔！</figcaption>
+</figure>
+
+<h3 id="-下載--安裝-docker">➤ 下載 &amp; 安裝 Docker<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89--%e5%ae%89%e8%a3%9d-docker" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1：</strong>下載 Docker</p>
+<p><strong>前往官網<a href="https://docs.docker.com/docker-for-mac/install/">下載 Docker 安裝檔</a></strong></p>
+<blockquote>
+<p>安裝過程就是狂按下一步，就不在多做介紹，下載後要把 App 打開依照步驟執行才算是完成安裝喔！</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-05.webp" width="1184" height="437" alt="下載 &amp; 安裝 Docker（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2：</strong>註冊 Docker</p>
+<p>在官網<a href="https://hub.docker.com/signup">註冊 docker 帳號</a></p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-06.webp" width="1184" height="866" alt="下載 &amp; 安裝 Docker（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3：</strong>在 local 端登入 docker</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ docker login
+</span></span></code></pre></div><p>輸入剛剛註冊的帳號密碼</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-07.webp" width="1400" height="179" alt="下載 &amp; 安裝 Docker（圖 7）" loading="lazy" decoding="async"></p>
+<h2 id="二在-local-把-nuxtjs-專案-build-成-docker-image">二、在 local 把 Nuxt.js 專案 Build 成 docker image<a class="h-anchor" href="#%e4%ba%8c%e5%9c%a8-local-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image" aria-label="這個段落的連結"></a></h2>
+<h3 id="-撰寫-dockerfile--dockerignore">➤ 撰寫 dockerfile &amp; .dockerignore<a class="h-anchor" href="#-%e6%92%b0%e5%af%ab-dockerfile--dockerignore" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1：先用指令建立這兩個檔案</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ touch dockerfile
+</span></span><span style="display:flex;"><span>$ touch .dockerignore
+</span></span></code></pre></div><p><strong>STEP 2：撰寫 </strong>dockerfile</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># node 運行環境</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node:12.19.0</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 存放image的目錄</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> mkdir -p /app<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> . /app<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 如果需要相關的環境變數請自行調整路徑</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#COPY ./env/.prod-env /app/env/.prod-env</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 對外的port</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">ENV</span> HOST 0.0.0.0 <span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝套件並build專案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> yarn<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> yarn build<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 執行專案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [ <span style="color:#a5d6ff">&#34;yarn&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span> ]<span style="color:#f85149">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/647663b391da8292d80089d445f3e7e6" rel="noopener">dockerfile</a>（GitHub Gist）</p>
+<p><strong>STEP 2：撰寫 </strong>.dockerignore</p>
+<pre tabindex="0"><code>npm-debug.log
+node_modules
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/3d2509de3aba92d14d42b530c2e654ed" rel="noopener">.dockerignore</a>（GitHub Gist）</p>
+<h3 id="-把-nuxtjs-專案-build-成-docker-image">➤ 把 Nuxt.js 專案 build 成 Docker Image<a class="h-anchor" href="#-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1</strong>：Build Docker Image</p>
+<p>在專案目錄下輸入指令後耐心等待打包，<strong>docker_example</strong> 是這個 image 的名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker build -t docker_example .
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-08.webp" width="1400" height="510" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>：Run Docker Image</p>
+<p>輸入指令確認 image 是否成功</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -it — rm -p 80:3000 docker_example
+</span></span></code></pre></div><blockquote>
+<p>特別注意『80 是對外 port，3000 是 container 的 port』，<strong>docker_example </strong>就是剛剛建立的 image 名稱</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-09.webp" width="1400" height="469" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 9）" loading="lazy" decoding="async"></p>
+<p>上圖 172.xx.xx.x:3000 的網址點開來是沒有畫面的，因為我們已經透過指令改變對外 port 到 80 了，在網址列上輸入 <a href="http://localhost/">http://localhost/</a> 就能成功看到供果嚕～</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-10.webp" width="1226" height="792" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 10）" loading="lazy" decoding="async"></p>
+<h2 id="三將-docker-image-發佈到-dockerhub-上面">三、將 Docker Image 發佈到 dockerhub 上面<a class="h-anchor" href="#%e4%b8%89%e5%b0%87-docker-image-%e7%99%bc%e4%bd%88%e5%88%b0-dockerhub-%e4%b8%8a%e9%9d%a2" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：給剛剛建立的 Image 一個 tag，username 是你 Doacker 的帳戶，xxximage是你希望這個 Image 在 dockerhub 上呈現的名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker tag docker_example username/xxximage
+</span></span></code></pre></div><p><strong>STEP 2</strong>：列出目前存在的 Images</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker images
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-11.webp" width="1400" height="144" alt="三、將 Docker Image 發佈到 dockerhub 上面（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：把這個 Image 丟到 dockerhub 的 repositories</p>
+<blockquote>
+<p>這個 push 的過程會根據你產生 Image 的大小決定，通常要等一段時間</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker push username/xxximage
+</span></span></code></pre></div><p><strong>STEP 4</strong>：在自己的 Docker 帳戶上看到剛剛上傳的 Docker Image</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-12.webp" width="1217" height="273" alt="三、將 Docker Image 發佈到 dockerhub 上面（圖 12）" loading="lazy" decoding="async"></p>
+<p>之後要部署這個 Docker Image 到其他 Server 就只需要輸入下面指令就能獲得嚕～</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker pull username/xxximage
+</span></span></code></pre></div><hr>
+<p>希望這篇文章有幫助到使用 Mac 開發 Nuxt.js 專案的朋友們～</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

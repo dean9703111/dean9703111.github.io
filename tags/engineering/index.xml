@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Engineering｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/engineering/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 08 Dec 2025 00:12:48 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/engineering/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Google Antigravity 教學】把想法化為現實！用 Vibe Coding 完成可部署上線的輕量級全端專案</title>
+      <link>https://deanlin.net/blog/202512/google-antigravity-full-stack/</link>
+      <pubDate>Mon, 08 Dec 2025 00:12:48 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202512/google-antigravity-full-stack/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>如果市場上找不到工具，那就自己動手實現！</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-01.webp" width="1400" height="788" alt="【Google Antigravity 教學】把想法化為現實！用 Vibe Coding 完成可部署上線的輕量級全端專案（圖 1）" loading="lazy" decoding="async"></p>
+<p>今天要跟大家分享 Google 最新推出的 Antigravity 這款 AI 程式碼編輯器。</p>
+<p>不管你電腦的作業系統是 Windows、Mac，還是 Linux，都可以安裝體驗。</p>
+<p>這隻文章我會透過 Vibe Coding，手把手帶你完成一個輕量級的全端專案，透過實戰的方式，帶大家了解他有哪些特色。</p>
+<p>如果你是剛接觸 Vibe Coding 的新手，可以了解有哪些實用技巧，能讓 AI 給你更精準的回覆，並根據你的需求進行功能調整、畫面優化。</p>
+<p>最後告訴你，如何在確保資訊安全的前提下，把專案部署到線上環境。</p>
+<blockquote>
+<p>完整的 Demo，可以觀看 YT 喔 👉</p>
+<p>對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。</p>
+</blockquote>
+<div class="yt" data-yt="-FW5DgQEV0M" data-title="YouTube 影片">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=-FW5DgQEV0M" target="_blank" rel="noopener" aria-label="播放影片：YouTube 影片">
+    <img src="https://i.ytimg.com/vi/-FW5DgQEV0M/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">YouTube 影片</span>
+  </a>
+</div>
+
+<hr>
+<h2 id="一全端架構快速入門">一、全端架構快速入門<a class="h-anchor" href="#%e4%b8%80%e5%85%a8%e7%ab%af%e6%9e%b6%e6%a7%8b%e5%bf%ab%e9%80%9f%e5%85%a5%e9%96%80" aria-label="這個段落的連結"></a></h2>
+<p>以全端專案來說，通常會包含<strong>前端、後端、資料庫</strong> 3 個部分。</p>
+<p><strong>前端是給使用者瀏覽的畫面</strong>，我選擇了 React 這款知名框架，他有許多現成的元件素材可以讓 AI 使用。</p>
+<p><strong>而後端是處理邏輯判斷的部分</strong>，如果採用傳統的 Python、Node.js、PHP 等程式語言。</p>
+<p>對新手來說，我認為難度太高了，就算真的把功能做出來也沒有掌控力。</p>
+<p>所以我打算使用 Google Apps Script，這款打開瀏覽器就能使用的工具作為替代方案。</p>
+<p><strong>至於資料庫，我也不使用 MySQL、Postgres、Mongo</strong>；而是使用大家非常熟悉的 Google Sheets，打開就能看到並且編輯資料。</p>
+<blockquote class="pullquote"><p>採用這套組合，你不需要伺服器、不用綁信用卡、不需要複雜的前置作業。</p>
+</blockquote>
+<p>就能透過實作理解全端專案的架構，而且最後可以免費把專案放到 GitHub 公開部署。</p>
+<p>不管你是要跟朋友炫耀，還是要直接應用到職場上都是可以的喔！</p>
+<hr>
+<h2 id="二快速上手-antigravity">二、快速上手 Antigravity<a class="h-anchor" href="#%e4%ba%8c%e5%bf%ab%e9%80%9f%e4%b8%8a%e6%89%8b-antigravity" aria-label="這個段落的連結"></a></h2>
+<p>如果使用過 VS Code 或是 Cusor，那他的介面你應該可以無障礙使用。</p>
+<p><a href="https://antigravity.google/">目前 Antigravity 只要登入 Google 帳號就可以免費使用</a>，至於免費多久，就看 Google 的心情了。</p>
+<p>這邊我先新增一個「pixel-game」的資料夾，然後把它拖曳到 Antigravity 中，這樣 AI 才知道他的工作區，在哪個資料夾底下。</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-02.webp" width="1400" height="818" alt="二、快速上手 Antigravity（圖 2）" loading="lazy" decoding="async"></p>
+<p>接下來跟大家說明一下右側 Agent 可以做的設定。</p>
+<p>這個 … 打開後有 3 個選項，分別是「客製化、MCP 伺服器，以及下載診斷」</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-03.webp" width="1400" height="818" alt="二、快速上手 Antigravity（圖 3）" loading="lazy" decoding="async"></p>
+<h3 id="-設定-rules讓-ai-更懂你">➤ 設定 Rules，讓 AI 更懂你<a class="h-anchor" href="#-%e8%a8%ad%e5%ae%9a-rules%e8%ae%93-ai-%e6%9b%b4%e6%87%82%e4%bd%a0" aria-label="這個段落的連結"></a></h3>
+<p>建議大家可以選擇「Customizations」來設定一下自己的使用偏好，在 Rules 這個地方，我選擇 Global。</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-04.webp" width="1400" height="818" alt="設定 Rules，讓 AI 更懂你（圖 4）" loading="lazy" decoding="async"></p>
+<p>這邊我複製貼上一個 Cursor 內部員工的 Rules 範例，其實提示詞都是通用的：<a href="https://x.com/kayladotdev/status/1853272891023872450">https://x.com/kayladotdev/status/1853272891023872450</a></p>
+<pre tabindex="0"><code>DO NOT GIVE ME HIGH LEVEL SHIT, IF I ASK FOR FIX OR EXPLANATION, I WANT ACTUAL CODE OR EXPLANATION!!! I DON&#39;T WANT &#34;Here&#39;s how you can blablabla&#34;
+
+- Be casual unless otherwise specified
+- Be terse
+- Suggest solutions that I didn&#39;t think about—anticipate my needs
+- Treat me as an expert
+- Be accurate and thorough
+- Give the answer immediately. Provide detailed explanations and restate my query in your own words if necessary after giving the answer
+- Value good arguments over authorities, the source is irrelevant
+- Consider new technologies and contrarian ideas, not just the conventional wisdom
+- You may use high levels of speculation or prediction, just flag it for me
+- No moral lectures
+- Discuss safety only when it&#39;s crucial and non-obvious
+- If your content policy is an issue, provide the closest acceptable response and explain the content policy issue afterward
+- Cite sources whenever possible at the end, not inline
+- No need to mention your knowledge cutoff
+- No need to disclose you&#39;re an AI
+- Please respect my prettier preferences when you provide code.
+- Split into multiple responses if one response isn&#39;t enough to answer the question.
+
+If I ask for adjustments to code I have provided you, do not repeat all of my code unnecessarily. Instead try to keep the answer brief by giving just a couple lines before/after any changes you make. Multiple code blocks are ok.
+</code></pre><p>貼上後，這個規則就會在所有的專案中生效；另外大家可以再加上一個 Rules，告訴 AI 你習慣使用的語言。</p>
+<pre tabindex="0"><code>- Always respond in 繁體中文
+</code></pre><p>點擊刷新後，就可以看到自己設定好的 Rules。</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-05.webp" width="1400" height="818" alt="設定 Rules，讓 AI 更懂你（圖 5）" loading="lazy" decoding="async"></p>
+<p>另外如果你想給目前的專案設定特定的 Rules，比如程式碼規則這類的，也可以點擊 Workspace 來設定喔。</p>
+<h3 id="-跨模型支援">➤ 跨模型支援<a class="h-anchor" href="#-%e8%b7%a8%e6%a8%a1%e5%9e%8b%e6%94%af%e6%8f%b4" aria-label="這個段落的連結"></a></h3>
+<p>在模型這塊，Google 除了自家的 Gemini 外，還提供了 Claude 與 GPT 的模型讓大家使用。</p>
+<p>這邊要提醒一下，每個模型使用是有額度限制的，超過後需要換一個模型使用。</p>
+<h3 id="-對話模式">➤ 對話模式<a class="h-anchor" href="#-%e5%b0%8d%e8%a9%b1%e6%a8%a1%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>在對話上，有分成 Planning 跟 Fast 兩種。</p>
+<p>如果你今天要處理的是複雜任務，比如專案初始的規劃，就建議選擇 Planning。</p>
+<p>假使你只是想要簡單快速的得到解答，那選擇 Fast 更省時喔。</p>
+<h3 id="-不要完全賦權給-ai-agent">➤ 不要完全賦權給 AI Agent<a class="h-anchor" href="#-%e4%b8%8d%e8%a6%81%e5%ae%8c%e5%85%a8%e8%b3%a6%e6%ac%8a%e7%b5%a6-ai-agent" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>Terminal Command Auto Execution 不建議用 Turbo 模式（此模式僅建議在獨立容器內執行）</li>
+<li>編輯 Deny List Terminal Commands 放黑名單指令</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-06.webp" width="645" height="611" alt="不要完全賦權給 AI Agent（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="三引導-ai-生成專案">三、引導 AI 生成專案<a class="h-anchor" href="#%e4%b8%89%e5%bc%95%e5%b0%8e-ai-%e7%94%9f%e6%88%90%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>可以在右側的 Agent 對話框中，貼上我們的需求：</p>
+<pre tabindex="0"><code># 角色
+你是一位資深的 React 前端工程師與遊戲設計師。請根據需求描述協助我設計一個網頁的「闖關問答遊戲」
+
+# UI/UX 需求
+- 前端框架：React Vite
+- 風格：Pixel Art 像素風，像是 2000 年代的街機，樸實但是有設計感。
+- 關主圖片處理：使用 DiceBear API 預先載入 100 張不同素材
+- 關卡呈現：每一關皆配有一個 Pixel 風格的「關主」圖片
+
+# 功能需求
+
+## 操作流程
+- 首頁：使用者需輸入「ID」才能開始遊戲，此 ID 是為了記錄到 Google Sheets
+- 題目來源：透過 Google Apps Script 從指定 Google Sheets 的「題目」工作表隨機撈取 N 題（不包含解答欄位）
+- 成績計算：將作答結果傳送到 Google Apps Script 計算成績，並記錄到 Google Sheets
+
+## Google Sheets 配置
+- 「題目」工作表：題號、題目、A、B、C、D、解答
+- 「回答」工作表：ID、闖關次數、總分、最高分、第一次通關分數（若同 ID 已通關過，後續分數不覆蓋，僅在同列增加闖關次數）、花了幾次通關、最近遊玩時間
+- Google Apps Script：是直接從這份 Google Sheet 擴充功能配置的
+
+# 環境變數設定 (.env)
+請將以下參數設計為可透過環境變數配置：
+- GOOGLE_APP_SCRIPT_URL：Google Apps Script 的後端連結
+- PASS_THRESHOLD：通過門檻（需要答對幾題才算通過）
+- QUESTION_COUNT：每次遊戲的題目數量
+</code></pre><p>這邊說明一下我是如何發想專案的。</p>
+<p>最近在幫學校老師與企業的人資上課時，他們提到自己時常有出考題給學生，以及對員工有培訓考核的需求。</p>
+<p><strong>但市場上找不到可以免費亂數出題、自動批改、簡單操作的工具。</strong></p>
+<p>了解需求後，我就想：</p>
+<blockquote class="pullquote"><p>那不如我嘗試用 Vibe Coding 設計一個簡易的闖關遊戲？</p>
+</blockquote>
+<p>於是今天的影片就出來了，我希望大家 Vibe Coding 時，盡可能從「實際」的需求出發；如果只是複製貼上別人的提示詞，你是學不到什麼東西的。</p>
+<p>下面跟大家說明一下我的提示詞架構：</p>
+<h3 id="-前端風格">➤ 前端風格<a class="h-anchor" href="#-%e5%89%8d%e7%ab%af%e9%a2%a8%e6%a0%bc" aria-label="這個段落的連結"></a></h3>
+<p>首先，我做了角色設定，讓他扮演資深的 React 前端工程師與遊戲設計師。</p>
+<p>另外如果你是第一次接觸 React，會需要先安裝 Node.js，詳細安裝與設定步驟可以參考上方的資訊卡，我有特別錄一集影片，分享安裝哪些工具可以讓 Vibe Coding 效率加倍。</p>
+<p>好，除了有角色設定與框架選擇外，我還跟他說了我期待的設計風格是 Pixel 像素風。</p>
+<p>並且關主的圖片要先下載好，每一關都要配置一個。</p>
+<h3 id="-前後端邏輯設計">➤ 前後端邏輯設計<a class="h-anchor" href="#-%e5%89%8d%e5%be%8c%e7%ab%af%e9%82%8f%e8%bc%af%e8%a8%ad%e8%a8%88" aria-label="這個段落的連結"></a></h3>
+<p>接下來，我則是非常明確的規範專案的「功能需求」，這塊就是講解前後端的運作邏輯。</p>
+<p>我告訴他使用者需輸入「ID」才能開始遊戲，此 ID 是為了讓 Google Sheets 紀錄分數時知道對方是誰。</p>
+<p>另外遊戲一開始會透過 Google Apps Script 從 Google Sheets 撈取「題目」，這邊有特別交代不要包含解答欄位。</p>
+<p>之所以不直接從 Google Sheets 抓題目，是為了保護資料來源。</p>
+<p>另外作答完畢後，會把答題結果傳送到 Google Apps Script 計算成績，並記錄到 Google Sheets。</p>
+<h3 id="-資料庫設計">➤ 資料庫設計<a class="h-anchor" href="#-%e8%b3%87%e6%96%99%e5%ba%ab%e8%a8%ad%e8%a8%88" aria-label="這個段落的連結"></a></h3>
+<p>然後為了要讓 AI 明白資料如何讀取與寫入，所以我提供了非常明確的 Google Sheets 配置，減少模糊地帶。</p>
+<p>不管題目還是回答的工作表，我都有明確列出欄位。</p>
+<p>並且針對特殊欄位有額外的說明，像是「回答」工作表的第一次通關分數，我就備注：「若同 ID 已通關過，後續分數不覆蓋，僅在同列增加闖關次數」。</p>
+<p>還有特別補充一點，Google Apps Script 是直接從這份 Google Sheet 擴充功能配置的，這是表達工具間的相依性。</p>
+<h3 id="-環境變數設計">➤ 環境變數設計<a class="h-anchor" href="#-%e7%92%b0%e5%a2%83%e8%ae%8a%e6%95%b8%e8%a8%ad%e8%a8%88" aria-label="這個段落的連結"></a></h3>
+<p>最後考量到專案完成後的「易用性」，所以我把「Google Apps Script 連結、通過門檻、題目數量」等設計為環境變數。</p>
+<p>這樣日後要換考題、改變評核標準，就不用打開程式，在網頁動動手指就好了。</p>
+<blockquote class="pullquote"><p>通常第一次的結果都不會滿意的</p>
+</blockquote>
+<blockquote class="pullquote"><p>不滿意的地方，你可以直接跟 AI 討論（<a href="https://youtu.be/-FW5DgQEV0M">可以參考影片</a>）</p>
+</blockquote>
+<hr>
+<h2 id="四部署前注意事項">四、部署前注意事項<a class="h-anchor" href="#%e5%9b%9b%e9%83%a8%e7%bd%b2%e5%89%8d%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85" aria-label="這個段落的連結"></a></h2>
+<p>確認功能都符合需求後，接下來我們就要準備將專案部署到 GitHub Pages。</p>
+<p>但部署前，我先提醒一下要注意的事項：</p>
+<h3 id="-設計-gitignore">➤ 設計 .gitignore<a class="h-anchor" href="#-%e8%a8%ad%e8%a8%88-gitignore" aria-label="這個段落的連結"></a></h3>
+<p>在這裡放不要加入 Git 版控的檔案、資料夾，比如：</p>
+<ul>
+<li>套件資料夾（node_modules）</li>
+<li>程式自動生成資料夾（dist）</li>
+<li>log 檔</li>
+<li>暫存檔（.tmp）</li>
+<li>隱私檔（.nev）</li>
+</ul>
+<h3 id="-設計-envexample">➤ 設計 .env.example<a class="h-anchor" href="#-%e8%a8%ad%e8%a8%88-envexample" aria-label="這個段落的連結"></a></h3>
+<p>雖然 .env 不可以上傳，但為了讓其他人知道可以如何使用這個專案，我會設計一個 .env.example 的範例檔：</p>
+<pre tabindex="0"><code>請幫我建立一個 .env.example 的範例檔
+</code></pre><h3 id="-設計-github-actions">➤ 設計 Github Actions<a class="h-anchor" href="#-%e8%a8%ad%e8%a8%88-github-actions" aria-label="這個段落的連結"></a></h3>
+<p>另外因為我們想要在 GitHub 部署，所以這邊我也請 AI 協助設計對應的工作流</p>
+<pre tabindex="0"><code>請設計能自動部署到 Github Pages 的 Action，會使用到的環境變數請參考 .env.exmaple 檔
+並將操作流程更新到 README.md 文件
+</code></pre><hr>
+<h2 id="五用-github-pages-免費發布網頁">五、用 GitHub Pages 免費發布網頁<a class="h-anchor" href="#%e4%ba%94%e7%94%a8-github-pages-%e5%85%8d%e8%b2%bb%e7%99%bc%e5%b8%83%e7%b6%b2%e9%a0%81" aria-label="這個段落的連結"></a></h2>
+<p>先點擊左側的 Source Control，點擊 Initialize Repository 可以初始化專案。</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-07.webp" width="1400" height="818" alt="五、用 GitHub Pages 免費發布網頁（圖 7）" loading="lazy" decoding="async"></p>
+<p>接著點擊 Generate，AI 就會辨識我們更新的內容，來產生 commit 訊息。</p>
+<p>確認文字描述符合自己的預期後，點擊 commit，就會在自己的電腦記錄這個變更。</p>
+<p>但如果想更新到雲端，你需要點擊 Push 才會正式上傳喔！</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-08.webp" width="1400" height="818" alt="五、用 GitHub Pages 免費發布網頁（圖 8）" loading="lazy" decoding="async"></p>
+<p>如果專案尚未存在於 GitHub，這邊會有彈窗出現，讓你輸入專案名稱。</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-09.webp" width="1400" height="818" alt="五、用 GitHub Pages 免費發布網頁（圖 9）" loading="lazy" decoding="async"></p>
+<p>另位因為我們的專案預計要發布到 GitHub Pages，所以選擇 Public Repository，完成後，點擊 Open GitHub 去看看是否部署順利。</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-10.webp" width="1400" height="818" alt="五、用 GitHub Pages 免費發布網頁（圖 10）" loading="lazy" decoding="async"></p>
+<p>如果能看到專案的內容，就代表你成功上傳專案了！</p>
+<p>完成這些操作後，我們回到 GitHub 點擊「Actions」的分頁，查看部署的狀況。</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-11.webp" width="1400" height="818" alt="五、用 GitHub Pages 免費發布網頁（圖 11）" loading="lazy" decoding="async"></p>
+<p>成功的話會有綠色勾勾，失敗則是紅色叉叉，會需要點進去釐清具體的錯誤原因。</p>
+<p>一開始部署失敗很正常，你可以把錯誤訊息複製起來，直接貼到與 AI 的對話視窗中，讓他幫忙解決</p>
+<p>如果一切順利，點擊進去就會看到這個專案的網址嚕</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-12.webp" width="1400" height="818" alt="五、用 GitHub Pages 免費發布網頁（圖 12）" loading="lazy" decoding="async"></p>
+<p>之後這個專案都是使用這個網址，把它點開來，順利的話，就可以看到成品嚕～</p>
+<p>但這個時候還不要高興的太早，因為我們還沒有設定這個專案的環境變數</p>
+<p>這邊我們再回到 GitHub 頁面，選擇 Settings 分頁，選擇左側的「Secrets and variables」。</p>
+<p>選擇「Actions」，這時你會發現環境變數的設定有分成兩種</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-13.webp" width="1400" height="818" alt="五、用 GitHub Pages 免費發布網頁（圖 13）" loading="lazy" decoding="async"></p>
+<p>Secrets，是放比較隱私的變數，而 Variables 則是放較不敏感的環境變數。</p>
+<p>至於怎麼放，我們可以回到專案，點開「.github」資料夾底下的 deploy.yml 檔案。</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-14.webp" width="1400" height="974" alt="五、用 GitHub Pages 免費發布網頁（圖 14）" loading="lazy" decoding="async"></p>
+<p>在 .env 的地方就有跟我們說明了哪些環境變數使用 secrets，哪些使用 variables，這邊使用「New repository secret」來設定。</p>
+<p><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-15.webp" width="1400" height="818" alt="五、用 GitHub Pages 免費發布網頁（圖 15）" loading="lazy" decoding="async"></p>
+<p>完成後，要記得到 Action 的分頁，找最後一個 deploy 的結果，選擇 Re-run all jobs，這樣環境變數的變更才會生效喔！</p>
+<blockquote>
+<p>這邊提醒一下，這隻影片是先幫大家初步掌握「全端專案的核心概念」</p>
+<p>讓你了解前端怎麼顯示、後端如何處理資料，以及資料庫如何存取</p>
+<p>目前的專案架構，並不適合處理邏輯複雜與高流量的使用場景</p>
+<p>但在了解這些概念後，未來後端想換成 Node.js，資料庫換成 MySQL 會輕鬆許多</p>
+</blockquote>
+<hr>
+<h2 id="六結語培養真正的工程思維">六、結語：培養真正的工程思維<a class="h-anchor" href="#%e5%85%ad%e7%b5%90%e8%aa%9e%e5%9f%b9%e9%a4%8a%e7%9c%9f%e6%ad%a3%e7%9a%84%e5%b7%a5%e7%a8%8b%e6%80%9d%e7%b6%ad" aria-label="這個段落的連結"></a></h2>
+<p>最近我拍了許多 AI 主題的影片，但主要目的不是要介紹工具如何使用，而是透過自己的經驗，從「實戰」的角度去深入分享。</p>
+<p>這幾年來，我在學校、企業講過許多 AI 輔助撰寫程式的課程，也就是現在大家所說的 Vibe Coding。</p>
+<p>很多學員都在問我，使用哪個工具才是最好的，我跟他們說：「選擇你最順手的主流工具就好，儘管工具間有差異；但完成專案的關鍵在於人，而不是工具。」</p>
+<p>以程式編輯器來說，從 VSCode、Cursor，到今天介紹的 Antigravity。</p>
+<p>工具永遠在更新、競爭，但我開發十幾年後，體悟到很重要的一件事：</p>
+<p><strong>「不管程式語言還是工具，他們的本質都是為了解決問題；</strong></p>
+<p><strong>一直學新的程式語言、換新的工具，其實對個人的成長極其有限。」</strong></p>
+<p>因為你的精力被分散了，對新手來說，還不如選擇一門程式語言，好好去深入研究。雖然程式間的語法不同，但底層邏輯都是差不多的。</p>
+<p>我不會特別崇拜某個程式語言，也不會非某個工具不用，因為現實世界只有「當下最合適」的選擇。</p>
+<p>技術會一直迭代更新，但程式的底蘊可以持續累積。</p>
+<p>在文章的最後，請大家在 AI 時代一定要保有自己的判斷力與行動力；就算你覺得這篇文章的內容很棒，那終究是「我的使用情境」。</p>
+<p>動手將知識轉化成自己實際能用到的，那才會變成你的。</p>
+<p>如果未來你打算用 Vibe Coding 開發更完整的全端專案，可以先<a href="https://www.youtube.com/watch?v=sLGT6fA9kIA">看看這隻影片</a>。</p>
+<p>我有錄一隻影片分享 Vibe Coding 時，前端、後端、資料庫最常遇到的陷，他可以幫助你有系統地建立安全意識。</p>
+<p>儘管 AI 工具會越來越強大，但他同時會給沒有相關知識背景的人帶來更大的幻覺。</p>
+<p>過去 AI 寫錯程式會跑不動，你會知道他錯了。</p>
+<p><strong>可是他現在有能力寫出「看起來能動」的工具，畫面正常、功能正常；但可能背後的邏輯有問題，或者你看到的只是假資料。</strong></p>
+<p>如果沒有前後端概念，不了解資料庫如何運作，那你是沒有能力判斷 AI 給的資訊是否正確的。</p>
+<blockquote class="pullquote"><p>記住！AI 是一個好幫手，但他並非萬能</p>
+</blockquote>
+<p>如果這篇文章對你有幫助，可以順手按個讚，把文章分享給正在 Vibe Coding 的朋友們。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-16.webp" width="1400" height="914" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>去需要你的公司，累積最多的履歷</title>
+      <link>https://deanlin.net/blog/202510/work-where-you-are-needed/</link>
+      <pubDate>Fri, 31 Oct 2025 12:18:38 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202510/work-where-you-are-needed/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>職涯成長</category>
+      <description>只做份內的事沒有錯，但如果想快速成長，勢必要做一些跟別人不一樣的事。</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202510/work-where-you-are-needed/images/work-where-you-are-needed-01.webp" width="1400" height="788" alt="去需要你的公司，累積最多的履歷（圖 1）" loading="lazy" decoding="async"></p>
+<p>今天想跟大家聊兩個職涯議題～</p>
+<p>一個是求職時「挑選工作」的技巧，如何<strong>用一樣的履歷談到更高薪水</strong>。</p>
+<p>另一個是在職時如何透過「主動安排」工作，擴增舒適圈，<strong>累積與眾不同的履歷</strong>。</p>
+<blockquote class="pullquote"><p><strong>畢竟想在職涯中有好選擇，你得先讓自己有更多選擇。</strong></p>
+</blockquote>
+<blockquote>
+<p>如果想用「聽」的，可以觀看 YT 喔 👉</p>
+<p>對職場故事感興趣的朋友，歡迎按下訂閱按鈕。</p>
+<p>未來我會分享自己從工程師做到專案經理、技術主管，一直到現在外商工作的故事。</p>
+</blockquote>
+<div class="yt" data-yt="h-MyZ4CJ4nY" data-title="YouTube 影片">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=h-MyZ4CJ4nY" target="_blank" rel="noopener" aria-label="播放影片：YouTube 影片">
+    <img src="https://i.ytimg.com/vi/h-MyZ4CJ4nY/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">YouTube 影片</span>
+  </a>
+</div>
+
+<h2 id="-薪水是環境決定的">薪水，是環境決定的<a class="h-anchor" href="#-%e8%96%aa%e6%b0%b4%e6%98%af%e7%92%b0%e5%a2%83%e6%b1%ba%e5%ae%9a%e7%9a%84" aria-label="這個段落的連結"></a></h2>
+<p>面試的時候，每間公司開出來的薪水都不一樣。</p>
+<blockquote>
+<p>但你還是你，你的能力不會在短短幾小時、幾天就發生巨大的變化。</p>
+</blockquote>
+<p>我認為影響薪水的因素主要有兩點：</p>
+<ol>
+<li><strong>這間公司是否賺錢</strong>：有賺錢的公司，你更有機會談到高於市場的價碼。</li>
+<li><strong>你與這個職缺有多高的匹配度</strong>：匹配度高，就代表你可以在更短的時間成為即戰力。</li>
+</ol>
+<p>在匹配度這塊，我以軟體工程師舉例，因為這個職稱下會有很多細分職位：</p>
+<ul>
+<li>設計網頁視覺與互動體驗的是「前端工程師」</li>
+<li>負責資料處理與系統邏輯的是「後端工程師」</li>
+<li>確保系統穩定運作的是「維運工程師」</li>
+</ul>
+<p>而我當年第一份工作是在一間軟體接案公司，因為人少，所以職位沒有劃分的那麼詳細。</p>
+<p><strong>換句話說，就是你什麼都要會，但這件事有好有壞。</strong></p>
+<p>如果我面試的是前端工程師、後端工程師，這些有明確劃分工作內容的職位，我無法談到理想的薪水 😭</p>
+<p><strong>因為以接案公司來說，在期限內交付專案是最重要的。</strong></p>
+<p>過去光是把功能完成，我就已經搞到天天加班，根本沒力氣深入研究技術細節與效能優化。</p>
+<p>因此面試幾次碰壁後，<strong>我把目光轉移到全端工程師這個職位。</strong></p>
+<p><strong>由於技能匹配度高，薪水相比於過去面試的前後端職位，保底就多了 2 成以上。</strong></p>
+<hr>
+<h2 id="-選需要你的公司填不後悔的薪水">選需要你的公司，填不後悔的薪水<a class="h-anchor" href="#-%e9%81%b8%e9%9c%80%e8%a6%81%e4%bd%a0%e7%9a%84%e5%85%ac%e5%8f%b8%e5%a1%ab%e4%b8%8d%e5%be%8c%e6%82%94%e7%9a%84%e8%96%aa%e6%b0%b4" aria-label="這個段落的連結"></a></h2>
+<p>這邊分享一個印象深刻的面試經驗，當時面試官是公司的副總。</p>
+<p>簡單聊幾句話後，他便起身跟我說：「接下來，我要帶領我們雲端部門的團隊來跟你面試。」</p>
+<p>幾分鐘後，他帶一個人走進會議室，正當我疑惑的時候，他開口說道：「如果你選擇加入我們公司，你就是團隊的第一位工程師。」</p>
+<p>儘管我面試的是一間業務範圍跨足全球，員工達數百人的硬體公司，但雲端部門才剛成立。</p>
+<p>故事說到這裡，大家不妨思考一下，如果換作是你，會做出什麼決策 🤔</p>
+<p><strong>反正我當年聽到這個消息時，就知道自己的機會來了！</strong></p>
+<p>我拿出準備好的簡報，詳細說明自己是如何從零開始，獨自打造出一套系統的。</p>
+<p>因為同時兼任專案經理、設計師、前後端工程師等多重角色，所以面試被問到的所有問題，我都能清楚說明背後的設計思維與實務經驗。</p>
+<p><strong>在技術面試結束後，我就知道自己是公司要的人 💪</strong></p>
+<p>所以最後與人資面談時，<strong>在期望薪水那欄，我寫了一個就算加班到爆也不會後悔的數字。</strong></p>
+<p>結果隔天就收到錄取通知了，恩…也許我當年可以填更高一點 😏</p>
+<p>透過這個案例，大家應該可以感受到，你與職位的「匹配度」，會對薪水產生多大影響。</p>
+<p><strong>我會很多技能這件事，在有些公司看來是「樣樣通、樣樣鬆」。</strong></p>
+<p><strong>但這個特質如果放到剛起步、需要全才的公司，我就是個難得一見的人才！</strong></p>
+<p>而且這份工作除了要從零建構一套系統外，還要與韌體、App 部門的同事溝通。</p>
+<p>因此還需要具備跨部門溝通，以及資訊整合的能力。</p>
+<p>剛好，<strong>我在上一份工作擁有與政府官員溝通，以及整合各單位需求的豐富經驗，這也讓面試官更相信我適合這個職位。</strong></p>
+<hr>
+<h2 id="-擴大舒適圈成為更有價值的人">擴大舒適圈，成為更有價值的人<a class="h-anchor" href="#-%e6%93%b4%e5%a4%a7%e8%88%92%e9%81%a9%e5%9c%88%e6%88%90%e7%82%ba%e6%9b%b4%e6%9c%89%e5%83%b9%e5%80%bc%e7%9a%84%e4%ba%ba" aria-label="這個段落的連結"></a></h2>
+<p>入職後，我做了很多別人眼中「自找麻煩」的事情。</p>
+<blockquote class="pullquote"><p>但如果你只願意做份內的事，就不要期待未來會有不一樣的變化。</p>
+</blockquote>
+<p>很多時候只要多做一點，你就能在公司建立自己的影響力！</p>
+<p><strong>這邊的「多做一點」並不是要你加班，而是要學會主動安排自己的工作。</strong></p>
+<p>這不但能給別人積極主動的印象，還可以讓履歷的素材更豐富，讓年資不再成為職涯的限制。</p>
+<p>因為我是部門除主管外的第一位工程師，所以除了網頁前後端的開發外。</p>
+<p>公司內部的伺服器架設、GitLab CI/CD 自動化、GCP 雲端部署⋯等 DevOps、MIS 的任務都跑到我頭上。</p>
+<p>除了上述雜事要處理外，當時公司會成立雲端部門，是因為公司販售的硬體設備為了符合法規，需要搭配一些雲端支援的功能。</p>
+<p>所以我們部門要提供 API 給韌體與 App 部門的同事使用。</p>
+<p>但隔行如隔山，因為雙方的專業領域不同，所以初期也花了不少時間釐清規格，並把討論結果彙整成彼此有共識的開發文件，確保日後溝通不會雞同鴨講。</p>
+<p><strong>或許從工程師的角度來看，我做了很多「本職工作」以外的事情；但我覺得自己是在「擴大舒適圈」。</strong></p>
+<ul>
+<li>架設內部伺服器的過程，讓我對公司網路架構有更深刻的理解。</li>
+<li>設計 Gitlab CI/CD 流程，讓我了解加入哪些步驟可以讓專案更穩定。</li>
+<li>操作 GCP 雲端部署，則是我過去沒有接觸過的技能。</li>
+<li>理解韌體與 APP 部門的需求後，我對公司的硬體產品有更全面的認識。</li>
+</ul>
+<p>我當然可以選擇裝死，讓主管去搞定與釐清這一切，但我選擇主動承接這些任務。</p>
+<p>因為搞定這些「陌生」的事情，是在擴增我的舒適圈，讓我可以走到更遠的地方。</p>
+<p>當然每個人的職涯規劃不同，有些人可能想把某項技術鑽研到極致。</p>
+<p>而我選擇的是，<strong>從實務中學習需要的技術、從問題中找到解決的方法</strong>，所以技能樹非常的發散。</p>
+<p>我認這沒有對錯，只是個人選擇。</p>
+<hr>
+<h2 id="-導入專案系統增加合作效率">導入專案系統，增加合作效率<a class="h-anchor" href="#-%e5%b0%8e%e5%85%a5%e5%b0%88%e6%a1%88%e7%b3%bb%e7%b5%b1%e5%a2%9e%e5%8a%a0%e5%90%88%e4%bd%9c%e6%95%88%e7%8e%87" aria-label="這個段落的連結"></a></h2>
+<p>隨著業務量增加，部門後續有找前端、後端、DevOps 工程師與 UI/UX 設計師加入團隊。</p>
+<p>但其他部門遇到問題、有新需求時，第一個還是先想到我，除了寄信、傳訊息外，有些人會直接跑到我座位旁邊討論。</p>
+<p><strong>這導致我常常事情做到一半被打斷思路，而且訊息、郵件過多時，總是會有漏看、漏回的狀況發生；於是我心想，這樣不行啊！</strong></p>
+<p>所以開始思考如何優化部門間的溝通問題，與主管討論後，我在公司內部架設了開源的專案管理系統（ex：REDMINE、Zentao）讓大家使用。</p>
+<p>並負責向各部門做系統的教育訓練、指派 Key man 協助推廣。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202510/work-where-you-are-needed/images/work-where-you-are-needed-02.webp" width="770" height="431" alt="當年製作的講義" loading="lazy" decoding="async">
+  <figcaption>當年製作的講義</figcaption>
+</figure>
+
+<p>導入專案管理系統後，資訊就變得透明化，大家都可以更有效地掌握任務時程、討論過程、工作進度、負責人員等。</p>
+<p>儘管其他部門一開始都還是把任務指派給我，但我可以等工作到一個段落後，再來統一處理；並轉移一些任務給同事，而不是自己一個人傻傻做到死。</p>
+<p>在各部門同事熟悉專案管理系統的操作後，我就要回了自己的時間。</p>
+<pre tabindex="0"><code>這邊要特別感謝主管與執行長的支持
+這個故事表面看起來很輕鬆，但剛開始在內部推專案管理系統的阻礙超大，因為這是在改變所有人過去的做事流程。
+而且專案管理系統會讓一切執行中的任務都「透明化」，讓混水摸魚的人原形畢露，所以部分資深員工的反對聲浪尤其大。
+有時就算有更好的方案，大部分的人還是喜歡用自己習慣的流程。
+所以推行初期，專案管理系統只在自己的部門內使用。
+執行一段時間，主管將成效報告給執行長，執行長對結果很滿意，才下令各部門必須強制推動。
+一個組織的改革，單靠員工的努力是不夠的；一定要有高層的協助，才會進行得順利。
+</code></pre><hr>
+<h2 id="-建立文件系統縮小資訊落差">建立文件系統，縮小資訊落差<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b%e6%96%87%e4%bb%b6%e7%b3%bb%e7%b5%b1%e7%b8%ae%e5%b0%8f%e8%b3%87%e8%a8%8a%e8%90%bd%e5%b7%ae" aria-label="這個段落的連結"></a></h2>
+<p>隨著部門持續擴張，我發現自己一直在做重複的事：</p>
+<ul>
+<li>設定電腦開發環境</li>
+<li>介紹合作夥伴的工作執掌</li>
+<li>講解系統架構與操作流程</li>
+<li>說明技術框架與開發規範</li>
+</ul>
+<blockquote>
+<p>而且這些資訊就算說過一遍，新進人員往往同一個問題還會問好幾遍。</p>
+</blockquote>
+<p>為了改善這個狀況，與主管討論後，我便開始著手建立新人的教育訓練文件；並將專案使用到的技術、常遇到的問題、目前的開發流程，整理成有結構、方便查詢的技術文件。</p>
+<p>這樣同事日後在遇到問題時，就可以先從文件找答案。</p>
+<p><strong>雖然寫文件很花時間，但只要建立好，他就具備「重用」的特性，不用浪費時間重複解釋。</strong></p>
+<p>而且人的記憶是不可靠的，就算是當事人，也可能在幾個月後就忘得一乾二淨，很多時候，建立文件是為了幫助未來的自己。</p>
+<pre tabindex="0"><code>而且整理公司文件的過程中，發生一件有趣的事情！
+我沈睡多年的作家魂突然甦醒了，所以把這些文件寫的鉅細彌遺、邏輯縝密。
+寫完後覺得這些文件只給同事看太可惜，在把機敏資料移除後，我以技術分享文的形式發表在 Medium。
+希望能幫助遇到相同問題的朋友們，從此開啟了自己的斜槓之路。
+現在回頭來看，人生際遇真的很難說，但用盡全力的人肯定會有更多機會。
+</code></pre><hr>
+<h2 id="-人生是自己選擇而來的">人生，是自己選擇而來的<a class="h-anchor" href="#-%e4%ba%ba%e7%94%9f%e6%98%af%e8%87%aa%e5%b7%b1%e9%81%b8%e6%93%87%e8%80%8c%e4%be%86%e7%9a%84" aria-label="這個段落的連結"></a></h2>
+<p>有些人可能覺得做「份外」的事情很吃虧，公司又未必會幫你加薪升職。</p>
+<p>但我認為這是在累積自己的底蘊，<strong>就算現在的公司看不懂你的價值，之後找一間懂你的就好了！</strong></p>
+<blockquote class="pullquote"><p>想進入優秀的團隊，你要先成為一個優秀的人！</p>
+</blockquote>
+<p>另外找到自己職場的「定位」很重要，以我個人來說，比起深入研究單一領域，我更喜歡接觸不同領域的新知識。</p>
+<p><strong>「專才」也好，「通才」也罷，在有興趣與優勢的領域持續發展，定位就會自己出現。</strong></p>
+<p>我第二份工作做了 4 年多，今天的文章才講到一半而已。</p>
+<p>在下一篇文章，<strong>我會分享自己是如何在一份工作中，從工程師做到專案經理，最後站上部門技術主管的位置。</strong></p>
+<p><strong>以及如何透過談判，獲得超過 40% 的內部調薪。</strong></p>
+<p>今天的故事就分享到這邊，如果有給你啟發與幫助，可以順手按個讚，把文章分享給需要的朋友。</p>
+<p>未來我會分享更多職場故事與生存技巧～</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202510/work-where-you-are-needed/images/work-where-you-are-needed-03.webp" width="1400" height="914" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<a class="linkcard" href="https://dean-lin.medium.com/list/b9f7a7403936" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">下班有約系列文</span>
+    <span class="lc-desc">來自不同領域、職位、產業的故事</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202510/work-where-you-are-needed/images/work-where-you-are-needed-card-01_hu_facdff382f68e43c.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>如果只會寫程式，感覺撐不過下個世代 😕 ── AI 時代的思辨</title>
+      <link>https://deanlin.net/blog/202312/coding-alone-is-not-enough/</link>
+      <pubDate>Sun, 10 Dec 2023 12:45:12 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202312/coding-alone-is-not-enough/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>一轉眼，2023 就到尾聲了，AI 話題的熱度也逐漸下降📉。 是因為 AI 不紅了嗎？不！是因為大家已經逐漸「習慣」AI 的存在🤖。</description>
+      <content:encoded><![CDATA[<p>一轉眼，2023 就到了尾聲，AI 話題的熱度也逐漸下降📉。</p>
+<p>是因為 AI 不紅了嗎？不！是因為大家已經逐漸「習慣」AI 的存在🤖。</p>
+<p><img src="https://deanlin.net/blog/202312/coding-alone-is-not-enough/images/coding-alone-is-not-enough-01.webp" width="765" height="431" alt="如果只會寫程式，感覺撐不過下個世代 😕 ── AI 時代的思辨（圖 1）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="ai-對你的幫助愈大你愈要警惕-">AI 對你的幫助愈大，你愈要警惕 🚨<a class="h-anchor" href="#ai-%e5%b0%8d%e4%bd%a0%e7%9a%84%e5%b9%ab%e5%8a%a9%e6%84%88%e5%a4%a7%e4%bd%a0%e6%84%88%e8%a6%81%e8%ad%a6%e6%83%95-" aria-label="這個段落的連結"></a></h2>
+<p>前陣子聚會時，有個工程師朋友問到：「你未來職涯規劃會持續寫程式嗎？還是有別的打算呢？如果只會寫程式，感覺撐不過下個世代。」</p>
+<p>面對這個問題，其實我深有感觸；因為這一年來，AI 給我的工作帶來非常大的幫助💡。</p>
+<p>甚至可以這麼說，在演算法優化、程式重構、SQL 撰寫、DB 規劃、Unit Test、變數命名等任務上，AI 已經做得比絕大多數的工程師更好👍。</p>
+<p>AI 對你的幫助愈大，其實你愈應該去想：「我會不會哪一天就被 AI 取代？我會不會被其他更擅長使用 AI 的人取代 🤔」</p>
+<hr>
+<h2 id="如果高度專業的技能也被-ai-取代-">如果高度專業的技能也被 AI 取代 🔄<a class="h-anchor" href="#%e5%a6%82%e6%9e%9c%e9%ab%98%e5%ba%a6%e5%b0%88%e6%a5%ad%e7%9a%84%e6%8a%80%e8%83%bd%e4%b9%9f%e8%a2%ab-ai-%e5%8f%96%e4%bb%a3-" aria-label="這個段落的連結"></a></h2>
+<p>下面舉一個朋友的案例，他是一個年薪近 300 的工程師，之所以可以領到這個薪水，除了熟悉產業外，另一個重點是他非常熟悉組合語言💰。</p>
+<p>如果你不知道什麼是組合語言，就把它想成 20 個人努力去學，最多就 1 個人能夠理解並掌握的技術。因為人才稀有，所以都是高薪職位。</p>
+<p>原本朋友覺得自己可以靠這個稀有技能爽爽做到退休，但今年 3 月時，他開始焦慮了，因為他發現過去只有少數人能掌握的組合語言，對 AI 來說根本沒有難度🤯。</p>
+<p>也就是說，如果公司意識到這件事，基於人力成本考量很有可能把他給 Fire；然後請一個熟悉這個領域，並對組合語言有基礎理解的人來取代他。</p>
+<hr>
+<h2 id="解決問題的能力會更加重要-">解決問題的能力會更加重要 💪<a class="h-anchor" href="#%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c%e7%9a%84%e8%83%bd%e5%8a%9b%e6%9c%83%e6%9b%b4%e5%8a%a0%e9%87%8d%e8%a6%81-" aria-label="這個段落的連結"></a></h2>
+<p>也許在 3 年內，現有的開發生態會被 AI 顛覆。</p>
+<p>對過去的工程師來說，寫出優秀的演算法、易讀性高的程式非常重要；但現在，能夠判斷出演算法的好壞、程式的可執行性會更加重要。</p>
+<p>而在未來，也許工程師的價值會變成解決複雜的商業邏輯、分析多個系統的資料流，有能力判斷不同方案的 Trade-off（權衡）；而撰寫程式這件事的比重會下降非常多。</p>
+<blockquote>
+<p>因為新手工程師較難判斷 AI 答案的品質與正確性，所以未來企業在徵才時，與其僱傭新手工程師，不如僱傭會用 AI 輔助開發的資深工程師（純屬個人猜想）。</p>
+</blockquote>
+<hr>
+<h2 id="要對本質有更深刻的理解-">要對本質有更深刻的理解 🤓<a class="h-anchor" href="#%e8%a6%81%e5%b0%8d%e6%9c%ac%e8%b3%aa%e6%9c%89%e6%9b%b4%e6%b7%b1%e5%88%bb%e7%9a%84%e7%90%86%e8%a7%a3-" aria-label="這個段落的連結"></a></h2>
+<p>下面分享一段朋友說的話。</p>
+<p>前幾年 Golang 很火，相關職位的薪水都比其他程式語言來得更高，所以就有人一窩蜂地跑去學 Golang。</p>
+<p>不過朋友是這麼說的：「這份專案用 Golang 寫，是因為面對這個需求時，Golang 的效能比較好而已；我花一個禮拜寫完這個專案，而 Golang 我才接觸兩個禮拜。」</p>
+<p>這段話要表達的不是 Golang 很好學，而是當你對程式的本質有深刻的理解時，程式語言只是一種工具而已。</p>
+<p>想要讓 AI 給你最大的幫助，你本身就需要具備對應的知識水平。</p>
+<hr>
+<h2 id="選擇比努力重要-">選擇比努力重要 🎯<a class="h-anchor" href="#%e9%81%b8%e6%93%87%e6%af%94%e5%8a%aa%e5%8a%9b%e9%87%8d%e8%a6%81-" aria-label="這個段落的連結"></a></h2>
+<p>這篇文章要傳遞的並不是「工程師已死、工程師將被 AI 取代」這類訊息。</p>
+<p>而是想表達「是時候思考自己的下一步了」，因為人的時間有限，只有分配到對的位置才會有最大效益。</p>
+<p>過去只要會寫程式就能混口飯吃，但在 AI 的時代，你還需要具備其他重要的多元化技能（團隊合作、溝通表達、產品思維…），讓自己更難被取代。</p>
+<p>這篇文章僅是我對產業的粗淺了解，歡迎大家交流彼此的想法，有不同的聲音，才有更全面的觀點，謝謝🙏。</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202312/coding-alone-is-not-enough/images/coding-alone-is-not-enough-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202312/coding-alone-is-not-enough/images/coding-alone-is-not-enough-02.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

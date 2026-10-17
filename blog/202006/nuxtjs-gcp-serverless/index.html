@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NUXTJS GCP serverless實戰｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="因為跟著官方文件做，讓我被雷了整整一天，於是我決定紀錄操作流程，希望看到的人可以節省時間 事前準備 你有GCP的帳戶(沒有就直接去開一個) 你有信用卡(因為GCP serverless服務一定要綁信用卡，就算你一塊錢都沒花，你還是得綁定) 你…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="NUXTJS GCP serverless實戰">
+  <meta property="og:description" content="因為跟著官方文件做，讓我被雷了整整一天，於是我決定紀錄操作流程，希望看到的人可以節省時間 事前準備 你有GCP的帳戶(沒有就直接去開一個) 你有信用卡(因為GCP serverless服務一定要綁信用卡，就算你一塊錢都沒花，你還是得綁定) 你…">
+  <meta property="og:url" content="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-06-24T14:01:45&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:06:14&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Nuxt.js">
+  <meta property="article:tag" content="GCP">
+  <meta property="article:tag" content="Serverless">
+  <meta property="article:tag" content="App Engine">
+  <meta property="article:tag" content="Front End Development">
+  <meta property="og:image" content="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-og.jpg">
+  <meta property="og:image:width" content="1080">
+  <meta property="og:image:height" content="600">
+  <meta property="og:image:alt" content="NUXTJS GCP serverless實戰">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-og.jpg">
+  <meta name="twitter:title" content="NUXTJS GCP serverless實戰">
+  <meta name="twitter:description" content="因為跟著官方文件做，讓我被雷了整整一天，於是我決定紀錄操作流程，希望看到的人可以節省時間 事前準備 你有GCP的帳戶(沒有就直接去開一個) 你有信用卡(因為GCP serverless服務一定要綁信用卡，就算你一塊錢都沒花，你還是得綁定) 你…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:06:14+08:00","datePublished":"2020-06-24T14:01:45+08:00","description":"因為跟著官方文件做，讓我被雷了整整一天，於是我決定紀錄操作流程，希望看到的人可以節省時間 事前準備 你有GCP的帳戶(沒有就直接去開一個) 你有信用卡(因為GCP serverless服務一定要綁信用卡，就算你一塊錢都沒花，你還是得綁定) 你…","headline":"NUXTJS GCP serverless實戰","image":{"@type":"ImageObject","height":600,"url":"https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-og.jpg","width":1080},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Nuxt.js, GCP, Serverless, App Engine, Front End Development","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/nuxtjs-gcp-serverless%E5%AF%A6%E6%88%B0-3f1ae8667533"],"timeRequired":"PT4M","url":"https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/","wordCount":1735},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/","name":"NUXTJS GCP serverless實戰","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">NUXTJS GCP serverless實戰</h1>
+      <p class="article-lede">因為跟著官方文件做，讓我被雷了整整一天，於是我決定紀錄操作流程，希望看到的人可以節省時間</p>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-06-24">2020.06.24</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 4 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+
+      <div class="prose" data-prose>
+        <p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-01.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-01_hu_d29d20566819f40f.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-01.webp 1080w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1080" height="600" alt="NUXTJS GCP serverless實戰（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="事前準備">事前準備<a class="h-anchor" href="#%e4%ba%8b%e5%89%8d%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>你有GCP的帳戶(沒有就直接去開一個)</li>
+<li>你有信用卡(因為GCP serverless服務一定要綁信用卡，就算你一塊錢都沒花，你還是得綁定)</li>
+<li>你會用git(如果不會你要抄襲前人的成果都很難)</li>
+<li>如果有mac電腦會是最棒的，因為作者的操作都是在mac的環境</li>
+</ol>
+<h2 id="文章目標">文章目標<a class="h-anchor" href="#%e6%96%87%e7%ab%a0%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>根據官方文件建立Nuxt專案</li>
+<li>開啟GCP App Engine</li>
+<li>將Nuxt專案deploy到GCP</li>
+</ol>
+<p>SETP 1/5 : 建立Nuxt專案</p>
+<p><a href="https://nuxtjs.org/guide/installation">這裡是官方安裝說明文件</a>，根據我的個人經驗，你每個禮拜都會得到不一樣的錯誤訊息(感覺他們工程師根本沒有qa就直接上正式版本了…)，以下為我操作的及遇到的錯誤及相關解決方案。</p>
+<p>創建nuxt專案，project-name請自由發揮</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app &lt;project-name&gt;
+</span></span></code></pre></div><p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-02.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-02_hu_decde5ea43f56bdd.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-02.webp 1312w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1312" height="236" alt="文章目標（圖 2）" loading="lazy" decoding="async"></p>
+<p>接下來會問你一堆問題，根據我之後會撰寫的文章類型，你可以跟我做一樣的設定</p>
+<p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-03.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-03_hu_ea82eb1b97763bc3.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-03.webp 1274w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1274" height="390" alt="文章目標（圖 3）" loading="lazy" decoding="async"></p>
+<p>只要你運氣夠差，你就會遇到這個錯誤：</p>
+<pre tabindex="0"><code>throw new SAOError(`Failed to install ${packageName} in ${cwd}`)
+</code></pre><p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-04.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-04_hu_29d2914eefa59b24.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-04.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="633" alt="文章目標（圖 4）" loading="lazy" decoding="async"></p>
+<p>別怕，仔細看錯誤訊息，你會發現是因為local端的node版本過低，最新的nuxt需要你的<a href="https://nodejs.org/en/">node版本</a>保持在13.7以上，建議你可以使用<a href="https://github.com/nvm-sh/nvm#install--update-script">nvm這個套件</a>來做local端node的版本控制</p>
+<p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-05.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-05_hu_e767bbbf22aff778.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-05.webp 810w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="810" height="72" alt="文章目標（圖 5）" loading="lazy" decoding="async"></p>
+<p>調整完node版本後再下一樣建立nuxt的指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app &lt;project-name&gt;
+</span></span></code></pre></div><p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-06.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-06_hu_ca8fedcdcae2b2d6.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-06.webp 1286w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1286" height="968" alt="文章目標（圖 6）" loading="lazy" decoding="async"></p>
+<p>這次就會通過嚕～接著下指令確認使否正常跑</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd nuxt_baobao
+</span></span><span style="display:flex;"><span>yarn dev
+</span></span></code></pre></div><p>如果成功出現下面的畫面就恭喜你嚕～</p>
+<p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-07.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-07_hu_f84a80955ecf027e.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-07.webp 740w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="740" height="938" alt="文章目標（圖 7）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-08.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-08_hu_a07b28ad8307b3e0.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-08.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="726" alt="http://localhost:3000/" loading="lazy" decoding="async">
+  <figcaption><a href="http://localhost:3000/">http://localhost:3000/</a></figcaption>
+</figure>
+
+<p>SETP 2/5 : 將nuxt專案build起來</p>
+<p>因為實際運行你總不可能把整個專案丟到GCP，所以要下指令build這個專案，那他變小一點</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn build
+</span></span></code></pre></div><p>如果沒發生意外應該會build失敗(我真的懷疑他們到底有沒有做過上線測試…)</p>
+<p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-09.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-09_hu_54e138c38a07a05d.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="755" alt="文章目標（圖 9）" loading="lazy" decoding="async"></p>
+<p>因為很多人遇到這個問題，有興趣可以參考<a href="https://github.com/postcss/autoprefixer/issues/1328#issuecomment-647279513">這篇文章</a>，不然就複製下面指令執行</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nvm use 14.4
+</span></span><span style="display:flex;"><span>yarn add autoprefixer@9.8.1
+</span></span></code></pre></div><p>安裝完套件再下一次yarn build指令就能順利完成</p>
+<p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-10.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-10_hu_1c712cbb47dfbf83.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-10.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="755" alt="文章目標（圖 10）" loading="lazy" decoding="async"></p>
+<p>SETP 3/5 : 開啟GCP App Engine</p>
+<p>我建議你先建立一個<a href="https://console.cloud.google.com/cloud-resource-manager">GCP新的專案</a>來做這次的操作，建立好專案去App Engine建立應用程式</p>
+<p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-11.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-11_hu_80dd40306b9c59de.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-11.webp 1275w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1275" height="608" alt="文章目標（圖 11）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-12.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-12.webp 551w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="551" height="555" alt="地區請選擇離自己近的，價格會便宜一點" loading="lazy" decoding="async">
+  <figcaption>地區請選擇離自己近的，價格會便宜一點</figcaption>
+</figure>
+
+<p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-13.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-13_hu_45312b29098b16e4.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-13.webp 776w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="776" height="363" alt="文章目標（圖 13）" loading="lazy" decoding="async"></p>
+<p>SETP 4/5 : 下載Google Cloud SDK</p>
+<p>如果你可以根據<a href="https://cloud.google.com/sdk/docs/quickstarts">官方文件</a>操作，裡面有提供各式各樣的安裝方法，一開始我是直接下載壓縮檔來安裝，但遇到各種悲劇…</p>
+<pre tabindex="0"><code>Welcome to the Google Cloud SDK!
+ERROR:root:code for hash md5 was not found.
+</code></pre><p>然後網路上你查到<a href="https://stackoverflow.com/questions/25372911/python-pip-error-on-osx">大部分的答案</a>都是唬爛你的</p>
+<p>所以我個人建議你使用<a href="https://brew.sh/index_zh-tw">homebrew</a>安裝吧</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew cask install google-cloud-sdk
+</span></span></code></pre></div><p>安裝後你可以嘗試看看</p>
+<pre tabindex="0"><code>gcloud init
+</code></pre><p>如果不發生意外應該又是一大串的錯誤…這個時候的問題通常是python版本的問題，請指定你執行gcp的python版本</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export <span style="color:#79c0ff">CLOUDSDK_PYTHON</span><span style="color:#ff7b72;font-weight:bold">=</span>python3
+</span></span></code></pre></div><p>之後再執行gcloud init應該就是一路通暢了，裡面會有一些讓你登入以及選擇專案的選項就按造個人需求調整即可</p>
+<p>SETP 5/5 : deploy Nuxt專案到GCP App Engine</p>
+<p>如果你上面的操作都很順利，你接下來就可以嘗試把本地的nuxt專案發布到GCP上面了，首先你要在nuxt專案做以下調整，這裡是<a href="https://nuxtjs.org/faq/appengine-deployment/">官方文件</a>(跟著照做會錯誤)：</p>
+<p>新增app.yaml檔案，這個檔案是在deploy的時候使用的</p>
+<p>PS.在這裡我要特別提醒一件事情，一但你的環境(env)設定為flex，你醒來的時候帳單就有可能爆掉，所以這個部分請謹慎，這是我端午連假完打開GCP帳單發現的慘痛經驗，使用標準環境才會有免費配額，但還是會扣一點費用(ex: Google Storage、Could Build…)。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">runtime</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">nodejs12</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">instance_class</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">F1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">automatic_scaling</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">max_instances</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">handlers</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>- <span style="color:#7ee787">url</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">/_nuxt</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">static_dir</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">.nuxt/dist/client</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">secure</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>- <span style="color:#7ee787">url</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">/(.*\.(gif|png|jpg|ico|txt))$</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">static_files</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">static/\1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">upload</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">static/.*\.(gif|png|jpg|ico|txt)$</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">secure</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>- <span style="color:#7ee787">url</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">/.*</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">script</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">auto</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">secure</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">env_variables</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">HOST</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;0.0.0.0&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">NODE_ENV</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;production&#39;</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/6b739e200a284d085377d96555e2d171" rel="noopener">nuxt_baobao_app.yaml</a>（GitHub Gist）</p>
+<p>調整package.json檔案，要在dependencies加上“@nuxtjs/vuetify”，並加上這個專案nodejs的版本(本範例為14.4)</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;name&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt_baobao&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;version&#34;</span>: <span style="color:#a5d6ff">&#34;1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;private&#34;</span>: <span style="color:#79c0ff">true</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;scripts&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;dev&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;build&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt build&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;start&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt start&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;export&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt export&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;serve&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt serve&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;lint:js&#34;</span>: <span style="color:#a5d6ff">&#34;eslint --ext .js,.vue --ignore-path .gitignore .&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;lint&#34;</span>: <span style="color:#a5d6ff">&#34;yarn lint:js&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;dependencies&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/axios&#34;</span>: <span style="color:#a5d6ff">&#34;^5.11.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/vuetify&#34;</span>: <span style="color:#a5d6ff">&#34;^1.11.2&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;autoprefixer&#34;</span>: <span style="color:#a5d6ff">&#34;9.8.1&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;chart.js&#34;</span>: <span style="color:#a5d6ff">&#34;^2.9.3&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;hchs-vue-charts&#34;</span>: <span style="color:#a5d6ff">&#34;^1.2.8&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;nuxt&#34;</span>: <span style="color:#a5d6ff">&#34;^2.13.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;vue-chartjs&#34;</span>: <span style="color:#a5d6ff">&#34;^3.5.0&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;devDependencies&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/eslint-config&#34;</span>: <span style="color:#a5d6ff">&#34;^3.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/eslint-module&#34;</span>: <span style="color:#a5d6ff">&#34;^2.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/vuetify&#34;</span>: <span style="color:#a5d6ff">&#34;^1.11.2&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;babel-eslint&#34;</span>: <span style="color:#a5d6ff">&#34;^10.1.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint&#34;</span>: <span style="color:#a5d6ff">&#34;^7.2.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint-config-prettier&#34;</span>: <span style="color:#a5d6ff">&#34;^6.11.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint-plugin-nuxt&#34;</span>: <span style="color:#a5d6ff">&#34;^1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint-plugin-prettier&#34;</span>: <span style="color:#a5d6ff">&#34;^3.1.4&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;prettier&#34;</span>: <span style="color:#a5d6ff">&#34;^2.0.5&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;engines&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;node&#34;</span>: <span style="color:#a5d6ff">&#34;^12&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/e4436bcdb26e49a6bb1be8afc98d59a9" rel="noopener">nuxt_baobao_package.json</a>（GitHub Gist）</p>
+<p>完成以上設定後在專案目錄下指令</p>
+<pre tabindex="0"><code>gcloud init
+</code></pre><p>這裡會讓你再次確認自己的設定檔(是否初始化、新增)，登入的google帳號，選擇雲端專案(就是你剛剛新增的那個專案)</p>
+<p>在完成上述設定後就可以輸入以下指令來deploy啦(這裡會讓你在確認一下deploy發布的專案位置)</p>
+<pre tabindex="0"><code>gcloud app deploy
+</code></pre><p>如果你看到以下畫面就要恭喜你了</p>
+<p><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-14.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-14_hu_16db50caa7d26fad.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-14.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="341" alt="文章目標（圖 14）" loading="lazy" decoding="async"></p>
+<p>輸入下面指令可以檢視你的網頁是否發布成功嚕～</p>
+<pre tabindex="0"><code>gcloud app browse
+</code></pre><figure class="figure"><img src="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-15.webp" srcset="/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-15_hu_dc50c2df1cab85e0.webp 720w, /blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-15.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="758" alt="https://nuxt-demo-281302.dt.r.appspot.com" loading="lazy" decoding="async">
+  <figcaption><a href="https://nuxt-demo-281302.dt.r.appspot.com">https://nuxt-demo-281302.dt.r.appspot.com</a></figcaption>
+</figure>
+
+<p>如果有問題歡迎在下方回覆，如果這篇文章有讓你少走彎路請用力拍手喔～</p>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2020.06.24）</span><a href="https://medium.com/dean-lin/nuxtjs-gcp-serverless%E5%AF%A6%E6%88%B0-3f1ae8667533" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/nuxt.js/">Nuxt.js</a>
+            <a class="chip chip-hash" href="/tags/gcp/">GCP</a>
+            <a class="chip chip-hash" href="/tags/serverless/">Serverless</a>
+            <a class="chip chip-hash" href="/tags/app-engine/">App Engine</a>
+            <a class="chip chip-hash" href="/tags/front-end-development/">Front End Development</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202006%2Fnuxtjs-gcp-serverless%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202006%2Fnuxtjs-gcp-serverless%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/" data-title="NUXTJS GCP serverless實戰" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202006/nginx-common-features/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">Nginx高頻率使用功能</span></a>
+          <a class="next" href="/blog/202007/vue-basics/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">Vue的基本常識</span></a>
+        </nav>
+      </footer>
+    </div>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAACQBACdASoYAA0APw1mp0emIqGYBABjEMTyAE6ZQAHr8Z/DZIgP84tTjf2Y5MAA/tum0rfdz87dbuaaQ7KGaSfWJOwKroXwvGOag&#43;LjcoWtYE6OJlCBZiziRgPbQ6HDPrFFPUzI&#43;N55&#43;z6QPrnSBwEfkITk/NSllzP0cXZJU4AAAA==" alt="" width="24" height="13"><img src="/blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_5c72c7a3b350bf1.webp" srcset="/blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_2bc9ca599af2fd6b.webp 240w, /blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_6dc10f3cc59770b8.webp 480w, /blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_729125b30fe63eb2.webp 800w, /blog/202301/frontend-testing-roadmap/images/frontend-testing-roadmap-01_hu_5c72c7a3b350bf1.webp 1150w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1150" height="602" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/frontend-testing/">前端單元測試</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/frontend-testing-roadmap/">想幫前端專案導入測試框架？也許我的想法與學習地圖能給你一點方向</a></h3>
+    <p class="card-desc">筆者自首，過去我只撰寫後端測試，總是忽略前端測試的重要性。 當初會這樣，是因為經手的專案規格變動頻繁，感覺測試寫完沒多久就要棄用；但近期與業界的朋友聊天時，他們跟我強調了 TDD（Test-Driven Development），也就是「測試驅動開發」的概念。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-19">2023.01.19</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAACwBACdASoYAA0APw1oqEemIqIYBABjEMTygF2Axg58s7KUktWLGo4ailSgu9KAAP6vpWg9vXuny18Y1MchjTuU7SVzYU0Igya9XAL3NeZATw5TDjR&#43;Y2QulK17YArrSon5qGyvw34t&#43;WM/0/lCqBiHzq0i3rPc&#43;IPgGDY5M3/cbG81t20jQ3TH3&#43;Dv41xjlQC3e8zTc8dqv4458NX75YDXDAf/fWag8aq2JMwcEatBI&#43;vk4ukAAA==" alt="" width="24" height="13"><img src="/blog/202209/advanced-console-log/images/advanced-console-log-01_hu_91a4cc8959df8b67.webp" srcset="/blog/202209/advanced-console-log/images/advanced-console-log-01_hu_48154d9272dbeb90.webp 240w, /blog/202209/advanced-console-log/images/advanced-console-log-01_hu_44ab5978e0d7ea15.webp 480w, /blog/202209/advanced-console-log/images/advanced-console-log-01_hu_d0710cff29ab3ac7.webp 800w, /blog/202209/advanced-console-log/images/advanced-console-log-01_hu_91a4cc8959df8b67.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="627" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202209/advanced-console-log/">6 種不可不知的「console.log」進階應用</a></h3>
+    <p class="card-desc">相信 console.log 是 Frontend 開發人員的好朋友，我們用它印出各種輔助資訊來解決問題。這邊文章會跟你分享 6 種 console.log 的進階應用，並說明各自的使用情境，讓你在開發路上更加順利。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-09-09">2022.09.09</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01_hu_34e3eae3f7ed51f5.webp" srcset="/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01_hu_57bac894e07b0026.webp 240w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01_hu_314748573d8bc54c.webp 480w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01_hu_a086dba4f1c42c92.webp 800w, /blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01_hu_34e3eae3f7ed51f5.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202104/nuxtjs-docker-image-dockerhub/">在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub</a></h3>
+    <p class="card-desc">每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-04-08">2021.04.08</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>2 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>手把手帶你實作 Microsoft Power Automate 超簡單範例｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="把這篇文章獻給看完微軟教學依舊霧颯颯的朋友們，文章中會用一個超簡單的範例讓剛接觸的朋友們理解這這軟體是在做什麼的，以及如何操作">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202010/power-automate-simple-example/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="手把手帶你實作 Microsoft Power Automate 超簡單範例">
+  <meta property="og:description" content="把這篇文章獻給看完微軟教學依舊霧颯颯的朋友們，文章中會用一個超簡單的範例讓剛接觸的朋友們理解這這軟體是在做什麼的，以及如何操作">
+  <meta property="og:url" content="https://deanlin.net/blog/202010/power-automate-simple-example/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-10-13T11:50:58&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:07:29&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Power Automate">
+  <meta property="article:tag" content="Example">
+  <meta property="og:image" content="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-og.jpg">
+  <meta property="og:image:width" content="900">
+  <meta property="og:image:height" content="450">
+  <meta property="og:image:alt" content="手把手帶你實作 Microsoft Power Automate 超簡單範例">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-og.jpg">
+  <meta name="twitter:title" content="手把手帶你實作 Microsoft Power Automate 超簡單範例">
+  <meta name="twitter:description" content="把這篇文章獻給看完微軟教學依舊霧颯颯的朋友們，文章中會用一個超簡單的範例讓剛接觸的朋友們理解這這軟體是在做什麼的，以及如何操作">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/power-automate-simple-example/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:07:29+08:00","datePublished":"2020-10-13T11:50:58+08:00","description":"把這篇文章獻給看完微軟教學依舊霧颯颯的朋友們，文章中會用一個超簡單的範例讓剛接觸的朋友們理解這這軟體是在做什麼的，以及如何操作","headline":"手把手帶你實作 Microsoft Power Automate 超簡單範例","image":{"@type":"ImageObject","height":450,"url":"https://deanlin.net/blog/202010/power-automate-simple-example/images/power-automate-simple-example-og.jpg","width":900},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Power Automate, Example","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/power-automate-simple-example/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E6%89%8B%E6%8A%8A%E6%89%8B%E5%B8%B6%E4%BD%A0%E5%AF%A6%E4%BD%9C-microsoft-power-automate-%E8%B6%85%E7%B0%A1%E5%96%AE%E7%AF%84%E4%BE%8B-7ef4c5a44b9b"],"timeRequired":"PT2M","url":"https://deanlin.net/blog/202010/power-automate-simple-example/","wordCount":824},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/power-automate-simple-example/","name":"手把手帶你實作 Microsoft Power Automate 超簡單範例","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">手把手帶你實作 Microsoft Power Automate 超簡單範例</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-10-13">2020.10.13</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 2 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#-%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">🤔 今日目標</a></li><li><a href="#-%e9%96%8b%e5%a7%8b%e5%af%a6%e4%bd%9c%e6%b5%81%e7%a8%8b">💡 開始實作流程</a></li><li><a href="#%e6%96%b0%e5%a2%9e-form-%e8%a1%a8%e5%96%ae">新增 Form 表單</a></li><li class="is-sub"><a href="#setp-1--%e5%9c%a8-forms%e4%b8%8b%e6%96%b0%e5%a2%9e%e8%a1%a8%e5%96%ae">SETP 1 : 在 Forms下新增表單</a></li><li class="is-sub"><a href="#setp-2--%e5%a1%ab%e4%b8%8a%e6%a8%99%e9%a1%8c%e8%88%87%e6%8f%8f%e8%bf%b0">SETP 2 : 填上標題與描述</a></li><li class="is-sub"><a href="#setp-3-%e6%96%b0%e5%a2%9e%e5%95%8f%e9%a1%8c">SETP 3: 新增問題</a></li><li><a href="#%e5%9c%a8-teams-%e6%96%b0%e5%a2%9e%e4%b8%80%e5%80%8b%e8%ab%8b%e5%81%87%e5%b0%88%e7%94%a8%e9%a0%bb%e9%81%93">在 Teams 新增一個請假專用頻道</a></li><li class="is-sub"><a href="#step-1--%e6%96%b0%e5%a2%9e%e9%a0%bb%e9%81%93">STEP 1 : 新增頻道</a></li><li class="is-sub"><a href="#step-2--%e5%a1%ab%e5%af%ab%e9%a0%bb%e9%81%93%e8%b3%87%e8%a8%8a">STEP 2 : 填寫頻道資訊</a></li><li><a href="#%e5%9c%a8-power-automate-%e6%96%b0%e5%a2%9e%e6%b5%81%e7%a8%8b">在 Power automate 新增流程</a></li><li class="is-sub"><a href="#step-1--%e5%bb%ba%e7%ab%8b%e8%87%aa%e5%8b%95%e5%8c%96%e6%b5%81%e7%a8%8b">STEP 1 : 建立自動化流程</a></li><li class="is-sub"><a href="#step-2--%e9%81%b8%e6%93%87%e8%87%aa%e5%8b%95%e6%b5%81%e7%a8%8b%e8%a6%81%e8%a7%b8%e7%99%bc%e7%9a%84%e7%a8%8b%e5%ba%8f">STEP 2 : 選擇自動流程要觸發的程序</a></li><li class="is-sub"><a href="#step-3--%e5%9c%a8%e8%a1%a8%e5%96%ae%e8%ad%98%e5%88%a5%e7%a2%bc%e7%9a%84%e5%9c%b0%e6%96%b9%e9%81%b8%e6%93%87%e5%89%9b%e5%bb%ba%e7%ab%8b%e7%9a%84-form">STEP 3 : 在表單識別碼的地方選擇剛建立的 Form</a></li><li class="is-sub"><a href="#step-4--%e6%96%b0%e6%ad%a5%e9%a9%9f%e5%8f%96%e5%be%97-form-%e8%a1%a8%e5%96%ae%e5%9b%9e%e8%a6%86%e7%9a%84%e5%85%a7%e5%ae%b9">STEP 4 : 新步驟，取得 Form 表單回覆的內容</a></li><li class="is-sub"><a href="#step-4--%e9%81%b8%e6%93%87%e4%bd%a0%e8%a6%81%e6%8e%a5%e6%94%b6%e5%93%aa%e5%80%8b%e8%a1%a8%e5%96%ae%e7%9a%84%e8%b3%87%e8%a8%8a">STEP 4 : 選擇你要接收哪個表單的資訊</a></li><li class="is-sub"><a href="#step-5--%e6%96%b0%e6%ad%a5%e9%a9%9f%e8%a8%ad%e5%ae%9a%e7%b0%bd%e6%a0%b8%e6%a9%9f%e5%88%b6">STEP 5 : 新步驟，設定簽核機制</a></li><li class="is-sub"><a href="#step-6-%e5%a1%ab%e5%af%ab%e4%b8%bb%e7%ae%a1%e7%b0%bd%e6%a0%b8%e6%99%82%e6%9c%83%e7%9c%8b%e5%88%b0%e7%9a%84%e5%85%a7%e5%ae%b9">STEP 6: 填寫主管簽核時會看到的內容</a></li><li class="is-sub"><a href="#step-6--%e6%96%b0%e6%ad%a5%e9%a9%9f%e5%bb%ba%e7%ab%8b%e7%b0%bd%e6%a0%b8%e8%a7%b8%e7%99%bc%e6%a2%9d%e4%bb%b6">STEP 6 : 新步驟，建立簽核觸發條件</a></li><li class="is-sub"><a href="#step-6--%e7%94%a8%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e4%be%86%e8%99%95%e7%90%86%e6%8e%a5%e4%b8%8b%e4%be%86%e6%b5%81%e7%a8%8b">STEP 6 : 用簽核結果來處理接下來流程</a></li><li class="is-sub"><a href="#step-6--%e5%a6%82%e6%9e%9c%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e7%82%ba%e6%98%af%e5%b0%b1%e5%b0%87%e8%a8%8a%e6%81%af-post-%e5%88%b0-teams-%e7%be%a4%e7%b5%84">STEP 6 : 如果簽核結果為是就將訊息 post 到 teams 群組</a></li><li class="is-sub"><a href="#step-7--%e5%a1%ab%e5%af%ab%e8%a6%81%e7%99%bc%e5%b8%83%e7%9a%84%e5%9c%98%e9%9a%8a%e5%8f%8a%e9%a0%bb%e9%81%93%e6%92%b0%e5%af%ab%e8%a8%8a%e6%81%af">STEP 7 : 填寫要發布的團隊及頻道，撰寫訊息</a></li><li class="is-sub"><a href="#step-8--%e5%a6%82%e6%9e%9c%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e7%82%ba%e5%90%a6%e5%b0%b1%e5%9b%9e-email-%e8%aa%aa%e6%98%8e">STEP 8 : 如果簽核結果為否，就回 email 說明</a></li><li class="is-sub"><a href="#step-9--%e5%a1%ab%e5%af%ab-email-%e5%85%a7%e5%ae%b9">STEP 9 : 填寫 email 內容</a></li><li class="is-sub"><a href="#step-10--%e5%b0%87%e6%b5%81%e7%a8%8b%e5%84%b2%e5%ad%98">STEP 10 : 將流程儲存</a></li><li><a href="#%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f%e5%8b%95%e4%bd%9c">測試流程是否符合預期動作</a></li><li class="is-sub"><a href="#setp-1--%e9%96%8b%e5%a7%8b%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b">SETP 1 : 開始測試流程</a></li><li class="is-sub"><a href="#setp-2--%e5%a1%ab%e5%af%ab%e8%a1%a8%e5%96%ae%e7%a2%ba%e8%aa%8d%e6%b5%81%e7%a8%8b%e8%a7%b8%e7%99%bc">SETP 2 : 填寫表單確認流程觸發</a></li><li class="is-sub"><a href="#setp-3-%e6%8b%92%e7%b5%95%e8%ab%8b%e5%81%87">SETP 3: 拒絕請假</a></li><li class="is-sub"><a href="#setp-4-%e6%8e%a5%e5%8f%97%e8%ab%8b%e5%81%87">SETP 4: 接受請假</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>把這篇文章獻給看完微軟教學依舊霧颯颯的朋友們，文章中會用一個超簡單的範例讓剛接觸的朋友們理解這這軟體如何操作</p>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-01.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-01_hu_728aa1bc8a944032.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-01.webp 900w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="900" height="450" alt="手把手帶你實作 Microsoft Power Automate 超簡單範例（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="-今日目標">🤔 今日目標<a class="h-anchor" href="#-%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>建立一個簡易的請假流程（填寫請假單→主管簽核→依簽核結果執行不同流程）</li>
+<li>將 Forms + Teams + Power Automate 工具串連起來</li>
+</ul>
+<h2 id="-開始實作流程">💡 開始實作流程<a class="h-anchor" href="#-%e9%96%8b%e5%a7%8b%e5%af%a6%e4%bd%9c%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<h2 id="新增-form-表單">新增 Form 表單<a class="h-anchor" href="#%e6%96%b0%e5%a2%9e-form-%e8%a1%a8%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<h3 id="setp-1--在-forms下新增表單">SETP 1 : 在 Forms下新增表單<a class="h-anchor" href="#setp-1--%e5%9c%a8-forms%e4%b8%8b%e6%96%b0%e5%a2%9e%e8%a1%a8%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-02.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-02_hu_4f642cf58894b912.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-02.webp 1154w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1154" height="657" alt="SETP 1 : 在 Forms下新增表單（圖 2）" loading="lazy" decoding="async"></p>
+<h3 id="setp-2--填上標題與描述">SETP 2 : 填上標題與描述<a class="h-anchor" href="#setp-2--%e5%a1%ab%e4%b8%8a%e6%a8%99%e9%a1%8c%e8%88%87%e6%8f%8f%e8%bf%b0" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-03.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-03_hu_45926fcba4efc6e6.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-03.webp 1154w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1154" height="412" alt="SETP 2 : 填上標題與描述（圖 3）" loading="lazy" decoding="async"></p>
+<h3 id="setp-3-新增問題">SETP 3: 新增問題<a class="h-anchor" href="#setp-3-%e6%96%b0%e5%a2%9e%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>對方填寫問題的資訊都能成為之後訊息組合的一部分</p>
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-04.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-04_hu_d0011b3843a34c7f.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-04.webp 1154w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1154" height="868" alt="目前這三個問題我都設定為必答" loading="lazy" decoding="async">
+  <figcaption>目前這三個問題我都設定為必答</figcaption>
+</figure>
+
+<hr>
+<h2 id="在-teams-新增一個請假專用頻道">在 Teams 新增一個請假專用頻道<a class="h-anchor" href="#%e5%9c%a8-teams-%e6%96%b0%e5%a2%9e%e4%b8%80%e5%80%8b%e8%ab%8b%e5%81%87%e5%b0%88%e7%94%a8%e9%a0%bb%e9%81%93" aria-label="這個段落的連結"></a></h2>
+<h3 id="step-1--新增頻道">STEP 1 : 新增頻道<a class="h-anchor" href="#step-1--%e6%96%b0%e5%a2%9e%e9%a0%bb%e9%81%93" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-05.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-05_hu_1d88d4ad409a0dbb.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-05.webp 1223w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1223" height="550" alt="建議你建立全新的團隊來做這個實驗" loading="lazy" decoding="async">
+  <figcaption>建議你建立全新的團隊來做這個實驗</figcaption>
+</figure>
+
+<h3 id="step-2--填寫頻道資訊">STEP 2 : 填寫頻道資訊<a class="h-anchor" href="#step-2--%e5%a1%ab%e5%af%ab%e9%a0%bb%e9%81%93%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-06.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-06_hu_91a866fc34638b00.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-06.webp 1223w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1223" height="737" alt="隱私權這樣設定是因為請假這件事團隊成員都知道會比較好溝通協調" loading="lazy" decoding="async">
+  <figcaption>隱私權這樣設定是因為請假這件事團隊成員都知道會比較好溝通協調</figcaption>
+</figure>
+
+<hr>
+<h2 id="在-power-automate-新增流程">在 Power automate 新增流程<a class="h-anchor" href="#%e5%9c%a8-power-automate-%e6%96%b0%e5%a2%9e%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<h3 id="step-1--建立自動化流程">STEP 1 : 建立自動化流程<a class="h-anchor" href="#step-1--%e5%bb%ba%e7%ab%8b%e8%87%aa%e5%8b%95%e5%8c%96%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-07.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-07_hu_2cf19788823ed0c1.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-07.webp 1154w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1154" height="549" alt="STEP 1 : 建立自動化流程（圖 7）" loading="lazy" decoding="async"></p>
+<h3 id="step-2--選擇自動流程要觸發的程序">STEP 2 : 選擇自動流程要觸發的程序<a class="h-anchor" href="#step-2--%e9%81%b8%e6%93%87%e8%87%aa%e5%8b%95%e6%b5%81%e7%a8%8b%e8%a6%81%e8%a7%b8%e7%99%bc%e7%9a%84%e7%a8%8b%e5%ba%8f" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-08.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-08_hu_fcbba3830a5f78a5.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-08.webp 1154w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1154" height="714" alt="我們這個流程是要在 Form 表單提交時觸發" loading="lazy" decoding="async">
+  <figcaption>我們這個流程是要在 Form 表單提交時觸發</figcaption>
+</figure>
+
+<h3 id="step-3--在表單識別碼的地方選擇剛建立的-form">STEP 3 : 在表單識別碼的地方選擇剛建立的 Form<a class="h-anchor" href="#step-3--%e5%9c%a8%e8%a1%a8%e5%96%ae%e8%ad%98%e5%88%a5%e7%a2%bc%e7%9a%84%e5%9c%b0%e6%96%b9%e9%81%b8%e6%93%87%e5%89%9b%e5%bb%ba%e7%ab%8b%e7%9a%84-form" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-09.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-09_hu_69c384a28fb7eb78.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-09.webp 956w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="956" height="287" alt="STEP 3 : 在表單識別碼的地方選擇剛建立的 Form（圖 9）" loading="lazy" decoding="async"></p>
+<h3 id="step-4--新步驟取得-form-表單回覆的內容">STEP 4 : 新步驟，取得 Form 表單回覆的內容<a class="h-anchor" href="#step-4--%e6%96%b0%e6%ad%a5%e9%a9%9f%e5%8f%96%e5%be%97-form-%e8%a1%a8%e5%96%ae%e5%9b%9e%e8%a6%86%e7%9a%84%e5%85%a7%e5%ae%b9" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-10.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-10_hu_a11920758031f177.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-10.webp 940w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="940" height="762" alt="你可以用搜尋功能幫你快速找到這個動作" loading="lazy" decoding="async">
+  <figcaption>你可以用搜尋功能幫你快速找到這個<strong>動作</strong></figcaption>
+</figure>
+
+<h3 id="step-4--選擇你要接收哪個表單的資訊">STEP 4 : 選擇你要接收哪個表單的資訊<a class="h-anchor" href="#step-4--%e9%81%b8%e6%93%87%e4%bd%a0%e8%a6%81%e6%8e%a5%e6%94%b6%e5%93%aa%e5%80%8b%e8%a1%a8%e5%96%ae%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-11.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-11_hu_5d90b9a5e8401919.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-11.webp 940w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="940" height="520" alt="回應識別碼選擇預設的即可" loading="lazy" decoding="async">
+  <figcaption>回應識別碼選擇預設的即可</figcaption>
+</figure>
+
+<h3 id="step-5--新步驟設定簽核機制">STEP 5 : 新步驟，設定簽核機制<a class="h-anchor" href="#step-5--%e6%96%b0%e6%ad%a5%e9%a9%9f%e8%a8%ad%e5%ae%9a%e7%b0%bd%e6%a0%b8%e6%a9%9f%e5%88%b6" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-12.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-12_hu_7d5f6a0b3c916e09.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-12.webp 940w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="940" height="653" alt="STEP 5 : 新步驟，設定簽核機制（圖 12）" loading="lazy" decoding="async"></p>
+<h3 id="step-6-填寫主管簽核時會看到的內容">STEP 6: 填寫主管簽核時會看到的內容<a class="h-anchor" href="#step-6-%e5%a1%ab%e5%af%ab%e4%b8%bb%e7%ae%a1%e7%b0%bd%e6%a0%b8%e6%99%82%e6%9c%83%e7%9c%8b%e5%88%b0%e7%9a%84%e5%85%a7%e5%ae%b9" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-13.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-13_hu_2be8f0cc76ba2855.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-13.webp 940w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="940" height="689" alt="STEP 6: 填寫主管簽核時會看到的內容（圖 13）" loading="lazy" decoding="async"></p>
+<h3 id="step-6--新步驟建立簽核觸發條件">STEP 6 : 新步驟，建立簽核觸發條件<a class="h-anchor" href="#step-6--%e6%96%b0%e6%ad%a5%e9%a9%9f%e5%bb%ba%e7%ab%8b%e7%b0%bd%e6%a0%b8%e8%a7%b8%e7%99%bc%e6%a2%9d%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-14.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-14_hu_bbb89a203f258d57.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-14.webp 940w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="940" height="528" alt="STEP 6 : 新步驟，建立簽核觸發條件（圖 14）" loading="lazy" decoding="async"></p>
+<h3 id="step-6--用簽核結果來處理接下來流程">STEP 6 : 用簽核結果來處理接下來流程<a class="h-anchor" href="#step-6--%e7%94%a8%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e4%be%86%e8%99%95%e7%90%86%e6%8e%a5%e4%b8%8b%e4%be%86%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-15.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-15.webp 710w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="710" height="295" alt="STEP 6 : 用簽核結果來處理接下來流程（圖 15）" loading="lazy" decoding="async"></p>
+<h3 id="step-6--如果簽核結果為是就將訊息-post-到-teams-群組">STEP 6 : 如果簽核結果為是就將訊息 post 到 teams 群組<a class="h-anchor" href="#step-6--%e5%a6%82%e6%9e%9c%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e7%82%ba%e6%98%af%e5%b0%b1%e5%b0%87%e8%a8%8a%e6%81%af-post-%e5%88%b0-teams-%e7%be%a4%e7%b5%84" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-16.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-16.webp 637w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="637" height="518" alt="STEP 6 : 如果簽核結果為是就將訊息 post 到 teams 群組（圖 16）" loading="lazy" decoding="async"></p>
+<h3 id="step-7--填寫要發布的團隊及頻道撰寫訊息">STEP 7 : 填寫要發布的團隊及頻道，撰寫訊息<a class="h-anchor" href="#step-7--%e5%a1%ab%e5%af%ab%e8%a6%81%e7%99%bc%e5%b8%83%e7%9a%84%e5%9c%98%e9%9a%8a%e5%8f%8a%e9%a0%bb%e9%81%93%e6%92%b0%e5%af%ab%e8%a8%8a%e6%81%af" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-17.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-17.webp 634w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="634" height="407" alt="STEP 7 : 填寫要發布的團隊及頻道，撰寫訊息（圖 17）" loading="lazy" decoding="async"></p>
+<h3 id="step-8--如果簽核結果為否就回-email-說明">STEP 8 : 如果簽核結果為否，就回 email 說明<a class="h-anchor" href="#step-8--%e5%a6%82%e6%9e%9c%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e7%82%ba%e5%90%a6%e5%b0%b1%e5%9b%9e-email-%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-18.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-18.webp 632w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="632" height="526" alt="STEP 8 : 如果簽核結果為否，就回 email 說明（圖 18）" loading="lazy" decoding="async"></p>
+<h3 id="step-9--填寫-email-內容">STEP 9 : 填寫 email 內容<a class="h-anchor" href="#step-9--%e5%a1%ab%e5%af%ab-email-%e5%85%a7%e5%ae%b9" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-19.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-19.webp 632w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="632" height="452" alt="STEP 9 : 填寫 email 內容（圖 19）" loading="lazy" decoding="async"></p>
+<h3 id="step-10--將流程儲存">STEP 10 : 將流程儲存<a class="h-anchor" href="#step-10--%e5%b0%87%e6%b5%81%e7%a8%8b%e5%84%b2%e5%ad%98" aria-label="這個段落的連結"></a></h3>
+<h2 id="測試流程是否符合預期動作">測試流程是否符合預期動作<a class="h-anchor" href="#%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f%e5%8b%95%e4%bd%9c" aria-label="這個段落的連結"></a></h2>
+<h3 id="setp-1--開始測試流程">SETP 1 : 開始測試流程<a class="h-anchor" href="#setp-1--%e9%96%8b%e5%a7%8b%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-20.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-20_hu_6f5f0193c4d72ab5.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-20.webp 1090w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1090" height="249" alt="SETP 1 : 開始測試流程（圖 20）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-21.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-21_hu_76d80c929a684c58.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-21.webp 1090w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1090" height="249" alt="SETP 1 : 開始測試流程（圖 21）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-22.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-22_hu_642c0c02fce2dcc3.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-22.webp 1090w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1090" height="397" alt="千萬不要在這個畫面傻等，他會轉圈圈直到你觸發第一個動作" loading="lazy" decoding="async">
+  <figcaption><strong>千萬不要在這個畫面傻等</strong>，他會轉圈圈直到你觸發第一個動作</figcaption>
+</figure>
+
+<h3 id="setp-2--填寫表單確認流程觸發">SETP 2 : 填寫表單確認流程觸發<a class="h-anchor" href="#setp-2--%e5%a1%ab%e5%af%ab%e8%a1%a8%e5%96%ae%e7%a2%ba%e8%aa%8d%e6%b5%81%e7%a8%8b%e8%a7%b8%e7%99%bc" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-23.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-23_hu_225626085d2e4e83.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-23.webp 1288w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1288" height="634" alt="先在剛建立的 Form 裡面取得表單連結，你也可以寄這個連結給特定人士" loading="lazy" decoding="async">
+  <figcaption>先在剛建立的 Form 裡面取得表單連結，你也可以寄這個連結給特定人士</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-24.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-24_hu_b3c351d7b5865f4c.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-24.webp 1288w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1288" height="865" alt="對方必須也有 office365 才能填寫" loading="lazy" decoding="async">
+  <figcaption>對方必須也有 office365 才能填寫</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-25.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-25_hu_637346d76216f69c.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-25.webp 1088w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1088" height="441" alt="提交表單後你就會看到流程已被觸發，但是信件通常要等一段時間才會收到" loading="lazy" decoding="async">
+  <figcaption>提交表單後你就會看到流程已被觸發，但是<strong>信件通常要等一段時間</strong>才會收到</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-26.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-26_hu_7cff31f88530c128.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-26.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1377" alt="確認我們標題與描述與設計一致" loading="lazy" decoding="async">
+  <figcaption>確認我們標題與描述與設計一致</figcaption>
+</figure>
+
+<h3 id="setp-3-拒絕請假">SETP 3: 拒絕請假<a class="h-anchor" href="#setp-3-%e6%8b%92%e7%b5%95%e8%ab%8b%e5%81%87" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-27.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-27_hu_91c780c0e01264ab.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-27.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="994" alt="按下 Reject 就會跳到網頁讓你填寫拒絕理由" loading="lazy" decoding="async">
+  <figcaption>按下 Reject 就會跳到網頁讓你填寫拒絕理由</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-28.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-28_hu_5cc901a305eee748.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-28.webp 1087w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1087" height="431" alt="在上面的網頁按下確認後這個流程就執行完畢嚕～" loading="lazy" decoding="async">
+  <figcaption>在上面的網頁按下確認後這個流程就執行完畢嚕～</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-29.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-29_hu_49a358af0fcb4ec.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-29.webp 1286w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1286" height="444" alt="同時也會收到請假被駁回的信件" loading="lazy" decoding="async">
+  <figcaption>同時也會收到請假被駁回的信件</figcaption>
+</figure>
+
+<h3 id="setp-4-接受請假">SETP 4: 接受請假<a class="h-anchor" href="#setp-4-%e6%8e%a5%e5%8f%97%e8%ab%8b%e5%81%87" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-30.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-30_hu_55df7917457ddf65.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-30.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1040" alt="按下 Approve 一樣會跳到網頁讓你填寫註解" loading="lazy" decoding="async">
+  <figcaption>按下 Approve 一樣會跳到網頁讓你填寫註解</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-31.webp" srcset="/blog/202010/power-automate-simple-example/images/power-automate-simple-example-31_hu_656418f670ec5090.webp 720w, /blog/202010/power-automate-simple-example/images/power-automate-simple-example-31.webp 874w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="874" height="452" alt="同時在 Teams 團隊的頻道也會發布訊息通知大家" loading="lazy" decoding="async">
+  <figcaption>同時在 Teams 團隊的頻道也會發布訊息通知大家</figcaption>
+</figure>
+
+<hr>
+<blockquote class="pullquote"><p>雖然是一個超簡單範例，但實際動手操作起來也是要花一段時間才能完成需求的，希望今天的教學能給需要的人幫助喔～</p>
+</blockquote>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2020.10.13）</span><a href="https://medium.com/dean-lin/%E6%89%8B%E6%8A%8A%E6%89%8B%E5%B8%B6%E4%BD%A0%E5%AF%A6%E4%BD%9C-microsoft-power-automate-%E8%B6%85%E7%B0%A1%E5%96%AE%E7%AF%84%E4%BE%8B-7ef4c5a44b9b" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/power-automate/">Power Automate</a>
+            <a class="chip chip-hash" href="/tags/example/">Example</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Fpower-automate-simple-example%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Fpower-automate-simple-example%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202010/power-automate-simple-example/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202010/power-automate-simple-example/" data-title="手把手帶你實作 Microsoft Power Automate 超簡單範例" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202010/microsoft-planner-vs-lists/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">Microsoft Planner VS Microsoft Lists</span></a>
+          <a class="next" href="/blog/202011/salary-negotiation/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">薪水談判-Salary Negotiation</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#-%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">🤔 今日目標</a></li><li><a href="#-%e9%96%8b%e5%a7%8b%e5%af%a6%e4%bd%9c%e6%b5%81%e7%a8%8b">💡 開始實作流程</a></li><li><a href="#%e6%96%b0%e5%a2%9e-form-%e8%a1%a8%e5%96%ae">新增 Form 表單</a></li><li class="is-sub"><a href="#setp-1--%e5%9c%a8-forms%e4%b8%8b%e6%96%b0%e5%a2%9e%e8%a1%a8%e5%96%ae">SETP 1 : 在 Forms下新增表單</a></li><li class="is-sub"><a href="#setp-2--%e5%a1%ab%e4%b8%8a%e6%a8%99%e9%a1%8c%e8%88%87%e6%8f%8f%e8%bf%b0">SETP 2 : 填上標題與描述</a></li><li class="is-sub"><a href="#setp-3-%e6%96%b0%e5%a2%9e%e5%95%8f%e9%a1%8c">SETP 3: 新增問題</a></li><li><a href="#%e5%9c%a8-teams-%e6%96%b0%e5%a2%9e%e4%b8%80%e5%80%8b%e8%ab%8b%e5%81%87%e5%b0%88%e7%94%a8%e9%a0%bb%e9%81%93">在 Teams 新增一個請假專用頻道</a></li><li class="is-sub"><a href="#step-1--%e6%96%b0%e5%a2%9e%e9%a0%bb%e9%81%93">STEP 1 : 新增頻道</a></li><li class="is-sub"><a href="#step-2--%e5%a1%ab%e5%af%ab%e9%a0%bb%e9%81%93%e8%b3%87%e8%a8%8a">STEP 2 : 填寫頻道資訊</a></li><li><a href="#%e5%9c%a8-power-automate-%e6%96%b0%e5%a2%9e%e6%b5%81%e7%a8%8b">在 Power automate 新增流程</a></li><li class="is-sub"><a href="#step-1--%e5%bb%ba%e7%ab%8b%e8%87%aa%e5%8b%95%e5%8c%96%e6%b5%81%e7%a8%8b">STEP 1 : 建立自動化流程</a></li><li class="is-sub"><a href="#step-2--%e9%81%b8%e6%93%87%e8%87%aa%e5%8b%95%e6%b5%81%e7%a8%8b%e8%a6%81%e8%a7%b8%e7%99%bc%e7%9a%84%e7%a8%8b%e5%ba%8f">STEP 2 : 選擇自動流程要觸發的程序</a></li><li class="is-sub"><a href="#step-3--%e5%9c%a8%e8%a1%a8%e5%96%ae%e8%ad%98%e5%88%a5%e7%a2%bc%e7%9a%84%e5%9c%b0%e6%96%b9%e9%81%b8%e6%93%87%e5%89%9b%e5%bb%ba%e7%ab%8b%e7%9a%84-form">STEP 3 : 在表單識別碼的地方選擇剛建立的 Form</a></li><li class="is-sub"><a href="#step-4--%e6%96%b0%e6%ad%a5%e9%a9%9f%e5%8f%96%e5%be%97-form-%e8%a1%a8%e5%96%ae%e5%9b%9e%e8%a6%86%e7%9a%84%e5%85%a7%e5%ae%b9">STEP 4 : 新步驟，取得 Form 表單回覆的內容</a></li><li class="is-sub"><a href="#step-4--%e9%81%b8%e6%93%87%e4%bd%a0%e8%a6%81%e6%8e%a5%e6%94%b6%e5%93%aa%e5%80%8b%e8%a1%a8%e5%96%ae%e7%9a%84%e8%b3%87%e8%a8%8a">STEP 4 : 選擇你要接收哪個表單的資訊</a></li><li class="is-sub"><a href="#step-5--%e6%96%b0%e6%ad%a5%e9%a9%9f%e8%a8%ad%e5%ae%9a%e7%b0%bd%e6%a0%b8%e6%a9%9f%e5%88%b6">STEP 5 : 新步驟，設定簽核機制</a></li><li class="is-sub"><a href="#step-6-%e5%a1%ab%e5%af%ab%e4%b8%bb%e7%ae%a1%e7%b0%bd%e6%a0%b8%e6%99%82%e6%9c%83%e7%9c%8b%e5%88%b0%e7%9a%84%e5%85%a7%e5%ae%b9">STEP 6: 填寫主管簽核時會看到的內容</a></li><li class="is-sub"><a href="#step-6--%e6%96%b0%e6%ad%a5%e9%a9%9f%e5%bb%ba%e7%ab%8b%e7%b0%bd%e6%a0%b8%e8%a7%b8%e7%99%bc%e6%a2%9d%e4%bb%b6">STEP 6 : 新步驟，建立簽核觸發條件</a></li><li class="is-sub"><a href="#step-6--%e7%94%a8%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e4%be%86%e8%99%95%e7%90%86%e6%8e%a5%e4%b8%8b%e4%be%86%e6%b5%81%e7%a8%8b">STEP 6 : 用簽核結果來處理接下來流程</a></li><li class="is-sub"><a href="#step-6--%e5%a6%82%e6%9e%9c%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e7%82%ba%e6%98%af%e5%b0%b1%e5%b0%87%e8%a8%8a%e6%81%af-post-%e5%88%b0-teams-%e7%be%a4%e7%b5%84">STEP 6 : 如果簽核結果為是就將訊息 post 到 teams 群組</a></li><li class="is-sub"><a href="#step-7--%e5%a1%ab%e5%af%ab%e8%a6%81%e7%99%bc%e5%b8%83%e7%9a%84%e5%9c%98%e9%9a%8a%e5%8f%8a%e9%a0%bb%e9%81%93%e6%92%b0%e5%af%ab%e8%a8%8a%e6%81%af">STEP 7 : 填寫要發布的團隊及頻道，撰寫訊息</a></li><li class="is-sub"><a href="#step-8--%e5%a6%82%e6%9e%9c%e7%b0%bd%e6%a0%b8%e7%b5%90%e6%9e%9c%e7%82%ba%e5%90%a6%e5%b0%b1%e5%9b%9e-email-%e8%aa%aa%e6%98%8e">STEP 8 : 如果簽核結果為否，就回 email 說明</a></li><li class="is-sub"><a href="#step-9--%e5%a1%ab%e5%af%ab-email-%e5%85%a7%e5%ae%b9">STEP 9 : 填寫 email 內容</a></li><li class="is-sub"><a href="#step-10--%e5%b0%87%e6%b5%81%e7%a8%8b%e5%84%b2%e5%ad%98">STEP 10 : 將流程儲存</a></li><li><a href="#%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f%e5%8b%95%e4%bd%9c">測試流程是否符合預期動作</a></li><li class="is-sub"><a href="#setp-1--%e9%96%8b%e5%a7%8b%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b">SETP 1 : 開始測試流程</a></li><li class="is-sub"><a href="#setp-2--%e5%a1%ab%e5%af%ab%e8%a1%a8%e5%96%ae%e7%a2%ba%e8%aa%8d%e6%b5%81%e7%a8%8b%e8%a7%b8%e7%99%bc">SETP 2 : 填寫表單確認流程觸發</a></li><li class="is-sub"><a href="#setp-3-%e6%8b%92%e7%b5%95%e8%ab%8b%e5%81%87">SETP 3: 拒絕請假</a></li><li class="is-sub"><a href="#setp-4-%e6%8e%a5%e5%8f%97%e8%ab%8b%e5%81%87">SETP 4: 接受請假</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Fpower-automate-simple-example%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Fpower-automate-simple-example%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202010/power-automate-simple-example/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202010/power-automate-simple-example/" data-title="手把手帶你實作 Microsoft Power Automate 超簡單範例" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202412/gitlab-ci-notes/images/gitlab-ci-notes-01_hu_aed69cadc794a43c.webp" srcset="/blog/202412/gitlab-ci-notes/images/gitlab-ci-notes-01_hu_682610a1fee1c89a.webp 240w, /blog/202412/gitlab-ci-notes/images/gitlab-ci-notes-01_hu_c8d09d54e537c9a6.webp 480w, /blog/202412/gitlab-ci-notes/images/gitlab-ci-notes-01_hu_1a323f8eada7b34f.webp 800w, /blog/202412/gitlab-ci-notes/images/gitlab-ci-notes-01_hu_aed69cadc794a43c.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202412/gitlab-ci-notes/">GitLab CI 實戰（踩坑）筆記</a></h3>
+    <p class="card-desc">GitLab CI 是 GitLab 的內建工具，每次 Push 都會觸發一次腳本執行，內容通常涵蓋測試、編譯、部署等一系列自定義內容。 這篇文章會分享設計上要注意的細節，以及實戰過程踩過的坑。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2024-12-02">2024.12.02</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAADwAwCdASoYAA0APw1mqEemIqIYBABjEMT0gAA1dTeuCbPTxCvdqCxAAP7w3n6xzYffiIBwji2ni/wBbJX8s2hIvokn5vr5j0XzMSN52Sm0Wt435lo5dpRmDzteHejvjsSgDTgal6dLniPiaF8jRLkJGX&#43;gAA==" alt="" width="24" height="13"><img src="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-01_hu_f3b71895766d25c7.webp" srcset="/blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-01_hu_b2a6496a7a5d3e1c.webp 240w, /blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-01_hu_9bad6abe80bb0936.webp 480w, /blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-01_hu_60ea1f98104b2b5e.webp 800w, /blog/202301/vue-test-utils-examples/images/vue-test-utils-examples-01_hu_f3b71895766d25c7.webp 1148w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1148" height="599" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/frontend-testing/">前端單元測試</a></div>
+
+    <h3 class="card-title"><a href="/blog/202301/vue-test-utils-examples/">透過實際案例了解在 Vuetify（Vite &amp; TypeScript）中如何運用 @vue/test-utils</a></h3>
+    <p class="card-desc">今天這篇文章，筆者會用一個簡易的「登入頁面」，來介紹 @vue/test-utils 這款套件的常用功能（ex：getComponent、setValue、wrapper.vm、trigger button、Vue Router）</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2023-01-19">2023.01.19</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADwAwCdASoYAAwAPw1op0emIyGYBABjEMT0gGM&#43;EsZ0K6xn0yX7UkYAAP7qcZJIJ57BmRDmFcrMGNoRV8gGDWw&#43;Zz/3ZzZ3aaCl7gUaYNgAAA==" alt="" width="24" height="12"><img src="/images/post/202501/hugo6-set-up-google-search-console/cover_hu_b5e15df62493a699.webp" srcset="/images/post/202501/hugo6-set-up-google-search-console/cover_hu_dc77916d4432cc52.webp 240w, /images/post/202501/hugo6-set-up-google-search-console/cover_hu_5721931de7545604.webp 480w, /images/post/202501/hugo6-set-up-google-search-console/cover_hu_7b14cdc6dc9d8f68.webp 800w, /images/post/202501/hugo6-set-up-google-search-console/cover_hu_b5e15df62493a699.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="624" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/hugo/">Hugo 自架站</a></div>
+
+    <h3 class="card-title"><a href="/blog/202501/hugo6-set-up-google-search-console/">[Hugo自架站-6]設定 Google Search Console，讓自己的網站可以被搜尋</a></h3>
+    <p class="card-desc">這篇文章要教大家如何設定 Google Search Console，以及上傳網站的 Sitemap（網站地圖），讓自己的網站可以被搜尋。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2025-01-21">2025.01.21</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202010/power-automate-simple-example/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>用 Node.js 享受 Cloud MongoDB 吧｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="你知道有免費的 Cloud MongoDB 資源可以使用嗎？雖然跟著官方教學走就能順利使用，但有些小細節我還是補充一下避免新手擔心，希望大家可以無障礙的使用這些資源～">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202108/nodejs-mongodb-atlas/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="用 Node.js 享受 Cloud MongoDB 吧">
+  <meta property="og:description" content="你知道有免費的 Cloud MongoDB 資源可以使用嗎？雖然跟著官方教學走就能順利使用，但有些小細節我還是補充一下避免新手擔心，希望大家可以無障礙的使用這些資源～">
+  <meta property="og:url" content="https://deanlin.net/blog/202108/nodejs-mongodb-atlas/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2021-08-26T21:53:02&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:25:01&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="MongoDB">
+  <meta property="article:tag" content="MongoDB Tutorial">
+  <meta property="article:tag" content="Node.js">
+  <meta property="og:image" content="https://deanlin.net/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="673">
+  <meta property="og:image:alt" content="用 Node.js 享受 Cloud MongoDB 吧">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-og.jpg">
+  <meta name="twitter:title" content="用 Node.js 享受 Cloud MongoDB 吧">
+  <meta name="twitter:description" content="你知道有免費的 Cloud MongoDB 資源可以使用嗎？雖然跟著官方教學走就能順利使用，但有些小細節我還是補充一下避免新手擔心，希望大家可以無障礙的使用這些資源～">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202108/nodejs-mongodb-atlas/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:25:01+08:00","datePublished":"2021-08-26T21:53:02+08:00","description":"你知道有免費的 Cloud MongoDB 資源可以使用嗎？雖然跟著官方教學走就能順利使用，但有些小細節我還是補充一下避免新手擔心，希望大家可以無障礙的使用這些資源～","headline":"用 Node.js 享受 Cloud MongoDB 吧","image":{"@type":"ImageObject","height":673,"url":"https://deanlin.net/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"MongoDB, MongoDB Tutorial, Node.js","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202108/nodejs-mongodb-atlas/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E7%94%A8-node-js-%E4%BA%AB%E5%8F%97-cloud-%E7%89%88-mongodb-%E5%90%A7-fb0f49b1f23"],"timeRequired":"PT3M","url":"https://deanlin.net/blog/202108/nodejs-mongodb-atlas/","wordCount":1499},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202108/nodejs-mongodb-atlas/","name":"用 Node.js 享受 Cloud MongoDB 吧","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">用 Node.js 享受 Cloud MongoDB 吧</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2021-08-26">2021.08.26</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 3 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+
+      <div class="prose" data-prose>
+        <p>你知道有免費的 Cloud MongoDB 資源可以使用嗎？雖然跟著官方教學走就能順利使用，但有些小細節我還是補充一下避免新手擔心，希望大家可以無障礙的使用這些資源～</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-01.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-01_hu_c69c9f8d9bef86cf.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="785" alt="用 Node.js 享受 Cloud MongoDB 吧（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+一、建立雲端 MongoDB
+  SETP 1：註冊帳號
+  SETP 2：建立組織(Organization)
+  SETP 3：建立專案(Project)
+  SETP 4：建立叢集（Build your first cluster）
+  SETP 5：建立 DB 使用者（Create your first database user）
+  SETP 6：加入可以存取的 IP（Add IP Address to your Access List）
+  SETP 7：載入範例資料（Load Sample Data）
+  SETP 8：連線到這個叢集（Connect to your cluster）
+二、用 Node.js 取得雲端 MongoDB 的資料
+</code></pre><h2 id="一建立雲端-mongodb">一、建立雲端 MongoDB<a class="h-anchor" href="#%e4%b8%80%e5%bb%ba%e7%ab%8b%e9%9b%b2%e7%ab%af-mongodb" aria-label="這個段落的連結"></a></h2>
+<p><strong>SETP 1</strong>：註冊帳號</p>
+<p>建議直接用 Google 帳號登入就好了，這個是真的有「免費」資源讓大家使用的。</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-02.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-02_hu_391261293d00a1e9.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-02.webp 1304w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1304" height="616" alt="一、建立雲端 MongoDB（圖 2）" loading="lazy" decoding="async"></p>
+<p>基本上你只打勾才能下一步啦</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-03.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-03_hu_d346b67f34c11df.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-03.webp 1304w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1304" height="315" alt="一、建立雲端 MongoDB（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 2</strong>：建立組織(Organization)</p>
+<blockquote>
+<p>左下角的「Get Started」是官方教學，但如果在這個階段「Build your first cluster」會失敗 QQ，所以建議按照文章操作順序比較穩定</p>
+</blockquote>
+<p>點擊「Create an Organization」</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-04.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-04_hu_309b48bc98d4ecb9.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-04.webp 1315w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1315" height="879" alt="一、建立雲端 MongoDB（圖 4）" loading="lazy" decoding="async"></p>
+<p>輸入組織名稱後點擊「Next」</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-05.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-05_hu_4cf967e69b208d10.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-05.webp 1315w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1315" height="724" alt="一、建立雲端 MongoDB（圖 5）" loading="lazy" decoding="async"></p>
+<p>點擊「Create Organization」建立組織，你之後還是可以邀請其他人進來這個組織，不急於現在。</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-06.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-06_hu_8b3a4c2f90d5589e.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-06.webp 1141w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1141" height="724" alt="一、建立雲端 MongoDB（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 3</strong>：建立專案(Project)</p>
+<p>點擊「New Project」</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-07.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-07_hu_6e90646f51974d8b.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-07.webp 1322w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1322" height="518" alt="一、建立雲端 MongoDB（圖 7）" loading="lazy" decoding="async"></p>
+<p>輸入專案名稱</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-08.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-08_hu_cf285ae3614ac059.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-08.webp 1322w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1322" height="518" alt="一、建立雲端 MongoDB（圖 8）" loading="lazy" decoding="async"></p>
+<p>點擊「Create Project」建立專案</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-09.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-09_hu_bb46f189dfc87908.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-09.webp 1169w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1169" height="689" alt="一、建立雲端 MongoDB（圖 9）" loading="lazy" decoding="async"></p>
+<hr>
+<p><strong>SETP 4</strong>：建立叢集（Build your first cluster）</p>
+<p>選最右邊「FREE」的</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-10.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-10_hu_35f17a4953a062d9.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-10.webp 1046w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1046" height="941" alt="一、建立雲端 MongoDB（圖 10）" loading="lazy" decoding="async"></p>
+<p>這邊我是選擇「Google Cloud」在「Taiwan」的機器，選好後按「Create Cluster」</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-11.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-11_hu_704379cc28da3b65.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-11.webp 1046w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1046" height="959" alt="一、建立雲端 MongoDB（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 5</strong>：建立 DB 使用者（Create your first database user）</p>
+<p>點擊「Add New Database User」建立使用者</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-12.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-12_hu_51784951c5642805.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-12.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="809" alt="一、建立雲端 MongoDB（圖 12）" loading="lazy" decoding="async"></p>
+<p>他有提供三種驗證方式，如果是初學者我建議選擇「Password」就好，而密碼我建議用「Autogenerate Secure Password」產生的比較安全；其他權限都先使用默認就好，按下「Add User」便建立成功～</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-13.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-13_hu_71b90a7b795087e2.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-13.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="809" alt="一、建立雲端 MongoDB（圖 13）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 6</strong>：加入可以存取的 IP（Add IP Address to your Access List）</p>
+<p>點擊「Add IP Address」加入 IP</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-14.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-14_hu_fa46f124fb8f507.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-14.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="809" alt="一、建立雲端 MongoDB（圖 14）" loading="lazy" decoding="async"></p>
+<p>如果你電腦的 IP 是固定的就選「ADD CURRENT IP ADDRESS」，如果是使用手機分享或是其他浮動 IP，你可以選「ALLOW ACCESS FROM ANYWHERE」，但如果選了這個就真的要小心保護你的帳號密碼不要外流</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-15.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-15_hu_a80460b18c3ff139.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-15.webp 905w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="905" height="547" alt="一、建立雲端 MongoDB（圖 15）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 7</strong>：載入範例資料（Load Sample Data）</p>
+<p>為了方便讓大家測試與學習，官方提供範例資料讓大家使用</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-16.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-16_hu_7ae30a6a6142787d.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-16.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="554" alt="一、建立雲端 MongoDB（圖 16）" loading="lazy" decoding="async"></p>
+<p>點擊「Load Sample Dataset」即可，大概等個 5~8 分鐘左右載入</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-17.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-17_hu_6bb9a0e0a2910a52.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-17.webp 773w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="773" height="409" alt="一、建立雲端 MongoDB（圖 17）" loading="lazy" decoding="async"></p>
+<p><strong>SETP 8</strong>：連線到這個叢集（Connect to your cluster）</p>
+<p>點擊「Connect」來看連線的方式</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-18.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-18_hu_4a39a11484edc156.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-18.webp 1214w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1214" height="405" alt="一、建立雲端 MongoDB（圖 18）" loading="lazy" decoding="async"></p>
+<p>這裡我推薦使用「MongoDB Compass」，有 GUI 介面就是友善～</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-19.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-19_hu_eb81a893c5532b14.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-19.webp 892w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="892" height="693" alt="一、建立雲端 MongoDB（圖 19）" loading="lazy" decoding="async"></p>
+<p>下載及安裝的方式請依照自己的作業系統處理，這裏我就不贅述了；但下面連線字串真的要複製起來等等連線要用</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-20.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-20_hu_b015835ace62d329.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-20.webp 892w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="892" height="812" alt="一、建立雲端 MongoDB（圖 20）" loading="lazy" decoding="async"></p>
+<p>打開安裝好的「MongoDB Compass」後，在框框內貼上剛剛複製的連線字串，記得要把 <code>&lt;password&gt;</code> 換成在 「STEP 5 建立 DB 使用者」的密碼</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-21.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-21_hu_c1b84b1f93af0a9a.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-21.webp 1274w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1274" height="313" alt="一、建立雲端 MongoDB（圖 21）" loading="lazy" decoding="async"></p>
+<p>連進去後就能看到範例資料嚕～</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-22.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-22_hu_157fa2927d504131.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-22.webp 1276w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1276" height="782" alt="一、建立雲端 MongoDB（圖 22）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="二用-nodejs-取得雲端-mongodb-的資料">二、用 Node.js 取得雲端 MongoDB 的資料<a class="h-anchor" href="#%e4%ba%8c%e7%94%a8-nodejs-%e5%8f%96%e5%be%97%e9%9b%b2%e7%ab%af-mongodb-%e7%9a%84%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：建立一個資料夾，輸入 <code>npm init</code></p>
+<p><strong>SETP 2</strong>：安裝 MongoDB 套件 <code>npm install mongodb</code></p>
+<p><strong>STEP 3</strong>：建立 <code>index.js</code> 並貼上官方範例程式</p>
+<p><strong>SETP 4</strong>：將 <code>uri</code> 的內容要改成自己的（你怎麼連線到 MongoDB Compass 這裡就是怎麼設定）</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { MongoClient } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;mongodb&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Replace the uri string with your MongoDB deployment&#39;s connection string.
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> uri <span style="color:#ff7b72;font-weight:bold">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a5d6ff">&#34;mongodb+srv://&lt;user&gt;:&lt;password&gt;@&lt;cluster-url&gt;?retryWrites=true&amp;writeConcern=majority&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> MongoClient(uri);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> run() {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> client.connect();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> database <span style="color:#ff7b72;font-weight:bold">=</span> client.db(<span style="color:#a5d6ff">&#39;sample_mflix&#39;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> movies <span style="color:#ff7b72;font-weight:bold">=</span> database.collection(<span style="color:#a5d6ff">&#39;movies&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Query for a movie that has the title &#39;Back to the Future&#39;
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> query <span style="color:#ff7b72;font-weight:bold">=</span> { title<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;Back to the Future&#39;</span> };
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> movie <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> movies.findOne(query);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    console.log(movie);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">finally</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Ensures that the client will close when you finish/error
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> client.close();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>run().<span style="color:#ff7b72">catch</span>(console.dir);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/f24587554ce195dc3249ff68f7bdd3ff" rel="noopener">Mongo_example.js</a>（GitHub Gist）</p>
+<p><strong>STEP 5</strong>：在終端機輸入 <code>node index.js</code></p>
+<p>如果順利印出下面的資訊就代表你成功踏入 MongoDB 學習的第一步嚕～</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-23.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-23_hu_3055d54cb1dd8cc7.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-23.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="539" alt="二、用 Node.js 取得雲端 MongoDB 的資料（圖 23）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 6</strong>：如果你有驗證的心，可以回到 MongoDB Compass</p>
+<p>選好 DB 以及 Collection 後，在 filter 輸入 <code>{ title: &lsquo;Back to Future&rsquo; }</code> ，確認回傳結果是否與 Node.js 查到的相同</p>
+<p><img src="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-24.webp" srcset="/blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-24_hu_15d07d8e68c4ac86.webp 720w, /blog/202108/nodejs-mongodb-atlas/images/nodejs-mongodb-atlas-24.webp 1275w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1275" height="776" alt="二、用 Node.js 取得雲端 MongoDB 的資料（圖 24）" loading="lazy" decoding="async"></p>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2021.08.26）</span><a href="https://medium.com/dean-lin/%E7%94%A8-node-js-%E4%BA%AB%E5%8F%97-cloud-%E7%89%88-mongodb-%E5%90%A7-fb0f49b1f23" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/mongodb/">MongoDB</a>
+            <a class="chip chip-hash" href="/tags/mongodb-tutorial/">MongoDB Tutorial</a>
+            <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202108%2Fnodejs-mongodb-atlas%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202108%2Fnodejs-mongodb-atlas%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202108/nodejs-mongodb-atlas/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202108/nodejs-mongodb-atlas/" data-title="用 Node.js 享受 Cloud MongoDB 吧" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202108/covering-index-explained/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">你在 Table 建立的 Index 真的有效嗎？用範例帶你理解 Coverage Index 的意義</span></a>
+          <a class="next" href="/blog/202110/microsoft-project-review/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">Microsoft Project 好用嗎？我需要它嗎？</span></a>
+        </nav>
+      </footer>
+    </div>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01_hu_850f88c656b6eebf.webp" srcset="/blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01_hu_5e5133c54c72c0e.webp 240w, /blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01_hu_f2b27e9aa6845c0f.webp 480w, /blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01_hu_f47f4ee13f5ad70e.webp 800w, /blog/202405/mongodb-vs-mysql-index-performance/images/mongodb-vs-mysql-index-performance-01_hu_850f88c656b6eebf.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a></div>
+
+    <h3 class="card-title"><a href="/blog/202405/mongodb-vs-mysql-index-performance/">MongoDB 與 MySQL 建立 Index 對 Read/Write 的效能影響</a></h3>
+    <p class="card-desc">儘管網路上有許多資料顯示 MongoDB 建立 Index 後的效能比 MySQL 好，但這篇文章我想要透過程式來驗證兩者的寫入、讀取、資料大小差異。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2024-05-25">2024.05.25</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>8 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_bf1adbce5bb8fbcc.webp" srcset="/blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_77a7ba93efa6226a.webp 240w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_dca6240ff135eca5.webp 480w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_e6a4a09b25bf8902.webp 800w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_bf1adbce5bb8fbcc.webp 1144w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1144" height="644" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/after-office/">工程師下班有約</a></div>
+
+    <h3 class="card-title"><a href="/blog/202405/database-bottlenecks/">當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文</a></h3>
+    <p class="card-desc">除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。 今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2024-05-22">2024.05.22</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADwAwCdASoYAAwAPw1mpkemIqGYBABjEMT0gAAzJ3QaDPiVh64J7QYAAP7F4mmfhtDVop53atR2b&#43;OtttnZZfu0zMb3kmaagKj/t/Yw9Nk/xi4dz6L0UtHUBHF1f5OAL57I3CIa1tDdQ/G0slCvtNoa7DixgEEAAAA=" alt="" width="24" height="12"><img src="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_bff1ffae4bf58b52.webp" srcset="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_2e344cb8100c56a2.webp 240w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_2ddd8bf6f3e4ef34.webp 480w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_7e397ca4dc4f3d5.webp 800w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_bff1ffae4bf58b52.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="622" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/kafka-tracing/">Kafka 與分散式追蹤</a></div>
+
+    <h3 class="card-title"><a href="/blog/202211/trace-kafka-with-jaeger/">透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況</a></h3>
+    <p class="card-desc">我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-11-23">2022.11.23</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>5 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202108/nodejs-mongodb-atlas/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

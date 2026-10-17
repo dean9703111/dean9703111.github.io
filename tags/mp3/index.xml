@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>MP3｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/mp3/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 29 Mar 2023 22:46:00 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/mp3/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）</title>
+      <link>https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/</link>
+      <pubDate>Wed, 29 Mar 2023 22:46:00 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>筆者真的嚇到了🫢，沒想到我真的做到一行程式碼都沒寫，以菜鳥的語氣跟 ChatGPT 對話，就能完成一個用 Python 將 Youtube 影片轉成音檔（mp3）的小專案。</description>
+      <content:encoded><![CDATA[<p>筆者真的嚇到了🫢，沒想到我真的做到一行程式碼都沒寫，以菜鳥的語氣跟 ChatGPT 對話，就能完成一個用 Python 將 Youtube 影片轉成音檔（mp3）的小專案。</p>
+<p>在這篇文章中，我附上與 ChatGPT 的完整對話，大家只要複製貼上就可以嘗試看看嚕！</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-01.webp" width="1139" height="626" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>Python 環境安裝的部分我就不贅述了，筆者使用的是 Python3；不過有設定 alias name，讓 python3/pip3 的指令對應 python/pip。</p>
+</blockquote>
+<p>😀：「我使用的程式語言是 Python，他有辦法抓取 Youtube 影片的音擋嗎？」</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-02.webp" width="886" height="692" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>ChatGPT 這邊也有提醒大家，不要未經授權下載有版權保護的影片喔！</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=VIDEO_ID&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span></code></pre></div><p><strong>SETP 1</strong>：建立一個<code>youtube-test.py</code>的檔案，貼上 ChatGPT 的程式。</p>
+<p><strong>SETP 2</strong>：如果要執行程式，請安裝套件：<code>pip install pytube</code>。</p>
+<p><strong>SETP 3</strong>：將 url 替換成自己的：<a href="https://www.youtube.com/watch?v=IvOdTbIYZs4%22%EF%BC%88%E9%80%99%E6%98%AF%E7%AD%86%E8%80%85%E5%88%86%E4%BA%AB%E5%87%BA%E6%9B%B8%E5%BF%83%E5%BE%97%E7%9A%84%E5%BD%B1%E7%89%87%EF%BC%89%E3%80%82">https://www.youtube.com/watch?v=IvOdTbIYZs4</a></p>
+<blockquote>
+<p>這是筆者分享出書心得的影片。</p>
+</blockquote>
+<p><strong>SETP 4</strong>：在終端機輸入<code>python youtube-test.py</code>執行它，你會發現他自動建立了資料夾路徑，裡面存放著「audio」的檔案。</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-03.webp" width="584" height="388" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 3）" loading="lazy" decoding="async"></p>
+<p>😀：「有順利在「path/to/save/directory」這個路徑下產生「audio」的檔案了，但他無法打開，這個真的是音擋嗎？」</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-04.webp" width="886" height="653" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 4）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>請安裝套件：<code>pip install pydub</code></p>
+</blockquote>
+<p>😀：「如何與上一段程式結合呢？」</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-05.webp" width="807" height="720" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 5）" loading="lazy" decoding="async"></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>Copy code
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=VIDEO_ID&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 檢查音檔是否可以正常解碼</span>
+</span></span><span style="display:flex;"><span>print(audio_file)
+</span></span></code></pre></div><p>在終端機輸入<code>python youtube-test.py</code>，結果冒出一堆錯誤訊息。</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-06.webp" width="1400" height="612" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 6）" loading="lazy" decoding="async"></p>
+<p>把錯誤的結果貼到 ChatGPT，他是會幫你解答的。</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-07.webp" width="995" height="425" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 7）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>若未安裝 homebrew 的朋友也可以詢問 ChatGPT 如何安裝。</p>
+</blockquote>
+<p>在終端機輸入<code>brew install ffmpeg</code>，之後等他安裝完成（頗久的&hellip;）</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-08.webp" width="1400" height="706" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 8）" loading="lazy" decoding="async"></p>
+<p>再輸入一次<code>python youtube-test.py</code>，從終端機來看，天下太平了！</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-09.webp" width="1400" height="101" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 9）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-10.webp" width="882" height="681" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 10）" loading="lazy" decoding="async"></p>
+<p>然後我們把 ChatGPT 的建議加入最後一行，讓他轉成 mp3 檔案。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pytube</span> <span style="color:#ff7b72">import</span> YouTube
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">from</span> <span style="color:#ff7b72">pydub</span> <span style="color:#ff7b72">import</span> AudioSegment
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 設定要下載的影片 URL</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.youtube.com/watch?v=IvOdTbIYZs4&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 建立 YouTube 物件</span>
+</span></span><span style="display:flex;"><span>yt <span style="color:#ff7b72;font-weight:bold">=</span> YouTube(url)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 取得影片的音軌</span>
+</span></span><span style="display:flex;"><span>audio_stream <span style="color:#ff7b72;font-weight:bold">=</span> yt<span style="color:#ff7b72;font-weight:bold">.</span>streams<span style="color:#ff7b72;font-weight:bold">.</span>filter(only_audio<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#79c0ff">True</span>)<span style="color:#ff7b72;font-weight:bold">.</span>first()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載音軌到指定的路徑</span>
+</span></span><span style="display:flex;"><span>audio_stream<span style="color:#ff7b72;font-weight:bold">.</span>download(output_path<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;path/to/save/directory&#34;</span>, filename<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 讀取下載下來的音檔</span>
+</span></span><span style="display:flex;"><span>audio_file <span style="color:#ff7b72;font-weight:bold">=</span> AudioSegment<span style="color:#ff7b72;font-weight:bold">.</span>from_file(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 檢查音檔是否可以正常解碼</span>
+</span></span><span style="display:flex;"><span>print(audio_file)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 將音檔轉換為 MP3 格式</span>
+</span></span><span style="display:flex;"><span>mp3_file <span style="color:#ff7b72;font-weight:bold">=</span> audio_file<span style="color:#ff7b72;font-weight:bold">.</span>export(<span style="color:#a5d6ff">&#34;path/to/save/directory/audio.mp3&#34;</span>, format<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;mp3&#34;</span>)
+</span></span></code></pre></div><p>此時你在終端機執行<code>python youtube-test.py</code> 會有一種感動！這個 mp3 擋真的在播放 Youtube 影片的音檔了…太神了…</p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-11.webp" width="818" height="328" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 11）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-12.webp" width="1400" height="637" alt="0 基礎！讓 ChatGPT 手把手教你用 Python 將 Youtube 影片轉成音檔（mp3）（圖 12）" loading="lazy" decoding="async"></p>
+<h2 id="結語讓不會程式的人更願意嘗試">結語：讓不會程式的人更願意嘗試<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e8%ae%93%e4%b8%8d%e6%9c%83%e7%a8%8b%e5%bc%8f%e7%9a%84%e4%ba%ba%e6%9b%b4%e9%a1%98%e6%84%8f%e5%98%97%e8%a9%a6" aria-label="這個段落的連結"></a></h2>
+<p>寫程式是一條非常艱辛的路，中間會遇到非常多的險阻與挫折。</p>
+<p>就像上面展示的範例一樣，我們很難一次就得到正確的結果，但在發生錯誤時，過往會需要花費大量的時間除錯、找文件。</p>
+<p>這些失敗的經歷會使人成長，但同時也會消耗熱情。</p>
+<p>而 ChatGPT 的出現，很大程度地減緩了這塊的痛苦，讓我們更容易上手程式。</p>
+<blockquote>
+<p>不過這對程式教育產業來說，可說是巨大的衝擊，因為人們多了一個全新的選擇（而且還不賴）。</p>
+<p>下一篇就來分享<a href="https://deanlin.net/blog/202303/python-youtube-transcript-whisper/">如何搭配 OpenAI 的 whisper api 將音檔（mp3）轉換成文字吧</a>！</p>
+</blockquote>
+<hr>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/images/python-youtube-to-mp3-with-chatgpt-13.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

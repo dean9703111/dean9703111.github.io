@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Proxy｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/proxy/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 22 Jun 2020 16:09:35 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/proxy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Nginx高頻率使用功能</title>
+      <link>https://deanlin.net/blog/202006/nginx-common-features/</link>
+      <pubDate>Mon, 22 Jun 2020 16:09:35 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/nginx-common-features/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>我將在這裡記錄Nginx時常被問到但很難說清楚的問題及實作方式，文章參考許多前輩們的文獻，在此先感謝他們的無私貢獻</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202006/nginx-common-features/images/nginx-common-features-01.webp" width="960" height="540" alt="Nginx高頻率使用功能（圖 1）" loading="lazy" decoding="async"></p>
+<h3 id="相關議題">相關議題<a class="h-anchor" href="#%e7%9b%b8%e9%97%9c%e8%ad%b0%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>反向代理伺服器(reverse proxy)</li>
+<li>負載平衡(load balancer)</li>
+<li>虛擬主機(Virtual Host)</li>
+</ol>
+<h2 id="1-反向代理伺服器reverse-proxy">1. 反向代理伺服器(reverse proxy)<a class="h-anchor" href="#1-%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86%e4%bc%ba%e6%9c%8d%e5%99%a8reverse-proxy" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>正向代理伺服器：用來解決訪問限制問題</p>
+<p>反向代理伺服器：提供負載均衡、安全防護等作用</p>
+</blockquote>
+<p>你可以理解為你網頁的前端實際使用server的port是3000，但是透過Nginx可以把對方80 port的連線導向3000 port，應用如下：</p>
+<pre tabindex="0"><code>vi /etc/nginx/sites-enabled/default
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#ff7b72">server</span> {   
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">listen</span> <span style="color:#a5d6ff">80</span>;   <span style="color:#ff7b72">//外部nginx監聽port</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">location</span> <span style="color:#a5d6ff">/</span> {   
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">proxy_pass</span> <span style="color:#a5d6ff">http://127.0.0.1:3000</span>; <span style="color:#8b949e;font-style:italic">#你可以把它當成local端轉port的服務
+</span></span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic"># proxy_pass http://172.1.1.1; #這是實際訪問的ip位址  
+</span></span></span><span style="display:flex;"><span>    }   
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/169bc78205976713c685ef3e1611f069" rel="noopener">reverse_proxy.conf</a>（GitHub Gist）</p>
+<p>實務上野可能會直接把它當成一個自動轉址的中介Service，像是外面所輸入的domain name實際上都是指向同一台nginx server，經過這台nginx 的設定分析過後再導向真正的server</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#ff7b72">server</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">listen</span>         <span style="color:#a5d6ff">*:443</span> <span style="color:#a5d6ff">ssl</span>; <span style="color:#8b949e;font-style:italic">#https
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">server_name</span>   <span style="color:#a5d6ff">your.domain.name1</span>; <span style="color:#8b949e;font-style:italic">#外面輸入的網址
+</span></span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">client_max_body_size</span> <span style="color:#a5d6ff">2000M</span>; <span style="color:#8b949e;font-style:italic">#上傳檔案大小限制
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">fastcgi_read_timeout</span> <span style="color:#a5d6ff">3600s</span>; <span style="color:#8b949e;font-style:italic"># nginx執行時間
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">proxy_read_timeout</span> <span style="color:#a5d6ff">3600s</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">ssl_certificate</span> <span style="color:#a5d6ff">/var/www/cert.chain.crt</span>; <span style="color:#8b949e;font-style:italic"># ssl檔案位置
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">ssl_certificate_key</span> <span style="color:#a5d6ff">/var/www/www_ruggon_com.key</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">location</span> <span style="color:#a5d6ff">/</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">proxy_pass</span> <span style="color:#a5d6ff">https:</span><span style="color:#8b949e;font-style:italic">#172.6.5.8; # 目標導向的服務位址
+</span></span></span><span style="display:flex;"><span>    <span style="color:#f85149">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#a5d6ff">server</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">listen</span>         <span style="color:#a5d6ff">*:443</span> <span style="color:#a5d6ff">ssl</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">server_name</span>   <span style="color:#a5d6ff">your.domain.name2</span>; <span style="color:#8b949e;font-style:italic">#外面輸入的網址
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">ssl_certificate</span> <span style="color:#a5d6ff">/var/www/cert.chain.crt</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">ssl_certificate_key</span> <span style="color:#a5d6ff">/var/www/www_ruggon_com.key</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">location</span> <span style="color:#a5d6ff">/</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">proxy_pass</span> <span style="color:#a5d6ff">https:</span><span style="color:#8b949e;font-style:italic">#172.6.5.10; # 目標導向的服務位址
+</span></span></span><span style="display:flex;"><span>    <span style="color:#f85149">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f85149">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#下面為讀取80 port http轉https的功能
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">server</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">listen</span> <span style="color:#a5d6ff">80</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">listen</span> <span style="color:#a5d6ff">[::]:80</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">server_name</span> <span style="color:#a5d6ff">your.domain.name1</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">301</span> <span style="color:#a5d6ff">https:</span><span style="color:#8b949e;font-style:italic">#$host$request_uri;
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#a5d6ff">server</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">listen</span> <span style="color:#a5d6ff">80</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">listen</span> <span style="color:#a5d6ff">[::]:80</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">server_name</span> <span style="color:#a5d6ff">your.domain.name</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">301</span> <span style="color:#a5d6ff">https:</span><span style="color:#8b949e;font-style:italic">#$host$request_uri;
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">}</span>
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/5956b633bb1bf9af45f93e416f6e9a41" rel="noopener">redirect.conf</a>（GitHub Gist）</p>
+<h2 id="2-負載平衡load-balancer">2. 負載平衡(load balancer)<a class="h-anchor" href="#2-%e8%b2%a0%e8%bc%89%e5%b9%b3%e8%a1%a1load-balancer" aria-label="這個段落的連結"></a></h2>
+<p>如果一個網站的訪問量非常大，一台server已經無法負擔時，你可以透過load balance(多幾台server來分攤這些流量，當某一台server掛掉的時候你的網站還是活得很好)處理</p>
+<p>Nginx實務上你可以根據server實際上的硬體條件去分散每個server的流量，在這裡我以透過Nginx分流到兩個server上面做解釋：</p>
+<p>SETP 1/3 : server A的Nginx設定</p>
+<pre tabindex="0"><code>vi /etc/nginx/sites-enabled/default
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#ff7b72">server</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">listen</span> <span style="color:#a5d6ff">80</span>;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">#Proxy的位置，提供給使用者連線
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">server_name</span>  <span style="color:#a5d6ff">server_a.com</span>; 
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">access_log</span> <span style="color:#a5d6ff">/var/log/nginx/server_a.com</span> <span style="color:#a5d6ff">main</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">error_log</span> <span style="color:#a5d6ff">/var/log/nginx/server_a.com</span> <span style="color:#a5d6ff">warn</span>;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">location</span> <span style="color:#a5d6ff">/</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">root</span>   <span style="color:#a5d6ff">/usr/share/nginx/html</span>;<span style="color:#8b949e;font-style:italic"># 靜態文件路徑
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">index</span>  <span style="color:#a5d6ff">index.html</span> <span style="color:#a5d6ff">index.htm</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/9f199fd23e615fdcf568702f86698cfd" rel="noopener">server_a.conf</a>（GitHub Gist）</p>
+<p>SETP 2/3 : server B的Nginx設定</p>
+<pre tabindex="0"><code>vi /etc/nginx/sites-enabled/default
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#ff7b72">server</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">listen</span> <span style="color:#a5d6ff">80</span>;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">#Proxy的位置，提供給使用者連線
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">server_name</span>  <span style="color:#a5d6ff">server_b.com</span>; 
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">access_log</span> <span style="color:#a5d6ff">/var/log/nginx/server_b.com</span> <span style="color:#a5d6ff">main</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">error_log</span> <span style="color:#a5d6ff">/var/log/nginx/server_b.com</span> <span style="color:#a5d6ff">warn</span>;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">location</span> <span style="color:#a5d6ff">/</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">root</span>   <span style="color:#a5d6ff">/usr/share/nginx/html</span>; <span style="color:#8b949e;font-style:italic">#靜態文件路徑
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">index</span>  <span style="color:#a5d6ff">index.html</span> <span style="color:#a5d6ff">index.htm</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/eb788190ed0de8adff45c3da1f64bf73" rel="noopener">server_b.conf</a>（GitHub Gist）</p>
+<p>STEP 3/3 : nginx來處理負載平衡</p>
+<pre tabindex="0"><code>vi /etc/nginx/sites-enabled/default
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># weight是資源分散的權重，可根據server本身硬體條件做調整
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">upstream</span> <span style="color:#a5d6ff">your_web</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">server</span> <span style="color:#a5d6ff">server_a.com</span> <span style="color:#a5d6ff">weight=3</span>;<span style="color:#8b949e;font-style:italic">#前面設定的server_name，或者用存粹的ip也可以()
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">server</span> <span style="color:#a5d6ff">server_a.com</span> <span style="color:#a5d6ff">weight=2</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">server</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">listen</span>       <span style="color:#a5d6ff">443</span> <span style="color:#a5d6ff">ssl</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">server_name</span>  <span style="color:#a5d6ff">server.com</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">access_log</span> <span style="color:#a5d6ff">/var/log/nginx/server.com.access.log</span> <span style="color:#a5d6ff">main</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">error_log</span> <span style="color:#a5d6ff">/var/log/nginx/server.com.error.log</span> <span style="color:#a5d6ff">warn</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">ssl_certificate</span> <span style="color:#a5d6ff">server.com.crt</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">ssl_certificate_key</span> <span style="color:#a5d6ff">server.com..key</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">ssl_protocols</span> <span style="color:#a5d6ff">TLSv1</span> <span style="color:#a5d6ff">TLSv1.1</span> <span style="color:#a5d6ff">TLSv1.2</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">location</span> <span style="color:#a5d6ff">/</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">proxy_pass</span> <span style="color:#a5d6ff">http://your_web</span>;<span style="color:#8b949e;font-style:italic">#真實網址
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">proxy_set_header</span>   <span style="color:#a5d6ff">Host</span>    <span style="color:#79c0ff">$host</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">proxy_set_header</span>   <span style="color:#a5d6ff">X-Real-IP</span>   <span style="color:#79c0ff">$remote_addr</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">proxy_set_header</span>   <span style="color:#a5d6ff">X-Forwarded-For</span> <span style="color:#79c0ff">$proxy_add_x_forwarded_for</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/c59dd2d76bd61d9f7e74749aa9959b57" rel="noopener">nginx.conf</a>（GitHub Gist）</p>
+<h2 id="3-虛擬主機virtual-host">3. 虛擬主機(Virtual Host)<a class="h-anchor" href="#3-%e8%99%9b%e6%93%ac%e4%b8%bb%e6%a9%9fvirtual-host" aria-label="這個段落的連結"></a></h2>
+<p>如果單一網站的流量太小，你會覺得他獨佔一台server有點浪費，所以除了負載平衡(load balance)這種導流量的做法外，你也可以讓一台server在不同的port開啟多個服務</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">server</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">listen</span> <span style="color:#a5d6ff">80</span> <span style="color:#a5d6ff">default_server</span>;  
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">server_name</span> <span style="color:#a5d6ff">_</span>;  
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">444</span>; <span style="color:#8b949e;font-style:italic"># 過濾其他domain name返回444
+</span></span></span><span style="display:flex;"><span>}   
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">server</span> {  
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">listen</span> <span style="color:#a5d6ff">80</span>;  
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">server_name</span> <span style="color:#a5d6ff">your.domain.name1</span>;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">location</span> <span style="color:#a5d6ff">/</span> {  
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">proxy_pass</span> <span style="color:#a5d6ff">http://localhost:8080</span>; <span style="color:#8b949e;font-style:italic"># 內部對應的port
+</span></span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>}  
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">server</span> {   
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">listen</span> <span style="color:#a5d6ff">80</span>;   
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">server_name</span> <span style="color:#a5d6ff">your.domain.name2</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">location</span> <span style="color:#a5d6ff">/</span> {   
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">proxy_pass</span> <span style="color:#a5d6ff">http://localhost:8081</span>; <span style="color:#8b949e;font-style:italic"># 內部對應的port 
+</span></span></span><span style="display:flex;"><span>    }   
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/25717edfe9b85681caddbb0827f8b389" rel="noopener">VirtualHost.conf</a>（GitHub Gist）</p>
+<p>參考資源：<a href="https://blog.dtask.idv.tw/Nginx/2018-07-31/">使用 Nginx 做 Load Balancer</a>、<a href="https://blog.csdn.net/qq_25843323/article/details/81902015">Nginx簡介</a>、<a href="https://kknews.cc/zh-tw/tech/k66p2gb.html">正向代理和反向代理解釋</a></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

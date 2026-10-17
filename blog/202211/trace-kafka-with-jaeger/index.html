@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況">
+  <meta property="og:description" content="我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。">
+  <meta property="og:url" content="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2022-11-23T23:11:29&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T21:59:06&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="Jaeger">
+  <meta property="article:tag" content="OpenTelemetry">
+  <meta property="article:tag" content="Kafka">
+  <meta property="article:tag" content="Node.js">
+  <meta property="article:tag" content="Propagator">
+  <meta property="og:image" content="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="622">
+  <meta property="og:image:alt" content="透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-og.jpg">
+  <meta name="twitter:title" content="透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況">
+  <meta name="twitter:description" content="我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202211/trace-kafka-with-jaeger/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T21:59:06+08:00","datePublished":"2022-11-23T23:11:29+08:00","description":"我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。","headline":"透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況","image":{"@type":"ImageObject","height":622,"url":"https://deanlin.net/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"Kafka 與分散式追蹤","url":"https://deanlin.net/series/kafka-tracing/"}],"keywords":"Jaeger, OpenTelemetry, Kafka, Node.js, Propagator","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202211/trace-kafka-with-jaeger/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E9%80%8F%E9%81%8E-jaeger-with-opentelemetry-%E8%BF%BD%E8%B9%A4-kafka-%E8%B3%87%E6%96%99%E5%82%B3%E9%81%9E%E8%B7%AF%E5%BE%91%E8%88%87%E9%81%8B%E8%A1%8C%E7%8B%80%E6%B3%81-%E4%BD%BF%E7%94%A8-w3ctracecontextpropagator-%E8%87%AA%E5%AE%9A%E7%BE%A9-parent-child-2a89b4585ae"],"timeRequired":"PT5M","url":"https://deanlin.net/blog/202211/trace-kafka-with-jaeger/","wordCount":2470},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202211/trace-kafka-with-jaeger/","name":"透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2022-11-23">2022.11.23</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 5 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・Kafka 與分散式追蹤 <b>4</b>/ 4</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e3%84%a7%e8%87%aa%e5%ae%9a%e7%be%a9%e8%bf%bd%e8%b9%a4%e7%9a%84-parent--child-%e9%97%9c%e8%81%afmanually-propagating-span-context">ㄧ、自定義追蹤的 Parent &amp; Child 關聯（Manually propagating span context）</a></li><li class="is-sub"><a href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-%e6%8a%8a-span-%e8%b3%87%e8%a8%8a-inject-%e5%88%b0-carrier">➤ 透過 W3CTraceContextPropagator 把 span 資訊 inject 到 carrier</a></li><li class="is-sub"><a href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-extract-carrier-%e8%b3%87%e8%a8%8a%e4%bd%bf%e5%85%b6%e6%88%90%e7%82%ba%e8%83%bd%e4%bd%bf%e7%94%a8%e7%9a%84-context">➤ 透過 W3CTraceContextPropagator extract carrier 資訊，使其成為能使用的 Context</a></li><li><a href="#%e4%ba%8c%e4%bd%bf%e7%94%a8-kafka-%e4%bd%9c%e7%82%ba%e5%82%b3%e9%81%9e%e8%b3%87%e6%96%99%e7%9a%84%e8%bd%89%e9%81%8b%e7%ab%99">二、使用 Kafka 作為傳遞資料的轉運站</a></li><li class="is-sub"><a href="#-%e5%9c%a8-producer-%e7%9a%84-value-%e6%94%be%e4%b8%8a-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a%e8%a8%98%e5%be%97%e8%a6%81%e8%bd%89%e7%82%ba%e5%ad%97%e4%b8%b2">➤ 在 Producer 的 value 放上 carrier 的資訊（記得要轉為字串）</a></li><li class="is-sub"><a href="#-%e5%be%9e-consumer-%e6%94%b6%e5%88%b0%e7%9a%84-message-%e4%b8%ad%e5%8f%96%e5%87%ba-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a">➤ 從 Consumer 收到的 message 中取出 carrier 的資訊</a></li><li><a href="#%e4%b8%89%e5%9c%a8-local-%e5%bb%ba%e7%ab%8b-nodejs-%e5%b0%88%e6%a1%88%e4%be%86%e9%81%94%e6%88%90%e7%9b%ae%e6%a8%99">三、在 Local 建立 Node.js 專案來達成目標</a></li><li><a href="#%e5%9b%9b%e5%95%9f%e5%8b%95%e5%b0%88%e6%a1%88%e9%80%8f%e9%81%8e-jaeger-ui-%e7%a2%ba%e8%aa%8d-trace-%e8%b7%af%e5%be%91%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f">四、啟動專案，透過 Jaeger UI 確認 Trace 路徑是否符合預期</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。</p>
+<p>而且會用到 Kafka 的系統，大多以微服務（Microservices）為主；若沒有搭配合適的追蹤系統，我們很難排查 Consumer 收到消息後發生的錯誤。</p>
+<p><img src="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01.webp" srcset="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01_hu_e9b83af923c6eb67.webp 720w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="726" alt="透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況（圖 1）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>這篇文章以實作和邏輯講解為主，如果想了解 Jaeger 這個分布式追蹤系統，請參考<a href="/blog/202211/distributed-tracing-jaeger-opentelemetry/">連結</a>；想了解 Kafka 這個分布式消息串流平台，請參考<a href="/blog/202211/what-is-kafka/">連結1</a>、<a href="/blog/202211/nodejs-kafka-hands-on/">連結2</a></p>
+</blockquote>
+<p>建議讀者直接到<a href="https://github.com/dean9703111/kafka-jaeger-demo">筆者的 Github</a> Clone 一份下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。</p>
+<pre tabindex="0"><code>大綱
+
+一、自定義追蹤的 Parent &amp; Child 關聯（Manually propagating span context）
+二、使用 Kafka 作為傳遞資料的轉運站
+三、在 Local 建立 Node.js 專案來達成目標
+四、啟動專案，透過 Jaeger UI 確認 Trace 路徑是否符合預期
+</code></pre><h2 id="ㄧ自定義追蹤的-parent--child-關聯manually-propagating-span-context">ㄧ、自定義追蹤的 Parent &amp; Child 關聯（Manually propagating span context）<a class="h-anchor" href="#%e3%84%a7%e8%87%aa%e5%ae%9a%e7%be%a9%e8%bf%bd%e8%b9%a4%e7%9a%84-parent--child-%e9%97%9c%e8%81%afmanually-propagating-span-context" aria-label="這個段落的連結"></a></h2>
+<p>其實 OpenTelemetry 有提供許多 Instrumentation 的方案，如：</p>
+<ul>
+<li><a href="https://www.npmjs.com/package/@opentelemetry/instrumentation-http">@opentelemetry/instrumentation-http</a></li>
+<li><a href="https://www.npmjs.com/package/@opentelemetry/instrumentation-grpc">@opentelemetry/instrumentation-grpc</a></li>
+<li><a href="https://www.npmjs.com/package/opentelemetry-instrumentation-kafkajs">opentelemetry-instrumentation-kafkajs</a></li>
+</ul>
+<p>透過上面的套件可以自動產生追蹤紀錄，但有時我們只需要追蹤特定路徑，而使用上面的套件會產生許多不需要的資訊，還容易產生效能瓶頸。</p>
+<blockquote>
+<p>比如使用「instrumentation-http」這款套件時，它會把所有 http 相關的操作都記錄下來，但我們實際上只關心其中的幾個路徑。</p>
+</blockquote>
+<p>因此在某些情況下，自定義追蹤的 Parent &amp; Child 關聯是有必要的；下面筆者擷取關鍵的程式碼來做說明：</p>
+<h3 id="-透過-w3ctracecontextpropagator-把-span-資訊-inject-到-carrier">➤ 透過 W3CTraceContextPropagator 把 span 資訊 inject 到 carrier<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-%e6%8a%8a-span-%e8%b3%87%e8%a8%8a-inject-%e5%88%b0-carrier" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">&#39;example&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> carrier <span style="color:#ff7b72;font-weight:bold">=</span> {};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> propagator <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> W3CTraceContextPropagator();
+</span></span><span style="display:flex;"><span>propagator.inject(
+</span></span><span style="display:flex;"><span>    api.trace.setSpanContext(api.context.active(), span.spanContext()),
+</span></span><span style="display:flex;"><span>    carrier,
+</span></span><span style="display:flex;"><span>    api.defaultTextMapSetter,
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>span.end()
+</span></span></code></pre></div><h3 id="-透過-w3ctracecontextpropagator-extract-carrier-資訊使其成為能使用的-context">➤ 透過 W3CTraceContextPropagator extract carrier 資訊，使其成為能使用的 Context<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-extract-carrier-%e8%b3%87%e8%a8%8a%e4%bd%bf%e5%85%b6%e6%88%90%e7%82%ba%e8%83%bd%e4%bd%bf%e7%94%a8%e7%9a%84-context" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> propagator <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> W3CTraceContextPropagator();
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 解析 carrier
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> parentCtx <span style="color:#ff7b72;font-weight:bold">=</span> propagator.extract(api.context.active(), carrier, api.defaultTextMapGetter);
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 設定 parent 關聯
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">`report_consumer`</span>, <span style="color:#79c0ff">undefined</span>, parentCtx);
+</span></span><span style="display:flex;"><span>span.end()
+</span></span></code></pre></div><hr>
+<h2 id="二使用-kafka-作為傳遞資料的轉運站">二、使用 Kafka 作為傳遞資料的轉運站<a class="h-anchor" href="#%e4%ba%8c%e4%bd%bf%e7%94%a8-kafka-%e4%bd%9c%e7%82%ba%e5%82%b3%e9%81%9e%e8%b3%87%e6%96%99%e7%9a%84%e8%bd%89%e9%81%8b%e7%ab%99" aria-label="這個段落的連結"></a></h2>
+<p>假使今天有個功能是「產出報表」，但它的執行時間長達「3 分鐘」；我想正常的使用者是不會等一隻 API 回傳等這麼久，針對這個議題，我們不妨改個思路：</p>
+<p><strong>SETP 1</strong>：在報表的 Table 新增一個「status」欄位，用來表達報表建立的狀況（init、processing、done、fail）。</p>
+<p><strong>SETP 2</strong>：前端呼叫產出報表的 API 時</p>
+<ul>
+<li>在報表的 Table 新增初始資訊，並將 Status 設定為「init」。</li>
+<li>將相關資訊透過 Producer 塞入 Kafka。</li>
+</ul>
+<p><strong>SETP 3</strong>：前端收到 API 回傳的報表 id 後</p>
+<ul>
+<li>透過 Consumer 監聽報表執行的狀況；可以用報表的 id 作為 Topic 命名邏輯，ex：reports/{id}。</li>
+</ul>
+<p><strong>SETP 4</strong>：監聽產出報表的 Consumer 從 Kafka 收到命令後</p>
+<ul>
+<li>透過 id 從資料庫撈出對應的報表資訊，將 Status 設定為「processing」。</li>
+<li>呼叫相關服務產出報表，如果其中一個服務發生錯誤，就將 Status 設定為「fail」。</li>
+<li>如果報表順利產出，就將 Status 設定為「done」。</li>
+</ul>
+<blockquote>
+<p>對 Status 的任何變動，都會透過 Producer 將資訊傳遞到 <strong>reports/{id} </strong>這個 Topic，讓前端監聽的的 Consumer 可以作出對應的變動。</p>
+</blockquote>
+<p>上面是比較完整的業務邏輯，建議讀者可以自行實做看看，下面筆者就單純示範透過 Kafka 傳遞 carrier 資訊的部分：</p>
+<h3 id="-在-producer-的-value-放上-carrier-的資訊記得要轉為字串">➤ 在 Producer 的 value 放上 carrier 的資訊（記得要轉為字串）<a class="h-anchor" href="#-%e5%9c%a8-producer-%e7%9a%84-value-%e6%94%be%e4%b8%8a-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a%e8%a8%98%e5%be%97%e8%a6%81%e8%bd%89%e7%82%ba%e5%ad%97%e4%b8%b2" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">await</span> producer.connect()
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> producer
+</span></span><span style="display:flex;"><span>  .send({
+</span></span><span style="display:flex;"><span>    topic,
+</span></span><span style="display:flex;"><span>    messages<span style="color:#ff7b72;font-weight:bold">:</span> Array({
+</span></span><span style="display:flex;"><span>      key<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`report`</span>,
+</span></span><span style="display:flex;"><span>      value<span style="color:#ff7b72;font-weight:bold">:</span> JSON.stringify(carrier)
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>  });
+</span></span></code></pre></div><h3 id="-從-consumer-收到的-message-中取出-carrier-的資訊">➤ 從 Consumer 收到的 message 中取出 carrier 的資訊<a class="h-anchor" href="#-%e5%be%9e-consumer-%e6%94%b6%e5%88%b0%e7%9a%84-message-%e4%b8%ad%e5%8f%96%e5%87%ba-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">await</span> consumer.connect()
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> consumer.subscribe({ topic, fromBeginning<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span> })
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> consumer.run({
+</span></span><span style="display:flex;"><span>  eachMessage<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#ff7b72">async</span> ({ topic, partition, message }) =&gt; {
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#34;topic:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> topic <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#34;  message:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> message.value)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> carrier <span style="color:#ff7b72;font-weight:bold">=</span> JSON.parse(message.value)
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><hr>
+<h2 id="三在-local-建立-nodejs-專案來達成目標">三、在 Local 建立 Node.js 專案來達成目標<a class="h-anchor" href="#%e4%b8%89%e5%9c%a8-local-%e5%bb%ba%e7%ab%8b-nodejs-%e5%b0%88%e6%a1%88%e4%be%86%e9%81%94%e6%88%90%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<p>專案的目標就如同標題，我們要透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況。</p>
+<p><strong>STEP 1</strong>：建立專案、安裝必要套件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir -p kafka-jaeger-demo
+</span></span><span style="display:flex;"><span>cd kafka-jaeger-demo
+</span></span><span style="display:flex;"><span>mkdir -p deploy/kafkaCluster/kraft
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>npm init -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>npm install --save @opentelemetry/api
+</span></span><span style="display:flex;"><span>npm install --save @opentelemetry/resources
+</span></span><span style="display:flex;"><span>npm install --save @opentelemetry/semantic-conventions
+</span></span><span style="display:flex;"><span>npm install --save @opentelemetry/sdk-trace-base
+</span></span><span style="display:flex;"><span>npm install --save @opentelemetry/exporter-jaeger
+</span></span><span style="display:flex;"><span>npm install --save axios
+</span></span><span style="display:flex;"><span>npm install --save express
+</span></span><span style="display:flex;"><span>npm install --save kafkajs
+</span></span></code></pre></div><p><strong>SETP 2</strong>：新增「docker-compose.yml」貼上如下程式，並將 docker 啟動。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;2.0&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">services</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">jaeger</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">jaegertracing/all-in-one:1.38</span><span style="color:#6e7681"> </span><span style="color:#8b949e;font-style:italic"># 當時用 1.39 或 latest 有出現一些 bug，故選用此版本</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">environment</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">COLLECTOR_ZIPKIN_HOST_PORT=:9411</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;5775:5775/udp&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;6831:6831/udp&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;6832:6832/udp&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;5778:5778&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;16686:16686&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;14250:14250&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;14268:14268&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;14269:14269&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#34;9411:9411&#34;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">kafka</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">image</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;bitnami/kafka:latest&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ports</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">&#39;9092:9092&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">environment</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_ENABLE_KRAFT=yes</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_PROCESS_ROLES=broker,controller</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_BROKER_ID=1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9093</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">ALLOW_PLAINTEXT_LISTENER=yes</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">volumes</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span><span style="color:#8b949e;font-style:italic"># 這是設定資料要存在哪路的路徑</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span>- <span style="color:#a5d6ff">./deploy/kafkaCluster/kraft:/bitnami/kafka:rw</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p>接著輸入指令拉下並啟動 Kafka &amp; Jaeger 環境。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker-compose up -d
+</span></span></code></pre></div><p><strong>STEP 3</strong>：新增「tracing.js」貼上如下程式，基本上就是「Opentelemetry」的基礎運用。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a5d6ff">&#39;use strict&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> opentelemetry <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/api&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Resource } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/resources&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { SemanticResourceAttributes } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/semantic-conventions&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { BasicTracerProvider, BatchSpanProcessor } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/sdk-trace-base&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { JaegerExporter } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/exporter-jaeger&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>module.exports <span style="color:#ff7b72;font-weight:bold">=</span> (serviceName) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> provider <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> BasicTracerProvider({
+</span></span><span style="display:flex;"><span>        resource<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#ff7b72">new</span> Resource({
+</span></span><span style="display:flex;"><span>            [SemanticResourceAttributes.SERVICE_NAME]<span style="color:#ff7b72;font-weight:bold">:</span> serviceName,
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> exporter;
+</span></span><span style="display:flex;"><span>    exporter <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> JaegerExporter({ endpoint<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;http://127.0.0.1:14268/api/traces&#34;</span> });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    provider.addSpanProcessor(<span style="color:#ff7b72">new</span> BatchSpanProcessor(exporter));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Initialize the OpenTelemetry APIs to use the NodeTracerProvider bindings
+</span></span></span><span style="display:flex;"><span>    provider.register();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> opentelemetry.trace.getTracer(<span style="color:#a5d6ff">&#39;my-service-tracer&#39;</span>);
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p><strong>STEP 4</strong>：新增「service.js」貼上如下程式；我們在這裡建立供使用者呼叫的 API（/api/report），當 API 被呼叫後會開始追蹤，並透過 Producer 將資料塞入 Kafka。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> api <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/api&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> tracer <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;./tracing&#39;</span>)(<span style="color:#a5d6ff">&#39;service&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;express&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> PORT <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;8080&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Kafka, logLevel } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;kafkajs&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> kafka <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Kafka({
+</span></span><span style="display:flex;"><span>  logLevel<span style="color:#ff7b72;font-weight:bold">:</span> logLevel.ERROR,
+</span></span><span style="display:flex;"><span>  brokers<span style="color:#ff7b72;font-weight:bold">:</span> [<span style="color:#a5d6ff">`localhost:9092`</span>],
+</span></span><span style="display:flex;"><span>  clientId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;example-producer&#39;</span>,
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> producer <span style="color:#ff7b72;font-weight:bold">=</span> kafka.producer()
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> topic <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;report&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { W3CTraceContextPropagator } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/core&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> report(parentSpan) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> ctx <span style="color:#ff7b72;font-weight:bold">=</span> api.trace.setSpan(
+</span></span><span style="display:flex;"><span>      api.context.active(),
+</span></span><span style="display:flex;"><span>      parentSpan
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">&#39;report_producer&#39;</span>, <span style="color:#79c0ff">undefined</span>, ctx);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> carrier <span style="color:#ff7b72;font-weight:bold">=</span> {};
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> propagator <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> W3CTraceContextPropagator();
+</span></span><span style="display:flex;"><span>    propagator.inject(
+</span></span><span style="display:flex;"><span>      api.trace.setSpanContext(api.context.active(), span.spanContext()),
+</span></span><span style="display:flex;"><span>      carrier,
+</span></span><span style="display:flex;"><span>      api.defaultTextMapSetter,
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> producer.connect()
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> producer
+</span></span><span style="display:flex;"><span>      .send({
+</span></span><span style="display:flex;"><span>        topic,
+</span></span><span style="display:flex;"><span>        messages<span style="color:#ff7b72;font-weight:bold">:</span> Array({
+</span></span><span style="display:flex;"><span>          key<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`report`</span>,
+</span></span><span style="display:flex;"><span>          value<span style="color:#ff7b72;font-weight:bold">:</span> JSON.stringify(carrier)
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>      });
+</span></span><span style="display:flex;"><span>    span.end()
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>    console.log(e)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">throw</span> e
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>app.get(<span style="color:#a5d6ff">&#34;/api/report&#34;</span>, <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">&#39;report_request&#39;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> result <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> report(span)
+</span></span><span style="display:flex;"><span>    span.end()
+</span></span><span style="display:flex;"><span>    res.send(result);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>    res.send(e);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(parseInt(PORT, <span style="color:#a5d6ff">10</span>), () =&gt; {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">`Service listening for requests on http://localhost:</span><span style="color:#a5d6ff">${</span>PORT<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p><strong>STEP 5</strong>：新增「consumer.js」貼上如下程式；專門監聽「report」這個 Topic，在收到 message 後會開始後續的處理（有刻意設計一個執行錯誤的結果）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> api <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/api&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> tracer <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;./tracing&#39;</span>)(<span style="color:#a5d6ff">&#39;consumer&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { W3CTraceContextPropagator } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@opentelemetry/core&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Kafka, logLevel } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;kafkajs&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> kafka <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Kafka({
+</span></span><span style="display:flex;"><span>  logLevel<span style="color:#ff7b72;font-weight:bold">:</span> logLevel.INFO,
+</span></span><span style="display:flex;"><span>  brokers<span style="color:#ff7b72;font-weight:bold">:</span> [<span style="color:#a5d6ff">`localhost:9092`</span>],
+</span></span><span style="display:flex;"><span>  clientId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;example-consumer&#39;</span>,
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> topic <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;report&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> consumer <span style="color:#ff7b72;font-weight:bold">=</span> kafka.consumer({ groupId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;test-group&#39;</span> })
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> run <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> consumer.connect()
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> consumer.subscribe({ topic, fromBeginning<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span> })
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> consumer.run({
+</span></span><span style="display:flex;"><span>    eachMessage<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#ff7b72">async</span> ({ topic, partition, message }) =&gt; {
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#a5d6ff">&#34;topic:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> topic <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#34;  message:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> message.value)
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">const</span> carrier <span style="color:#ff7b72;font-weight:bold">=</span> JSON.parse(message.value)
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">const</span> propagator <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> W3CTraceContextPropagator();
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">const</span> parentCtx <span style="color:#ff7b72;font-weight:bold">=</span> propagator.extract(api.context.active(), carrier, api.defaultTextMapGetter);
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">if</span> (topic <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;report&#34;</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">`report_consumer`</span>, <span style="color:#79c0ff">undefined</span>, parentCtx);
+</span></span><span style="display:flex;"><span>        report(span)
+</span></span><span style="display:flex;"><span>        span.end()
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> report(parentSpan) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> parentCtx <span style="color:#ff7b72;font-weight:bold">=</span> api.trace.setSpan(
+</span></span><span style="display:flex;"><span>    api.context.active(),
+</span></span><span style="display:flex;"><span>    parentSpan
+</span></span><span style="display:flex;"><span>  );
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">&#39;handle_report&#39;</span>, <span style="color:#79c0ff">undefined</span>, parentCtx);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">let</span> i <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>; i <span style="color:#ff7b72;font-weight:bold">&lt;</span> <span style="color:#a5d6ff">10</span>; i<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>    doWork(span, i);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  span.end();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> doWork(parentSpan, i) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> parentCtx <span style="color:#ff7b72;font-weight:bold">=</span> api.trace.setSpan(
+</span></span><span style="display:flex;"><span>    api.context.active(),
+</span></span><span style="display:flex;"><span>    parentSpan
+</span></span><span style="display:flex;"><span>  );
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">`doWork:</span><span style="color:#a5d6ff">${</span>i<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>, <span style="color:#79c0ff">undefined</span>, parentCtx);
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 讓每個執行的時間不一樣
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">let</span> i <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>; i <span style="color:#ff7b72;font-weight:bold">&lt;=</span> Math.floor(Math.random() <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">40000000</span>); i<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// empty
+</span></span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (i <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">5</span>) { <span style="color:#8b949e;font-style:italic">// 產生錯誤訊息
+</span></span></span><span style="display:flex;"><span>    span.recordException(<span style="color:#ff7b72">new</span> Error(<span style="color:#a5d6ff">`doWork:</span><span style="color:#a5d6ff">${</span>i<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> error`</span>));
+</span></span><span style="display:flex;"><span>    span.setStatus({ code<span style="color:#ff7b72;font-weight:bold">:</span> api.SpanStatusCode.ERROR, message<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;Something wrong!&#34;</span> });
+</span></span><span style="display:flex;"><span>    span.addEvent(<span style="color:#a5d6ff">&#39;log&#39;</span>, {
+</span></span><span style="display:flex;"><span>      <span style="color:#a5d6ff">&#39;log.severity&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;error&#39;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#a5d6ff">&#39;log.message&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;doWork:${i} error&#39;</span>
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  span.end();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>run().<span style="color:#ff7b72">catch</span>(e =&gt; console.error(<span style="color:#a5d6ff">`[example/consumer] </span><span style="color:#a5d6ff">${</span>e.message<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>, e))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> errorTypes <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;unhandledRejection&#39;</span>, <span style="color:#a5d6ff">&#39;uncaughtException&#39;</span>]
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> signalTraps <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;SIGTERM&#39;</span>, <span style="color:#a5d6ff">&#39;SIGINT&#39;</span>, <span style="color:#a5d6ff">&#39;SIGUSR2&#39;</span>]
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 收到無法處理錯誤時的處理
+</span></span></span><span style="display:flex;"><span>errorTypes.forEach(type =&gt; {
+</span></span><span style="display:flex;"><span>  process.on(type, <span style="color:#ff7b72">async</span> e =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#a5d6ff">`process.on </span><span style="color:#a5d6ff">${</span>type<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>      console.error(e)
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">await</span> consumer.disconnect()
+</span></span><span style="display:flex;"><span>      process.exit(<span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (_) {
+</span></span><span style="display:flex;"><span>      process.exit(<span style="color:#a5d6ff">1</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 收到中斷訊號時的處理
+</span></span></span><span style="display:flex;"><span>signalTraps.forEach(type =&gt; {
+</span></span><span style="display:flex;"><span>  process.once(type, <span style="color:#ff7b72">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">await</span> consumer.disconnect()
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">finally</span> {
+</span></span><span style="display:flex;"><span>      process.kill(process.pid, type)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><hr>
+<h2 id="四啟動專案透過-jaeger-ui-確認-trace-路徑是否符合預期">四、啟動專案，透過 Jaeger UI 確認 Trace 路徑是否符合預期<a class="h-anchor" href="#%e5%9b%9b%e5%95%9f%e5%8b%95%e5%b0%88%e6%a1%88%e9%80%8f%e9%81%8e-jaeger-ui-%e7%a2%ba%e8%aa%8d-trace-%e8%b7%af%e5%be%91%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>建議使用有分頁功能的終端機（如 iTerm2），這樣比較好觀察與操作。</p>
+</blockquote>
+<p><strong>STEP 1</strong>：在專案根目錄下輸入 <code>node service.js</code> 啟動 Service。</p>
+<p><strong>STEP 2</strong>：在終端機貼上指令 <code>curl http://localhost:8080/api/report</code> 來呼叫 API。</p>
+<p><strong>STEP 3</strong>：在專案根目錄下輸入 <code>node consumer.js</code> 啟動監聽模式；這邊提醒一下，如果監聽不存在的 Topic 會報錯。</p>
+<p><img src="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-02.webp" srcset="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-02_hu_920af2a15fd50d6b.webp 720w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="1058" alt="四、啟動專案，透過 Jaeger UI 確認 Trace 路徑是否符合預期（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 4</strong>：到 Jaeger UI 上（<a href="http://localhost:16686/search">http://localhost:16686/search</a>）確認 Trace 路徑是否符合預期。</p>
+<figure class="figure"><img src="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-03.webp" srcset="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-03_hu_d3fc957f320c64bb.webp 720w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-03.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="728" alt="上面是呼叫 API 時留下的紀錄" loading="lazy" decoding="async">
+  <figcaption>上面是呼叫 API 時留下的紀錄</figcaption>
+</figure>
+
+<p>下圖「report_producer」跟「report_consumer」之間的空白，就是資料在 Kafka 轉運站傳遞的時間。</p>
+<figure class="figure"><img src="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-04.webp" srcset="/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-04_hu_368be8ad04b1c5a9.webp 720w, /blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-04.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="596" alt="我們可以看到 trace 中每個 span 執行的狀況（這邊能看到錯誤是出現在 dowork5 的 span 上）" loading="lazy" decoding="async">
+  <figcaption>我們可以看到 trace 中每個 span 執行的狀況（這邊能看到錯誤是出現在 dowork5 的 span 上）</figcaption>
+</figure>
+
+<blockquote class="pullquote"><p>範例到這裡告一段落，希望文中 Jaeger 與 Kafka 的組合應用，有幫讀者打開不一樣的思路。</p>
+</blockquote>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2022.11.23）</span><a href="https://medium.com/dean-lin/%E9%80%8F%E9%81%8E-jaeger-with-opentelemetry-%E8%BF%BD%E8%B9%A4-kafka-%E8%B3%87%E6%96%99%E5%82%B3%E9%81%9E%E8%B7%AF%E5%BE%91%E8%88%87%E9%81%8B%E8%A1%8C%E7%8B%80%E6%B3%81-%E4%BD%BF%E7%94%A8-w3ctracecontextpropagator-%E8%87%AA%E5%AE%9A%E7%BE%A9-parent-child-2a89b4585ae" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/jaeger/">Jaeger</a>
+            <a class="chip chip-hash" href="/tags/opentelemetry/">OpenTelemetry</a>
+            <a class="chip chip-hash" href="/tags/kafka/">Kafka</a>
+            <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
+            <a class="chip chip-hash" href="/tags/propagator/">Propagator</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202211%2Ftrace-kafka-with-jaeger%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202211%2Ftrace-kafka-with-jaeger%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/" data-title="透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/kafka-tracing/">Kafka 與分散式追蹤</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>4</b> 篇・共 4 篇</p>
+          </div>
+          <ol class="steps">
+            <li>
+              <a href="/blog/202211/distributed-tracing-jaeger-opentelemetry/"><span class="n">01</span><span>善用分布式追蹤系統，幫你找出程式的效能瓶頸與問題影響範圍（Jaeger with OpenTelemetry Node.js）</span></a>
+            </li>
+            <li>
+              <a href="/blog/202211/what-is-kafka/"><span class="n">02</span><span>正在為大數據所苦嗎？帶你了解 Kafka 這個分布式消息串流平台，以及它能解決什麼問題！</span></a>
+            </li>
+            <li>
+              <a href="/blog/202211/nodejs-kafka-hands-on/"><span class="n">03</span><span>手把手帶你建立 Node.js 專案 ＆ Kafka 環境，透過實作了解 Kafka 的運行邏輯</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">04</span><span>透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+          </ol>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202211/nodejs-kafka-hands-on/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">手把手帶你建立 Node.js 專案 ＆ Kafka 環境，透過實作了解 Kafka 的運行邏輯</span></a>
+          <a class="next" href="/blog/202211/my-story-origin/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">想像與現實的差距，可能會毀掉人的一生 — 那些我走過的路與故事（緣起）</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e3%84%a7%e8%87%aa%e5%ae%9a%e7%be%a9%e8%bf%bd%e8%b9%a4%e7%9a%84-parent--child-%e9%97%9c%e8%81%afmanually-propagating-span-context">ㄧ、自定義追蹤的 Parent &amp; Child 關聯（Manually propagating span context）</a></li><li class="is-sub"><a href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-%e6%8a%8a-span-%e8%b3%87%e8%a8%8a-inject-%e5%88%b0-carrier">➤ 透過 W3CTraceContextPropagator 把 span 資訊 inject 到 carrier</a></li><li class="is-sub"><a href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-extract-carrier-%e8%b3%87%e8%a8%8a%e4%bd%bf%e5%85%b6%e6%88%90%e7%82%ba%e8%83%bd%e4%bd%bf%e7%94%a8%e7%9a%84-context">➤ 透過 W3CTraceContextPropagator extract carrier 資訊，使其成為能使用的 Context</a></li><li><a href="#%e4%ba%8c%e4%bd%bf%e7%94%a8-kafka-%e4%bd%9c%e7%82%ba%e5%82%b3%e9%81%9e%e8%b3%87%e6%96%99%e7%9a%84%e8%bd%89%e9%81%8b%e7%ab%99">二、使用 Kafka 作為傳遞資料的轉運站</a></li><li class="is-sub"><a href="#-%e5%9c%a8-producer-%e7%9a%84-value-%e6%94%be%e4%b8%8a-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a%e8%a8%98%e5%be%97%e8%a6%81%e8%bd%89%e7%82%ba%e5%ad%97%e4%b8%b2">➤ 在 Producer 的 value 放上 carrier 的資訊（記得要轉為字串）</a></li><li class="is-sub"><a href="#-%e5%be%9e-consumer-%e6%94%b6%e5%88%b0%e7%9a%84-message-%e4%b8%ad%e5%8f%96%e5%87%ba-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a">➤ 從 Consumer 收到的 message 中取出 carrier 的資訊</a></li><li><a href="#%e4%b8%89%e5%9c%a8-local-%e5%bb%ba%e7%ab%8b-nodejs-%e5%b0%88%e6%a1%88%e4%be%86%e9%81%94%e6%88%90%e7%9b%ae%e6%a8%99">三、在 Local 建立 Node.js 專案來達成目標</a></li><li><a href="#%e5%9b%9b%e5%95%9f%e5%8b%95%e5%b0%88%e6%a1%88%e9%80%8f%e9%81%8e-jaeger-ui-%e7%a2%ba%e8%aa%8d-trace-%e8%b7%af%e5%be%91%e6%98%af%e5%90%a6%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f">四、啟動專案，透過 Jaeger UI 確認 Trace 路徑是否符合預期</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202211%2Ftrace-kafka-with-jaeger%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202211%2Ftrace-kafka-with-jaeger%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/" data-title="透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAADwAwCdASoYAA0APw1op0emIyGYBABjEMT0gAAzJ2lPhxrXgr51mSjoAP7VFiQhLZ2o5OHrh1iJKmvu5MaWiNzUsG73&#43;UNvPhgcNHWgK0L6EQoTRZSgP0LdXPzCfa1/68WS&#43;w5pfj89TU5qWNAplaAA" alt="" width="24" height="13"><img src="/blog/202211/distributed-tracing-jaeger-opentelemetry/images/distributed-tracing-jaeger-opentelemetry-01_hu_2f697c90a1775de3.webp" srcset="/blog/202211/distributed-tracing-jaeger-opentelemetry/images/distributed-tracing-jaeger-opentelemetry-01_hu_f69f52effff1e4e5.webp 240w, /blog/202211/distributed-tracing-jaeger-opentelemetry/images/distributed-tracing-jaeger-opentelemetry-01_hu_bb7037db8519c6ec.webp 480w, /blog/202211/distributed-tracing-jaeger-opentelemetry/images/distributed-tracing-jaeger-opentelemetry-01_hu_bc711d9025ecf38c.webp 800w, /blog/202211/distributed-tracing-jaeger-opentelemetry/images/distributed-tracing-jaeger-opentelemetry-01_hu_2f697c90a1775de3.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="626" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/kafka-tracing/">Kafka 與分散式追蹤</a></div>
+
+    <h3 class="card-title"><a href="/blog/202211/distributed-tracing-jaeger-opentelemetry/">善用分布式追蹤系統，幫你找出程式的效能瓶頸與問題影響範圍（Jaeger with OpenTelemetry Node.js）</a></h3>
+    <p class="card-desc">大型專案免不了要多個團隊合作，而每個團隊熟悉的程式語言可能不同，所部署的服務也可能分佈在多台 Server 上面。在這樣複雜的架構下，如果系統的某個服務出問題，又或是遇到效能瓶頸；即便有 log 紀錄，但在上下依賴不清楚的狀態下，工程師需要花不少時間來釐清問題原因。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-11-15">2022.11.15</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAQBACdASoYAA0APw1mp0emIqGYBABjEMT0gAA1r7sK5EF/gb3kKwLggAD&#43;7BGPDBEPQ21CGzPwH9yZJtrLugBOxmcJ4ZSHLcVX2JSR&#43;ARZDZKnog9LSGNPKejSTQ/WZeqdB6tpTc/kAKHy49rasGsi05YGh2&#43;RjoAiv/5A/rPigv/Ewk1RA66Q1YtQKfqZVQ9DB6AAAAA=" alt="" width="24" height="13"><img src="/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_3f93f554e365f2c2.webp" srcset="/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_1e5d67c140e4a4f.webp 240w, /blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_c8b2ac800b256674.webp 480w, /blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_9ed347305feab0fe.webp 800w, /blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01_hu_3f93f554e365f2c2.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="633" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/kafka-tracing/">Kafka 與分散式追蹤</a></div>
+
+    <h3 class="card-title"><a href="/blog/202211/nodejs-kafka-hands-on/">手把手帶你建立 Node.js 專案 ＆ Kafka 環境，透過實作了解 Kafka 的運行邏輯</a></h3>
+    <p class="card-desc">本篇文章將會帶大家一步步建立 Node.js 專案 ＆ Kafka 環境，透過具體實踐來了解 Kafka 的運行邏輯。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-11-20">2022.11.20</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAAAQBACdASoYAA0APw1op0emIyGYBABjEMT0gAA1r7sK60QLc&#43;3E7EOlAAD&#43;7BGPDBEPQ21CGzPwH9yZJtrLugBOxmcJ4ZSIBLP5atJTZ8QCL7M9jE4Ja4pf2V96v8ykQxx6Ll6Y0g/mhxTBwBmFrbzWrIpRTfu6gb7a2vk3&#43;wNnHEVEIo6/OYVSaJYDQeS59MAAAA==" alt="" width="24" height="13"><img src="/blog/202211/what-is-kafka/images/what-is-kafka-02_hu_6702322cb8edf565.webp" srcset="/blog/202211/what-is-kafka/images/what-is-kafka-02_hu_9917db70fdc23906.webp 240w, /blog/202211/what-is-kafka/images/what-is-kafka-02_hu_1a3e81bef414491b.webp 480w, /blog/202211/what-is-kafka/images/what-is-kafka-02_hu_a099ff03b44aecaa.webp 800w, /blog/202211/what-is-kafka/images/what-is-kafka-02_hu_6702322cb8edf565.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="633" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/kafka-tracing/">Kafka 與分散式追蹤</a></div>
+
+    <h3 class="card-title"><a href="/blog/202211/what-is-kafka/">正在為大數據所苦嗎？帶你了解 Kafka 這個分布式消息串流平台，以及它能解決什麼問題！</a></h3>
+    <p class="card-desc">如果推出的 Web 系統受到市場親睞，那隨著使用者成長，勢必會更高頻率的呼叫 api 與存取資料庫；假使我們沒有設計任何的緩衝機制，那資料庫不堪重負也只是時間問題。 而且隨著公司規模的擴張，接下來可能會有專門的團隊來分析使用者行為，公司高層與投資人會想看具體的業務狀況…</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-11-20">2022.11.20</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

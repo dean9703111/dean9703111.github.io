@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>禪道 Zentao 新手教學 &amp; 體驗心得｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="以開源軟體而言 Zentao 是相當優秀的專案管理工具，但如果沒有一些基礎教學導引，裡面的功能真的多到你眼花撩亂不知從何下手，如果你有這種困擾，或是想再導入這個軟體前對他有更深一步的了解；我相信這篇文章能給你帶來很大的幫助，讓你了解重要角色的權限劃分及專案流程。">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202103/zentao-beginner-guide/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="禪道 Zentao 新手教學 &amp; 體驗心得">
+  <meta property="og:description" content="以開源軟體而言 Zentao 是相當優秀的專案管理工具，但如果沒有一些基礎教學導引，裡面的功能真的多到你眼花撩亂不知從何下手，如果你有這種困擾，或是想再導入這個軟體前對他有更深一步的了解；我相信這篇文章能給你帶來很大的幫助，讓你了解重要角色的權限劃分及專案流程。">
+  <meta property="og:url" content="https://deanlin.net/blog/202103/zentao-beginner-guide/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2021-03-16T15:16:42&#43;08:00">
+  <meta property="article:modified_time" content="2023-05-05T18:17:39&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="團隊合作">
+  <meta property="article:tag" content="ZenTao">
+  <meta property="article:tag" content="新手教學">
+  <meta property="article:tag" content="禪道">
+  <meta property="article:tag" content="專案管理">
+  <meta property="article:tag" content="專案流程">
+  <meta property="og:image" content="https://deanlin.net/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="672">
+  <meta property="og:image:alt" content="禪道 Zentao 新手教學 &amp; 體驗心得">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-og.jpg">
+  <meta name="twitter:title" content="禪道 Zentao 新手教學 &amp; 體驗心得">
+  <meta name="twitter:description" content="以開源軟體而言 Zentao 是相當優秀的專案管理工具，但如果沒有一些基礎教學導引，裡面的功能真的多到你眼花撩亂不知從何下手，如果你有這種困擾，或是想再導入這個軟體前對他有更深一步的了解；我相信這篇文章能給你帶來很大的幫助，讓你了解重要角色的權限劃分及專案流程。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202103/zentao-beginner-guide/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"團隊合作"},"articleSection":"團隊合作","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2023-05-05T18:17:39+08:00","datePublished":"2021-03-16T15:16:42+08:00","description":"以開源軟體而言 Zentao 是相當優秀的專案管理工具，但如果沒有一些基礎教學導引，裡面的功能真的多到你眼花撩亂不知從何下手，如果你有這種困擾，或是想再導入這個軟體前對他有更深一步的了解；我相信這篇文章能給你帶來很大的幫助，讓你了解重要角色的權限劃分及專案流程。","headline":"禪道 Zentao 新手教學 \u0026 體驗心得","image":{"@type":"ImageObject","height":672,"url":"https://deanlin.net/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"ZenTao, 新手教學, 禪道, 專案管理, 專案流程","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202103/zentao-beginner-guide/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E7%A6%AA%E9%81%93-zentao-%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8-%E9%AB%94%E9%A9%97%E5%BF%83%E5%BE%97-9a46546c4f4d"],"timeRequired":"PT7M","url":"https://deanlin.net/blog/202103/zentao-beginner-guide/","wordCount":3014},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/teamwork/","name":"團隊合作","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202103/zentao-beginner-guide/","name":"禪道 Zentao 新手教學 \u0026 體驗心得","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/">技術教學</a></li>
+        <li><a href="/categories/teamwork/" aria-current="page">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/" aria-current="page">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/teamwork/">團隊合作</a>
+      </nav>
+      <h1 class="article-title">禪道 Zentao 新手教學 &amp; 體驗心得</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2021-03-16">2021.03.16</time>
+              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
+              <span>閱讀約 7 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e5%ae%98%e6%96%b9%e7%9a%84%e6%96%b0%e6%89%8b%e6%95%99%e7%a8%8b">一、官方的『新手教程』</a></li><li class="is-sub"><a href="#%e6%95%99%e7%a8%8b%e9%9d%a2%e6%9d%bf%e8%aa%aa%e6%98%8e">教程面板說明：</a></li><li><a href="#%e4%ba%8c%e4%ba%86%e8%a7%a3%e6%af%8f%e5%80%8b%e8%a7%92%e8%89%b2%e7%9a%84%e8%81%b7%e6%ac%8a">二、了解每個角色的職權</a></li><li><a href="#1-%e7%ae%a1%e7%90%86%e5%93%a1%e7%9a%84%e5%9f%ba%e6%9c%ac%e5%8a%9f">1. 『管理員』的基本功</a></li><li class="is-sub"><a href="#-%e8%aa%bf%e6%95%b4%e9%83%a8%e9%96%80%e7%b5%90%e6%a7%8b">➤ 調整部門結構</a></li><li class="is-sub"><a href="#-%e6%89%b9%e9%87%8f%e5%a2%9e%e5%8a%a0%e7%94%a8%e6%88%b6">➤ 批量增加用戶</a></li><li class="is-sub"><a href="#-%e8%aa%bf%e6%95%b4%e7%94%a8%e6%88%b6%e6%ac%8a%e9%99%90">➤ 調整用戶權限</a></li><li class="is-sub"><a href="#-%e9%82%84%e5%8e%9f%e5%88%aa%e9%99%a4%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85">➤ 還原刪除的使用者</a></li><li class="is-sub"><a href="#-%e8%a7%a3%e9%8e%96%e5%a4%9a%e6%ac%a1%e7%99%bb%e5%85%a5%e5%a4%b1%e6%95%97%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85">➤ 解鎖多次登入失敗的使用者</a></li><li class="is-sub"><a href="#-%e7%99%bc%e7%8f%be%e7%9a%84%e7%b3%bb%e7%b5%b1-bug">➤ 發現的系統 Bug</a></li><li><a href="#2-%e7%94%a2%e5%93%81%e7%b6%93%e7%90%86%e7%9a%84%e8%b5%b7%e6%89%8b%e5%bc%8f">2. 『產品經理』的起手式</a></li><li class="is-sub"><a href="#step-1%e5%89%b5%e5%bb%ba%e7%94%a2%e5%93%81">STEP 1：創建產品</a></li><li class="is-sub"><a href="#step-2%e7%b6%ad%e8%ad%b7%e6%a8%a1%e7%b5%84">STEP 2：維護模組</a></li><li class="is-sub"><a href="#step-3%e5%89%b5%e5%bb%ba%e8%a8%88%e7%95%ab">STEP 3：創建計畫</a></li><li class="is-sub"><a href="#step-4%e5%89%b5%e5%bb%ba%e9%9c%80%e6%b1%82">STEP 4：創建需求</a></li><li class="is-sub"><a href="#step-5%e9%9c%80%e6%b1%82%e6%8c%87%e6%b4%be">STEP 5：需求指派</a></li><li><a href="#3-%e9%a0%85%e7%9b%ae%e7%b6%93%e7%90%86%e5%a6%82%e4%bd%95%e5%88%86%e9%85%8d%e4%bb%bb%e5%8b%99">3. 『項目經理』如何分配任務</a></li><li class="is-sub"><a href="#step-1%e7%99%bb%e5%85%a5%e5%be%8c%e7%9c%8b%e8%a2%ab%e6%8c%87%e6%b4%be%e7%9a%84%e9%9c%80%e6%b1%82">STEP 1：登入後看被指派的需求</a></li><li class="is-sub"><a href="#step-2%e5%89%b5%e5%bb%ba%e9%a0%85%e7%9b%ae">STEP 2：創建項目</a></li><li class="is-sub"><a href="#step-3%e7%ae%a1%e7%90%86%e5%9c%98%e9%9a%8a">STEP 3：管理團隊</a></li><li class="is-sub"><a href="#step-4%e5%89%b5%e5%bb%ba%e4%bb%bb%e5%8b%99">STEP 4：創建任務</a></li><li><a href="#4-%e7%a0%94%e7%99%bc%e4%ba%ba%e5%93%a1%e5%ae%8c%e6%88%90%e6%94%b6%e5%88%b0%e7%9a%84%e4%bb%bb%e5%8b%99">4. 『研發人員』完成收到的任務</a></li><li class="is-sub"><a href="#step-1%e7%99%bb%e5%85%a5%e5%be%8c%e7%9c%8b%e8%a2%ab%e6%8c%87%e6%b4%be%e7%9a%84%e4%bb%bb%e5%8b%99%e5%92%8cbug">STEP 1：登入後看被指派的任務和Bug</a></li><li class="is-sub"><a href="#step-2%e6%9b%b4%e6%96%b0%e4%bb%bb%e5%8b%99%e7%9a%84%e8%b3%87%e8%a8%8a">STEP 2：更新任務的資訊</a></li><li><a href="#5-%e6%b8%ac%e8%a9%a6%e4%ba%ba%e5%93%a1%e7%a2%ba%e8%aa%8d%e6%af%8f%e5%80%8b%e7%92%b0%e7%af%80%e7%9a%84%e7%a9%a9%e5%ae%9a%e6%80%a7">5. 『測試人員』確認每個環節的穩定性</a></li><li class="is-sub"><a href="#step-1%e5%89%b5%e5%bb%ba%e7%94%a8%e4%be%8b">STEP 1：創建用例</a></li><li class="is-sub"><a href="#step-2%e4%ba%86%e8%a7%a3%e7%94%a8%e4%be%8b%e7%9a%84%e4%bd%bf%e7%94%a8%e6%96%b9%e5%bc%8f">STEP 2：了解用例的使用方式</a></li><li class="is-sub"><a href="#step-3%e6%b8%ac%e8%a9%a6%e9%8c%af%e8%aa%a4%e8%bd%89-bug">STEP 3：測試錯誤轉 Bug</a></li><li class="is-sub"><a href="#step-3%e7%94%9f%e6%88%90%e6%b8%ac%e8%a9%a6%e5%96%ae%e6%aa%a2%e9%a9%97%e6%88%90%e6%9e%9c">STEP 3：生成測試單檢驗成果</a></li><li><a href="#%e4%b8%89%e9%ab%94%e9%a9%97%e5%bf%83%e5%be%97">三、體驗心得</a></li><li class="is-sub"><a href="#-%e7%b3%bb%e7%b5%b1%e6%93%8d%e4%bd%9c%e9%9d%a2">➤ 系統操作面</a></li><li class="is-sub"><a href="#-%e4%b8%80%e4%ba%9b%e5%b0%8f%e7%bc%ba%e9%bb%9e">➤ 一些小缺點</a></li><li class="is-sub"><a href="#-%e8%88%87%e5%85%b6%e4%bb%96%e5%b0%88%e6%a1%88%e7%ae%a1%e7%90%86%e7%b3%bb%e7%b5%b1%e7%9a%84%e6%af%94%e8%bc%83">➤ 與其他專案管理系統的比較</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p>以開源軟體而言 Zentao 是相當優秀的專案管理工具，但如果沒有一些基礎教學導引，裡面的功能真的多到你眼花撩亂不知從何下手，如果你有這種困擾，或是想再導入這個軟體前對他有更深一步的了解；我相信這篇文章能給你帶來很大的幫助，讓你了解重要角色的權限劃分及專案流程。</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-01.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-01_hu_7feca7fd2d5464a.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="784" alt="禪道 Zentao 新手教學 &amp; 體驗心得（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>一、官方的『新手教程』
+二、了解每個角色的職權
+  1.『管理員』的基本功
+    ➤ 調整部門結構
+    ➤ 批量增加用戶
+    ➤ 調整用戶權限
+    ➤ 還原刪除的使用者
+    ➤ 解鎖多次登入失敗的使用者
+    ➤ 發現的系統 Bug
+  2.『產品經理』的起手式
+  3.『項目經理』如何分配任務
+  4.『研發人員』完成收到的任務
+  5.『測試人員』確認每個環節的穩定性
+三、體驗心得
+</code></pre><h2 id="一官方的新手教程">一、官方的『新手教程』<a class="h-anchor" href="#%e4%b8%80%e5%ae%98%e6%96%b9%e7%9a%84%e6%96%b0%e6%89%8b%e6%95%99%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>這個新手教學並沒有依照角色權限設計，所以每個人看到的版本都是以『管理者』的角度去呈現</p>
+</blockquote>
+<p>官方提供的教學可以讓你快速了解整個系統的作業流程，你在『<strong>教學裡面的所有操作並不會儲存』</strong>只是給你體驗而已，所以意思意思打一下就好。</p>
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-02.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-02_hu_bfc0a0205af20b97.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="471" alt="新手教程用戶第一次登入時不會彈出，要自己點才會有喔！" loading="lazy" decoding="async">
+  <figcaption>新手教程用戶<strong>第一次登入時不會彈出</strong>，要自己點才會有喔！</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-03.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-03_hu_8121b1a9e908dae8.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-03.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="625" alt="該教程隨時可以退出，所以安心使用" loading="lazy" decoding="async">
+  <figcaption>該教程<strong>隨時可以退出</strong>，所以安心使用</figcaption>
+</figure>
+
+<h3 id="教程面板說明">教程面板說明：<a class="h-anchor" href="#%e6%95%99%e7%a8%8b%e9%9d%a2%e6%9d%bf%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>A</strong>：會有亮起來的地方讓你選擇及輸入資訊，這塊跟著走，資訊亂填即可(不會存進系統)</li>
+<li><strong>B</strong>：教學的操作步驟</li>
+<li><strong>C</strong>：以管理員導向的八個任務讓你體驗，接下來我的文章會更細節說明每個角色實際能操作的範疇</li>
+</ul>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-04.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-04_hu_9ff260e6baf91b3c.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-04.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="674" alt="教程面板說明：（圖 4）" loading="lazy" decoding="async"></p>
+<h2 id="二了解每個角色的職權">二、了解每個角色的職權<a class="h-anchor" href="#%e4%ba%8c%e4%ba%86%e8%a7%a3%e6%af%8f%e5%80%8b%e8%a7%92%e8%89%b2%e7%9a%84%e8%81%b7%e6%ac%8a" aria-label="這個段落的連結"></a></h2>
+<p>其實在首頁的地方就已經把每個角色的職權都說得清清楚楚了，如果發現有角色的職權跟你預計的不符合也可以再自行客製化</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-05.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-05_hu_49d9c9818f5209d2.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-05.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="536" alt="二、了解每個角色的職權（圖 5）" loading="lazy" decoding="async"></p>
+<h2 id="1-管理員的基本功">1. 『管理員』的基本功<a class="h-anchor" href="#1-%e7%ae%a1%e7%90%86%e5%93%a1%e7%9a%84%e5%9f%ba%e6%9c%ac%e5%8a%9f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>管理員需要對所有職位的權限非常熟悉，並要了解每個權限具體對應到哪些功能</p>
+</blockquote>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-06.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-06.webp 668w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="668" height="51" alt="1. 『管理員』的基本功（圖 6）" loading="lazy" decoding="async"></p>
+<h3 id="-調整部門結構">➤ 調整部門結構<a class="h-anchor" href="#-%e8%aa%bf%e6%95%b4%e9%83%a8%e9%96%80%e7%b5%90%e6%a7%8b" aria-label="這個段落的連結"></a></h3>
+<p>必須要先設定好部門的結構再去新增用戶，因為用戶跟部門是有相互依賴關係的</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-07.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-07_hu_b9fd6b6dd8067a62.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-07.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="433" alt="調整部門結構（圖 7）" loading="lazy" decoding="async"></p>
+<h3 id="-批量增加用戶">➤ 批量增加用戶<a class="h-anchor" href="#-%e6%89%b9%e9%87%8f%e5%a2%9e%e5%8a%a0%e7%94%a8%e6%88%b6" aria-label="這個段落的連結"></a></h3>
+<p>建議用『批量』的方式建立用戶，無論在權限、密碼方面的設定都會輕鬆許多</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-08.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-08_hu_bb616fbc2eca9cb.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-08.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="430" alt="批量增加用戶（圖 8）" loading="lazy" decoding="async"></p>
+<p>批量新增時技巧：</p>
+<ul>
+<li><strong>職位高的先放</strong>：因為通常他們會是所屬部門的根目錄</li>
+<li><strong>善用『同上』的功能</strong>：相同的部門、相同職位…依照同類型的分類設定可以加快速度</li>
+</ul>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-09.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-09_hu_c769256494a10b38.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="771" alt="批量增加用戶（圖 9）" loading="lazy" decoding="async"></p>
+<h3 id="-調整用戶權限">➤ 調整用戶權限<a class="h-anchor" href="#-%e8%aa%bf%e6%95%b4%e7%94%a8%e6%88%b6%e6%ac%8a%e9%99%90" aria-label="這個段落的連結"></a></h3>
+<p>在批量新增使用者的時候一個用戶只能有一個角色權限，但有能力的人在公司裡面身兼多職是常有的情形，就像我在公司是『研發 Dev』人員，但同時也需要負責『系統組織、後台設定 Admin』，所以我會給自己設定多種角色權限</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-10.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-10_hu_e2be761d5d89505e.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-10.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="634" alt="調整用戶權限（圖 10）" loading="lazy" decoding="async"></p>
+<p>如果公司規模不大，一個團隊的 leader 要身兼 『項目經理 PM』、『產品經理 PO』、『研發主管 Dev Manager』、『產品主管 PD』都是很常見的（ex：我現在的直屬主管）</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-11.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-11_hu_a13c1de199992bf6.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-11.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="628" alt="調整用戶權限（圖 11）" loading="lazy" decoding="async"></p>
+<h3 id="-還原刪除的使用者">➤ 還原刪除的使用者<a class="h-anchor" href="#-%e9%82%84%e5%8e%9f%e5%88%aa%e9%99%a4%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85" aria-label="這個段落的連結"></a></h3>
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-12.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-12_hu_979e5865bf4c0ead.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-12.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="430" alt="後台 &gt; 數據 &gt; 資源回收筒 &gt; 還原" loading="lazy" decoding="async">
+  <figcaption>後台 &gt; 數據 &gt; 資源回收筒 &gt; 還原</figcaption>
+</figure>
+
+<h3 id="-解鎖多次登入失敗的使用者">➤ 解鎖多次登入失敗的使用者<a class="h-anchor" href="#-%e8%a7%a3%e9%8e%96%e5%a4%9a%e6%ac%a1%e7%99%bb%e5%85%a5%e5%a4%b1%e6%95%97%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85" aria-label="這個段落的連結"></a></h3>
+<p>為了避免帳號被暴力破解法盜取，禪道有登入錯誤次數的設定</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-13.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-13_hu_87433ba59d2b8676.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-13.webp 921w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="921" height="624" alt="解鎖多次登入失敗的使用者（圖 13）" loading="lazy" decoding="async">
+</figure>
+
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-14.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-14_hu_5227c5be1b7f9dac.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-14.webp 921w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="921" height="624" alt="如果執迷不誤的一直登入失敗，帳號就會被鎖住需要管理員協助處理" loading="lazy" decoding="async">
+  <figcaption>如果執迷不誤的一直登入失敗，帳號就會被鎖住需要管理員協助處理</figcaption>
+</figure>
+
+
+</div>
+
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-15.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-15_hu_2b8f65331f627bc8.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-15.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="542" alt="組織 &gt; 用戶 &gt; 解鎖" loading="lazy" decoding="async">
+  <figcaption>組織 &gt; 用戶 &gt; 解鎖</figcaption>
+</figure>
+
+<h3 id="-發現的系統-bug">➤ 發現的系統 Bug<a class="h-anchor" href="#-%e7%99%bc%e7%8f%be%e7%9a%84%e7%b3%bb%e7%b5%b1-bug" aria-label="這個段落的連結"></a></h3>
+<p>這裡特別說明一下，禪道這個專案管理系統在權限管理、用戶管理上面的防呆不是很嚴謹，下面舉兩個範例：</p>
+<ul>
+<li>『管理者』移除自己『管理者』的身份後還能繼續使用管理者的權限😨，需要再次登入才會生效😱（如果由其他管理者移除對方管理者身份時一樣要重新登入才會讓身份生效）</li>
+</ul>
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-16.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-16_hu_823da28a6f841857.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-16.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="633" alt="我給『dev』這個用戶『Admin』的身份讓他可以管控用戶權限" loading="lazy" decoding="async">
+  <figcaption>我給『dev』這個用戶『Admin』的身份讓他可以管控用戶權限</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-17.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-17_hu_812beadf12d68a43.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-17.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="633" alt="把『dev』從『Admin』的用戶裡移除" loading="lazy" decoding="async">
+  <figcaption>把『dev』從『Admin』的用戶裡移除</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-18.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-18_hu_b992f5eddeb59b21.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-18.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="633" alt="『dev』從『Admin』移除後除非登出但還是有『Admin』權限" loading="lazy" decoding="async">
+  <figcaption>『dev』從『Admin』移除後除非登出但還是有『Admin』權限</figcaption>
+</figure>
+
+<ul>
+<li>『管理者』可以移除自己的帳號😨，帳號移除後還能繼續操作系統😱</li>
+</ul>
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-19.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-19_hu_bf408b527487a548.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-19.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="430" alt="我知道這個操作匪夷所思，但基於測試的心態就用用看了" loading="lazy" decoding="async">
+  <figcaption>我知道這個操作匪夷所思，但基於測試的心態就用用看了</figcaption>
+</figure>
+
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-20.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-20_hu_89d40233c5e48a0e.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-20.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="430" alt="神奇的事情發生惹！帳號移除後居然什麼操作都還能執行" loading="lazy" decoding="async">
+  <figcaption>神奇的事情發生惹！帳號移除後居然什麼操作都還能執行</figcaption>
+</figure>
+
+<h2 id="2-產品經理的起手式">2. 『產品經理』的起手式<a class="h-anchor" href="#2-%e7%94%a2%e5%93%81%e7%b6%93%e7%90%86%e7%9a%84%e8%b5%b7%e6%89%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>產品經理需要專注在每個產品的週期，並確認所有需求都有在進行</p>
+</blockquote>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-21.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-21_hu_3bf8c45850e5fb6f.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-21.webp 992w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="992" height="51" alt="2. 『產品經理』的起手式（圖 21）" loading="lazy" decoding="async"></p>
+<h3 id="step-1創建產品">STEP 1：創建產品<a class="h-anchor" href="#step-1%e5%89%b5%e5%bb%ba%e7%94%a2%e5%93%81" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-22.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-22_hu_65834462e1f2962c.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-22.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="353" alt="STEP 1：創建產品（圖 22）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-23.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-23_hu_d8a5554ee2effb41.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-23.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="766" alt="STEP 1：創建產品（圖 23）" loading="lazy" decoding="async"></p>
+<h3 id="step-2維護模組">STEP 2：維護模組<a class="h-anchor" href="#step-2%e7%b6%ad%e8%ad%b7%e6%a8%a1%e7%b5%84" aria-label="這個段落的連結"></a></h3>
+<p>這裡的模組會用來區分『需求』的類別</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-24.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-24_hu_ebaf7a70c5661332.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-24.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="351" alt="STEP 2：維護模組（圖 24）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-25.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-25_hu_2ba5205d63e6e97.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-25.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="472" alt="STEP 2：維護模組（圖 25）" loading="lazy" decoding="async"></p>
+<h3 id="step-3創建計畫">STEP 3：創建計畫<a class="h-anchor" href="#step-3%e5%89%b5%e5%bb%ba%e8%a8%88%e7%95%ab" aria-label="這個段落的連結"></a></h3>
+<p>每個『需求』都會隸屬於某個『計畫』</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-26.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-26_hu_375d932ce13ab7be.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-26.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="366" alt="STEP 3：創建計畫（圖 26）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-27.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-27_hu_ddc2d4cac0c4d9bc.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-27.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="615" alt="STEP 3：創建計畫（圖 27）" loading="lazy" decoding="async"></p>
+<h3 id="step-4創建需求">STEP 4：創建需求<a class="h-anchor" href="#step-4%e5%89%b5%e5%bb%ba%e9%9c%80%e6%b1%82" aria-label="這個段落的連結"></a></h3>
+<p>『需求』就會依照剛剛創建的『模組』、『計畫』做設定</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-28.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-28_hu_93b1fba09facc5f7.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-28.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="366" alt="STEP 4：創建需求（圖 28）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-29.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-29_hu_12e9846d2046888a.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-29.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="677" alt="STEP 4：創建需求（圖 29）" loading="lazy" decoding="async"></p>
+<h3 id="step-5需求指派">STEP 5：需求指派<a class="h-anchor" href="#step-5%e9%9c%80%e6%b1%82%e6%8c%87%e6%b4%be" aria-label="這個段落的連結"></a></h3>
+<p>需求要指派給相關的人員才能夠推動專案的進行，這裡指派讓項目經理做後續處理。</p>
+<blockquote>
+<p>『項目經理』預設權限並不能對產品需求進行操作，即時被指派也不行；所以如果要讓他提供相關的資訊請前往：<strong>權限 &gt; 需求&gt; 編輯、變更需求、指派需求(打勾)</strong></p>
+</blockquote>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-30.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-30_hu_c286b104765029c4.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-30.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="362" alt="STEP 5：需求指派（圖 30）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-31.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-31_hu_9f2707b7aef434e8.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-31.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="732" alt="STEP 5：需求指派（圖 31）" loading="lazy" decoding="async"></p>
+<h2 id="3-項目經理如何分配任務">3. 『項目經理』如何分配任務<a class="h-anchor" href="#3-%e9%a0%85%e7%9b%ae%e7%b6%93%e7%90%86%e5%a6%82%e4%bd%95%e5%88%86%e9%85%8d%e4%bb%bb%e5%8b%99" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>項目經裡是具體分配任務的人，他需要了解團隊中每個人的職位才能有效地指派任務</p>
+</blockquote>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-32.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-32_hu_36dacf2f01a17761.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-32.webp 992w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="992" height="51" alt="3. 『項目經理』如何分配任務（圖 32）" loading="lazy" decoding="async"></p>
+<h3 id="step-1登入後看被指派的需求">STEP 1：登入後看被指派的需求<a class="h-anchor" href="#step-1%e7%99%bb%e5%85%a5%e5%be%8c%e7%9c%8b%e8%a2%ab%e6%8c%87%e6%b4%be%e7%9a%84%e9%9c%80%e6%b1%82" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-33.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-33_hu_f8bdc2127d4eb7d6.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-33.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="524" alt="STEP 1：登入後看被指派的需求（圖 33）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-34.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-34_hu_64d2a2d71707757c.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-34.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="264" alt="STEP 1：登入後看被指派的需求（圖 34）" loading="lazy" decoding="async"></p>
+<h3 id="step-2創建項目">STEP 2：創建項目<a class="h-anchor" href="#step-2%e5%89%b5%e5%bb%ba%e9%a0%85%e7%9b%ae" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-35.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-35_hu_7320f52e22317a96.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-35.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="349" alt="STEP 2：創建項目（圖 35）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-36.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-36_hu_e5943213289c37b.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-36.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="737" alt="STEP 2：創建項目（圖 36）" loading="lazy" decoding="async"></p>
+<p>創建完項目後系統會有彈窗詢問你要不要進行後續的操作，如果選擇『返回任務列表』也還是可以做這些設定</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-37.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-37.webp 643w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="643" height="230" alt="STEP 2：創建項目（圖 37）" loading="lazy" decoding="async"></p>
+<h3 id="step-3管理團隊">STEP 3：管理團隊<a class="h-anchor" href="#step-3%e7%ae%a1%e7%90%86%e5%9c%98%e9%9a%8a" aria-label="這個段落的連結"></a></h3>
+<p>如果沒有設定好參與項目的團隊成員，創建任務時只能指派給自己喔XD</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-38.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-38_hu_e3146874d89b7556.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-38.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="286" alt="STEP 3：管理團隊（圖 38）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-39.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-39_hu_97b42cf1207ad4e3.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-39.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="523" alt="STEP 3：管理團隊（圖 39）" loading="lazy" decoding="async"></p>
+<h3 id="step-4創建任務">STEP 4：創建任務<a class="h-anchor" href="#step-4%e5%89%b5%e5%bb%ba%e4%bb%bb%e5%8b%99" aria-label="這個段落的連結"></a></h3>
+<p>項目經理需要將創建任務並指派給相關研發人員</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-40.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-40_hu_7553f56286b329e.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-40.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="350" alt="STEP 4：創建任務（圖 40）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-41.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-41_hu_d88a3088a6f0cc08.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-41.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="713" alt="STEP 4：創建任務（圖 41）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>項目經理可以透過『燃盡圖』來觀察每個項目的實作狀況是否符合預期，這裡要特別注意的是『<strong>燃盡圖只能計算今天的數據，歷史紀錄無法修改</strong>』，所以要記得提醒組員每天更新自己的工作狀況，否則燃盡圖是無法正確顯示的。</p>
+</blockquote>
+<h2 id="4-研發人員完成收到的任務">4. 『研發人員』完成收到的任務<a class="h-anchor" href="#4-%e7%a0%94%e7%99%bc%e4%ba%ba%e5%93%a1%e5%ae%8c%e6%88%90%e6%94%b6%e5%88%b0%e7%9a%84%e4%bb%bb%e5%8b%99" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>研發人員主要會收到來自『項目經理』的任務、『測試人員』的bug，他的工作就是每完成到一個進度做回報，方便管理人員掌握進度</p>
+</blockquote>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-42.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-42.webp 667w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="667" height="51" alt="4. 『研發人員』完成收到的任務（圖 42）" loading="lazy" decoding="async"></p>
+<h3 id="step-1登入後看被指派的任務和bug">STEP 1：登入後看被指派的任務和Bug<a class="h-anchor" href="#step-1%e7%99%bb%e5%85%a5%e5%be%8c%e7%9c%8b%e8%a2%ab%e6%8c%87%e6%b4%be%e7%9a%84%e4%bb%bb%e5%8b%99%e5%92%8cbug" aria-label="這個段落的連結"></a></h3>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-43.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-43_hu_7bf0b9ec9759ca8d.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-43.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="534" alt="STEP 1：登入後看被指派的任務和Bug（圖 43）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-44.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-44_hu_5eb1ec0e88d7283.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-44.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="261" alt="STEP 1：登入後看被指派的任務和Bug（圖 44）" loading="lazy" decoding="async"></p>
+<h3 id="step-2更新任務的資訊">STEP 2：更新任務的資訊<a class="h-anchor" href="#step-2%e6%9b%b4%e6%96%b0%e4%bb%bb%e5%8b%99%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>A：任務開始</li>
+<li>B：任務完成，使用此功能時會將任務重新指派給當時委任的『項目經理』</li>
+<li>C：觀看、撰寫任務工時</li>
+<li>D：編輯任務內容</li>
+<li>E：創建子任務</li>
+</ul>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-45.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-45_hu_ae9aa33d2906a629.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-45.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="261" alt="STEP 2：更新任務的資訊（圖 45）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3：將收到的 Bug 轉成任務</strong></p>
+<blockquote>
+<p>『Bug』跟『任務』不同，Bug 不會紀錄完成的時間，也不會把它算進去燃盡圖中，所以如果想將 Bug 轉為自己的績效，記得先將他轉型</p>
+</blockquote>
+<ul>
+<li>項目 &gt; 任務 &gt; 導入 &gt; 導入Bug</li>
+</ul>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-46.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-46_hu_8f85b7f1bad6e98f.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-46.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="355" alt="STEP 2：更新任務的資訊（圖 46）" loading="lazy" decoding="async"></p>
+<ul>
+<li>勾選欲導入的 bug 並填入預計工時&gt; 導入</li>
+</ul>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-47.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-47_hu_11131642129b4646.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-47.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="405" alt="STEP 2：更新任務的資訊（圖 47）" loading="lazy" decoding="async"></p>
+<p>此時你就會看到『 <strong>Bug 被轉型成任務嚕</strong>』～為自己爭取更多績效吧！</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-48.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-48_hu_2cfd825f3207dd82.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-48.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="350" alt="STEP 2：更新任務的資訊（圖 48）" loading="lazy" decoding="async"></p>
+<p>如果改變剛剛轉型任務的『狀態』為『已完成』會詢問是否要將關聯的 Bug 一併改為『已完成』</p>
+<figure class="figure"><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-49.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-49_hu_7f3c1133dcb21d3f.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-49.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="616" alt="在看板可以直接用拖拉的來處理喔" loading="lazy" decoding="async">
+  <figcaption>在看板可以直接用拖拉的來處理喔</figcaption>
+</figure>
+
+<h2 id="5-測試人員確認每個環節的穩定性">5. 『測試人員』確認每個環節的穩定性<a class="h-anchor" href="#5-%e6%b8%ac%e8%a9%a6%e4%ba%ba%e5%93%a1%e7%a2%ba%e8%aa%8d%e6%af%8f%e5%80%8b%e7%92%b0%e7%af%80%e7%9a%84%e7%a9%a9%e5%ae%9a%e6%80%a7" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>測試人員需要先了解產品具體的操作方式以及每個項目的測試點，不然他是很難撰寫用例的</p>
+</blockquote>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-50.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-50_hu_73a1c831725e727b.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-50.webp 987w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="987" height="51" alt="5. 『測試人員』確認每個環節的穩定性（圖 50）" loading="lazy" decoding="async"></p>
+<h3 id="step-1創建用例">STEP 1：創建用例<a class="h-anchor" href="#step-1%e5%89%b5%e5%bb%ba%e7%94%a8%e4%be%8b" aria-label="這個段落的連結"></a></h3>
+<p>『用例』：測試的流程撰寫</p>
+<blockquote>
+<p>用例建議一個一個創建，因為很多細節需要填寫，以下純為流程解說</p>
+</blockquote>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-51.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-51_hu_f99b7fb72dd58b1b.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-51.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="347" alt="STEP 1：創建用例（圖 51）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-52.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-52_hu_5240d8db7819b585.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-52.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="343" alt="STEP 1：創建用例（圖 52）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-53.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-53_hu_87ba04bcf203d9db.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-53.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="701" alt="STEP 1：創建用例（圖 53）" loading="lazy" decoding="async"></p>
+<h3 id="step-2了解用例的使用方式">STEP 2：了解用例的使用方式<a class="h-anchor" href="#step-2%e4%ba%86%e8%a7%a3%e7%94%a8%e4%be%8b%e7%9a%84%e4%bd%bf%e7%94%a8%e6%96%b9%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>A：觀察用例過去所有執行的結果</li>
+<li>B：執行用例，確認每個步驟符合預期，如果執行中發現錯誤就可以轉Bug</li>
+<li>C：編輯用例，調整前置條件、執行步驟、備註等等</li>
+<li>D：如果用例測試的結果為『失敗』，也可以在這個地方做轉 Bug 的步驟</li>
+<li>E：複製用例</li>
+</ul>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-54.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-54_hu_65b5f19ef9862033.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-54.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="343" alt="STEP 2：了解用例的使用方式（圖 54）" loading="lazy" decoding="async"></p>
+<h3 id="step-3測試錯誤轉-bug">STEP 3：測試錯誤轉 Bug<a class="h-anchor" href="#step-3%e6%b8%ac%e8%a9%a6%e9%8c%af%e8%aa%a4%e8%bd%89-bug" aria-label="這個段落的連結"></a></h3>
+<p>這裡我們可以發現如果結果不是『通過』，Bug 的 icon 就會亮起來</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-55.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-55_hu_1adb495a3000d241.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-55.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="325" alt="STEP 3：測試錯誤轉 Bug（圖 55）" loading="lazy" decoding="async"></p>
+<p>點擊『轉Bug』後就去詳細的說明這個 Bug 的內容，撰寫的越詳細越能提升工程師解決的速度</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-56.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-56_hu_277985fd838586f5.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-56.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="491" alt="STEP 3：測試錯誤轉 Bug（圖 56）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-57.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-57_hu_7bb1b2508bc94525.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-57.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="712" alt="STEP 3：測試錯誤轉 Bug（圖 57）" loading="lazy" decoding="async"></p>
+<h3 id="step-3生成測試單檢驗成果">STEP 3：生成測試單檢驗成果<a class="h-anchor" href="#step-3%e7%94%9f%e6%88%90%e6%b8%ac%e8%a9%a6%e5%96%ae%e6%aa%a2%e9%a9%97%e6%88%90%e6%9e%9c" aria-label="這個段落的連結"></a></h3>
+<p>『用例』、『Bug』都是單項的，測試單能把這些資訊做一個彙整</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-58.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-58_hu_2d10723dfaf02ead.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-58.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="272" alt="STEP 3：生成測試單檢驗成果（圖 58）" loading="lazy" decoding="async"></p>
+<p>藉由『測試單』還能將過去的用例導出數據</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-59.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-59_hu_92f34df272fffb38.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-59.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="577" alt="STEP 3：生成測試單檢驗成果（圖 59）" loading="lazy" decoding="async"></p>
+<p>想要生成報表也沒有問題</p>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-60.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-60_hu_f8d0d064950b23f8.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-60.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="741" alt="STEP 3：生成測試單檢驗成果（圖 60）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>PS.當時我在報告的這個 Tab 用了好久都不知道怎麼操作，後來發現是測試人員 (QA) 預設的權限沒有打開，創建報告的功能要測試主管(QD) 才有權限</p>
+</blockquote>
+<p><img src="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-61.webp" srcset="/blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-61_hu_7630350a55991ac8.webp 720w, /blog/202103/zentao-beginner-guide/images/zentao-beginner-guide-61.webp 1261w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1261" height="40" alt="STEP 3：生成測試單檢驗成果（圖 61）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="三體驗心得">三、體驗心得<a class="h-anchor" href="#%e4%b8%89%e9%ab%94%e9%a9%97%e5%bf%83%e5%be%97" aria-label="這個段落的連結"></a></h2>
+<h3 id="-系統操作面">➤ 系統操作面<a class="h-anchor" href="#-%e7%b3%bb%e7%b5%b1%e6%93%8d%e4%bd%9c%e9%9d%a2" aria-label="這個段落的連結"></a></h3>
+<p>這款專案軟體的操作引導是非常棒的，加上官方的中文社群非常活躍，所以如果操作上遇到問題往往 google 一下就能得到解答。</p>
+<h3 id="-一些小缺點">➤ 一些小缺點<a class="h-anchor" href="#-%e4%b8%80%e4%ba%9b%e5%b0%8f%e7%bc%ba%e9%bb%9e" aria-label="這個段落的連結"></a></h3>
+<p>因為使用者權限劃分得非常細，所以有些操作會發現沒辦法下一步；又因為功能實在太過繁雜所以使用起來會有一點學習曲線。</p>
+<h3 id="-與其他專案管理系統的比較">➤ 與其他專案管理系統的比較<a class="h-anchor" href="#-%e8%88%87%e5%85%b6%e4%bb%96%e5%b0%88%e6%a1%88%e7%ae%a1%e7%90%86%e7%b3%bb%e7%b5%b1%e7%9a%84%e6%af%94%e8%bc%83" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>Jira</strong>：認真說 Jira 還是稍微好用一點，特別是在系統彈性以及流程規劃上面；當然這可能因為我現在用的是開源版本所造成的。</li>
+<li><strong>Redmine</strong>：Redmine 需要自己安裝一大堆 plugins 才能成為一套好用的系統，單純這點禪道真的是大勝，但學習曲線 Redmine 相對比較低。</li>
+<li><strong>Teams 的 Planner &amp; Lists</strong>：基本上這兩個是幾乎無法拿來做專案管理，會非常的綁手綁腳，不建議嘗試。</li>
+</ul>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2021.03.16）</span><a href="https://medium.com/dean-lin/%E7%A6%AA%E9%81%93-zentao-%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8-%E9%AB%94%E9%A9%97%E5%BF%83%E5%BE%97-9a46546c4f4d" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/zentao/">ZenTao</a>
+            <a class="chip chip-hash" href="/tags/%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8/">新手教學</a>
+            <a class="chip chip-hash" href="/tags/%E7%A6%AA%E9%81%93/">禪道</a>
+            <a class="chip chip-hash" href="/tags/%E5%B0%88%E6%A1%88%E7%AE%A1%E7%90%86/">專案管理</a>
+            <a class="chip chip-hash" href="/tags/%E5%B0%88%E6%A1%88%E6%B5%81%E7%A8%8B/">專案流程</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202103%2Fzentao-beginner-guide%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202103%2Fzentao-beginner-guide%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202103/zentao-beginner-guide/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202103/zentao-beginner-guide/" data-title="禪道 Zentao 新手教學 &amp; 體驗心得" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202103/pessimistic-vs-optimistic-locking/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">理解資料庫『悲觀鎖』和『樂觀鎖』的觀念</span></a>
+          <a class="next" href="/blog/202103/ssr-vs-csr/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">SSR、CSR名詞理解 &amp; 應用場景</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e4%b8%80%e5%ae%98%e6%96%b9%e7%9a%84%e6%96%b0%e6%89%8b%e6%95%99%e7%a8%8b">一、官方的『新手教程』</a></li><li class="is-sub"><a href="#%e6%95%99%e7%a8%8b%e9%9d%a2%e6%9d%bf%e8%aa%aa%e6%98%8e">教程面板說明：</a></li><li><a href="#%e4%ba%8c%e4%ba%86%e8%a7%a3%e6%af%8f%e5%80%8b%e8%a7%92%e8%89%b2%e7%9a%84%e8%81%b7%e6%ac%8a">二、了解每個角色的職權</a></li><li><a href="#1-%e7%ae%a1%e7%90%86%e5%93%a1%e7%9a%84%e5%9f%ba%e6%9c%ac%e5%8a%9f">1. 『管理員』的基本功</a></li><li class="is-sub"><a href="#-%e8%aa%bf%e6%95%b4%e9%83%a8%e9%96%80%e7%b5%90%e6%a7%8b">➤ 調整部門結構</a></li><li class="is-sub"><a href="#-%e6%89%b9%e9%87%8f%e5%a2%9e%e5%8a%a0%e7%94%a8%e6%88%b6">➤ 批量增加用戶</a></li><li class="is-sub"><a href="#-%e8%aa%bf%e6%95%b4%e7%94%a8%e6%88%b6%e6%ac%8a%e9%99%90">➤ 調整用戶權限</a></li><li class="is-sub"><a href="#-%e9%82%84%e5%8e%9f%e5%88%aa%e9%99%a4%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85">➤ 還原刪除的使用者</a></li><li class="is-sub"><a href="#-%e8%a7%a3%e9%8e%96%e5%a4%9a%e6%ac%a1%e7%99%bb%e5%85%a5%e5%a4%b1%e6%95%97%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85">➤ 解鎖多次登入失敗的使用者</a></li><li class="is-sub"><a href="#-%e7%99%bc%e7%8f%be%e7%9a%84%e7%b3%bb%e7%b5%b1-bug">➤ 發現的系統 Bug</a></li><li><a href="#2-%e7%94%a2%e5%93%81%e7%b6%93%e7%90%86%e7%9a%84%e8%b5%b7%e6%89%8b%e5%bc%8f">2. 『產品經理』的起手式</a></li><li class="is-sub"><a href="#step-1%e5%89%b5%e5%bb%ba%e7%94%a2%e5%93%81">STEP 1：創建產品</a></li><li class="is-sub"><a href="#step-2%e7%b6%ad%e8%ad%b7%e6%a8%a1%e7%b5%84">STEP 2：維護模組</a></li><li class="is-sub"><a href="#step-3%e5%89%b5%e5%bb%ba%e8%a8%88%e7%95%ab">STEP 3：創建計畫</a></li><li class="is-sub"><a href="#step-4%e5%89%b5%e5%bb%ba%e9%9c%80%e6%b1%82">STEP 4：創建需求</a></li><li class="is-sub"><a href="#step-5%e9%9c%80%e6%b1%82%e6%8c%87%e6%b4%be">STEP 5：需求指派</a></li><li><a href="#3-%e9%a0%85%e7%9b%ae%e7%b6%93%e7%90%86%e5%a6%82%e4%bd%95%e5%88%86%e9%85%8d%e4%bb%bb%e5%8b%99">3. 『項目經理』如何分配任務</a></li><li class="is-sub"><a href="#step-1%e7%99%bb%e5%85%a5%e5%be%8c%e7%9c%8b%e8%a2%ab%e6%8c%87%e6%b4%be%e7%9a%84%e9%9c%80%e6%b1%82">STEP 1：登入後看被指派的需求</a></li><li class="is-sub"><a href="#step-2%e5%89%b5%e5%bb%ba%e9%a0%85%e7%9b%ae">STEP 2：創建項目</a></li><li class="is-sub"><a href="#step-3%e7%ae%a1%e7%90%86%e5%9c%98%e9%9a%8a">STEP 3：管理團隊</a></li><li class="is-sub"><a href="#step-4%e5%89%b5%e5%bb%ba%e4%bb%bb%e5%8b%99">STEP 4：創建任務</a></li><li><a href="#4-%e7%a0%94%e7%99%bc%e4%ba%ba%e5%93%a1%e5%ae%8c%e6%88%90%e6%94%b6%e5%88%b0%e7%9a%84%e4%bb%bb%e5%8b%99">4. 『研發人員』完成收到的任務</a></li><li class="is-sub"><a href="#step-1%e7%99%bb%e5%85%a5%e5%be%8c%e7%9c%8b%e8%a2%ab%e6%8c%87%e6%b4%be%e7%9a%84%e4%bb%bb%e5%8b%99%e5%92%8cbug">STEP 1：登入後看被指派的任務和Bug</a></li><li class="is-sub"><a href="#step-2%e6%9b%b4%e6%96%b0%e4%bb%bb%e5%8b%99%e7%9a%84%e8%b3%87%e8%a8%8a">STEP 2：更新任務的資訊</a></li><li><a href="#5-%e6%b8%ac%e8%a9%a6%e4%ba%ba%e5%93%a1%e7%a2%ba%e8%aa%8d%e6%af%8f%e5%80%8b%e7%92%b0%e7%af%80%e7%9a%84%e7%a9%a9%e5%ae%9a%e6%80%a7">5. 『測試人員』確認每個環節的穩定性</a></li><li class="is-sub"><a href="#step-1%e5%89%b5%e5%bb%ba%e7%94%a8%e4%be%8b">STEP 1：創建用例</a></li><li class="is-sub"><a href="#step-2%e4%ba%86%e8%a7%a3%e7%94%a8%e4%be%8b%e7%9a%84%e4%bd%bf%e7%94%a8%e6%96%b9%e5%bc%8f">STEP 2：了解用例的使用方式</a></li><li class="is-sub"><a href="#step-3%e6%b8%ac%e8%a9%a6%e9%8c%af%e8%aa%a4%e8%bd%89-bug">STEP 3：測試錯誤轉 Bug</a></li><li class="is-sub"><a href="#step-3%e7%94%9f%e6%88%90%e6%b8%ac%e8%a9%a6%e5%96%ae%e6%aa%a2%e9%a9%97%e6%88%90%e6%9e%9c">STEP 3：生成測試單檢驗成果</a></li><li><a href="#%e4%b8%89%e9%ab%94%e9%a9%97%e5%bf%83%e5%be%97">三、體驗心得</a></li><li class="is-sub"><a href="#-%e7%b3%bb%e7%b5%b1%e6%93%8d%e4%bd%9c%e9%9d%a2">➤ 系統操作面</a></li><li class="is-sub"><a href="#-%e4%b8%80%e4%ba%9b%e5%b0%8f%e7%bc%ba%e9%bb%9e">➤ 一些小缺點</a></li><li class="is-sub"><a href="#-%e8%88%87%e5%85%b6%e4%bb%96%e5%b0%88%e6%a1%88%e7%ae%a1%e7%90%86%e7%b3%bb%e7%b5%b1%e7%9a%84%e6%af%94%e8%bc%83">➤ 與其他專案管理系統的比較</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202103%2Fzentao-beginner-guide%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202103%2Fzentao-beginner-guide%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202103/zentao-beginner-guide/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202103/zentao-beginner-guide/" data-title="禪道 Zentao 新手教學 &amp; 體驗心得" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202103/zentao-installation-guide/images/zentao-installation-guide-01_hu_4721dc2ad71b2825.webp" srcset="/blog/202103/zentao-installation-guide/images/zentao-installation-guide-01_hu_185267b7680e2f1d.webp 240w, /blog/202103/zentao-installation-guide/images/zentao-installation-guide-01_hu_5ada562ae87e1bbf.webp 480w, /blog/202103/zentao-installation-guide/images/zentao-installation-guide-01_hu_9915fa8503fe5a92.webp 800w, /blog/202103/zentao-installation-guide/images/zentao-installation-guide-01_hu_4721dc2ad71b2825.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a></div>
+
+    <h3 class="card-title"><a href="/blog/202103/zentao-installation-guide/">禪道 Zentao 安裝教學 &amp; 重要系統設定，建議公司導入的專案管理系統</a></h3>
+    <p class="card-desc">過去安裝一些內部使用的 Server ，像 Gitlab、Redmine 都讓人在安裝的過程中遇到許多的挫折；直到最近同事向我推薦一款專案管理系統 — 禪道，聽到這詭異的名字讓我對他深表懷疑，抱著嘗試的心態安裝與試用了一下，讓我頓時非常後悔當初為什麼要研究…</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2021-03-10">2021.03.10</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202402/freelance-pitfalls/images/freelance-pitfalls-01_hu_1831ab61098de520.webp" srcset="/blog/202402/freelance-pitfalls/images/freelance-pitfalls-01_hu_128136b6d83a46d9.webp 240w, /blog/202402/freelance-pitfalls/images/freelance-pitfalls-01_hu_c93cd04be38bc544.webp 480w, /blog/202402/freelance-pitfalls/images/freelance-pitfalls-01_hu_804a65e47b82d36d.webp 800w, /blog/202402/freelance-pitfalls/images/freelance-pitfalls-01_hu_1831ab61098de520.webp 1145w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1145" height="644" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/freelancing/">接案心法</a></div>
+
+    <h3 class="card-title"><a href="/blog/202402/freelance-pitfalls/">為什麼接案就像踩地雷？苦主幫你來掃雷 ── 設計管理系列文</a></h3>
+    <p class="card-desc">很多人想透過接案來增加收入、豐富履歷，但往往踏入後，才發現這原來是一個踩地雷遊戲！</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2024-02-11">2024.02.11</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRsYAAABXRUJQVlA4ILoAAADwBACdASoYAA0APw1op0emIyGYBABjEMT1AE6ZQAHqnv&#43;1FcpuBh2jAOmA3/RfugAA&#43;nhwIbAMi24kNE67H20kjGXrfEiZoIu2ehtaos5vZF2loNP3kllBSPtJojMNihw7UlqSpF46166krwg07zluujujuDKuvzo&#43;dmSSEjbcdgMEzAkODKgEMxiMuuk7R8OtF4b974cI9lunxKgFOXi2l1QD/7lrOFpvWEeJCuRjysiPARD06uQAAAA=" alt="" width="24" height="13"><img src="/blog/202207/constantly-changing-requirements/images/constantly-changing-requirements-01_hu_f9737eb8f030000d.webp" srcset="/blog/202207/constantly-changing-requirements/images/constantly-changing-requirements-01_hu_b65b6dd61355180c.webp 240w, /blog/202207/constantly-changing-requirements/images/constantly-changing-requirements-01_hu_bea66fb5081ddec2.webp 480w, /blog/202207/constantly-changing-requirements/images/constantly-changing-requirements-01_hu_692c7ad2d1b3706.webp 800w, /blog/202207/constantly-changing-requirements/images/constantly-changing-requirements-01_hu_f9737eb8f030000d.webp 1158w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1158" height="605" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/engineer-war-stories/">工程師血淚史</a></div>
+
+    <h3 class="card-title"><a href="/blog/202207/constantly-changing-requirements/">需求不斷變更，到底哪個環節出錯了 ── 工程師血淚史</a></h3>
+    <p class="card-desc">有些 PM 覺得跟工程師溝通很痛苦，甚至大腦會不時冒出這樣的想法：「明明只是修改一個小地方，為什麼總有各式各樣的理由拒絕跟拖延，就算答應修改，做起來也是一副心不甘情不願的樣子。」</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2022-07-07">2022.07.07</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202103/zentao-beginner-guide/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

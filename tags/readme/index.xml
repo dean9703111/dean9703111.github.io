@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>README｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/readme/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 11 Jul 2024 18:11:07 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/readme/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>用 tree 套件生成專案樹狀的資料夾（目錄）結構</title>
+      <link>https://deanlin.net/blog/202407/project-tree-structure/</link>
+      <pubDate>Thu, 11 Jul 2024 18:11:07 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202407/project-tree-structure/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>隨著專案迭代，除了程式碼越來越龐大外，資料夾結構也越來越複雜。這邊推薦一個直接產生資料夾結構的套件「tree」，透過簡單的指令就能生成樹狀的目錄結構。</description>
+      <content:encoded><![CDATA[<h2 id="用-tree-套件生成專案樹狀資料夾目錄結構">用 tree 套件生成專案樹狀資料夾（目錄）結構<a class="h-anchor" href="#%e7%94%a8-tree-%e5%a5%97%e4%bb%b6%e7%94%9f%e6%88%90%e5%b0%88%e6%a1%88%e6%a8%b9%e7%8b%80%e8%b3%87%e6%96%99%e5%a4%be%e7%9b%ae%e9%8c%84%e7%b5%90%e6%a7%8b" aria-label="這個段落的連結"></a></h2>
+<p>隨著專案迭代，除了程式碼越來越龐大外，資料夾結構也越來越複雜。</p>
+<p>到後來，可能連開發人員自己都搞不清楚每個資料夾在做什麼事。</p>
+<p>為了避免交接、教育訓練時要花很多時間回憶、解釋，我們應該把這些資訊記錄到文件中。</p>
+<p>這邊推薦一個直接產生資料夾結構的套件「<a href="https://www.npmjs.com/package/tree-cli">tree</a>」，透過簡單的指令就能生成樹狀的目錄結構，以此加速文件撰寫。</p>
+<p><img src="https://deanlin.net/blog/202407/project-tree-structure/images/project-tree-structure-01.webp" width="1400" height="786" alt="用 tree 套件生成專案樹狀資料夾（目錄）結構（圖 1）" loading="lazy" decoding="async"></p>
+<h2 id="-安裝-tree-套件">安裝 tree 套件<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-tree-%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>在 Windows &amp; Mac 有安裝 npm 的電腦上，只要輸入如下指令便可安裝。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm install -g tree-cli
+</span></span></code></pre></div><p>安裝好後，可透過 <code>tree -h</code> 查看有哪些指令可以使用。</p>
+<p><img src="https://deanlin.net/blog/202407/project-tree-structure/images/project-tree-structure-02.webp" width="659" height="652" alt="安裝 tree 套件（圖 2）" loading="lazy" decoding="async"></p>
+<p>官方文件中有提醒，Windows 要用「treee」來當指令（多一個 e），筆者的環境為 Mac。</p>
+<p><img src="https://deanlin.net/blog/202407/project-tree-structure/images/project-tree-structure-03.webp" width="631" height="185" alt="安裝 tree 套件（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-使用-tree-生成樹狀的目錄結構">使用 tree 生成樹狀的目錄結構<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8-tree-%e7%94%9f%e6%88%90%e6%a8%b9%e7%8b%80%e7%9a%84%e7%9b%ae%e9%8c%84%e7%b5%90%e6%a7%8b" aria-label="這個段落的連結"></a></h2>
+<p>下面分享幾個高頻率使用的指令：</p>
+<ul>
+<li><code>tree</code> : 顯示「資料夾」與「目錄」</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202407/project-tree-structure/images/project-tree-structure-04.webp" width="440" height="446" alt="使用 tree 生成樹狀的目錄結構（圖 4）" loading="lazy" decoding="async"></p>
+<ul>
+<li><code>tree -d</code> : 僅顯示「資料夾」</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202407/project-tree-structure/images/project-tree-structure-05.webp" width="399" height="424" alt="使用 tree 生成樹狀的目錄結構（圖 5）" loading="lazy" decoding="async"></p>
+<ul>
+<li><code>tree -l n</code> : 顯示到第 n 層目錄（tree -l 2 就是顯示兩層目錄）</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202407/project-tree-structure/images/project-tree-structure-06.webp" width="399" height="709" alt="使用 tree 生成樹狀的目錄結構（圖 6）" loading="lazy" decoding="async"></p>
+<ul>
+<li><code>tree &ndash;ignore pattern</code> : 排除不要顯示的檔案/資料夾（tree &ndash;ignore node_modules 就能排除 node_modules 資料夾）</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202407/project-tree-structure/images/project-tree-structure-07.webp" width="448" height="396" alt="使用 tree 生成樹狀的目錄結構（圖 7）" loading="lazy" decoding="async"></p>
+<ul>
+<li><code>tree -o filename</code> : 將結果寫入 filename 這個檔案</li>
+</ul>
+<p>這邊展示一個組合指令： <code>tree &ndash;ignore node_modules -l 3 -d &gt; README.md</code></p>
+<p>這個指令能將 3 層目錄資料夾（排除 node_modules）結果寫入 README.md 這個檔案中。</p>
+<p>一開始生成好後，README.md 的預覽會因為沒有排版導致難以閱讀。</p>
+<p><img src="https://deanlin.net/blog/202407/project-tree-structure/images/project-tree-structure-08.webp" width="1400" height="680" alt="使用 tree 生成樹狀的目錄結構（圖 8）" loading="lazy" decoding="async"></p>
+<p>但只要在開頭和結尾加上「```」就會排版嚕！</p>
+<p><img src="https://deanlin.net/blog/202407/project-tree-structure/images/project-tree-structure-09.webp" width="1400" height="606" alt="使用 tree 生成樹狀的目錄結構（圖 9）" loading="lazy" decoding="async"></p>
+<p>以上就是這篇文章的分享，希望這個套件能幫助大家更輕鬆、清晰的撰寫與表達文件。</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>你知道對專案來說，README.md 有多麼重要嗎？ ── 工程師血淚史</title>
+      <link>https://deanlin.net/blog/202208/why-readme-matters/</link>
+      <pubDate>Fri, 05 Aug 2022 11:33:37 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202208/why-readme-matters/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>如果公司的專案很多，README.md 又沒有寫好，那後續接手的人會非常痛苦；如果公司專案的規模很大，README.md 又缺乏維護，那這個專案已經半隻腳踏進棺材。</description>
+      <content:encoded><![CDATA[<p>如果公司的專案很多，README.md 又沒有寫好，那後續接手的人會非常痛苦；如果公司專案的規模很大，README.md 又缺乏維護，那這個專案已經半隻腳踏進棺材。</p>
+<p>身為工程師，我理解大部分的人都想把精力放在寫出更好的程式，但專案能否長期發展，其實是取決於「文件」；如果文件亂七八糟，或者甚至根本沒有制式文件，那這個專案的未來發展性堪憂。</p>
+<p>從管理的角度來說，我們要去思考：「如果負責專案的工程師明天就不在了，這個專案能否進行下去？」</p>
+<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-01.webp" width="1400" height="733" alt="你知道對專案來說，README.md 有多麼重要嗎？ ── 工程師血淚史（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+一、為什麼 README.md 很重要？
+二、有哪些是 README.md 一定要提供的資訊？
+ ➤ 專案介紹 — Description
+ ➤ 運行環境需求 — Requirement
+ ➤ 環境檔（.env）有哪些欄位要自己填寫 — .env Setting
+ ➤ 在 Local 端的安裝＆運行步驟 — Build Setup(Local)
+ ➤ 在 Server 端的安裝＆驗證步驟- Build Setup(Server)
+ ➤ 可提供支援的同仁 ── Support
+ ➤ 注意事項 — Warning
+三、如果 README.md 有這些資訊，會讓日後維運更加順利
+ ➤ 系統架構圖 — System architecture
+ ➤ 使用者操作手冊 — User Manual
+ ➤ Demo 影片 — Demo Video
+ ➤ UI/UX 設計稿 — UI/UX Design
+ ➤ Function map
+ ➤ 單元測試、整合測試 — Unit Testing、Integration Testing
+</code></pre><h2 id="一為什麼-readmemd-很重要">一、為什麼 README.md 很重要？<a class="h-anchor" href="#%e4%b8%80%e7%82%ba%e4%bb%80%e9%ba%bc-readmemd-%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
+<p>因為開發人員第一次接觸專案時，就是透過 README.md 來了解的。</p>
+<p>它就像是一張專案的地圖，如果破損、缺乏維護，那踏上旅途的人勢必會遇上迷航、陷阱。</p>
+<p>在沒有律定 README.md 該有什麼內容時，每個人都是自由發揮；除了內容可能有短缺外，每份專案的撰寫風格也不盡相同，因此想透過這篇文章律定基礎架構。</p>
+<blockquote>
+<p>這邊提醒讀者，本篇文章所建議的 README.md 內容是提供給「內部開發人員」看的；如果你的專案是對外開放，部分內容請自行斟酌。</p>
+</blockquote>
+<hr>
+<h2 id="二有哪些是-readmemd-一定要提供的資訊">二、有哪些是 README.md 一定要提供的資訊？<a class="h-anchor" href="#%e4%ba%8c%e6%9c%89%e5%93%aa%e4%ba%9b%e6%98%af-readmemd-%e4%b8%80%e5%ae%9a%e8%a6%81%e6%8f%90%e4%be%9b%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
+<p>下面列出的項目，是筆者認為對第一次接觸專案、準備維護專案的人有幫助的資訊。</p>
+<h3 id="-專案介紹--description">➤ 專案介紹 ── Description<a class="h-anchor" href="#-%e5%b0%88%e6%a1%88%e4%bb%8b%e7%b4%b9--description" aria-label="這個段落的連結"></a></h3>
+<p>簡述專案目標，讓第一次接觸的人也能在短時間初步了解專案（如果使用到少見的專有名詞，請附加說明）。</p>
+<blockquote>
+<p>如果是前後端分離的專案，請附上前端/後端的專案連結。</p>
+</blockquote>
+<h3 id="-運行環境需求--requirement">➤ 運行環境需求 ── Requirement<a class="h-anchor" href="#-%e9%81%8b%e8%a1%8c%e7%92%b0%e5%a2%83%e9%9c%80%e6%b1%82--requirement" aria-label="這個段落的連結"></a></h3>
+<p>描述這個專案運行所需要的環境，比如說：</p>
+<ul>
+<li><strong>前端（Frontend）</strong>：NVM、Yarn、Node.js</li>
+<li><strong>後端（Backend）</strong>：PHP、Composer、Laravel、MySQL</li>
+</ul>
+<blockquote>
+<p>隨著技術進步，各項工具的版本不斷更迭；因此建議要附上能讓專案順利運行的「版本」，因為許多工具並沒有向下相容。</p>
+</blockquote>
+<h3 id="-環境檔env有哪些欄位要自己填寫--env-setting">➤ 環境檔（.env）有哪些欄位要自己填寫 ── .env Setting<a class="h-anchor" href="#-%e7%92%b0%e5%a2%83%e6%aa%94env%e6%9c%89%e5%93%aa%e4%ba%9b%e6%ac%84%e4%bd%8d%e8%a6%81%e8%87%aa%e5%b7%b1%e5%a1%ab%e5%af%ab--env-setting" aria-label="這個段落的連結"></a></h3>
+<p>以後端來說，涉及機密、隱私、個人化的參數會需要自己填寫，比如：</p>
+<ol>
+<li>DB 帳號密碼、IP、Port</li>
+<li>JWT 有效期限</li>
+<li>Mail 相關參數</li>
+<li>Storage 路徑</li>
+</ol>
+<h3 id="-在-local-端的安裝運行步驟--build-setup-local">➤ 在 Local 端的安裝＆運行步驟 ── Build Setup (Local)<a class="h-anchor" href="#-%e5%9c%a8-local-%e7%ab%af%e7%9a%84%e5%ae%89%e8%a3%9d%e9%81%8b%e8%a1%8c%e6%ad%a5%e9%a9%9f--build-setup-local" aria-label="這個段落的連結"></a></h3>
+<p>是那種「複製貼上」就能夠順利安裝的步驟，可以放一些參考連結，但不要讓使用者需要去閱讀官方文檔才知道怎麼安裝。</p>
+<p>以後端舉例，指令需至少包含如下內容：</p>
+<ol>
+<li>專案安裝步驟</li>
+<li>DB Migration</li>
+<li>DB Seeder</li>
+<li>運行專案</li>
+</ol>
+<blockquote>
+<p>如果採前後端分離，可以附上 POSTMAN 的 collection 方便前端驗證。</p>
+</blockquote>
+<h3 id="-在-server-端的安裝驗證步驟--build-setup-server">➤ 在 Server 端的安裝＆驗證步驟 ── Build Setup (Server)<a class="h-anchor" href="#-%e5%9c%a8-server-%e7%ab%af%e7%9a%84%e5%ae%89%e8%a3%9d%e9%a9%97%e8%ad%89%e6%ad%a5%e9%a9%9f--build-setup-server" aria-label="這個段落的連結"></a></h3>
+<p>如果不是採取自動部署的策略，那筆者建議紀錄如下內容：</p>
+<ol>
+<li>專案運行所需套件，及其對應的指令</li>
+<li>伺服器端參數（ex：API 最長可執行時間、可上傳檔案容量限制、單個 IP 每分鐘存取次數）</li>
+<li>不同環境對應的 Server ip</li>
+<li>相關參數調整後，重啟使其生效的指令</li>
+<li>部署完成後，可以透過什麼方式（工具）驗證功能皆如預期運行</li>
+</ol>
+<h3 id="-可提供支援的同仁--support">➤ 可提供支援的同仁 ── Support<a class="h-anchor" href="#-%e5%8f%af%e6%8f%90%e4%be%9b%e6%94%af%e6%8f%b4%e7%9a%84%e5%90%8c%e4%bb%81--support" aria-label="這個段落的連結"></a></h3>
+<p>讓初次接觸專案的人知道遇到問題可以找誰詢問，建議在這個部分放上開發人員的聯絡方式（ex：座位、email）。</p>
+<p>有時問題可能有其歷史背景，所以可以用附註形式，放上了解這份專案歷史的同仁（ex：主管、負責的 PM）。</p>
+<h3 id="-注意事項--warning">➤ 注意事項 ── Warning<a class="h-anchor" href="#-%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85--warning" aria-label="這個段落的連結"></a></h3>
+<p>每個專案或多或少都會有一些特別的設計，時間拉長難免遺忘，建議把他們記錄下來，比如：</p>
+<ol>
+<li>如果 API 文檔是用指令產生的，請記得記錄下來</li>
+<li>如果有設計排程（Schedule），把觸發的時間點列出</li>
+<li>前端在不同環境的建立指令（Script）</li>
+<li>如果用到特別的套件，建議簡單說明在什麼時機應用，並放上官方文檔連結</li>
+<li>專案的授權條款（License）</li>
+</ol>
+<hr>
+<h2 id="三如果-readmemd-有這些資訊會讓日後維運更加順利">三、如果 README.md 有這些資訊，會讓日後維運更加順利<a class="h-anchor" href="#%e4%b8%89%e5%a6%82%e6%9e%9c-readmemd-%e6%9c%89%e9%80%99%e4%ba%9b%e8%b3%87%e8%a8%8a%e6%9c%83%e8%ae%93%e6%97%a5%e5%be%8c%e7%b6%ad%e9%81%8b%e6%9b%b4%e5%8a%a0%e9%a0%86%e5%88%a9" aria-label="這個段落的連結"></a></h2>
+<h3 id="-系統架構圖--system-architecture">➤ 系統架構圖 ── System architecture<a class="h-anchor" href="#-%e7%b3%bb%e7%b5%b1%e6%9e%b6%e6%a7%8b%e5%9c%96--system-architecture" aria-label="這個段落的連結"></a></h3>
+<p>如果專案結構複雜，或是需要串接多個系統，那建議放上系統架構圖，否則接手的工程師會需要花很多時間去研究他們之間的關聯性。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-02.webp" width="1044" height="904" alt="IMG from：https://commons.wikimedia.org/" loading="lazy" decoding="async">
+  <figcaption>IMG from：<a href="https://commons.wikimedia.org/">https://commons.wikimedia.org/</a></figcaption>
+</figure>
+
+<h3 id="-使用者操作手冊--user-manual">➤ 使用者操作手冊 ── User Manual<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8%e8%80%85%e6%93%8d%e4%bd%9c%e6%89%8b%e5%86%8a--user-manual" aria-label="這個段落的連結"></a></h3>
+<p>每份專案都一定要製作使用者操作手冊，否則 PM、工程師會不停被重複的問題打擾；有了這份手冊後，之後負責維運的工程師也能更快上手。</p>
+<blockquote>
+<p>形式可以是 Wiki、Word…等等，讓使用者方便閱讀為第一優先。</p>
+</blockquote>
+<h3 id="-demo-影片-demo-video">➤ Demo 影片── Demo Video<a class="h-anchor" href="#-demo-%e5%bd%b1%e7%89%87-demo-video" aria-label="這個段落的連結"></a></h3>
+<p>如果可以，建議在專案完成後錄製「簡單」的 Demo 影片；主要目的是讓工程師知曉專案「正常」的狀況下應該長什麼樣子。</p>
+<blockquote>
+<p><em>有時專案看似順利啟動了，但實際上部分功能是不完整的（ex：前端順利啟動了，但 WebSocket 異常）。</em></p>
+</blockquote>
+<h3 id="-uiux-設計稿--uiux-design">➤ UI/UX 設計稿 ── UI/UX Design<a class="h-anchor" href="#-uiux-%e8%a8%ad%e8%a8%88%e7%a8%bf--uiux-design" aria-label="這個段落的連結"></a></h3>
+<p>放上 Wireframe、Mockup、Prototype 等設計稿連結（如果有的話）</p>
+<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-03.webp" width="1000" height="667" alt="UI/UX 設計稿 ── UI/UX Design（圖 3）" loading="lazy" decoding="async"></p>
+<h3 id="-function-map">➤ Function map<a class="h-anchor" href="#-function-map" aria-label="這個段落的連結"></a></h3>
+<p>通常會以心智圖來呈現，PM 可以透過它讓工程師快速了解、評估初期的功能。</p>
+<p>在遇到需求要新增或變更時，有這張圖工程師能也更快回憶，並掌握重點。</p>
+<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-04.webp" width="1400" height="1566" alt="Function map（圖 4）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><a href="https://gitmind.com/">GitMind</a> 是個不錯的工具，推薦大家使用看看。</p>
+</blockquote>
+<h3 id="-單元測試整合測試--unit-testingintegration-testing">➤ 單元測試、整合測試 ── Unit Testing、Integration Testing<a class="h-anchor" href="#-%e5%96%ae%e5%85%83%e6%b8%ac%e8%a9%a6%e6%95%b4%e5%90%88%e6%b8%ac%e8%a9%a6--unit-testingintegration-testing" aria-label="這個段落的連結"></a></h3>
+<p>專案的穩定，是建立在有寫測試程式的前提下；否則系統很容易因為需求的新增、變更，而導致過去的功能毀損。</p>
+<p>在測試方面，除了「整體」的測試外，有時我們只需要測試「特定功能」；可以把常用的測試指令紀錄在這裡（ex：邏輯複雜、關聯廣泛的測試）。</p>
+<blockquote class="pullquote"><p>以上內容是筆者過去專案經驗的彙整，若有未盡之處，歡迎留言補充。</p>
+</blockquote>
+<hr>
+<pre tabindex="0"><code>工程師血淚史
+▋ 團隊在系統開發上遇到了哪些問題
+▋ 需求不斷變更，到底哪個環節出錯了
+▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
+▋ 如果沒有明確的開發流程，團隊將會無所適從
+▋ 你知道對專案來說，README.md 有多麼重要嗎？(本篇)
+</code></pre>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Vue 3｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/vue-3/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 19 Jan 2023 13:58:00 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/vue-3/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing</title>
+      <link>https://deanlin.net/blog/202301/vuetify-vite-unit-testing/</link>
+      <pubDate>Thu, 19 Jan 2023 13:58:00 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/vuetify-vite-unit-testing/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>這篇文章會先帶大家建立 Vuetify 的初始環境（Vue3 & Vite & TypeScript），並導入「Vue Test Utils」這款測試工具。</description>
+      <content:encoded><![CDATA[<blockquote>
+<p>如果你完全沒有接觸過單元測試，建議可以先閱讀這兩篇文章：「<a href="https://deanlin.net/blog/202301/jest-unit-testing-typescript/">認識 Jest 測試框架，開始動手寫單元測試</a>、<a href="https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/">Jest 框架進階應用（describe、Setup and Teardown、Mock function） </a>」。</p>
+</blockquote>
+<p>這篇文章會先帶大家建立 Vuetify 的初始環境（Vue3 &amp; Vite &amp; TypeScript），並導入「Vue Test Utils」這款測試工具。</p>
+<p><img src="https://deanlin.net/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-01.webp" width="1148" height="598" alt="在 Vuetify（Vite &amp; TypeScript）中導入單元測試 Unit Testing（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+ㄧ、初始化專案、安裝必要套件
+二、編寫測試的 config 檔
+三、撰寫第一隻測試程式
+四、運行測試程式確認結果符合預期
+五、VSCode 的 Vitest 外掛
+六、一些建議
+</code></pre><blockquote>
+<p>讀者可以直接到<a href="https://github.com/dean9703111/vuetify-vite-ts-test">筆者的 Github </a>，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。</p>
+</blockquote>
+<h2 id="ㄧ初始化專案安裝必要套件">ㄧ、初始化專案、安裝必要套件<a class="h-anchor" href="#%e3%84%a7%e5%88%9d%e5%a7%8b%e5%8c%96%e5%b0%88%e6%a1%88%e5%ae%89%e8%a3%9d%e5%bf%85%e8%a6%81%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>筆者 node.js 的版本為 18.13.0，建議選擇較新的版本，否則安裝套件的過程會遇到一些問題。</p>
+</blockquote>
+<p>這邊我們參考 Vuetify 官方文件的指令 <code>yarn create vuetify</code> 來建立專案。</p>
+<p>建立過程中會問你很多問題，筆者的選擇如下：</p>
+<ul>
+<li><strong>Project name</strong>：自行決定（ex：vuetify-vite-ts-test）</li>
+<li><strong>Which preset would you like to install</strong>：Essentials (Vuetify, VueRouter, Pinia)</li>
+<li><strong>Use TypeScript</strong>：Yes</li>
+<li><strong>Would you like to install dependencies with yarn, npm, or pnpm?</strong>：Yarn</li>
+</ul>
+<blockquote>
+<p>不過問題時常調整，大家參考就好。</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-02.webp" width="1400" height="898" alt="ㄧ、初始化專案、安裝必要套件（圖 2）" loading="lazy" decoding="async"></p>
+<p>建立好 Vuetify 專案後，我們來安裝測試輔助套件如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn add --dev @vue/test-utils @vitejs/plugin-vue vitest jsdom
+</span></span></code></pre></div><p>完成以上步驟後，在終端機輸入指令 <code>yarn dev</code>，看看是否能順利啟動。</p>
+<p><img src="https://deanlin.net/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-03.webp" width="489" height="195" alt="ㄧ、初始化專案、安裝必要套件（圖 3）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-04.webp" width="1400" height="795" alt="ㄧ、初始化專案、安裝必要套件（圖 4）" loading="lazy" decoding="async"></p>
+<p>如果網頁能順利跑出來就恭喜你完成第一步嚕！</p>
+<hr>
+<h2 id="二編寫測試的-config-檔">二、編寫測試的 config 檔<a class="h-anchor" href="#%e4%ba%8c%e7%b7%a8%e5%af%ab%e6%b8%ac%e8%a9%a6%e7%9a%84-config-%e6%aa%94" aria-label="這個段落的連結"></a></h2>
+<p>在專案根目錄下，新增 vitest.config.ts，這是專門為了單元測試寫的相關設定檔，你仔細看會發現它跟「vite.config.ts」設定很像。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { defineConfig } <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#39;vitest/config&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> vue <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#39;@vitejs/plugin-vue&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> vuetify <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#39;vite-plugin-vuetify&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { fileURLToPath, URL } <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#39;node:url&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">export</span> <span style="color:#ff7b72">default</span> defineConfig({
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// Resolver
+</span></span></span><span style="display:flex;"><span>  resolve<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// https://vitejs.dev/config/#resolve-alias
+</span></span></span><span style="display:flex;"><span>    alias<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a5d6ff">&#39;@&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> fileURLToPath(<span style="color:#ff7b72">new</span> URL(<span style="color:#a5d6ff">&#39;./src&#39;</span>, <span style="color:#ff7b72">import</span>.meta.url)),
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// plugins
+</span></span></span><span style="display:flex;"><span>  plugins<span style="color:#ff7b72;font-weight:bold">:</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Vue3
+</span></span></span><span style="display:flex;"><span>    vue(),
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Vuetify Loader
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// https://github.com/vuetifyjs/vuetify-loader
+</span></span></span><span style="display:flex;"><span>    vuetify({
+</span></span><span style="display:flex;"><span>      autoImport: <span style="color:#ff7b72">true</span>,
+</span></span><span style="display:flex;"><span>      styles<span style="color:#ff7b72;font-weight:bold">:</span> { configFile<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;./src/styles/variables.scss&#39;</span> },
+</span></span><span style="display:flex;"><span>    }),
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>  test<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// https://vitest.dev/guide/#configuring-vitest
+</span></span></span><span style="display:flex;"><span>    globals: <span style="color:#ff7b72">true</span>,
+</span></span><span style="display:flex;"><span>    environment<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;jsdom&#39;</span>,
+</span></span><span style="display:flex;"><span>    deps<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>      inline<span style="color:#ff7b72;font-weight:bold">:</span> [<span style="color:#a5d6ff">&#39;vuetify&#39;</span>],
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><hr>
+<h2 id="三撰寫第一隻測試程式">三、撰寫第一隻測試程式<a class="h-anchor" href="#%e4%b8%89%e6%92%b0%e5%af%ab%e7%ac%ac%e4%b8%80%e9%9a%bb%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>我們就以入口頁「HelloWorld.vue」為範例跟大家說明。</p>
+<h3 id="-調整srccomponentshelloworldvue的程式">➤ 調整「src/components/HelloWorld.vue」的程式<a class="h-anchor" href="#-%e8%aa%bf%e6%95%b4srccomponentshelloworldvue%e7%9a%84%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>這裡我們新增 defineProps 以接收傳進來的「msg」，並在頁面上顯示。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span>&lt;<span style="color:#7ee787">template</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#7ee787">v</span><span style="color:#f85149">-</span>container class<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;fill-height&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#7ee787">v</span><span style="color:#f85149">-</span>responsive class<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;d-flex align-center text-center fill-height&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#7ee787">v</span><span style="color:#f85149">-</span>img
+</span></span><span style="display:flex;"><span>        contain
+</span></span><span style="display:flex;"><span>        height<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;200&#34;</span>
+</span></span><span style="display:flex;"><span>        src<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;@/assets/logo.svg&#34;</span>
+</span></span><span style="display:flex;"><span>      /&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#7ee787">h1</span> class<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;green&#34;</span>&gt;{{ msg }}&lt;/<span style="color:#7ee787">h1</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72;font-weight:bold">&lt;</span><span style="color:#f85149">/v-responsive&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72;font-weight:bold">&lt;</span><span style="color:#f85149">/v-container&gt;</span>
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">template</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#7ee787">script</span> setup lang<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;ts&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>defineProps<span style="color:#ff7b72;font-weight:bold">&lt;</span>{
+</span></span><span style="display:flex;"><span>  msg: <span style="color:#ff7b72">string</span>;
+</span></span><span style="display:flex;"><span>}<span style="color:#ff7b72;font-weight:bold">&gt;</span>();
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">script</span>&gt;
+</span></span></code></pre></div><h3 id="-新增srccomponents__test__helloworldspects作為測試程式">➤ 新增「src/components/__test__/HelloWorld.spec.ts」作為測試程式<a class="h-anchor" href="#-%e6%96%b0%e5%a2%9esrccomponents__test__helloworldspects%e4%bd%9c%e7%82%ba%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>在 components 資料夾下建立「__test__」的資料夾放置測試程式，我們透過它來確認 HelloWorld 頁面是否有收到 props 的 msg，並如預期被渲染。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { describe, it, expect } <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#34;vitest&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> { mount } <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#34;@vue/test-utils&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> HelloWorld <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#34;../HelloWorld.vue&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">import</span> vuetify <span style="color:#ff7b72">from</span> <span style="color:#a5d6ff">&#39;@/plugins/vuetify&#39;</span>;
+</span></span><span style="display:flex;"><span>describe(<span style="color:#a5d6ff">&#34;HelloWorld&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  it(<span style="color:#a5d6ff">&#34;renders properly&#34;</span>, () <span style="color:#ff7b72;font-weight:bold">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> wrapper <span style="color:#ff7b72;font-weight:bold">=</span> mount(HelloWorld, {
+</span></span><span style="display:flex;"><span>      <span style="color:#ff7b72">global</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>        plugins<span style="color:#ff7b72;font-weight:bold">:</span> [vuetify],
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      props<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>        msg<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;Hello Vitest&#34;</span>
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>    expect(wrapper.text()).toContain(<span style="color:#a5d6ff">&#34;Hello Vitest&#34;</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><hr>
+<h2 id="四運行測試程式確認結果符合預期">四、運行測試程式確認結果符合預期<a class="h-anchor" href="#%e5%9b%9b%e9%81%8b%e8%a1%8c%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f%e7%a2%ba%e8%aa%8d%e7%b5%90%e6%9e%9c%e7%ac%a6%e5%90%88%e9%a0%90%e6%9c%9f" aria-label="這個段落的連結"></a></h2>
+<p>在 package.json 新增一條測試用的 script：<code>&ldquo;test:unit&rdquo;: &ldquo;vitest &ndash;environment jsdom &ndash;root src/&quot;</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;name&#34;</span>: <span style="color:#a5d6ff">&#34;vuetify-vite-ts-test&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;version&#34;</span>: <span style="color:#a5d6ff">&#34;0.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;private&#34;</span>: <span style="color:#79c0ff">true</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;scripts&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;dev&#34;</span>: <span style="color:#a5d6ff">&#34;vite&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;build&#34;</span>: <span style="color:#a5d6ff">&#34;vue-tsc --noEmit &amp;&amp; vite build&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;preview&#34;</span>: <span style="color:#a5d6ff">&#34;vite preview&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;lint&#34;</span>: <span style="color:#a5d6ff">&#34;eslint . --fix --ignore-path .gitignore&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;test:unit&#34;</span>: <span style="color:#a5d6ff">&#34;vitest --environment jsdom --root src/&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;dependencies&#34;</span>: {<span style="color:#f85149">...</span>},
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;devDependencies&#34;</span>: {<span style="color:#f85149">...</span>}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>新增後在終端機輸入指令 <code>yarn test:unit</code> 就會開始執行測試，如果看到下面的畫面，就恭喜你成功導入單元測試嚕！</p>
+<p><img src="https://deanlin.net/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-05.webp" width="944" height="420" alt="四、運行測試程式確認結果符合預期（圖 5）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="五vscode-的-vitest-外掛">五、VSCode 的 Vitest 外掛<a class="h-anchor" href="#%e4%ba%94vscode-%e7%9a%84-vitest-%e5%a4%96%e6%8e%9b" aria-label="這個段落的連結"></a></h2>
+<p>跟 Jest 一樣，VSCode 也有 Vite 的外掛喔！他叫做 <a href="https://marketplace.visualstudio.com/items?itemName=ZixuanChen.vitest-explorer">Vitest</a>。</p>
+<p><img src="https://deanlin.net/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-06.webp" width="1400" height="384" alt="五、VSCode 的 Vitest 外掛（圖 6）" loading="lazy" decoding="async"></p>
+<p>安裝完成後，點擊 VSCode 左側的「Testing」icon，就可以測試嚕！</p>
+<p><img src="https://deanlin.net/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-07.webp" width="1400" height="540" alt="五、VSCode 的 Vitest 外掛（圖 7）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="六一些建議">六、一些建議<a class="h-anchor" href="#%e5%85%ad%e4%b8%80%e4%ba%9b%e5%bb%ba%e8%ad%b0" aria-label="這個段落的連結"></a></h2>
+<h3 id="-vscode-改使用-volar-這個外掛">➤ VSCode 改使用 Volar 這個外掛<a class="h-anchor" href="#-vscode-%e6%94%b9%e4%bd%bf%e7%94%a8-volar-%e9%80%99%e5%80%8b%e5%a4%96%e6%8e%9b" aria-label="這個段落的連結"></a></h3>
+<p>今天這個是以 Vue3 設計的專案，如果你過去 VSCode 使用的版本是 Vue2，那可能有些程式下方會有警告，那可能是 VSCode 過去在 Vue2 時選用 <a href="https://marketplace.visualstudio.com/items?itemName=octref.vetur">Vetur</a> 這個外掛，現在 Vue3 要改成使用 <a href="https://marketplace.visualstudio.com/items?itemName=vue.volar">Volar</a>。</p>
+<h3 id="-如果遇到了type-plugin-is-not-assignable-to-type-pluginoption這類的錯誤">➤ 如果遇到了「Type &lsquo;Plugin&rsquo; is not assignable to type &lsquo;PluginOption&rsquo;」這類的錯誤<a class="h-anchor" href="#-%e5%a6%82%e6%9e%9c%e9%81%87%e5%88%b0%e4%ba%86type-plugin-is-not-assignable-to-type-pluginoption%e9%80%99%e9%a1%9e%e7%9a%84%e9%8c%af%e8%aa%a4" aria-label="這個段落的連結"></a></h3>
+<p>通常是因為安裝了多個 Vite 的版本所導致的，建議先將根目錄下的「node_modules」以及「.lock」全部移除，然後再重新安裝套件。</p>
+<blockquote>
+<p>筆者是在 nvm 切換 node.js 版本時遇到這個問題的。</p>
+</blockquote>
+<p>那今天的文章就分享到這裡，<a href="https://deanlin.net/blog/202301/vue-test-utils-examples/">下一篇文章會以實際案例跟大家分享 Vue Test Utils 的應用</a>！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/2680ca82395e" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">單元測試系列文</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/vuetify-vite-unit-testing/images/vuetify-vite-unit-testing-card-01_hu_ef2384f40f02a8f4.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="看起來能動的系統，才是最危險的！如果你正在 Vibe Coding，那這篇文章一定要看完！它可以幫你有系統地建立安全意識。我會從「前端、後端、資料庫、版本控制」四個面向，讓你了解風險與問題出在哪。完整的 Demo，可以觀看 YT 喔 …">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202511/vibe-coding-pitfalls/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱">
+  <meta property="og:description" content="看起來能動的系統，才是最危險的！如果你正在 Vibe Coding，那這篇文章一定要看完！它可以幫你有系統地建立安全意識。我會從「前端、後端、資料庫、版本控制」四個面向，讓你了解風險與問題出在哪。完整的 Demo，可以觀看 YT 喔 …">
+  <meta property="og:url" content="https://deanlin.net/blog/202511/vibe-coding-pitfalls/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2025-11-30T20:22:15&#43;08:00">
+  <meta property="article:modified_time" content="2025-11-30T20:22:15&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="AI 實戰">
+  <meta property="article:tag" content="Vibe Coding">
+  <meta property="article:tag" content="Security">
+  <meta property="article:tag" content="AI">
+  <meta property="article:tag" content="Web Development">
+  <meta property="article:tag" content="Generative AI Use Cases">
+  <meta property="og:image" content="https://deanlin.net/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-og.jpg">
+  <meta name="twitter:title" content="Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱">
+  <meta name="twitter:description" content="看起來能動的系統，才是最危險的！如果你正在 Vibe Coding，那這篇文章一定要看完！它可以幫你有系統地建立安全意識。我會從「前端、後端、資料庫、版本控制」四個面向，讓你了解風險與問題出在哪。完整的 Demo，可以觀看 YT 喔 …">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202511/vibe-coding-pitfalls/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"AI 實戰"},"articleSection":"AI 實戰","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2025-11-30T20:22:15+08:00","datePublished":"2025-11-30T20:22:15+08:00","description":"看起來能動的系統，才是最危險的！如果你正在 Vibe Coding，那這篇文章一定要看完！它可以幫你有系統地建立安全意識。我會從「前端、後端、資料庫、版本控制」四個面向，讓你了解風險與問題出在哪。完整的 Demo，可以觀看 YT 喔 …","headline":"Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱","image":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Vibe Coding, Security, AI, Web Development, Generative AI Use Cases","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202511/vibe-coding-pitfalls/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://dean-lin.medium.com/vibe-coding-%E5%AF%A6%E6%88%B0%E5%BF%85%E7%9C%8B-10-%E5%80%8B%E6%9C%83%E8%AE%93%E4%BD%A0%E5%B0%88%E6%A1%88%E7%BF%BB%E8%BB%8A%E7%9A%84%E6%8A%80%E8%A1%93%E9%99%B7%E9%98%B1-4a7f80f5833b"],"timeRequired":"PT3M","url":"https://deanlin.net/blog/202511/vibe-coding-pitfalls/","wordCount":1206},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/ai/","name":"AI 實戰","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202511/vibe-coding-pitfalls/","name":"Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰</a></li>
+        <li><a href="/categories/tech/">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/ai/">AI 實戰</a>
+      </nav>
+      <h1 class="article-title">Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱</h1>
+      <p class="article-lede">看起來能動的系統，才是最危險的！</p>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2025-11-30">2025.11.30</time>
+              <span>閱讀約 3 分鐘</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#-1-%e6%8a%8a%e6%95%8f%e6%84%9f%e6%95%b8%e6%93%9a%e5%af%ab%e5%9c%a8%e5%89%8d%e7%ab%af">1. 把敏感數據寫在前端</a></li><li><a href="#-2-%e5%b0%87%e6%9a%ab%e5%ad%98%e8%b3%87%e6%96%99%e7%95%b6%e6%b0%b8%e4%b9%85%e8%b3%87%e6%96%99">2. 將暫存資料當永久資料</a></li><li><a href="#-3-%e9%a0%81%e9%9d%a2%e6%b2%92%e6%9c%89%e5%81%9a%e6%ac%8a%e9%99%90%e6%8e%a7%e7%ae%a1">3. 頁面沒有做權限控管</a></li><li><a href="#-4-api-%e6%b2%92%e6%9c%89%e6%ac%8a%e9%99%90%e8%a8%ad%e8%a8%88">4. API 沒有權限設計</a></li><li><a href="#-5-%e6%b2%92%e6%9c%89%e8%a8%ad%e8%a8%88%e5%af%a9%e8%a8%88%e6%97%a5%e8%aa%8c">5. 沒有設計審計日誌</a></li><li><a href="#-6-%e6%b2%92%e6%9c%89%e9%99%90%e5%88%b6-api-%e5%91%bc%e5%8f%ab%e6%ac%a1%e6%95%b8">6. 沒有限制 API 呼叫次數</a></li><li><a href="#-7-%e4%bd%bf%e7%94%a8%e8%80%85%e5%af%86%e7%a2%bc%e7%94%a8%e6%98%8e%e6%96%87%e5%84%b2%e5%ad%98">7. 使用者密碼用明文儲存</a></li><li><a href="#-8-%e9%81%b8%e9%8c%af%e8%b3%87%e6%96%99%e5%ba%ab">8. 選錯資料庫</a></li><li><a href="#-9-%e6%8a%8a%e6%a9%9f%e5%af%86%e6%aa%94%e6%a1%88%e4%b8%8a%e5%82%b3%e5%88%b0-github">9. 把機密檔案上傳到 GitHub</a></li><li><a href="#-10-%e6%b2%92%e6%9c%89%e8%a8%ad%e8%a8%88-gitignore">10. 沒有設計 .gitignore</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p><img src="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-01.webp" srcset="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-01_hu_b615c3f9c7155ac2.webp 720w, /blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="788" alt="Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱（圖 1）" loading="lazy" decoding="async"></p>
+<p>如果你正在 Vibe Coding，那這篇文章一定要看完！</p>
+<p>它可以幫你有系統地建立安全意識。</p>
+<p>我會從「前端、後端、資料庫、版本控制」四個面向，讓你了解風險與問題出在哪。</p>
+<blockquote>
+<p>完整的 Demo，可以觀看 YT 喔 👉</p>
+<p>對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。</p>
+</blockquote>
+<div class="yt" data-yt="sLGT6fA9kIA" data-title="【AI 陷阱 EP2】Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=sLGT6fA9kIA" target="_blank" rel="noopener" aria-label="播放影片：【AI 陷阱 EP2】Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱">
+    <img src="https://i.ytimg.com/vi/sLGT6fA9kIA/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">【AI 陷阱 EP2】Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱</span>
+  </a>
+</div>
+
+<h2 id="-1-把敏感數據寫在前端">1. 把敏感數據寫在前端<a class="h-anchor" href="#-1-%e6%8a%8a%e6%95%8f%e6%84%9f%e6%95%b8%e6%93%9a%e5%af%ab%e5%9c%a8%e5%89%8d%e7%ab%af" aria-label="這個段落的連結"></a></h2>
+<p>有時我們請 AI 設計一個登入頁面，結果他把帳號密碼的驗證邏輯寫在前端。</p>
+<p>這樣只要按下 F12，搜尋「password」這類關鍵字，就可能找到登入的帳號密碼。</p>
+<p><img src="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-02.webp" srcset="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-02_hu_725f241e04359498.webp 720w, /blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-02.webp 1328w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1328" height="607" alt="1. 把敏感數據寫在前端（圖 2）" loading="lazy" decoding="async"></p>
+<p>除了帳號密碼外，有些人會分享一些 AI 生成圖片、影片的服務，但這些服務通常要 API Key 才能使用。</p>
+<p><img src="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-03.webp" srcset="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-03_hu_2de7e5d5f74da2a0.webp 720w, /blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-03.webp 1295w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1295" height="593" alt="1. 把敏感數據寫在前端（圖 3）" loading="lazy" decoding="async"></p>
+<p>而 API Key 往往要綁定信用卡，這代表洩漏 API Key，你的信用卡可能會被刷爆。</p>
+<hr>
+<h2 id="-2-將暫存資料當永久資料">2. 將暫存資料當永久資料<a class="h-anchor" href="#-2-%e5%b0%87%e6%9a%ab%e5%ad%98%e8%b3%87%e6%96%99%e7%95%b6%e6%b0%b8%e4%b9%85%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h2>
+<p>有時 AI 做好的網站看起來有儲存功能。</p>
+<p>但他未必是存到資料庫，有可能只是暫存到網頁的變數，或是存到瀏覽器的 localStorage 中。</p>
+<p><img src="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-04.webp" srcset="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-04_hu_abf2750faf101860.webp 720w, /blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-04.webp 1292w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1292" height="584" alt="2. 將暫存資料當永久資料（圖 4）" loading="lazy" decoding="async"></p>
+<p>這樣當你刷新頁面，或換一個瀏覽器時，就會發現資料不見了。</p>
+<hr>
+<h2 id="-3-頁面沒有做權限控管">3. 頁面沒有做權限控管<a class="h-anchor" href="#-3-%e9%a0%81%e9%9d%a2%e6%b2%92%e6%9c%89%e5%81%9a%e6%ac%8a%e9%99%90%e6%8e%a7%e7%ae%a1" aria-label="這個段落的連結"></a></h2>
+<p>這樣只要使用者知道網頁路徑，就能跳轉到管理者介面。</p>
+<p><img src="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-05.webp" srcset="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-05_hu_3d4d52214f3887d0.webp 720w, /blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-05.webp 1234w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1234" height="593" alt="3. 頁面沒有做權限控管（圖 5）" loading="lazy" decoding="async"></p>
+<p>而這個問題可能會導致客戶個資外洩、產品訂單被篡改，除了經濟損失外，還會連帶影響品牌信譽。</p>
+<hr>
+<h2 id="-4-api-沒有權限設計">4. API 沒有權限設計<a class="h-anchor" href="#-4-api-%e6%b2%92%e6%9c%89%e6%ac%8a%e9%99%90%e8%a8%ad%e8%a8%88" aria-label="這個段落的連結"></a></h2>
+<p>接下來聊聊後端的部分。</p>
+<p>有些人設計了登入機制，但卻沒有設計角色權限，這會導致非常嚴重的問題。</p>
+<p>你可以想想看，如果一般消費者登入 PChome、Momo 這類購物平台後</p>
+<p>可以自由修改商品價格，那會造成多嚴重的後果</p>
+<hr>
+<h2 id="-5-沒有設計審計日誌">5. 沒有設計審計日誌<a class="h-anchor" href="#-5-%e6%b2%92%e6%9c%89%e8%a8%ad%e8%a8%88%e5%af%a9%e8%a8%88%e6%97%a5%e8%aa%8c" aria-label="這個段落的連結"></a></h2>
+<p>不管前期規劃多完善，系統上線後一定會出問題！</p>
+<p>假使沒有設計審計日誌，你連錯誤在哪裡、什麼時候發生、使用者做了什麼操作都一無所知。</p>
+<p>無法重現問題，怎麼可能解決問題？</p>
+<hr>
+<h2 id="-6-沒有限制-api-呼叫次數">6. 沒有限制 API 呼叫次數<a class="h-anchor" href="#-6-%e6%b2%92%e6%9c%89%e9%99%90%e5%88%b6-api-%e5%91%bc%e5%8f%ab%e6%ac%a1%e6%95%b8" aria-label="這個段落的連結"></a></h2>
+<p>這邊以使用者登入來舉例，假使系統登入的 API 沒有次數限制。</p>
+<p>那不就代表使用者可以嘗試不同密碼組合去暴力破解？</p>
+<hr>
+<h2 id="-7-使用者密碼用明文儲存">7. 使用者密碼用明文儲存<a class="h-anchor" href="#-7-%e4%bd%bf%e7%94%a8%e8%80%85%e5%af%86%e7%a2%bc%e7%94%a8%e6%98%8e%e6%96%87%e5%84%b2%e5%ad%98" aria-label="這個段落的連結"></a></h2>
+<p>如果資料庫裡使用者的密碼，沒有經過雜湊處理，那一旦資料庫外洩，所有使用者密碼會直接暴露。</p>
+<p><img src="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-06.webp" srcset="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-06_hu_da5acc073381badd.webp 720w, /blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-06.webp 984w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="984" height="222" alt="7. 使用者密碼用明文儲存（圖 6）" loading="lazy" decoding="async"></p>
+<p>我知道很多人是一個密碼打天下，這代表其他帳號可能會被駭客盜用。</p>
+<hr>
+<h2 id="-8-選錯資料庫">8. 選錯資料庫<a class="h-anchor" href="#-8-%e9%81%b8%e9%8c%af%e8%b3%87%e6%96%99%e5%ba%ab" aria-label="這個段落的連結"></a></h2>
+<p>有時 AI 會選擇 Redis 來當系統資料庫，但只要伺服器重啟，災難直接降臨。</p>
+<p>因為 Redis 是記憶體資料庫，重啟後緩存的資料就不見了，即使有持久化設計，也不建議當主資料庫。</p>
+<hr>
+<h2 id="-9-把機密檔案上傳到-github">9. 把機密檔案上傳到 GitHub<a class="h-anchor" href="#-9-%e6%8a%8a%e6%a9%9f%e5%af%86%e6%aa%94%e6%a1%88%e4%b8%8a%e5%82%b3%e5%88%b0-github" aria-label="這個段落的連結"></a></h2>
+<p>現在很多人用 GitHub 來做專案的版本控制。</p>
+<p>但如果不小心將存放隱私資料的 .env 環境檔上傳，然後你的 Repository 還是公開的。</p>
+<p>那系統的後台，可能就變成所有人可以隨意進出的遊樂場。</p>
+<hr>
+<h2 id="-10-沒有設計-gitignore">10. 沒有設計 .gitignore<a class="h-anchor" href="#-10-%e6%b2%92%e6%9c%89%e8%a8%ad%e8%a8%88-gitignore" aria-label="這個段落的連結"></a></h2>
+<p>這會導致你把 node_modules、dist、log 這類體積大、數量多的檔案加入版本控制。</p>
+<p>不僅會讓 repository 上傳下載時間變長，還會讓版本控制混亂，難以追蹤真正變更。</p>
+<hr>
+<p>好的，以上就是今天跟大家分享 Vibe Coding 的十大陷阱。</p>
+<p>這篇文章涵蓋的資訊量比較大，如果有聽不懂的地方也別擔心。</p>
+<p>我會在後續的文章中，透過實際案例跟大家分享這些問題如何解決。</p>
+<p>如果這篇文章對你有幫助，可以順手按個讚，把文章分享給正在 Vibe Coding 的朋友們。</p>
+<figure class="figure"><img src="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-07.webp" srcset="/blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-07_hu_b56b9783c6044813.webp 720w, /blog/202511/vibe-coding-pitfalls/images/vibe-coding-pitfalls-07.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="914" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2025.11.30）</span><a href="https://dean-lin.medium.com/vibe-coding-%E5%AF%A6%E6%88%B0%E5%BF%85%E7%9C%8B-10-%E5%80%8B%E6%9C%83%E8%AE%93%E4%BD%A0%E5%B0%88%E6%A1%88%E7%BF%BB%E8%BB%8A%E7%9A%84%E6%8A%80%E8%A1%93%E9%99%B7%E9%98%B1-4a7f80f5833b" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/vibe-coding/">Vibe Coding</a>
+            <a class="chip chip-hash" href="/tags/security/">Security</a>
+            <a class="chip chip-hash" href="/tags/ai/">AI</a>
+            <a class="chip chip-hash" href="/tags/web-development/">Web Development</a>
+            <a class="chip chip-hash" href="/tags/generative-ai-use-cases/">Generative AI Use Cases</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202511%2Fvibe-coding-pitfalls%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202511%2Fvibe-coding-pitfalls%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202511/vibe-coding-pitfalls/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202511/vibe-coding-pitfalls/" data-title="Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202511/prompt-injection-risks/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">小心！你的 AI 可能被人控制了</span></a>
+          <a class="next" href="/blog/202512/google-antigravity-full-stack/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">【Google Antigravity 教學】把想法化為現實！用 Vibe Coding 完成可部署上線的輕量級全端專案</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#-1-%e6%8a%8a%e6%95%8f%e6%84%9f%e6%95%b8%e6%93%9a%e5%af%ab%e5%9c%a8%e5%89%8d%e7%ab%af">1. 把敏感數據寫在前端</a></li><li><a href="#-2-%e5%b0%87%e6%9a%ab%e5%ad%98%e8%b3%87%e6%96%99%e7%95%b6%e6%b0%b8%e4%b9%85%e8%b3%87%e6%96%99">2. 將暫存資料當永久資料</a></li><li><a href="#-3-%e9%a0%81%e9%9d%a2%e6%b2%92%e6%9c%89%e5%81%9a%e6%ac%8a%e9%99%90%e6%8e%a7%e7%ae%a1">3. 頁面沒有做權限控管</a></li><li><a href="#-4-api-%e6%b2%92%e6%9c%89%e6%ac%8a%e9%99%90%e8%a8%ad%e8%a8%88">4. API 沒有權限設計</a></li><li><a href="#-5-%e6%b2%92%e6%9c%89%e8%a8%ad%e8%a8%88%e5%af%a9%e8%a8%88%e6%97%a5%e8%aa%8c">5. 沒有設計審計日誌</a></li><li><a href="#-6-%e6%b2%92%e6%9c%89%e9%99%90%e5%88%b6-api-%e5%91%bc%e5%8f%ab%e6%ac%a1%e6%95%b8">6. 沒有限制 API 呼叫次數</a></li><li><a href="#-7-%e4%bd%bf%e7%94%a8%e8%80%85%e5%af%86%e7%a2%bc%e7%94%a8%e6%98%8e%e6%96%87%e5%84%b2%e5%ad%98">7. 使用者密碼用明文儲存</a></li><li><a href="#-8-%e9%81%b8%e9%8c%af%e8%b3%87%e6%96%99%e5%ba%ab">8. 選錯資料庫</a></li><li><a href="#-9-%e6%8a%8a%e6%a9%9f%e5%af%86%e6%aa%94%e6%a1%88%e4%b8%8a%e5%82%b3%e5%88%b0-github">9. 把機密檔案上傳到 GitHub</a></li><li><a href="#-10-%e6%b2%92%e6%9c%89%e8%a8%ad%e8%a8%88-gitignore">10. 沒有設計 .gitignore</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202511%2Fvibe-coding-pitfalls%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202511%2Fvibe-coding-pitfalls%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202511/vibe-coding-pitfalls/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202511/vibe-coding-pitfalls/" data-title="Vibe Coding 實戰必看！10 個會讓你專案翻車的技術陷阱" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_a336123fd83d3944.webp" srcset="/blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_22189ad74f619fbe.webp 240w, /blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_31fe1e1d17628a7c.webp 480w, /blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_d273166fd35f3a5d.webp 800w, /blog/202605/ai-speed-is-not-your-speed/images/ai-speed-is-not-your-speed-01_hu_a336123fd83d3944.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202605/ai-speed-is-not-your-speed/">AI 的快，不是你的快；但 AI 的錯，會全部算在你頭上</a></h3>
+    <p class="card-desc">前陣子，有位朋友興奮地跟我說，他用 AI 只花 3 天就做出一個電商系統，準備要上線了。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-05-23">2026.05.23</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>2 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202605/manus-ai-agent-guide/images/manus-ai-agent-guide-01_hu_8f589702254a4ea2.webp" srcset="/blog/202605/manus-ai-agent-guide/images/manus-ai-agent-guide-01_hu_6ac4309ae0fb7b55.webp 240w, /blog/202605/manus-ai-agent-guide/images/manus-ai-agent-guide-01_hu_17cb932d60bca5d3.webp 480w, /blog/202605/manus-ai-agent-guide/images/manus-ai-agent-guide-01_hu_84a76153a4d27fe5.webp 800w, /blog/202605/manus-ai-agent-guide/images/manus-ai-agent-guide-01_hu_8f589702254a4ea2.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a><span class="sep" aria-hidden="true">/</span><a href="/series/manus/">Manus AI Agent</a></div>
+
+    <h3 class="card-title"><a href="/blog/202605/manus-ai-agent-guide/">【Manus 實戰教學】從研究、簡報到個人網站，帶你掌握普通人也能上手的 AI Agent</a></h3>
+    <p class="card-desc">這幾年協助企業導入 AI 時，發現對大部分的企業來說；他們判斷是否要導入一個 AI 工具的標準，除了功能與實際業務的「匹配度」外，他們其實更在意工具的「使用門檻」。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-05-13">2026.05.13</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>14 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRgoBAABXRUJQVlA4IP4AAACwBgCdASoYABgAPw12rE2mI6IhKAqoxiGJ4gC&#43;aT0JzHgBjQx9EJg9QqtnwaZgB0ybETR&#43;LitvJ&#43;QEusgnMAD&#43;4DJOl4DGFvKceUKRRNo714hZOtC68n74CCdR9aNJLgq/9pZu0esxo7QO/MfPl&#43;sbTlb&#43;yE0QXuirLQn7zUTBX1odnVT00X34fE7QGhSd0C8RH70vTMVo/HsbGE6MDAk8Ksq51ndBWly94wG5gz3aCOpsJXTsOwKgUwyuoDvoBZM0h5Eq5D7qQNyjsISMM65/JNfcW&#43;&#43;LgSYejM/M81gzUP7aVWdObt0RAY7pxQ&#43;248y4H0UalQRh824gGgAAAA==" alt="" width="24" height="24"><img src="/blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_277f27d0674fde5b.webp" srcset="/blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_f60f0d4e2bb66bf8.webp 240w, /blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_ae725bc6214344a2.webp 480w, /blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_1395294e94bd4e59.webp 800w, /blog/202605/will-ai-skills-last/images/will-ai-skills-last-01_hu_277f27d0674fde5b.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="1200" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a></div>
+
+    <h3 class="card-title"><a href="/blog/202605/will-ai-skills-last/">AI 工具幾乎每天都在變，現在學會的東西，明天還有用嗎？</a></h3>
+    <p class="card-desc">標題是我最近講座時，最常被問到問題。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-05-05">2026.05.05</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>3 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202511/vibe-coding-pitfalls/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

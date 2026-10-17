@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Nuxt.js｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/nuxt.js/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 08 Apr 2021 14:28:48 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/nuxt.js/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub</title>
+      <link>https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/</link>
+      <pubDate>Thu, 08 Apr 2021 14:28:48 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟。</description>
+      <content:encoded><![CDATA[<p>每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟；整體操作流程個人感覺非常簡單，大家不要被新的技術嚇到了，通常新技術的門檻比想像的更低一點。</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01.webp" width="1400" height="786" alt="在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>一、事先準備
+ ➤ 創建 Nuxt.js 專案
+ ➤ 下載 &amp; 安裝 Docker
+二、在 local 把 Nuxt.js 專案 Build 成 Docker Image
+ ➤ 撰寫 dockerfile &amp; .dockerignore
+ ➤ 把 Nuxt.js 專案 build 成 Docker Image
+三、將 Docker Image 發佈到 dockerhub 上面
+</code></pre><h2 id="一事先準備">一、事先準備<a class="h-anchor" href="#%e4%b8%80%e4%ba%8b%e5%85%88%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h2>
+<h3 id="-創建-nuxtjs-專案">➤ 創建 Nuxt.js 專案<a class="h-anchor" href="#-%e5%89%b5%e5%bb%ba-nuxtjs-%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>如果你已經有 Nuxt.js 的專案可以跳過下面的操作流程</p>
+</blockquote>
+<p><strong>STEP 1：</strong>創建一個 Nuxt.js 專案</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app nuxtjs-tutorial
+</span></span></code></pre></div><p>在創建過程中會問你一些問題，你可以參考筆者的選擇：</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-02.webp" width="1400" height="555" alt="創建 Nuxt.js 專案（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2：</strong>讓 Nuxt.js 專案跑起來</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ cd nuxtjs-tutorial 
+</span></span><span style="display:flex;"><span>$ yarn dev
+</span></span></code></pre></div><figure class="figure"><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-03.webp" width="1400" height="1149" alt="看到這樣的狀況就是跑起來成功嚕" loading="lazy" decoding="async">
+  <figcaption>看到這樣的狀況就是跑起來成功嚕</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-04.webp" width="1400" height="775" alt="開啟 http://localhost:3000/ 可以順利看到畫面了喔！" loading="lazy" decoding="async">
+  <figcaption>開啟 <a href="http://localhost:3000/">http://localhost:3000/</a> 可以順利看到畫面了喔！</figcaption>
+</figure>
+
+<h3 id="-下載--安裝-docker">➤ 下載 &amp; 安裝 Docker<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89--%e5%ae%89%e8%a3%9d-docker" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1：</strong>下載 Docker</p>
+<p><strong>前往官網<a href="https://docs.docker.com/docker-for-mac/install/">下載 Docker 安裝檔</a></strong></p>
+<blockquote>
+<p>安裝過程就是狂按下一步，就不在多做介紹，下載後要把 App 打開依照步驟執行才算是完成安裝喔！</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-05.webp" width="1184" height="437" alt="下載 &amp; 安裝 Docker（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2：</strong>註冊 Docker</p>
+<p>在官網<a href="https://hub.docker.com/signup">註冊 docker 帳號</a></p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-06.webp" width="1184" height="866" alt="下載 &amp; 安裝 Docker（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3：</strong>在 local 端登入 docker</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ docker login
+</span></span></code></pre></div><p>輸入剛剛註冊的帳號密碼</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-07.webp" width="1400" height="179" alt="下載 &amp; 安裝 Docker（圖 7）" loading="lazy" decoding="async"></p>
+<h2 id="二在-local-把-nuxtjs-專案-build-成-docker-image">二、在 local 把 Nuxt.js 專案 Build 成 docker image<a class="h-anchor" href="#%e4%ba%8c%e5%9c%a8-local-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image" aria-label="這個段落的連結"></a></h2>
+<h3 id="-撰寫-dockerfile--dockerignore">➤ 撰寫 dockerfile &amp; .dockerignore<a class="h-anchor" href="#-%e6%92%b0%e5%af%ab-dockerfile--dockerignore" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1：先用指令建立這兩個檔案</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ touch dockerfile
+</span></span><span style="display:flex;"><span>$ touch .dockerignore
+</span></span></code></pre></div><p><strong>STEP 2：撰寫 </strong>dockerfile</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># node 運行環境</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node:12.19.0</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 存放image的目錄</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> mkdir -p /app<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> . /app<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 如果需要相關的環境變數請自行調整路徑</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#COPY ./env/.prod-env /app/env/.prod-env</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 對外的port</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">ENV</span> HOST 0.0.0.0 <span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝套件並build專案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> yarn<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> yarn build<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 執行專案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [ <span style="color:#a5d6ff">&#34;yarn&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span> ]<span style="color:#f85149">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/647663b391da8292d80089d445f3e7e6" rel="noopener">dockerfile</a>（GitHub Gist）</p>
+<p><strong>STEP 2：撰寫 </strong>.dockerignore</p>
+<pre tabindex="0"><code>npm-debug.log
+node_modules
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/3d2509de3aba92d14d42b530c2e654ed" rel="noopener">.dockerignore</a>（GitHub Gist）</p>
+<h3 id="-把-nuxtjs-專案-build-成-docker-image">➤ 把 Nuxt.js 專案 build 成 Docker Image<a class="h-anchor" href="#-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1</strong>：Build Docker Image</p>
+<p>在專案目錄下輸入指令後耐心等待打包，<strong>docker_example</strong> 是這個 image 的名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker build -t docker_example .
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-08.webp" width="1400" height="510" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>：Run Docker Image</p>
+<p>輸入指令確認 image 是否成功</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -it — rm -p 80:3000 docker_example
+</span></span></code></pre></div><blockquote>
+<p>特別注意『80 是對外 port，3000 是 container 的 port』，<strong>docker_example </strong>就是剛剛建立的 image 名稱</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-09.webp" width="1400" height="469" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 9）" loading="lazy" decoding="async"></p>
+<p>上圖 172.xx.xx.x:3000 的網址點開來是沒有畫面的，因為我們已經透過指令改變對外 port 到 80 了，在網址列上輸入 <a href="http://localhost/">http://localhost/</a> 就能成功看到供果嚕～</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-10.webp" width="1226" height="792" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 10）" loading="lazy" decoding="async"></p>
+<h2 id="三將-docker-image-發佈到-dockerhub-上面">三、將 Docker Image 發佈到 dockerhub 上面<a class="h-anchor" href="#%e4%b8%89%e5%b0%87-docker-image-%e7%99%bc%e4%bd%88%e5%88%b0-dockerhub-%e4%b8%8a%e9%9d%a2" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：給剛剛建立的 Image 一個 tag，username 是你 Doacker 的帳戶，xxximage是你希望這個 Image 在 dockerhub 上呈現的名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker tag docker_example username/xxximage
+</span></span></code></pre></div><p><strong>STEP 2</strong>：列出目前存在的 Images</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker images
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-11.webp" width="1400" height="144" alt="三、將 Docker Image 發佈到 dockerhub 上面（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：把這個 Image 丟到 dockerhub 的 repositories</p>
+<blockquote>
+<p>這個 push 的過程會根據你產生 Image 的大小決定，通常要等一段時間</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker push username/xxximage
+</span></span></code></pre></div><p><strong>STEP 4</strong>：在自己的 Docker 帳戶上看到剛剛上傳的 Docker Image</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-12.webp" width="1217" height="273" alt="三、將 Docker Image 發佈到 dockerhub 上面（圖 12）" loading="lazy" decoding="async"></p>
+<p>之後要部署這個 Docker Image 到其他 Server 就只需要輸入下面指令就能獲得嚕～</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker pull username/xxximage
+</span></span></code></pre></div><hr>
+<p>希望這篇文章有幫助到使用 Mac 開發 Nuxt.js 專案的朋友們～</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>5 分鐘帶你搞懂 Vue、Vuex、Vuetify、Nuxt.js 之間的關係</title>
+      <link>https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/</link>
+      <pubDate>Thu, 01 Apr 2021 10:49:29 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>有了框架後做什麼都很方便，但因為太方便導致有時連工具負責哪一塊都功能有點霧颯颯，如果你搞不太懂 Vue、Veux、Vuetify、Nuxt.js 之間的關係、具體各自負責什麼事情的話可以參考這篇文章釐清自己的觀念喔！</description>
+      <content:encoded><![CDATA[<p>有了框架後做什麼都很方便，但因為太方便導致有時連工具負責哪一塊都功能有點霧颯颯，如果你搞不太懂 Vue、Veux、Vuetify、Nuxt.js 之間的關係、具體各自負責什麼事情的話可以參考這篇文章釐清自己的觀念喔！</p>
+<p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-01.webp" width="1400" height="788" alt="5 分鐘帶你搞懂 Vue、Vuex、Vuetify、Nuxt.js 之間的關係（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>Vue.js
+➤ 過去只有 Javascript、HTML、CSS 時有什麼問題？
+➤ 框架的優勢
+Vuex
+➤ Vue過去傳值時面臨什麼問題？
+➤ 如何解決這個問題？
+Vuetify
+➤ 提供前端工程師豐富的 MD component
+➤ 強大的社群支持並穩定更新
+➤ 自由決定導入 component
+Nuxt.js
+➤ Vue.js 的應用框架
+➤ SSR 伺服器端渲染
+</code></pre><h2 id="vuejs">Vue.js<a class="h-anchor" href="#vuejs" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>一個優秀的 Javascript 框架</p>
+</blockquote>
+<h3 id="-過去只有-javascripthtmlcss-時有什麼問題">➤ 過去只有 Javascript、HTML、CSS 時有什麼問題？<a class="h-anchor" href="#-%e9%81%8e%e5%8e%bb%e5%8f%aa%e6%9c%89-javascripthtmlcss-%e6%99%82%e6%9c%89%e4%bb%80%e9%ba%bc%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>難以維護</strong>：專案結構龐大時 Javascript、HTML、CSS 維護難度會成幾何式上升，各式各樣的邏輯都集中在 Javascript 裡面導致程式可讀性極低</li>
+<li><strong>效能低落</strong>：如果 Javascript 頻繁操作 DOM 元素時會不斷觸發 Reflow &amp; Repaint 的流程，頁面重複渲染的過程會消耗大量效能</li>
+</ul>
+<h3 id="-框架的優勢">➤ 框架的優勢<a class="h-anchor" href="#-%e6%a1%86%e6%9e%b6%e7%9a%84%e5%84%aa%e5%8b%a2" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>資料與 UI 分離</strong>：過去 Javascript 要動態的去更新 DOM 來塞入資料，但框架透過資料雙向綁定，工程師可以專注處理資料的邏輯面</li>
+<li><strong>模組化的 UI</strong>：一個網站會有許多重複出現的元素(按鈕、表單、表格…)，在框架中可以這些常用的元素設計成 component，要使用時再根據實際需求填入資料及參數即可，大幅提升工程師理解與維護的能力。</li>
+<li><strong>更好的效能</strong>：採取 <strong>Virtual DOM</strong> 概念，當資料變動時先計算好要變動的地方，以此抵銷無意義的變更，並且重複使用已存在的 DOM 元素</li>
+</ul>
+<h2 id="vuex">Vuex<a class="h-anchor" href="#vuex" aria-label="這個段落的連結"></a></h2>
+<h3 id="-vue過去傳值時面臨什麼問題">➤ Vue過去傳值時面臨什麼問題？<a class="h-anchor" href="#-vue%e9%81%8e%e5%8e%bb%e5%82%b3%e5%80%bc%e6%99%82%e9%9d%a2%e8%87%a8%e4%bb%80%e9%ba%bc%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>過去 Vue 裡面 component 的參數傳遞都是採用 <code>emit</code>跟 <code>props</code> ，但如果 component 的關係並非 parent/child 而是像下圖想要將 Component B 的資訊傳到 Component C ，這種操作不但需要很多 <code>emit</code>跟 <code>props</code> 還會造成程式碼閱讀困難</p>
+<p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-02.webp" width="1400" height="409" alt="Vue過去傳值時面臨什麼問題？（圖 2）" loading="lazy" decoding="async"></p>
+<h3 id="-如何解決這個問題">➤ 如何解決這個問題？<a class="h-anchor" href="#-%e5%a6%82%e4%bd%95%e8%a7%a3%e6%b1%ba%e9%80%99%e5%80%8b%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>根據上面的問題，官方推出專門用來『狀態管理』的工具，你可以把它想像成 Vue 裡面的全域變數，將狀態(state)全部放在倉庫(store)來進行管理。</p>
+<p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-03.webp" width="701" height="551" alt="如何解決這個問題？（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>更新 state</strong>：在 <strong>Vuex</strong> 裡面，儲存狀態的為 <strong>State</strong>，component 需要更動 <strong>State </strong>時，需要透過 <strong>Actions </strong>發出一個 <strong>Commit</strong> 去呼叫 <strong>Mutations</strong>，再由 <strong>Mutations </strong>去更改 <strong>State</strong>。</p>
+<p><strong>取得 state</strong>：而 component 的資料更新可以在 <strong>compute</strong> 裡面使用 <strong>mapGetters</strong> 使用 <strong>getters</strong> 的 function 或是用 <strong>mapState</strong> 直接取用 state 的資料</p>
+<h2 id="vuetify">Vuetify<a class="h-anchor" href="#vuetify" aria-label="這個段落的連結"></a></h2>
+<h3 id="-提供前端工程師豐富的-md-component">➤ 提供前端工程師豐富的 MD component<a class="h-anchor" href="#-%e6%8f%90%e4%be%9b%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e8%b1%90%e5%af%8c%e7%9a%84-md-component" aria-label="這個段落的連結"></a></h3>
+<p>你可以把 Vuetify 當成 Vue 的 Material Design framework，他不但省去了你自己手工打造 UI component 的時間，還為每個 component 提供許多可以自由定義的 property 讓版型更加靈活。</p>
+<h3 id="-強大的社群支持並穩定更新">➤ 強大的社群支持並穩定更新<a class="h-anchor" href="#-%e5%bc%b7%e5%a4%a7%e7%9a%84%e7%a4%be%e7%be%a4%e6%94%af%e6%8c%81%e4%b8%a6%e7%a9%a9%e5%ae%9a%e6%9b%b4%e6%96%b0" aria-label="這個段落的連結"></a></h3>
+<p>截至今天在 Github 上有高達 30K 的星星，如果你在開發上遇到問題在他們 <a href="https://discord.com/invite/s93b7Fv">discord社區</a>上發問也能很快得到解答。</p>
+<p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-04.webp" width="1400" height="107" alt="強大的社群支持並穩定更新（圖 4）" loading="lazy" decoding="async"></p>
+<p>官方每個禮拜都會穩定更新版本，相比於其他 Vue 的 framework 是非常穩定的</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-05.webp" width="971" height="562" alt="image from:https://vuetifyjs.com/en/introduction/why-vuetify/#why-vuetify3f" loading="lazy" decoding="async">
+  <figcaption>image from:<a href="https://vuetifyjs.com/en/introduction/why-vuetify/#why-vuetify3f">https://vuetifyjs.com/en/introduction/why-vuetify/#why-vuetify3f</a></figcaption>
+</figure>
+
+<h3 id="-自由決定導入-component">➤ 自由決定導入 component<a class="h-anchor" href="#-%e8%87%aa%e7%94%b1%e6%b1%ba%e5%ae%9a%e5%b0%8e%e5%85%a5-component" aria-label="這個段落的連結"></a></h3>
+<p>官方稱為 <strong>Auto treeshaking</strong>，在使用 Vuetify 時你可能覺得他非常『肥』，裡面包了一堆你專案中用不到 component，但因為有 <strong>Auto treeshaking </strong>的機制所以只會導入你有使用的 component</p>
+<h2 id="nuxtjs">Nuxt.js<a class="h-anchor" href="#nuxtjs" aria-label="這個段落的連結"></a></h2>
+<h3 id="-vuejs-的應用框架">➤ Vue.js 的應用框架<a class="h-anchor" href="#-vuejs-%e7%9a%84%e6%87%89%e7%94%a8%e6%a1%86%e6%9e%b6" aria-label="這個段落的連結"></a></h3>
+<p>把 webpack、vue loader、vuex、router 的設定都集中在一起，減少使用者的配置成本</p>
+<h3 id="-ssr-伺服器端渲染">➤ SSR 伺服器端渲染<a class="h-anchor" href="#-ssr-%e4%bc%ba%e6%9c%8d%e5%99%a8%e7%ab%af%e6%b8%b2%e6%9f%93" aria-label="這個段落的連結"></a></h3>
+<p>因為由 server 端組成 HTML 後回傳，所以 Google 在 SEO 解析時可以很好的分析 DOM 元素，藉此提升網站的 SEO 水平</p>
+<blockquote>
+<p>Nuxt.js 也是能做 SPA(無SSR)、產生靜態網頁</p>
+</blockquote>
+<hr>
+<p><strong>參考資源</strong>： <a href="https://medium.com/itsems-frontend/vue-vuex1-state-mutations-364163b3acac">Vuex 是什麼? 怎麼用?</a>、<a href="https://tw.alphacamp.co/blog/why-use-front-end-framework">前端框架的功能與優點</a></p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>NUXTJS GCP serverless實戰</title>
+      <link>https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/</link>
+      <pubDate>Wed, 24 Jun 2020 14:01:45 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>因為跟著官方文件做，讓我被雷了整整一天，於是我決定紀錄操作流程，希望看到的人可以節省時間</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-01.webp" width="1080" height="600" alt="NUXTJS GCP serverless實戰（圖 1）" loading="lazy" decoding="async"></p>
+<h3 id="事前準備">事前準備<a class="h-anchor" href="#%e4%ba%8b%e5%89%8d%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>你有GCP的帳戶(沒有就直接去開一個)</li>
+<li>你有信用卡(因為GCP serverless服務一定要綁信用卡，就算你一塊錢都沒花，你還是得綁定)</li>
+<li>你會用git(如果不會你要抄襲前人的成果都很難)</li>
+<li>如果有mac電腦會是最棒的，因為作者的操作都是在mac的環境</li>
+</ol>
+<h3 id="文章目標">文章目標<a class="h-anchor" href="#%e6%96%87%e7%ab%a0%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>根據官方文件建立Nuxt專案</li>
+<li>開啟GCP App Engine</li>
+<li>將Nuxt專案deploy到GCP</li>
+</ol>
+<p>SETP 1/5 : 建立Nuxt專案</p>
+<p><a href="https://nuxtjs.org/guide/installation">這裡是官方安裝說明文件</a>，根據我的個人經驗，你每個禮拜都會得到不一樣的錯誤訊息(感覺他們工程師根本沒有qa就直接上正式版本了…)，以下為我操作的及遇到的錯誤及相關解決方案。</p>
+<p>創建nuxt專案，project-name請自由發揮</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app &lt;project-name&gt;
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-02.webp" width="1312" height="236" alt="文章目標（圖 2）" loading="lazy" decoding="async"></p>
+<p>接下來會問你一堆問題，根據我之後會撰寫的文章類型，你可以跟我做一樣的設定</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-03.webp" width="1274" height="390" alt="文章目標（圖 3）" loading="lazy" decoding="async"></p>
+<p>只要你運氣夠差，你就會遇到這個錯誤：</p>
+<pre tabindex="0"><code>throw new SAOError(`Failed to install ${packageName} in ${cwd}`)
+</code></pre><p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-04.webp" width="1400" height="633" alt="文章目標（圖 4）" loading="lazy" decoding="async"></p>
+<p>別怕，仔細看錯誤訊息，你會發現是因為local端的node版本過低，最新的nuxt需要你的<a href="https://nodejs.org/en/">node版本</a>保持在13.7以上，建議你可以使用<a href="https://github.com/nvm-sh/nvm#install--update-script">nvm這個套件</a>來做local端node的版本控制</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-05.webp" width="810" height="72" alt="文章目標（圖 5）" loading="lazy" decoding="async"></p>
+<p>調整完node版本後再下一樣建立nuxt的指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app &lt;project-name&gt;
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-06.webp" width="1286" height="968" alt="文章目標（圖 6）" loading="lazy" decoding="async"></p>
+<p>這次就會通過嚕～接著下指令確認使否正常跑</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd nuxt_baobao
+</span></span><span style="display:flex;"><span>yarn dev
+</span></span></code></pre></div><p>如果成功出現下面的畫面就恭喜你嚕～</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-07.webp" width="740" height="938" alt="文章目標（圖 7）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-08.webp" width="1400" height="726" alt="http://localhost:3000/" loading="lazy" decoding="async">
+  <figcaption><a href="http://localhost:3000/">http://localhost:3000/</a></figcaption>
+</figure>
+
+<p>SETP 2/5 : 將nuxt專案build起來</p>
+<p>因為實際運行你總不可能把整個專案丟到GCP，所以要下指令build這個專案，那他變小一點</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn build
+</span></span></code></pre></div><p>如果沒發生意外應該會build失敗(我真的懷疑他們到底有沒有做過上線測試…)</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-09.webp" width="1400" height="755" alt="文章目標（圖 9）" loading="lazy" decoding="async"></p>
+<p>因為很多人遇到這個問題，有興趣可以參考<a href="https://github.com/postcss/autoprefixer/issues/1328#issuecomment-647279513">這篇文章</a>，不然就複製下面指令執行</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nvm use 14.4
+</span></span><span style="display:flex;"><span>yarn add autoprefixer@9.8.1
+</span></span></code></pre></div><p>安裝完套件再下一次yarn build指令就能順利完成</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-10.webp" width="1400" height="755" alt="文章目標（圖 10）" loading="lazy" decoding="async"></p>
+<p>SETP 3/5 : 開啟GCP App Engine</p>
+<p>我建議你先建立一個<a href="https://console.cloud.google.com/cloud-resource-manager">GCP新的專案</a>來做這次的操作，建立好專案去App Engine建立應用程式</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-11.webp" width="1275" height="608" alt="文章目標（圖 11）" loading="lazy" decoding="async"></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-12.webp" width="551" height="555" alt="地區請選擇離自己近的，價格會便宜一點" loading="lazy" decoding="async">
+  <figcaption>地區請選擇離自己近的，價格會便宜一點</figcaption>
+</figure>
+
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-13.webp" width="776" height="363" alt="文章目標（圖 13）" loading="lazy" decoding="async"></p>
+<p>SETP 4/5 : 下載Google Cloud SDK</p>
+<p>如果你可以根據<a href="https://cloud.google.com/sdk/docs/quickstarts">官方文件</a>操作，裡面有提供各式各樣的安裝方法，一開始我是直接下載壓縮檔來安裝，但遇到各種悲劇…</p>
+<pre tabindex="0"><code>Welcome to the Google Cloud SDK!
+ERROR:root:code for hash md5 was not found.
+</code></pre><p>然後網路上你查到<a href="https://stackoverflow.com/questions/25372911/python-pip-error-on-osx">大部分的答案</a>都是唬爛你的</p>
+<p>所以我個人建議你使用<a href="https://brew.sh/index_zh-tw">homebrew</a>安裝吧</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew cask install google-cloud-sdk
+</span></span></code></pre></div><p>安裝後你可以嘗試看看</p>
+<pre tabindex="0"><code>gcloud init
+</code></pre><p>如果不發生意外應該又是一大串的錯誤…這個時候的問題通常是python版本的問題，請指定你執行gcp的python版本</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export <span style="color:#79c0ff">CLOUDSDK_PYTHON</span><span style="color:#ff7b72;font-weight:bold">=</span>python3
+</span></span></code></pre></div><p>之後再執行gcloud init應該就是一路通暢了，裡面會有一些讓你登入以及選擇專案的選項就按造個人需求調整即可</p>
+<p>SETP 5/5 : deploy Nuxt專案到GCP App Engine</p>
+<p>如果你上面的操作都很順利，你接下來就可以嘗試把本地的nuxt專案發布到GCP上面了，首先你要在nuxt專案做以下調整，這裡是<a href="https://nuxtjs.org/faq/appengine-deployment/">官方文件</a>(跟著照做會錯誤)：</p>
+<p>新增app.yaml檔案，這個檔案是在deploy的時候使用的</p>
+<p>PS.在這裡我要特別提醒一件事情，一但你的環境(env)設定為flex，你醒來的時候帳單就有可能爆掉，所以這個部分請謹慎，這是我端午連假完打開GCP帳單發現的慘痛經驗，使用標準環境才會有免費配額，但還是會扣一點費用(ex: Google Storage、Could Build…)。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">runtime</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">nodejs12</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">instance_class</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">F1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">automatic_scaling</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">max_instances</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">handlers</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>- <span style="color:#7ee787">url</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">/_nuxt</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">static_dir</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">.nuxt/dist/client</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">secure</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>- <span style="color:#7ee787">url</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">/(.*\.(gif|png|jpg|ico|txt))$</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">static_files</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">static/\1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">upload</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">static/.*\.(gif|png|jpg|ico|txt)$</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">secure</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>- <span style="color:#7ee787">url</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">/.*</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">script</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">auto</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">secure</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">always</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">env_variables</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">HOST</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;0.0.0.0&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">NODE_ENV</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;production&#39;</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/6b739e200a284d085377d96555e2d171" rel="noopener">nuxt_baobao_app.yaml</a>（GitHub Gist）</p>
+<p>調整package.json檔案，要在dependencies加上“@nuxtjs/vuetify”，並加上這個專案nodejs的版本(本範例為14.4)</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;name&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt_baobao&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;version&#34;</span>: <span style="color:#a5d6ff">&#34;1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;private&#34;</span>: <span style="color:#79c0ff">true</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;scripts&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;dev&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;build&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt build&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;start&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt start&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;export&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt export&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;serve&#34;</span>: <span style="color:#a5d6ff">&#34;nuxt serve&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;lint:js&#34;</span>: <span style="color:#a5d6ff">&#34;eslint --ext .js,.vue --ignore-path .gitignore .&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;lint&#34;</span>: <span style="color:#a5d6ff">&#34;yarn lint:js&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;dependencies&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/axios&#34;</span>: <span style="color:#a5d6ff">&#34;^5.11.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/vuetify&#34;</span>: <span style="color:#a5d6ff">&#34;^1.11.2&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;autoprefixer&#34;</span>: <span style="color:#a5d6ff">&#34;9.8.1&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;chart.js&#34;</span>: <span style="color:#a5d6ff">&#34;^2.9.3&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;hchs-vue-charts&#34;</span>: <span style="color:#a5d6ff">&#34;^1.2.8&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;nuxt&#34;</span>: <span style="color:#a5d6ff">&#34;^2.13.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;vue-chartjs&#34;</span>: <span style="color:#a5d6ff">&#34;^3.5.0&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;devDependencies&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/eslint-config&#34;</span>: <span style="color:#a5d6ff">&#34;^3.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/eslint-module&#34;</span>: <span style="color:#a5d6ff">&#34;^2.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;@nuxtjs/vuetify&#34;</span>: <span style="color:#a5d6ff">&#34;^1.11.2&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;babel-eslint&#34;</span>: <span style="color:#a5d6ff">&#34;^10.1.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint&#34;</span>: <span style="color:#a5d6ff">&#34;^7.2.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint-config-prettier&#34;</span>: <span style="color:#a5d6ff">&#34;^6.11.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint-plugin-nuxt&#34;</span>: <span style="color:#a5d6ff">&#34;^1.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;eslint-plugin-prettier&#34;</span>: <span style="color:#a5d6ff">&#34;^3.1.4&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;prettier&#34;</span>: <span style="color:#a5d6ff">&#34;^2.0.5&#34;</span>
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#7ee787">&#34;engines&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;node&#34;</span>: <span style="color:#a5d6ff">&#34;^12&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/e4436bcdb26e49a6bb1be8afc98d59a9" rel="noopener">nuxt_baobao_package.json</a>（GitHub Gist）</p>
+<p>完成以上設定後在專案目錄下指令</p>
+<pre tabindex="0"><code>gcloud init
+</code></pre><p>這裡會讓你再次確認自己的設定檔(是否初始化、新增)，登入的google帳號，選擇雲端專案(就是你剛剛新增的那個專案)</p>
+<p>在完成上述設定後就可以輸入以下指令來deploy啦(這裡會讓你在確認一下deploy發布的專案位置)</p>
+<pre tabindex="0"><code>gcloud app deploy
+</code></pre><p>如果你看到以下畫面就要恭喜你了</p>
+<p><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-14.webp" width="1400" height="341" alt="文章目標（圖 14）" loading="lazy" decoding="async"></p>
+<p>輸入下面指令可以檢視你的網頁是否發布成功嚕～</p>
+<pre tabindex="0"><code>gcloud app browse
+</code></pre><figure class="figure"><img src="https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/images/nuxtjs-gcp-serverless-15.webp" width="1400" height="758" alt="https://nuxt-demo-281302.dt.r.appspot.com" loading="lazy" decoding="async">
+  <figcaption><a href="https://nuxt-demo-281302.dt.r.appspot.com">https://nuxt-demo-281302.dt.r.appspot.com</a></figcaption>
+</figure>
+
+<p>如果有問題歡迎在下方回覆，如果這篇文章有讓你少走彎路請用力拍手喔～</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

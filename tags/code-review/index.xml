@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Code Review｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/code-review/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Tue, 24 Feb 2026 17:10:50 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/code-review/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</title>
+      <link>https://deanlin.net/blog/202602/git-worktree-ai-agents/</link>
+      <pubDate>Tue, 24 Feb 2026 17:10:50 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202602/git-worktree-ai-agents/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>最近與一群工程師朋友聚餐時，我們聊到公司導入 AI 加速開發後，遇到的各種問題。</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-01.webp" width="1400" height="788" alt="【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系（圖 1）" loading="lazy" decoding="async"></p>
+<p>最近與一群工程師朋友聚餐時，我們聊到公司導入 AI 加速開發後，遇到的各種問題。</p>
+<p>其中討論最熱烈的點，就是大家 <strong>Code Review 的負擔大幅增加</strong>，畢竟 AI 寫程式的速度，實在太快了。</p>
+<blockquote>
+<p><strong>在過去，一天完成既定工作量就是好員工；但現在有了 AI 的幫助，有些公司會認為，一天要完成 3 倍工作量才算達到 KPI。</strong></p>
+</blockquote>
+<p>而這，就衍生了一系列的問題：</p>
+<h3 id="-缺乏深度思考">① 缺乏深度思考<a class="h-anchor" href="#-%e7%bc%ba%e4%b9%8f%e6%b7%b1%e5%ba%a6%e6%80%9d%e8%80%83" aria-label="這個段落的連結"></a></h3>
+<p>因為 KPI 大幅上升，大家為了追上進度，就會犧牲對需求的深度思考，或者說，直接讓 AI 代替思考。</p>
+<h3 id="-懶得-code-review">② 懶得 Code Review<a class="h-anchor" href="#-%e6%87%b6%e5%be%97-code-review" aria-label="這個段落的連結"></a></h3>
+<p>完成的功能增加，就會導致功能合併到主線時的 Code Review 負擔，以往會認真思考別人的設計是否合理，但如果要看的份量太多，很多人就放棄理解直接合併。</p>
+<h3 id="-最終導致的結果">③ 最終導致的結果<a class="h-anchor" href="#-%e6%9c%80%e7%b5%82%e5%b0%8e%e8%87%b4%e7%9a%84%e7%b5%90%e6%9e%9c" aria-label="這個段落的連結"></a></h3>
+<p>團隊集體責任感下降、專案理解力降低、程式碼品質降低、上線後錯誤增加。</p>
+<hr>
+<p>切記，我們雖然可以讓 AI 自己檢查、修改、寫測試程式，但這只是確保產品的底線。</p>
+<blockquote class="pullquote"><p>假使用 AI 開發過中大型專案，就會理解全權交給 AI 有多麼的不切實際。</p>
+</blockquote>
+<p><strong>AI 產生的程式碼很多，但這不是你不檢查的原因，我們應該去想怎麼利用 AI 去優化檢查流程。</strong></p>
+<blockquote class="pullquote"><p>別忘記，當你對 AI 產出的內容，按下同意的那一刻，所有的錯誤必須由人類來承擔。</p>
+</blockquote>
+<p>所以今天這篇文章，我要跟大家分享如何用 Git Worktree 搭配 Agent Skills，來解決前面提到的痛點：</p>
+<h3 id="-爲什麼版本控制很重要">① 爲什麼版本控制很重要<a class="h-anchor" href="#-%e7%88%b2%e4%bb%80%e9%ba%bc%e7%89%88%e6%9c%ac%e6%8e%a7%e5%88%b6%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h3>
+<p>我會先展示一個經典的錯誤案例，讓大家更直觀的理解，如果沒有基礎的版本控制概念，專案會遭遇哪些災難。</p>
+<h3 id="-完成前置作業">② 完成前置作業<a class="h-anchor" href="#-%e5%ae%8c%e6%88%90%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad" aria-label="這個段落的連結"></a></h3>
+<p>接著帶大家了解 Git Worktree 基礎操作，並安裝 pnpm 減少磁碟空間浪費，以及分享有哪些好用的擴充套件能增加我們操作效率。</p>
+<h3 id="-agent-skills透過-git-worktree-拆分任務設計-spec">③ Agent Skills：透過 Git Worktree 拆分任務、設計 SPEC<a class="h-anchor" href="#-agent-skills%e9%80%8f%e9%81%8e-git-worktree-%e6%8b%86%e5%88%86%e4%bb%bb%e5%8b%99%e8%a8%ad%e8%a8%88-spec" aria-label="這個段落的連結"></a></h3>
+<p>然後就要進入實作階段，這邊會先提出一個複雜功能，以此觸發 Agent Skills 執行 Git Worktree 拆分任務，讓每個功能都有自己的工作區，這樣 AI Agent 就可以同時執行。</p>
+<h3 id="-agent-skills拆分-commit讓邏輯可被追蹤">④ Agent Skills：拆分 Commit，讓邏輯可被追蹤<a class="h-anchor" href="#-agent-skills%e6%8b%86%e5%88%86-commit%e8%ae%93%e9%82%8f%e8%bc%af%e5%8f%af%e8%a2%ab%e8%bf%bd%e8%b9%a4" aria-label="這個段落的連結"></a></h3>
+<p>在確認功能符合預期後，我會請 AI 根據調整檔案分階段的 commit，讓邏輯在未來可以被追蹤。</p>
+<h3 id="-降低-code-review-負擔">⑤ 降低 Code Review 負擔<a class="h-anchor" href="#-%e9%99%8d%e4%bd%8e-code-review-%e8%b2%a0%e6%93%94" aria-label="這個段落的連結"></a></h3>
+<p>把修改推送上去後，我們要透過 Pull Request 將變更的內容合併到主分支，為了讓 Code Review 的人快速理解，我們可以請 AI 根據變更生成 PR 模板。</p>
+<blockquote>
+<p>如果你是第一次接觸 Agent Skills，我過去有拍一隻影片分享安裝、使用、製作的技巧：<a href="https://youtu.be/xe00zJEtuMo">https://youtu.be/xe00zJEtuMo</a></p>
+</blockquote>
+<p><strong>如果你剛接觸 Vibe Coding ，或是進入職場不久，相信這隻影片會讓你了解業界在導入 AI 開發時，遇到的實際狀況。</strong></p>
+<blockquote>
+<p>完整的 Demo，可以觀看 YT 喔 👉</p>
+<p>對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。</p>
+</blockquote>
+<div class="yt" data-yt="1VuLTQidbPM" data-title="YouTube 影片">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=1VuLTQidbPM" target="_blank" rel="noopener" aria-label="播放影片：YouTube 影片">
+    <img src="https://i.ytimg.com/vi/1VuLTQidbPM/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">YouTube 影片</span>
+  </a>
+</div>
+
+<hr>
+<h2 id="-缺乏版控概念是災難的起點">① 缺乏版控概念，是災難的起點<a class="h-anchor" href="#-%e7%bc%ba%e4%b9%8f%e7%89%88%e6%8e%a7%e6%a6%82%e5%bf%b5%e6%98%af%e7%81%bd%e9%9b%a3%e7%9a%84%e8%b5%b7%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<p>現在輸入簡單的指令，AI 就可以根據需求完成功能，甚至一口氣完成 10 個功能都沒有問題。</p>
+<p>從表面上來看，效率倍增，但實際上有非常多的隱患，這邊展示一個實際案例讓大家更能理解：</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-02.webp" width="1400" height="755" alt="參考 PR: https://github.com/deancourse/git-worktree-demo/pull/1" loading="lazy" decoding="async">
+  <figcaption>參考 PR: <a href="https://github.com/deancourse/git-worktree-demo/pull/1">https://github.com/deancourse/git-worktree-demo/pull/1</a></figcaption>
+</figure>
+
+<p>在團隊合作時，如果想把自己的修改合併回主線，會先開一個 Pull Request，讓其他人幫你檢查程式碼、討論是否需要修改，確認沒問題後再合併。</p>
+<p>以這個 Pull Request 舉例，標題寫著「新增 i18n 多語系、淺色深色主題設計、常見 QA 問答區…」等多個功能，感覺做了很多事。</p>
+<blockquote class="pullquote"><p>但從專案管理的角度來看，其實每個功能都應該對應到不同的 feature branch，不要在一個分支中放多個功能。</p>
+</blockquote>
+<p>把視角切換到「Files changed」，你會對我說的話更有體會，像這個 Pull Request 涵蓋了 18 個檔案，有近千多行的程式變更；從 Code Review 的角度來看，你根本無法了解變更的功能要對應到哪些檔案。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-03.webp" width="1400" height="755" alt="① 缺乏版控概念，是災難的起點（圖 3）" loading="lazy" decoding="async"></p>
+<p>再來，我們看一下「Commits」的分頁，你會發現改了這麼多功能，竟然只有一個 commit，而且訊息也非常的簡單。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-04.webp" width="1400" height="755" alt="① 缺乏版控概念，是災難的起點（圖 4）" loading="lazy" decoding="async"></p>
+<p>這會導致未來發生問題時，我們無法追溯當時的設計邏輯，完全沒有參考價值。</p>
+<p><strong>其實這邊所展示的問題，在過去就已經存在了，但在使用 AI 加速開發後，問題被成倍放大。</strong></p>
+<p>因此接下來要跟大家分享，如何透過 Git Worktree 與 Agent Skills 來解決這些痛點。</p>
+<hr>
+<h2 id="-建立-git-worktree-環境git--pnpm--extensions">② 建立 Git Worktree 環境：Git + pnpm + Extensions<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b-git-worktree-%e7%92%b0%e5%a2%83git--pnpm--extensions" aria-label="這個段落的連結"></a></h2>
+<p>為了方便大家可以跟著影片操作，我在 GitHub 有上傳一個練習用的專案，歡迎大家路過按個 Star：</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-05.webp" width="1400" height="694" alt="https://github.com/deancourse/git-worktree-demo" loading="lazy" decoding="async">
+  <figcaption><a href="https://github.com/deancourse/git-worktree-demo">https://github.com/deancourse/git-worktree-demo</a></figcaption>
+</figure>
+
+<p>這邊我建議大家點擊 fork，將專案複製到自己的帳號下：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-06.webp" width="1400" height="753" alt="② 建立 Git Worktree 環境：Git &#43; pnpm &#43; Extensions（圖 6）" loading="lazy" decoding="async"></p>
+<p>然後點擊 Code，從裡面複製專案網址：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-07.webp" width="1400" height="753" alt="② 建立 Git Worktree 環境：Git &#43; pnpm &#43; Extensions（圖 7）" loading="lazy" decoding="async"></p>
+<p>接著打開你熟悉的程式碼編輯器，這邊我以 Google 最近推出的 Antigravity 來示範，這是 Google 最新推出的 AI 程式碼編輯</p>
+<p>目前登入 Google 帳號就可以使用，但如果付費升級到 Pro 會有更高的使用額度：</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-08.webp" width="1400" height="826" alt="https://antigravity.google/" loading="lazy" decoding="async">
+  <figcaption><a href="https://antigravity.google/">https://antigravity.google/</a></figcaption>
+</figure>
+
+<p>但如果你熟悉的是 Cursor 或 Claude 等其他 AI 工具也沒關係，因為以 Agent Skills 的設定來說，只有路徑稍微不同而已。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-09.webp" width="1400" height="826" alt="② 建立 Git Worktree 環境：Git &#43; pnpm &#43; Extensions（圖 9）" loading="lazy" decoding="async"></p>
+<p>好的，我們再把注意力轉回 Antigravity，點擊 <code>Clone Repository</code>，貼上剛剛複製的網址來下載專案：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-10.webp" width="1400" height="826" alt="② 建立 Git Worktree 環境：Git &#43; pnpm &#43; Extensions（圖 10）" loading="lazy" decoding="async"></p>
+<p>接下來要先跟大家分享，安裝哪些工具可以更舒適的使用 Git Worktree 功能：</p>
+<h3 id="-確認-git-版本">➤ 確認 Git 版本<a class="h-anchor" href="#-%e7%a2%ba%e8%aa%8d-git-%e7%89%88%e6%9c%ac" aria-label="這個段落的連結"></a></h3>
+<p>首先，我們要確認電腦的 Git 版本。</p>
+<blockquote>
+<p>提醒一下大家，因為這隻影片會使用到 Node.js 與 Git 等技術，如果你是第一次接觸，我有專門錄一隻影片分享詳細的操作步驟喔！</p>
+<p><a href="https://youtu.be/5DEV_K0JauQ">https://youtu.be/5DEV_K0JauQ</a></p>
+</blockquote>
+<p><a href="https://git-scm.com/">安裝好 Git 後</a>，點擊上方的 Toggle Panel 開啟終端機，輸入指令 <code>git -v</code> 確認有正確安裝。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-11.webp" width="1400" height="826" alt="確認 Git 版本（圖 11）" loading="lazy" decoding="async"></p>
+<p>另外提醒安裝過的朋友，<strong>如果你的版本低於 2.30，建議升級到最新版本，這樣 Git Worktree 功能會較為完整。</strong></p>
+<h3 id="-安裝-pnpm">➤ 安裝 pnpm<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-pnpm" aria-label="這個段落的連結"></a></h3>
+<p>因為 Git Worktree 會建立多個工作目錄，而 Node.js 專案的 node_modules 動輒上百 MB。</p>
+<p>如果用 <code>npm</code> 安裝會消耗大量硬碟資源，因此我推薦大家使用 <code>pnpm</code> 這款套件。</p>
+<p>在終端機輸入 <code>npm install -g pnpm</code> 便可完成全局安裝。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-12.webp" width="1400" height="826" alt="安裝 pnpm（圖 12）" loading="lazy" decoding="async"></p>
+<p>pnpm 會將所有套件存放在電腦的一個共用儲存區，各專案的 node_modules 只是透過連結指向同一份套件。</p>
+<p>雖然每個 Worktree 需要執行 pnpm install，但不會重新下載套件，非常適合搭配 Git Worktree 進行並行開發。</p>
+<h3 id="-安裝-extensions">➤ 安裝 Extensions<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-extensions" aria-label="這個段落的連結"></a></h3>
+<p>然後我們把視角轉到左側選單，點擊「Extensions」的分頁，這邊推薦大家安裝兩款外掛。</p>
+<p>第一款是「Git Worktree Manager」，他能讓你透過介面輕鬆的建立、切換、清理 Worktree。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-13.webp" width="1400" height="826" alt="安裝 Extensions（圖 13）" loading="lazy" decoding="async"></p>
+<p>第二款是「GitLens」，安裝好後，你把滑鼠移到對應的程式碼位置時，可以直接看到 Commit 的歷史。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-14.webp" width="1400" height="826" alt="安裝 Extensions（圖 14）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>不過這邊要提醒一下大家，這些外掛大部分是由第三方開發的，安裝前請自行評估安全性。</p>
+</blockquote>
+<h3 id="-了解-git-worktree-工作模式">➤ 了解 Git Worktree 工作模式<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3-git-worktree-%e5%b7%a5%e4%bd%9c%e6%a8%a1%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>做好前置作業後，我們先在終端機輸入 <code>pnpm install</code> 安裝套件。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-15.webp" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 15）" loading="lazy" decoding="async"></p>
+<p>安裝完成後，輸入 <code>pnpm run dev</code> 便可啟動專案，下面就會有一個「localhost:3000」的網址。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-16.webp" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 16）" loading="lazy" decoding="async"></p>
+<p>確認專案可以順利啟動後，我們回到 Antigravity，點擊左側剛剛安裝好的「Git Worktree Manager」，然後點擊這個資料夾的符號來新增 Worktree。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-17.webp" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 17）" loading="lazy" decoding="async"></p>
+<p>因為我們要從現在的主分支，切換到其他分支，所以選擇第一個「Create new branch」</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-18.webp" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 18）" loading="lazy" decoding="async"></p>
+<p>至於分支的名稱就打 <code>test</code>，主要是先讓大家了解 Git Worktree 概念；至於目錄，使用系統自動生成的就好了，最後點擊「Create」，就會直接把工作區的內容複製一份過去。</p>
+<p>此時，你就會看到 test 出現在 Worktree List 當中：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-19.webp" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 19）" loading="lazy" decoding="async"></p>
+<p>點擊後便會開啟一個新的工作區，打開終端機後，要在輸入 <code>pnpm install</code> 來安裝套件；<strong>你會發現套件幾乎在瞬間安裝完畢，打開 node_modules 資料夾，你會發現有箭頭圖示「↩」。</strong></p>
+<p>代表只是建立資料夾的連結，而非重新下載套件，這就是 pnpm 的運作方式，可以幫我們節省硬碟空間。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-20.webp" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 20）" loading="lazy" decoding="async"></p>
+<p>然後我們嘗試輸入 <code>pnpm run dev</code> 啟動專案，這次的網址變成了「localhost:3001」，點擊後，網頁也可以順利呈現。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-21.webp" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 21）" loading="lazy" decoding="async"></p>
+<p>這邊的示範，是想要讓大家了解<strong>每個 Worktree 都是獨立的工作目錄，所以可以同時跑不同的 dev server 跟 port</strong>。</p>
+<p>當然，也代表我們可以<strong>同時指揮多個 AI Agent 並行開發不同功能。</strong></p>
+<p>也跟大家說明一下，如何把 Worktree 刪除；在刪除前，請先把剛剛啟動的專案關閉。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-22.webp" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 22）" loading="lazy" decoding="async"></p>
+<p>然後回到 Git Worktree Manager 的介面，點擊右鍵，在 Worktree Action 當中選擇 Remove Worktree，就可以移除了。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-23.webp" width="1400" height="826" alt="了解 Git Worktree 工作模式（圖 23）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-agent-skill自動建立分支與開發規格">③ Agent Skill：自動建立分支與開發規格<a class="h-anchor" href="#-agent-skill%e8%87%aa%e5%8b%95%e5%bb%ba%e7%ab%8b%e5%88%86%e6%94%af%e8%88%87%e9%96%8b%e7%99%bc%e8%a6%8f%e6%a0%bc" aria-label="這個段落的連結"></a></h2>
+<p>前面有說到，不同的功能應該使用不同的 feature branch 來開發；但具體怎麼拆分功能，以及 branch 的名稱如何命名，我們可以直接設計一個 Agent Skill 來幫我們搞定。</p>
+<p>如果你是 Fork 我的專案，在根目錄下方會有一個「.agent」的資料夾，我有放一些 Skills 讓大家跟著影片一起體驗：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-24.webp" width="1400" height="826" alt="③ Agent Skill：自動建立分支與開發規格（圖 24）" loading="lazy" decoding="async"></p>
+<p>像這邊我設計了一個 <code>git-worktree-design</code> 技能，把 Markdown 點開來後，跟大家說明一下設計的邏輯：</p>
+<ol>
+<li>首先會檢查目前專案分支的狀況，確認既有 Worktree，以及是否有沒提交的變更。</li>
+<li>然後將複雜的需求拆成獨立的 feature branch 以及參考的規格後，用表格預覽，使用者確認後才會執行。</li>
+<li>接下來就會根據 Skill 指定的格式建立 Worktree。</li>
+<li>並順便安裝好每個 Worktree 的套件。</li>
+<li>然後新增這個 feature 要執行的 SPEC，方便後續 AI Agent 的開發。</li>
+<li>完成以上任務後，會再用表格像我們展示完成的結果。</li>
+</ol>
+<p>了解 Skill 的設計邏輯後，我們在右側與 AI 的對話視窗中，輸入指令</p>
+<pre tabindex="0"><code>採用 Worktree，新增淺色深色主題設計、常見 QA 問答區、Cookie 同意彈窗
+</code></pre><p>此時，你會發現 AI 判斷需要使用 Git Worktree 這個 Skill，並初步規劃了每個 Worktree 要參考的規格：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-25.webp" width="1400" height="826" alt="③ Agent Skill：自動建立分支與開發規格（圖 25）" loading="lazy" decoding="async"></p>
+<p>確認沒問題後，就可以讓 AI 幫我們執行下去，稍等一段時間後，AI 說他已經幫我們完成了對應的設計。</p>
+<p>打開左側 Git Worktree Manager 的分頁，可以看到看到新增的 Worktree：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-26.webp" width="1400" height="826" alt="③ Agent Skill：自動建立分支與開發規格（圖 26）" loading="lazy" decoding="async"></p>
+<p>這邊點擊其中一個 Worktree，你可以看到 AI 有根據我們的指示，用 pnpm 來安裝套件，所以 node_modules 下面資料夾有這個箭頭符號。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-27.webp" width="1400" height="826" alt="③ Agent Skill：自動建立分支與開發規格（圖 27）" loading="lazy" decoding="async"></p>
+<p>並且根目錄的地方有存放給「git-Worktree-spec.md」這個給 AI Agent 參考的規格，確保執行的方向。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-28.webp" width="1400" height="826" alt="③ Agent Skill：自動建立分支與開發規格（圖 28）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="-指揮多個-ai-agents-同時執行">④ 指揮多個 AI Agents 同時執行<a class="h-anchor" href="#-%e6%8c%87%e6%8f%ae%e5%a4%9a%e5%80%8b-ai-agents-%e5%90%8c%e6%99%82%e5%9f%b7%e8%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>但讓 AI 參考規格開發前，跟大家分享一個小技巧。先開啟與 AI 對話的視窗，點擊右上方的「…」選擇 Customizations，選擇 Workflows：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-29.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 29）" loading="lazy" decoding="async"></p>
+<p>我有設計一個自動化流程，這樣只要輸入快捷鍵，就可以讓 AI 知道讀取規格、執行實作、驗收結果的步驟：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-30.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 30）" loading="lazy" decoding="async"></p>
+<p>這邊我們先點開其中一個 Worktree，輸入「/」，選擇剛剛的那個 workflow，點擊「Enter」他就會開始執行了：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-31.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 31）" loading="lazy" decoding="async"></p>
+<p>以往我們開發功能因為在同一個工作區，所以需要一個完成後才能執行下一個。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-32.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 32）" loading="lazy" decoding="async"></p>
+<p>但用 Git Worktree 的好處，就是可以多個 AI Agent 同時執行。這邊我也把另外兩個 Worktree 打開，輸入「/」讓他們根據 workflow 來執行。</p>
+<p>但如果如果要在多個視窗切換，來觀察不同 AI Agent 執行的進度有點麻煩。</p>
+<p>所以我們可以點擊上方的「Open Agent Manager」，這樣就能知道 Agent 執行的過程是否需要我們介入。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-33.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 33）" loading="lazy" decoding="async"></p>
+<p>像這邊轉圈圈就是代表執行中，而稍等一段時間後，就會變成鈴鐺提醒的符號。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-34.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 34）" loading="lazy" decoding="async"></p>
+<p>稍等一段時間後，AI 就在不同的工作區，完成了各自的功能，這邊我們也可以從 SPEC 的修改中，看到他已經自我驗證了功能符合需求。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-35.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 35）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>但 AI 完成後，人類一定也要自行確認結果是否符合期待，這邊我先開啟各個 worktree 的瀏覽器。</p>
+</blockquote>
+<p>把所有服務都啟動後，也剛好趁這個機會，跟大家說明不同功能分 feature 開發的好處</p>
+<p>首先是我們人類驗證功能會比較輕鬆，因為要確認的面向單一</p>
+<ul>
+<li>像 Cookie 的部分，就是下方在使用者進入時，會有彈窗提示</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-36.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 36）" loading="lazy" decoding="async"></p>
+<ul>
+<li>而淺色深色主題這塊，則是上方多了一個按鈕，讓使用者自由切換主題</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-37.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 37）" loading="lazy" decoding="async"></p>
+<ul>
+<li>至於常見問答，也有根據主題新增了對應的區塊</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-38.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 38）" loading="lazy" decoding="async"></p>
+<p>再確認修改符合預期後，先把 Agent Manager 關閉，我們要把 Worktree 的變更推送上去。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-39.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 39）" loading="lazy" decoding="async"></p>
+<p>比如我們來打開淺色深色主題的 Worktree，以往我們可能是人工手打，或是點擊「Generate」讓 AI 自動產生。</p>
+<p>但人工手打不僅耗時，每個人的撰寫習慣也各不相同；但假使點擊 Generate 讓 AI 自動產生，他生成的訊息有時候是英文，有時是中文，而且長短很隨機。</p>
+<blockquote class="pullquote"><p>所以 commit 這塊，我也有設計一個 Skill，讓 AI 根據我的指引生成。</p>
+</blockquote>
+<p>我們先回到專案的目錄，點擊「.agent」資料夾，在 skills 底下有一個「git-smart-commit」的技能：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-40.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 40）" loading="lazy" decoding="async"></p>
+<p>他的任務就是把雜亂的變更，拆分成有意義的 commit；<strong>畢竟請 AI 輔助開發時，很可能一口氣改了很多個檔案，如果全部放在一個 commit，那這個 commit 就跟沒寫一樣。</strong></p>
+<p>這邊我們把左側的選單切換到 Source Control，你就會看到這個淺色深色主題有修改到多個檔案</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-41.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 41）" loading="lazy" decoding="async"></p>
+<p>這邊我就在對話窗輸入</p>
+<pre tabindex="0"><code>新增 commit
+</code></pre><p>稍等一段時間，會看到 AI 根據變更的檔案，生成對應的 commit 訊息：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-42.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 42）" loading="lazy" decoding="async"></p>
+<p>commit 送出後，記得要點擊 Publish Branch 才會將檔案上傳喔！</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-43.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 43）" loading="lazy" decoding="async"></p>
+<p>完成後可以把這個工作區關閉，另外兩個 Worktree 也是一樣操作即可。</p>
+<p>都 Publish 之後，我們回到 GitHub 網頁，此時你會看到下拉選單中有剛剛上傳的 branch：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-44.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 44）" loading="lazy" decoding="async"></p>
+<p>隨便點擊一個，就可以看到剛剛撰寫的 commit 訊息：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-45.webp" width="1400" height="826" alt="④ 指揮多個 AI Agents 同時執行（圖 45）" loading="lazy" decoding="async"></p>
+<p>但目前的 feature 都在不同的 branch，所以接下來會帶大家透過 Pull Reqeust，將功能合併到主線。</p>
+<hr>
+<h2 id="-好的-pull-request讓-code-review-變輕鬆">⑤ 好的 Pull Request，讓 Code Review 變輕鬆<a class="h-anchor" href="#-%e5%a5%bd%e7%9a%84-pull-request%e8%ae%93-code-review-%e8%ae%8a%e8%bc%95%e9%ac%86" aria-label="這個段落的連結"></a></h2>
+<p>這邊先點擊上方的「Pull Requests」：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-46.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 46）" loading="lazy" decoding="async"></p>
+<p>選擇「New Pull Requests」：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-47.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 47）" loading="lazy" decoding="async"></p>
+<p>如果你是 fork 我的專案，這邊要特別注意，base 要改成自己的帳號，然後 compare 要選擇想合併進來的 feature 分支：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-48.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 48）" loading="lazy" decoding="async"></p>
+<p>建立 PR 後，你會看到要填寫標題與描述，根據我的工作經驗，PR 是決定專案品質的重要環節：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-49.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 49）" loading="lazy" decoding="async"></p>
+<p>因為他是讓團隊成員 Code Review 時，理解你到底做了些什麼的文件</p>
+<p><strong>如果隨便寫寫，那審核的人通常也是隨意看看；畢竟直接讀程式碼，去理解功能為何這樣設計，真的太消耗腦力了。</strong></p>
+<blockquote class="pullquote"><p>我知道很多人嫌寫 PR 很麻煩，所以我也設計了一個 Skill，用來生成 Pull Request 的草稿。</p>
+</blockquote>
+<p>這邊我們把視角切換到 Antigravity，這個 Skill 一樣是放在「.agent/skills」底下，名稱叫做「git-pr-description」。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-50.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 50）" loading="lazy" decoding="async"></p>
+<p>這邊跟大家簡述這個 Skill 的設計</p>
+<ol>
+<li>首先，預設合併的目標為 master 這個主線分支，如果你是用 main/develop 等其他的分支請自行調整。</li>
+<li>接下來就會把當前的分支與目標分支進行比對，讀取差異的檔案與 commit 訊息，這邊也再次跟大家提醒 commit 訊息是很重要的，你不想寫，至少要讓 AI 幫你寫吧。</li>
+<li>而後就是分析變更的內容，然後生成 Pull Request 的 Title 與 Description。</li>
+<li>其中 Description 的部分，我是要求他參考「pr-template」的這個範例檔來撰寫，如果大家想把這個 Skill 導入目前的工作流，可以改寫這個檔案。</li>
+</ol>
+<p>講了這麼多，我直接示範給大家看比較快；一樣打開 Agent Manager，然後再各自的 Agent 輸入。</p>
+<pre tabindex="0"><code>撰寫 PR
+</code></pre><p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-51.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 51）" loading="lazy" decoding="async"></p>
+<p>稍等一段時間後，他就會根據 Skill 提供的格式生成 Pull Request 的草稿了：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-52.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 52）" loading="lazy" decoding="async"></p>
+<p>這邊我們把它複製到 GitHub 後，我強烈建議大家至少要跟著測試案例執行過一遍。</p>
+<p>如果是前端專案的話，建議附上對應的圖片，這樣可以減少別人 Code Review 時的負擔，同時也確認了功能符合預期。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-53.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 53）" loading="lazy" decoding="async"></p>
+<p>如果專案是自己開發的，那就直接點擊 Merge 合併就好。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-54.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 54）" loading="lazy" decoding="async"></p>
+<p>接下來回到 Antigravity，合併好的 Worktree，我個人會建議直接點擊右鍵，在 Worktree Action 當中選擇 Remove Worktree 將他移除，避免 Worktree 太多管理困難。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-55.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 55）" loading="lazy" decoding="async"></p>
+<p>至於另外兩個 Worktree 也是一樣操作，先建立 Pull Request，接著用 AI 生成對應的 Review 草稿，確認沒問題後合併回主線，完成這一切後記得移除 Worktree。</p>
+<p>但有一點要提醒一下大家，因為 Worktree AI Agent 同時開發，所以開發當下不會知道彼此的變更</p>
+<p><strong>所以把功能合併回主線時，可能出現衝突</strong>；像常見問答跟淺色深色的分支在合併時，都遇到了這個問題：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-56.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 56）" loading="lazy" decoding="async"></p>
+<p>點擊「Resolve conflicts」可以看到發生衝突的位置，但我個人並不建議在網頁上調整，因為你無法得知調整後的實際狀況：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-57.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 57）" loading="lazy" decoding="async"></p>
+<p><strong>我建議回到程式碼編輯器上操作，本地解決完衝突，確認結果符合預期後再更新上去。</strong></p>
+<p>這邊先回到 Antigravity 的頁面，我以切換淺色深色主題這個分支來做示範。</p>
+<p>首先，我們要打開終端機，執行 <code>git fetch origin</code> 拉取遠端最新資料 然後再執行 <code>git merge origin/master</code> 來同步主線的更新。</p>
+<p>執行後，你就會發現左側 Source Control 這個地方，在 Merge Changes 有一個衝突的檔案：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-58.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 58）" loading="lazy" decoding="async"></p>
+<p>打開後就會看到產生衝突的位置，衝突通常分成「語法衝突」跟「邏輯衝突」。</p>
+<blockquote>
+<p>邏輯衝突較難處理，因為要考量到相容性或是改寫程式，這個之後有機會透過一個主題專門分享。</p>
+</blockquote>
+<p>而現在看到的這個是調整 CSS 網頁外型的語法衝突；只是括號位置撞到了而已，所以我選擇 Accept Current Change。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-59.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 59）" loading="lazy" decoding="async"></p>
+<p>這邊也跟大家提一下前面安裝 Gitlens 外掛的好處，像這邊滑鼠移到程式碼時，你就可以看到當時是誰更新了這段程式、更新的目的是什麼：</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-60.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 60）" loading="lazy" decoding="async"></p>
+<p>處理完衝突後，按下「+」，然後輸入 commit</p>
+<pre tabindex="0"><code>chore: sync with master
+</code></pre><p>這是與主線同步的意思，然後點擊「Sync Changes」推送上去。</p>
+<p>此時回到 GitHub，刷新一下網頁，就會發現可以順利合併嚕！</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-61.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 61）" loading="lazy" decoding="async"></p>
+<p>等所有 feature 都合併到主線後，我們可以在 master 的這個地方輸入 <code>git pull</code>，拉回變更。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-62.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 62）" loading="lazy" decoding="async"></p>
+<p>然後輸入 <code>pnpm run dev</code>，來確認合併後的內容是否符合預期。</p>
+<p><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-63.webp" width="1400" height="826" alt="⑤ 好的 Pull Request，讓 Code Review 變輕鬆（圖 63）" loading="lazy" decoding="async"></p>
+<p>這邊把視角切到網頁，我們可以看到第一次進入時，下方會有 Cookie 的詢問視窗，上面可以切換淺色、深色主題，往下滑一點，常見問題的段落也有順利顯示。</p>
+<p>如果文章看到這邊，先給自己拍拍手，然後別忘記幫忙點個讚。</p>
+<blockquote>
+<p>假使你有跟著教學做到這個步驟，歡迎留言，讓我知道觀眾裡面有狠人，因為這個主題真的不容易。</p>
+</blockquote>
+<hr>
+<h2 id="結語人才是-ai-的瓶頸">結語：人，才是 AI 的瓶頸<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e4%ba%ba%e6%89%8d%e6%98%af-ai-%e7%9a%84%e7%93%b6%e9%a0%b8" aria-label="這個段落的連結"></a></h2>
+<p>完成這隻影片後，我不禁有個特別的感悟。</p>
+<p>因為這隻影片不管是專案範例、Commit 訊息、Agent Skills，甚至連 Pull Request 都是 AI 生成的。</p>
+<p>我從頭到尾一行程式都沒有寫，主要任務就是去 Review AI 給的建議、執行的成果。</p>
+<blockquote class="pullquote"><p>我想未來絕大多數產品，背後也都是 AI 在進行開發與迭代。</p>
+</blockquote>
+<p>但這並不代表 AI 可以取代工程師，雖然現在人人都可以寫程式；<strong>但「團隊溝通、功能擴充、系統維護、問題解決」都是需要經驗的。</strong></p>
+<p>就拿今天的影片來舉例好了，我是因為觀察到 Code Review 的速度，已經跟不上 AI 寫程式的速度。</p>
+<blockquote class="pullquote"><p>當人成為 AI 的瓶頸時，就要去分析如何降低門檻。</p>
+</blockquote>
+<p>比如不同功能要建立各自的分支，以減少 Code Review 的認知負擔。又或者完成功能後，請 AI 分析程式碼分段 commit，並撰寫 Pull Request 草稿，讓團隊協作的資訊有一致性。</p>
+<p><strong>雖然每一步都是 AI 在執行，但如果沒有業界的實戰經驗，大家對這些工具如何與 AI 協作是沒有概念的。</strong></p>
+<p>但這些才是真正的痛點，只要設計好就能提升個人與團隊的工作效率。</p>
+<p>當然，我相信一定還有很多更好的方案，歡迎大家留言分享。</p>
+<blockquote class="pullquote"><p>最後提醒大家，不管 AI 多強大，總需要有個人按下同意按鈕。</p>
+</blockquote>
+<blockquote class="pullquote"><p>當你按下去的那刻，責任就歸屬於你，畢竟 AI 還不能幫人背鍋。</p>
+</blockquote>
+<p>如果這篇文章對你有幫助，可以順手按個讚，並把文章分享給對 AI 主題感興趣的朋友們。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202602/git-worktree-ai-agents/images/git-worktree-ai-agents-64.webp" width="1400" height="914" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
+    <item>
+      <title>ChatGPT Code Review、Refactoring、Comments 的能力如何？</title>
+      <link>https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/</link>
+      <pubDate>Wed, 25 Jan 2023 22:01:46 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>ChatGPT 的 Code Review 能力如何？能幫我們解釋（Explain）、重構（Refactoring）、加註解（Comments）嗎？ 這邊我們就使用上一篇 Side Project 完成的 Code，來看看 ChatGPT 的表現。</description>
+      <content:encoded><![CDATA[<p>雖然之前<a href="https://deanlin.net/blog/202301/chatgpt-line-bot-side-project-part-2/">讓 ChatGPT 寫 Side Project</a> 時遇到一些狀況，不過這很可能是因為 ChatGPT 的資料截止於 2021 年所造成的。</p>
+<p>所以今天想來試試看，如果是「已知」的 Code，ChatGPT 的 Code Review 能力如何？能幫我們解釋（Explain）、重構（Refactoring）、加註解（Comments）嗎？</p>
+<p>這邊我們就使用<a href="https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/index.js">上一篇 Side Project 完成的 Code</a>，來看看 ChatGPT 的表現。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-01.webp" width="1260" height="689" alt="ChatGPT Code Review、Refactoring、Comments 的能力如何？（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+
+▋ 直接把程式碼丟進 ChatGPT 會發生什麼事？
+▋ 讓 ChatGPT 用中文解釋程式（Review and explain）
+▋ 用 ChatGPT 重構程式（Refactoring）
+▋ 用 ChatGPT 幫程式碼加上註解（Comments）
+▋ 結論：用對地方就是好幫手！
+</code></pre><h2 id="直接把程式碼丟進-chatgpt-會發生什麼事">直接把程式碼丟進 ChatGPT 會發生什麼事？<a class="h-anchor" href="#%e7%9b%b4%e6%8e%a5%e6%8a%8a%e7%a8%8b%e5%bc%8f%e7%a2%bc%e4%b8%9f%e9%80%b2-chatgpt-%e6%9c%83%e7%99%bc%e7%94%9f%e4%bb%80%e9%ba%bc%e4%ba%8b" aria-label="這個段落的連結"></a></h2>
+<p>這邊我把先前的「註解」都拿掉，直接丟到 ChatGPT 看看會發生什麼事。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> line <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@line/bot-sdk&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Configuration, OpenAIApi } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;openai&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> configuration <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Configuration({
+</span></span><span style="display:flex;"><span>  apiKey<span style="color:#ff7b72;font-weight:bold">:</span> process.env.OPENAI_API_KEY,
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> openai <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> OpenAIApi(configuration);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> config <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client(config);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware(config), (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  Promise
+</span></span><span style="display:flex;"><span>    .all(req.body.events.map(handleEvent))
+</span></span><span style="display:flex;"><span>    .then((result) =&gt; res.json(result))
+</span></span><span style="display:flex;"><span>    .<span style="color:#ff7b72">catch</span>((err) =&gt; {
+</span></span><span style="display:flex;"><span>      console.error(err);
+</span></span><span style="display:flex;"><span>      res.status(<span style="color:#a5d6ff">500</span>).end();
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> handleEvent (event) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (event.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;message&#39;</span> <span style="color:#ff7b72;font-weight:bold">||</span> event.message.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;text&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> Promise.resolve(<span style="color:#79c0ff">null</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> openai.createCompletion({
+</span></span><span style="display:flex;"><span>    prompt<span style="color:#ff7b72;font-weight:bold">:</span> event.message.text,
+</span></span><span style="display:flex;"><span>    model<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;text-davinci-003&#34;</span>,
+</span></span><span style="display:flex;"><span>    max_tokens<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1000</span>
+</span></span><span style="display:flex;"><span>  }).then((completions) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span> completions.data.choices[<span style="color:#a5d6ff">0</span>].text.trim();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> client.replyMessage(event.replyToken, {
+</span></span><span style="display:flex;"><span>      type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;text&#39;</span>,
+</span></span><span style="display:flex;"><span>      text<span style="color:#ff7b72;font-weight:bold">:</span> message
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#39;Linebot is running on 3000 port&#39;</span>);
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-02.webp" width="1084" height="362" alt="直接把程式碼丟進 ChatGPT 會發生什麼事？（圖 2）" loading="lazy" decoding="async"></p>
+<p>從 ChatGPT 的回覆中，我認爲他對程式的理解非常正確；當你接手一份程式碼，而前人完全沒有寫註解時， ChatGPT 能幫你加快理解這份程式。</p>
+<hr>
+<h2 id="讓-chatgpt-用中文解釋程式review-and-explain">讓 ChatGPT 用中文解釋程式（Review and explain）<a class="h-anchor" href="#%e8%ae%93-chatgpt-%e7%94%a8%e4%b8%ad%e6%96%87%e8%a7%a3%e9%87%8b%e7%a8%8b%e5%bc%8freview-and-explain" aria-label="這個段落的連結"></a></h2>
+<p>不過有時英文讀起來有點吃力，我們可以透過下面這段 prompt，讓他改成用「中文列點」來解釋。</p>
+<pre tabindex="0"><code>Review code and explain in traditional Chinese [List of points]
+</code></pre><p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-03.webp" width="1085" height="470" alt="讓 ChatGPT 用中文解釋程式（Review and explain）（圖 3）" loading="lazy" decoding="async"></p>
+<p>ChatGPT 的解釋挺讓我驚豔的，清晰明瞭的說明每個「套件的職責」，以及程式的「功能」。</p>
+<hr>
+<h2 id="用-chatgpt-重構程式refactoring">用 ChatGPT 重構程式（Refactoring）<a class="h-anchor" href="#%e7%94%a8-chatgpt-%e9%87%8d%e6%a7%8b%e7%a8%8b%e5%bc%8frefactoring" aria-label="這個段落的連結"></a></h2>
+<p>這邊我們再用下面這段 prompt，來實驗他重構程式，以及解釋重構理念的能力如何。</p>
+<pre tabindex="0"><code>Refactoring the code and explain in traditional Chinese
+</code></pre><p>下面是 ChatGPT 重構後的程式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> line <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@line/bot-sdk&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Configuration, OpenAIApi } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;openai&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client({
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> openai <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> OpenAIApi(<span style="color:#ff7b72">new</span> Configuration({
+</span></span><span style="display:flex;"><span>  apiKey<span style="color:#ff7b72;font-weight:bold">:</span> process.env.OPENAI_API_KEY,
+</span></span><span style="display:flex;"><span>}));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware({
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>}), <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> Promise.all(req.body.events.map(handleEvent));
+</span></span><span style="display:flex;"><span>    res.json(results);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    console.error(err);
+</span></span><span style="display:flex;"><span>    res.status(<span style="color:#a5d6ff">500</span>).end();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> handleEvent <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> (event) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (event.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;message&#39;</span> <span style="color:#ff7b72;font-weight:bold">||</span> event.message.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;text&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">null</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> { data<span style="color:#ff7b72;font-weight:bold">:</span> { choices } } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> openai.createCompletion({
+</span></span><span style="display:flex;"><span>    prompt<span style="color:#ff7b72;font-weight:bold">:</span> event.message.text,
+</span></span><span style="display:flex;"><span>    model<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;text-davinci-003&#34;</span>,
+</span></span><span style="display:flex;"><span>    max_tokens<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1000</span> 
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span> choices[<span style="color:#a5d6ff">0</span>].text.trim();
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> client.replyMessage(event.replyToken, {
+</span></span><span style="display:flex;"><span>    type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;text&#39;</span>,
+</span></span><span style="display:flex;"><span>    text<span style="color:#ff7b72;font-weight:bold">:</span> message
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#39;Linebot is running on 3000 port&#39;</span>);
+</span></span></code></pre></div><p>於結尾 ChatGPT 有說明自己的重構理念：</p>
+<ol>
+<li>使用 async/await 處理 promise 鏈，使程式碼更具可讀性。</li>
+<li>把 client 和 openai 的實例化移到最上層，使程式碼更整潔。</li>
+<li>使用解構賦值提取 openai 回應中的 choices，使程式碼更簡潔。</li>
+<li>把 handleEvent 函式移到最上層，使其更易於測試。</li>
+<li>使用箭頭函式語法使程式碼更一致。</li>
+<li>使用縮寫屬性名稱使程式碼更簡潔。</li>
+</ol>
+<p>這邊我得給他拍拍手，就算筆者認真重構都很難考慮的這麼完善。</p>
+<blockquote>
+<p><strong>這次 ChatGPT 重構完的程式是可以正常運行的，這點超重要！</strong></p>
+<p>因為實務上最怕重構後功能就壞掉，不過還是建議讀者將 ChatGPT 重構完的程式測試一遍，不要百分百相信。</p>
+</blockquote>
+<p>如果你對他的說明不理解，也可以再進一步詢問他（像是我對第 6 點就看不太懂）。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-04.webp" width="1091" height="583" alt="用 ChatGPT 重構程式（Refactoring）（圖 4）" loading="lazy" decoding="async"></p>
+<p>看完 ChatGPT 的解釋後，我回頭看了一下程式碼還是覺得怪怪的，所以我再次詢問。</p>
+<p><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-05.webp" width="1073" height="268" alt="用 ChatGPT 重構程式（Refactoring）（圖 5）" loading="lazy" decoding="async"></p>
+<p>對&hellip; <strong>ChatGPT 的解釋有時不完全正確，如果發現問題可以跟進一步他討論</strong>。</p>
+<p>另外我跟他討論後，又把 line 設定 config 的部分調整回來，因為 config 應該要集中設定，而不應該分散在多個位置。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> config <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client(config);
+</span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware(config), <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// code..
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 id="用-chatgpt-幫程式碼加上註解comments">用 ChatGPT 幫程式碼加上註解（Comments）<a class="h-anchor" href="#%e7%94%a8-chatgpt-%e5%b9%ab%e7%a8%8b%e5%bc%8f%e7%a2%bc%e5%8a%a0%e4%b8%8a%e8%a8%bb%e8%a7%a3comments" aria-label="這個段落的連結"></a></h2>
+<p>寫程式總是懶得寫註解？用下面這段 prompt 就能讓 ChatGPT 幫你完成這些瑣事！</p>
+<pre tabindex="0"><code>add code comments
+</code></pre><p>下面是 ChatGPT 加上註解後的程式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> line <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;@line/bot-sdk&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> express <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;express&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { Configuration, OpenAIApi } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;openai&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Initialize express app
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> app <span style="color:#ff7b72;font-weight:bold">=</span> express();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Get config values from environment variables
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> config <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  channelAccessToken<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_ACCESS_TOKEN,
+</span></span><span style="display:flex;"><span>  channelSecret<span style="color:#ff7b72;font-weight:bold">:</span> process.env.CHANNEL_SECRET,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Initialize line client
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> client <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> line.Client(config);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Initialize openai api
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> openai <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> OpenAIApi(<span style="color:#ff7b72">new</span> Configuration({
+</span></span><span style="display:flex;"><span>  apiKey<span style="color:#ff7b72;font-weight:bold">:</span> process.env.OPENAI_API_KEY,
+</span></span><span style="display:flex;"><span>}));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Handle post requests to /webhook
+</span></span></span><span style="display:flex;"><span>app.post(<span style="color:#a5d6ff">&#39;/webhook&#39;</span>, line.middleware(config), <span style="color:#ff7b72">async</span> (req, res) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Map handleEvent function over all events and wait for all promises to resolve
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> results <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> Promise.all(req.body.events.map(handleEvent));
+</span></span><span style="display:flex;"><span>    res.json(results);
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    console.error(err);
+</span></span><span style="display:flex;"><span>    res.status(<span style="color:#a5d6ff">500</span>).end();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Handle a single event
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> handleEvent <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">async</span> (event) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// Only handle message events of type text
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (event.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;message&#39;</span> <span style="color:#ff7b72;font-weight:bold">||</span> event.message.type <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#39;text&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">null</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// Get choices from openai response
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> { data<span style="color:#ff7b72;font-weight:bold">:</span> { choices } } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> openai.createCompletion({
+</span></span><span style="display:flex;"><span>    prompt<span style="color:#ff7b72;font-weight:bold">:</span> event.message.text,
+</span></span><span style="display:flex;"><span>    model<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;text-davinci-003&#34;</span>,
+</span></span><span style="display:flex;"><span>    max_tokens<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1000</span>
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// Send the first choice as a message reply
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span> choices[<span style="color:#a5d6ff">0</span>].text.trim;
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> client.replyMessage(event.replyToken, { type<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;text&#39;</span>, text<span style="color:#ff7b72;font-weight:bold">:</span> message });
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Start listening on port 3000 
+</span></span></span><span style="display:flex;"><span>app.listen(<span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#39;Linebot is running on 3000 port&#39;</span>);
+</span></span></code></pre></div><p>以筆者的角度來看，有些註解顯得多餘，但我覺得這些註解對新手理解程式很有幫助；實務上要保留、調整、移除，就看讀者的個人需求了。</p>
+<blockquote>
+<p>如果想要移除所有註解，輸入 <code>remove code comments</code> 即可。</p>
+</blockquote>
+<hr>
+<h2 id="結論用對地方就是好幫手">結論：用對地方就是好幫手！<a class="h-anchor" href="#%e7%b5%90%e8%ab%96%e7%94%a8%e5%b0%8d%e5%9c%b0%e6%96%b9%e5%b0%b1%e6%98%af%e5%a5%bd%e5%b9%ab%e6%89%8b" aria-label="這個段落的連結"></a></h2>
+<p>由於過去請 ChatGPT 寫 Side Project 時遇到各種挫折，讓我一度懷疑 ChatGPT 的戰力，但這篇文章總算是幫他板回一城。</p>
+<p>因為目前 ChatGPT 的資料截止於 2021 年，所以面對較新的技術、工具時，他的表現有點差強人意；但在面對「已知」的事物時，他所展現的功力並不輸一名訓練有素的資深工程師，確實能增加工作效率。</p>
+<blockquote>
+<p>其實我還有請他幫我將 JavaScript 重構成 TypeScript，但他最終只轉出一份很像可以跑的程式；but&hellip;實際上跑不動，還需要自己去微調許多細節，這邊我就不放上來了，期待日後會推出更完善的版本。</p>
+</blockquote>
+<p>未來筆者會出一系列使用 ChatGPT、openAI 的文章，如果你對這個議題感興趣，可以持續關注我的文章！</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/ddcc9c53a4ac" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">讓我們一起掌握 AI 帶來的紅利</span>
+    <span class="lc-desc">既然 AI 的發展勢不可擋，那我們要做的應該是去思考「如何利用他為自己帶來優勢」。 筆者相信，人不會被 AI 取代，只會被懶惰和守舊的想法取代，無論過去、現在、未來，跟不上時代的腳步就只能等著被淘汰。…</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-card-01_hu_31b2732656cc6583.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+<p><strong>想將 AI 導入自己的職場與生活嗎？歡迎<a href="https://www.books.com.tw/products/0011004216">購買筆者出版的新書</a></strong>，幫助您<strong>在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/images/chatgpt-code-review-refactoring-06.webp" width="1400" height="319" alt="https://www.books.com.tw/products/0011004216" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.books.com.tw/products/0011004216">https://www.books.com.tw/products/0011004216</a></figcaption>
+</figure>
+
+<p><strong>參考資料</strong>：</p>
+<ol>
+<li>ChatGPT Refactor 後的程式：<a href="https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/refactor-index.js">Github</a></li>
+<li>ChatGPT Refactor 並加上註解的程式：<a href="https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/commets-index.js">Github</a></li>
+</ol>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>[前端]新手工程師容易卡住的問題 — 下班有約系列文</title>
+      <link>https://deanlin.net/blog/202202/frontend-junior-pitfalls/</link>
+      <pubDate>Wed, 23 Feb 2022 10:03:38 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202202/frontend-junior-pitfalls/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>筆者跟擔任 Tech Lead 的朋友聊天時，發現我們在幫新人 Code Review、Code Refactoring、Bug Fixing時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，而今天這篇文章會針對新手工程師容易卡住的問題來做分享。</description>
+      <content:encoded><![CDATA[<p>筆者跟擔任 Tech Lead 的朋友聊天時，發現我們在幫新人 Code Review、Code Refactoring、Bug Fixing 時遇到了許多類似的問題，針對這個部分我安排了 3 篇文章做講解，而今天這篇文章會針對新手工程師容易卡住的問題來做分享。</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-01.webp" width="1400" height="741" alt="\[前端\]新手工程師容易卡住的問題 — 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+➤ 對網頁的元件(tag)、屬性(attr)不熟悉
+➤ 對 Object、Array 以及 null、undefine、&#34;&#34; 的特性並不熟
+➤ 不了解「==」跟「===」的差異
+➤ API 傳參數時遇到各種遇到困難
+➤ 非同步(Asynchronous)/同步(Synchronous)概念混亂
+➤ 不了解程式的運作流程
+➤ 演算法能力需要加強
+➤ 看不懂 Console 吐出的錯誤
+</code></pre><h2 id="-對網頁的元件tag屬性attr不熟悉">➤ 對網頁的元件(tag)、屬性(attr)不熟悉<a class="h-anchor" href="#-%e5%b0%8d%e7%b6%b2%e9%a0%81%e7%9a%84%e5%85%83%e4%bb%b6tag%e5%b1%ac%e6%80%a7attr%e4%b8%8d%e7%86%9f%e6%82%89" aria-label="這個段落的連結"></a></h2>
+<p>通常我們對「按鈕」的認知是「button」這個元件，相關的「click」事件也是由它來觸發；但我曾經遇過下面這個案例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#7ee787">v-btn</span> color<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;grey&#34;</span> class<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;ml-4 mt-7&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#7ee787">h6</span> <span style="color:#f85149">@</span>click<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;search()&#34;</span>&gt;搜尋&lt;/<span style="color:#7ee787">h6</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#7ee787">v-btn</span>&gt;
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/4a40a295f6d3211094992235066a364b" rel="noopener">err_button.html</a>（GitHub Gist）</p>
+<p>他將「click」的事件包到「h6」這個元件中，這造成有時候<strong>點擊按鈕是沒有反應的</strong>，因為 click 事件觸發的有效範圍只在「h6」裡面，而<strong>不是整個 button 的範圍</strong>。</p>
+<p>後來發現這類因為對網頁元件不熟悉而導致的 Bug 還蠻常見的，如果 Debug 遇到類似問題時，可以先到網路上查詢大家通常會用這個元件來做什麼事，可以減少烏龍事件的發生。</p>
+<blockquote>
+<p>筆者曾看過用「table」來做切版的，在電腦螢幕 Demo 時看起來一切正常，但切換到手機的瞬間就崩潰了…</p>
+</blockquote>
+<h2 id="-對-objectarray-以及-nullundefine-的特性並不熟">➤ 對 Object、Array 以及 null、undefine、”” 的特性並不熟<a class="h-anchor" href="#-%e5%b0%8d-objectarray-%e4%bb%a5%e5%8f%8a-nullundefine-%e7%9a%84%e7%89%b9%e6%80%a7%e4%b8%a6%e4%b8%8d%e7%86%9f" aria-label="這個段落的連結"></a></h2>
+<p>前端串接 API 時，通常都會接收到以 json 格式回傳的物件，但假設我們要取得的是 Array 裡面的資料，如果沒有經過驗證就直接使用很容易會產生 Bug。</p>
+<p>像下面這個範例，如果回傳的是空陣列，如果沒有先驗證「陣列長度」就直接取用就會噴錯誤。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> response <span style="color:#ff7b72;font-weight:bold">=</span> [];
+</span></span><span style="display:flex;"><span>console.log(response[<span style="color:#a5d6ff">0</span>].status);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/caae7f1fadb077386c91a1df48f0e190" rel="noopener">array_err.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-02.webp" width="1400" height="227" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<p>有時我們會用物件參數的值來判斷要執行哪個程式，但如果用 undefined、空字串、null 來比對，就可能造成程式沒有依照我們想的邏輯去執行。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> user <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  id<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,
+</span></span><span style="display:flex;"><span>  name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baobao&#34;</span>,
+</span></span><span style="display:flex;"><span>  email<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;baobao@gmail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>  status<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (status <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;執行A&#34;</span>);
+</span></span><span style="display:flex;"><span>} <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;執行B&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/c6ae5bef92b0fd1974736afc837ef9d2" rel="noopener">null_logic.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-03.webp" width="782" height="280" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 3）" loading="lazy" decoding="async"></p>
+<hr>
+<p>下面再舉例一個極端物件，大家可以不要急著往下滑看答案，先思考看看印出來會是什麼結果？</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> object <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  a<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  b<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">undefined</span>,
+</span></span><span style="display:flex;"><span>  c<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span>,
+</span></span><span style="display:flex;"><span>  d<span style="color:#ff7b72;font-weight:bold">:</span> [],
+</span></span><span style="display:flex;"><span>  e<span style="color:#ff7b72;font-weight:bold">:</span> {},
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.a) console.log(object.a);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.b) console.log(object.b);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.c) console.log(object.c);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.d) console.log(object.d);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> (object.e) console.log(object.e);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/a8b7daca5e33156180627955c87ba3c7" rel="noopener">object_example.js</a>（GitHub Gist）</p>
+<p>從下圖你可以看到除了「陣列、物件」外，其他都不會通過喔～</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-04.webp" width="1400" height="577" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 4）" loading="lazy" decoding="async"></p>
+<hr>
+<p>又或者有時我們在處理字串時會用「include」這個函式來比對，但如果你丟進去的參數是「null、undefine」這類的也會出事喔！</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> object <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>  string<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>object.string.include(<span style="color:#a5d6ff">&#34;something..&#34;</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/b4bf6ebb83058e45981b7d47aef86372" rel="noopener">include_err.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-05.webp" width="782" height="165" alt="對 Object、Array 以及 null、undefine、”” 的特性並不熟（圖 5）" loading="lazy" decoding="async"></p>
+<h2 id="-不了解跟的差異">➤ 不了解「==」跟「===」的差異<a class="h-anchor" href="#-%e4%b8%8d%e4%ba%86%e8%a7%a3%e8%b7%9f%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h2>
+<p>不知道大家有沒有想過上面提到的「undefined、null、空字串」如果用「==」跟「===」來比較會有怎麼樣的結果。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;undefined==null&#34;</span>, <span style="color:#79c0ff">undefined</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#79c0ff">null</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;undefined===null&#34;</span>, <span style="color:#79c0ff">undefined</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">null</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;null==&#39;&#39;&#34;</span>, <span style="color:#79c0ff">null</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;null===&#39;&#39;&#34;</span>, <span style="color:#79c0ff">null</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;&#39;==undefined&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#79c0ff">undefined</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;&#39;===undefined&#34;</span>, <span style="color:#a5d6ff">&#34;&#34;</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">undefined</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/1cd4b3426fda2774476d96f59ca98e76" rel="noopener">null_undefined_empty.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-06.webp" width="1400" height="578" alt="不了解「==」跟「===」的差異（圖 6）" loading="lazy" decoding="async"></p>
+<hr>
+<p>或者像是數字、字串、布林值這類的比較，有時這類型的的錯誤也常常讓人 Bug 找半天。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;true&#39;==true&#34;</span>, <span style="color:#a5d6ff">&#34;true&#34;</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;&#39;true&#39;===true&#34;</span>, <span style="color:#a5d6ff">&#34;true&#34;</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">true</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;1==&#39;1&#39;&#34;</span>, <span style="color:#a5d6ff">1</span> <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#a5d6ff">&#34;1&#34;</span>);
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;1===&#39;1&#39;&#34;</span>, <span style="color:#a5d6ff">1</span> <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#34;1&#34;</span>);
+</span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d1325479adeb360fedf3415766d1d18a" rel="noopener">number_boolean.js</a>（GitHub Gist）</p>
+<p><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-07.webp" width="1400" height="391" alt="不了解「==」跟「===」的差異（圖 7）" loading="lazy" decoding="async"></p>
+<h2 id="-api-傳參數時遇到各種困難">➤ API 傳參數時遇到各種困難<a class="h-anchor" href="#-api-%e5%82%b3%e5%8f%83%e6%95%b8%e6%99%82%e9%81%87%e5%88%b0%e5%90%84%e7%a8%ae%e5%9b%b0%e9%9b%a3" aria-label="這個段落的連結"></a></h2>
+<p>許多新手前端儘管可以完成切版，但是在串接 API 時卻遇到非常多的困難，就算看著 API 文件，在操作 GET、POST、PUT 傳遞參數時有很高的機率傳錯格式，像是：</p>
+<ul>
+<li>POST 的參數用 Params 傳，直接變成明碼。</li>
+<li>不知道 Body 的 form-data 怎麼組成、raw 如何組成 json 格式。</li>
+<li>常常有缺少或是格式錯誤參數。</li>
+</ul>
+<p>這部分我覺得如果後端工程師願意將 Postman 的 Collection 匯出，並在 Description 寫好邏輯直接讓前端工程師來確認，就會稍微減少以上的問題。</p>
+<h2 id="-非同步asynchronous同步synchronous概念混亂">➤ 非同步(Asynchronous)/同步(Synchronous)概念混亂<a class="h-anchor" href="#-%e9%9d%9e%e5%90%8c%e6%ad%a5asynchronous%e5%90%8c%e6%ad%a5synchronous%e6%a6%82%e5%bf%b5%e6%b7%b7%e4%ba%82" aria-label="這個段落的連結"></a></h2>
+<p>以非同步(Asynchronous)來說，最常見的錯誤就是前端在呼叫 API 時，並沒有等待資料回傳就直接使用它，導致畫面渲染的時候出現各種 Bug。</p>
+<p>以同步(Synchronous)來說，有時會設計了太多不必要的等待機制，導致在某個環節卡死無法進行下一步。</p>
+<h2 id="-不了解程式的運作流程">➤ 不了解程式的運作流程<a class="h-anchor" href="#-%e4%b8%8d%e4%ba%86%e8%a7%a3%e7%a8%8b%e5%bc%8f%e7%9a%84%e9%81%8b%e4%bd%9c%e6%b5%81%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<p>新進工程師通常都要維護 Legacy code，但通常他們並不具備掌握程式運作流程的能力。</p>
+<p>這塊除了註解以及技術文件可以加快新手的熟練度外，資深工程師願意一起 Pair Programing 也是一個讓新進工程師能力大增的方式。</p>
+<blockquote>
+<p>我在實戰經驗中發現<a href="https://deanlin.net/blog/202111/pair-programming/">手把手教學（pair programing）</a>的效率比給 hint 的效率高很多，如果只給新手 hint，除發他天賦異稟，不然有大機率是有聽沒有懂。</p>
+</blockquote>
+<p>在幫忙 Debug 時，筆者也發現很多新手工程師並不瞭解自己的程式到底會怎麼跑，這個時候我們可以透過下中斷點（Breakpoint），讓程式執行的每一步慢慢地在我們眼前呈現。</p>
+<h2 id="-演算法能力需要加強">➤ 演算法能力需要加強<a class="h-anchor" href="#-%e6%bc%94%e7%ae%97%e6%b3%95%e8%83%bd%e5%8a%9b%e9%9c%80%e8%a6%81%e5%8a%a0%e5%bc%b7" aria-label="這個段落的連結"></a></h2>
+<p>很多時候一個結果是需要經過多次運算才會得到，其中可能含有複雜的 and(&amp;&amp;)、or(ll)、not(!)、大於(&gt;)、小於(&lt;)..邏輯。</p>
+<p>假設你今天要設計一個打卡系統，如果要判斷一個職員今日出勤是否有異常，在程式設計上就需要考慮到幾個基礎邏輯：</p>
+<ol>
+<li>公司是否有彈性上、下班時間</li>
+<li>該名職員上、下班打卡時間是否在彈性上、下班的區間中</li>
+<li>該名職員上班總時數是否符合公司規定</li>
+<li>在判斷上下班打卡異常時，是否有考慮到假勤</li>
+</ol>
+<p>如果上面的邏輯複雜度已經超過你的腦容量，我強列建議回歸紙筆。</p>
+<p>複雜的邏輯用紙筆寫下來會比較容易理解，這是因為大腦在面對電腦時，邏輯容易憑空想像；而用紙筆寫的時候則可以將邏輯具象化，讓大腦放慢一點腳步反而能找到解法。</p>
+<blockquote>
+<p>想提升演算法能力，推薦挑戰 LeeCode easy 等級的題目。</p>
+</blockquote>
+<h2 id="-看不懂-console-吐出的錯誤">➤ 看不懂 Console 吐出的錯誤<a class="h-anchor" href="#-%e7%9c%8b%e4%b8%8d%e6%87%82-console-%e5%90%90%e5%87%ba%e7%9a%84%e9%8c%af%e8%aa%a4" aria-label="這個段落的連結"></a></h2>
+<p>遇到問題卡關時，我們往往會先上網找答案，不管正不正確，先貼回來看看能不能動。</p>
+<p>有時候可能真的找到正確解答了，但因為兩者程式執行的環境不同而有報錯，此時很多新人會因為看不懂這個錯誤，轉而找其他的解答複製貼上。</p>
+<p>其實如果你將上面的錯誤訊息貼到 Google，就有很大的機率可以得到解答；一直尋找只靠一步就能完成的解答，有時反而是在走遠路。</p>
+<blockquote>
+<p><a href="https://stackoverflow.com/">StackOverflow </a>上面聚集各種大神，只要善用關鍵字，基本上你遇到的問題以前已經有數不清的人踩過坑了。</p>
+</blockquote>
+<h2 id="-只使用自己會的技能">➤ 只使用自己會的技能<a class="h-anchor" href="#-%e5%8f%aa%e4%bd%bf%e7%94%a8%e8%87%aa%e5%b7%b1%e6%9c%83%e7%9a%84%e6%8a%80%e8%83%bd" aria-label="這個段落的連結"></a></h2>
+<p>面對新的問題時，我們會習慣從大腦搜尋已經純熟技能，但有些問題是現有技能無法處理的，或者要花大量時間才能解決。</p>
+<p>以前端的 UI Component 舉例，有些人花大量的時間去創造，但往往最後產出的結果遠遠不如現成的框架、套件，甚至還會有各式各樣的 Bug。</p>
+<p>下次遇到現有技能很難解決的問題時，不妨先搜尋網路，看看是否有前輩已經提供很好的解決方案；學習新技能所花的時間，有時會比硬要用過去技能解決更省時喔～</p>
+<hr>
+<blockquote class="pullquote"><p>這篇文章只是舉出最常見的幾個問題，筆者相信還有很多點沒有提到，如果讀者有想到的話歡迎補充～</p>
+</blockquote>
+<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202202/frontend-junior-pitfalls/images/frontend-junior-pitfalls-08.webp" width="1400" height="319" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<pre tabindex="0"><code>下班有約系列文
+▋ [前端]新手工程師容易卡住的問題(本篇)
+▋ [前端＆後端]工程師常犯的錯誤
+▋ 讓開發團隊更好協作的方式
+▋ 談談 Pair Programing
+▋ 談談工程師的話語權
+▋ 出社會後，新鮮人要及早知道的 5 件事
+▋ 面試的性向測驗竟然準到讓人心裡發寒？
+▋ 反其道而行的任務分配
+▋ 現在的 Daily Scrum 真的適合團隊嗎？
+▋ 用低成本也能請到好員工？資深 HR 不想告訴你的秘密！
+</code></pre>]]></content:encoded>
+    </item>
+    <item>
+      <title>談談 Pair Programing —下班有約系列文</title>
+      <link>https://deanlin.net/blog/202111/pair-programming/</link>
+      <pubDate>Fri, 26 Nov 2021 17:29:46 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202111/pair-programming/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>前幾天跟一位給了我很多幫助的學長一起吃晚餐，因為同為資訊工程領域，所以聊天的話題也不免轉移到程式方面；其中談到 Pair Programing 的話題時，我覺得學長的見解很棒，因此趁記憶猶新時記錄下來，也許未來筆者也會在自己的公司試行看看。</description>
+      <content:encoded><![CDATA[<p>前幾天跟一位給了我很多幫助的學長一起吃晚餐，因為同為資訊工程領域，所以聊天的話題也不免轉移到程式方面；其中談到 Pair Programing 的話題時，我覺得學長的見解很棒，因此趁記憶猶新時記錄下來，也許未來筆者也會在自己的公司試行看看。</p>
+<p><img src="https://deanlin.net/blog/202111/pair-programming/images/pair-programming-01.webp" width="1400" height="787" alt="談談 Pair Programing —下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>文章大綱
+一、 Code Review 這件事
+  ➤ 時機點
+  ➤ 由誰來 Review？
+二、 網頁一開始並沒有前後端之分
+  ➤ 在過去，每個人都是全端
+  ➤ 分前後端，是為讓專業更專業
+  ➤ 網頁工程師應該都要是全端
+三、 談談 Pair Programing
+  ➤ 什麼是 Pair Programing？
+  ➤ 更好的 Code Review 機制
+  ➤ 讓團隊每個人都變成全端
+  ➤ 可能會遇到的問題
+</code></pre><h2 id="一-code-review-這件事">一、 Code Review 這件事<a class="h-anchor" href="#%e4%b8%80-code-review-%e9%80%99%e4%bb%b6%e4%ba%8b" aria-label="這個段落的連結"></a></h2>
+<h3 id="-時機點">➤ 時機點<a class="h-anchor" href="#-%e6%99%82%e6%a9%9f%e9%bb%9e" aria-label="這個段落的連結"></a></h3>
+<p>筆者通常是在 Git Commit、Merge Request 的時機去做 Code Review 這件事，因為過去做的習以為常，所以沒有去思考這樣做到底有沒有意義。</p>
+<p>跟學長討論的過程中，我們發現在這個時間點做 Code Review，往往只能看到<code>很片面的程式邏輯</code>，因此通常僅能對 Coding Style 提出建議，對整體專案的架構幫助並不大；而且通常只有在新同事入職時會認真看，過一段時間後就會放鬆然後隨便了。</p>
+<h3 id="-由誰來-review">➤ 由誰來 Review？<a class="h-anchor" href="#-%e7%94%b1%e8%aa%b0%e4%be%86-review" aria-label="這個段落的連結"></a></h3>
+<p>往往是由在公司待比較久的資深工程師來做這件事情，從邏輯上看起來沒有什麼問題；但實際上資深工程師給出的建議，在很多時候新人是無法理解原因的，他只是根據建議做修改，<code>並沒有了解為什麼要這樣做，所以下次可能還是會犯相同的錯誤</code>。</p>
+<p>我們不能期待一個新人在剛入職時，就有向前輩提出問題、追根究底的勇氣；但前輩看到他一再犯下相同的錯誤時會去想：「我不是已經交了他很多次了，為什麼還是學不會？」</p>
+<p>如果讀者也有相同的經驗，也許我們自己要做一些調整。</p>
+<hr>
+<h2 id="二-網頁一開始並沒有前後端之分">二、 網頁一開始並沒有前後端之分<a class="h-anchor" href="#%e4%ba%8c-%e7%b6%b2%e9%a0%81%e4%b8%80%e9%96%8b%e5%a7%8b%e4%b8%a6%e6%b2%92%e6%9c%89%e5%89%8d%e5%be%8c%e7%ab%af%e4%b9%8b%e5%88%86" aria-label="這個段落的連結"></a></h2>
+<h3 id="-在過去每個人都是全端">➤ 在過去，每個人都是全端<a class="h-anchor" href="#-%e5%9c%a8%e9%81%8e%e5%8e%bb%e6%af%8f%e5%80%8b%e4%ba%ba%e9%83%bd%e6%98%af%e5%85%a8%e7%ab%af" aria-label="這個段落的連結"></a></h3>
+<p>在十幾年前，網頁並沒有明確的將工作劃分成前後端，當時的工程師基本上同時具備網頁切版、資料庫設計、伺服器架設…等技能。</p>
+<h3 id="-分前後端是為讓專業更專業">➤ 分前後端，是為讓專業更專業<a class="h-anchor" href="#-%e5%88%86%e5%89%8d%e5%be%8c%e7%ab%af%e6%98%af%e7%82%ba%e8%ae%93%e5%b0%88%e6%a5%ad%e6%9b%b4%e5%b0%88%e6%a5%ad" aria-label="這個段落的連結"></a></h3>
+<p>隨著網頁技術的蓬勃發展，每年都會推出大量的新技術，一個工程師很難在各個領域都即時跟上；也因此工作的內容有更明確的劃分，像是前後端分離、Devops、UIUX…等概念與技術也應運而生。</p>
+<h3 id="-網頁工程師應該都要是全端">➤ 網頁工程師應該都要是全端<a class="h-anchor" href="#-%e7%b6%b2%e9%a0%81%e5%b7%a5%e7%a8%8b%e5%b8%ab%e6%87%89%e8%a9%b2%e9%83%bd%e8%a6%81%e6%98%af%e5%85%a8%e7%ab%af" aria-label="這個段落的連結"></a></h3>
+<p>無論工作的內容是前端還是後端，筆者個人認為都應該要具備全端的知識水平；你不用在全部領域都做到專家的等級，但至少你要能夠看得懂對方寫的 Code，並具備基礎的維護能力。</p>
+<hr>
+<h2 id="三-談談-pair-programing">三、 談談 Pair Programing<a class="h-anchor" href="#%e4%b8%89-%e8%ab%87%e8%ab%87-pair-programing" aria-label="這個段落的連結"></a></h2>
+<h3 id="-什麼是-pair-programing">➤ 什麼是 Pair Programing？<a class="h-anchor" href="#-%e4%bb%80%e9%ba%bc%e6%98%af-pair-programing" aria-label="這個段落的連結"></a></h3>
+<p>這是雙方看同一個螢幕，經過彼此交流來共同開發的一個機制；筆者曾經寫一篇文章說明過去 Pair Programing 遇到的問題、有什麼工具可以讓我們在 Pair Programing 有更高的效率，有興趣的朋友可以參考：<a href="https://deanlin.net/blog/202106/vscode-live-share-pair-programming/">連結</a>。</p>
+<h3 id="-更好的-code-review-機制">➤ 更好的 Code Review 機制<a class="h-anchor" href="#-%e6%9b%b4%e5%a5%bd%e7%9a%84-code-review-%e6%a9%9f%e5%88%b6" aria-label="這個段落的連結"></a></h3>
+<p>比起等對方寫好後來做 Code Review，Pair Programing 可以<code>更即時</code>的知道對方是從哪個角度出發來寫這個程式的。</p>
+<p>剛入職的同事如果是透過 Pair Programing 來做開發，他可以更快速地融入團隊，並在短時間內將技術提升至團隊平均開發水平；這個過程中前輩也能對新人的技術有更高的掌握度，並作出合適的提點。</p>
+<h3 id="-讓團隊每個人都變成全端">➤ 讓團隊每個人都變成全端<a class="h-anchor" href="#-%e8%ae%93%e5%9c%98%e9%9a%8a%e6%af%8f%e5%80%8b%e4%ba%ba%e9%83%bd%e8%ae%8a%e6%88%90%e5%85%a8%e7%ab%af" aria-label="這個段落的連結"></a></h3>
+<p>在談話的過程中，學長認為前後端的劃分雖然有必要；<code>但不管是前端還是後端，應該都要具備全端的能力</code>，因此我向學長問道：「可是很多人就是以前端/後端工程師的身份入職，他們真的對另外一個領域完全不熟悉啊；先不論他們是否願意學習，就算願意學習，他們手上的專案也會 Delay，這些成本也要納入考量吧？」</p>
+<p>關於這個問題，學長的觀點是這樣的：「不管前後端，程式的邏輯都是一樣的，只是應用的地方不同而已；學習的成本一定有，但沒有你想像的那麼高，原則上 1 個禮拜就能夠具備基礎的開發能力；先跟老闆溝通好，專案 Delay 一個禮拜沒你想的那麼嚴重。」</p>
+<p>聽到變成全端的時間成本，我真的不太理解為何會這麼短，於是我拋出問題：「一個禮拜？不可能吧？這怎麼可能做到？有更具體的做法嗎？」</p>
+<p>面對我的質疑，學長回答是：「我這邊是用 Pair Programing 達成的，兩個工程師輪流寫，強迫他跨出舒適圈；這個舒適圈一但跨出，旁邊又有一個可以隨時解惑的老師，相信我，人類的學習潛能遠比你認知的還要強大。」</p>
+<blockquote>
+<p>上面是學長在自己公司實踐的成果，筆者尚未在自己的公司實踐；但我相信這個作法一定可以提升團隊整體的程式水平以及歸屬感。</p>
+</blockquote>
+<h3 id="-可能會遇到的問題">➤ 可能會遇到的問題<a class="h-anchor" href="#-%e5%8f%af%e8%83%bd%e6%9c%83%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><strong>沒有合適的教練</strong><br>就算有工程師願意學，也需要團隊裡面有人願意一起陪練；最佳的陪練就是「資深全端工程師」，因為他前後端都懂，所以在面對問題時可以更全面地給出解答，<code>但能做到並願意這樣做的人，市場上應該不會太多</code>。</li>
+<li><strong>時間成本、成效因人而異</strong><br>每個人的資質與領悟力不同，對原本領域的鑽研深度也不一樣；這些個體化的差異可能會讓你在推行這個政策的時候結果不如預期。</li>
+</ol>
+<hr>
+<blockquote class="pullquote"><p>文章僅是提出不同的觀點以及作法，是否適合自己的團隊、具體如何導入；筆者認為需要自己去評估，如果你有自己的想法或不同的見解，也歡迎在底下留言。</p>
+</blockquote>
+<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
+<figure class="figure"><img src="https://deanlin.net/blog/202111/pair-programming/images/pair-programming-02.webp" width="1400" height="319" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+<pre tabindex="0"><code>下班有約系列文
+▋ [前端]新手工程師容易卡住的問題
+▋ [前端＆後端]工程師常犯的錯誤
+▋ 讓開發團隊更好協作的方式
+▋ 談談 Pair Programing(本篇)
+▋ 談談工程師的話語權
+▋ 出社會後，新鮮人要及早知道的 5 件事
+▋ 面試的性向測驗竟然準到讓人心裡發寒？
+▋ 反其道而行的任務分配
+▋ 現在的 Daily Scrum 真的適合團隊嗎？
+▋ 用低成本也能請到好員工？資深 HR 不想告訴你的秘密！
+</code></pre>]]></content:encoded>
+    </item>
+  </channel>
+</rss>

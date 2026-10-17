@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>管理大量裝置｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/%E7%AE%A1%E7%90%86%E5%A4%A7%E9%87%8F%E8%A3%9D%E7%BD%AE/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 28 Jan 2021 16:48:49 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/%E7%AE%A1%E7%90%86%E5%A4%A7%E9%87%8F%E8%A3%9D%E7%BD%AE/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Zebra 如何提供管理大量 Android 裝置的產品 — 用逆向工程的角度去思考如何實現技術</title>
+      <link>https://deanlin.net/blog/202101/zebra-android-device-management/</link>
+      <pubDate>Thu, 28 Jan 2021 16:48:49 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202101/zebra-android-device-management/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>近年來無論是物流、警衛、超商店員，他們身上都配有一個平板電腦，用來協助進銷庫存盤點、巡邏地點定位；而許多知名的連鎖餐飲業者也將點餐的方式改為讓客人使用平板來選擇，這樣不但能呈現更多的菜色，也能減少許多營運上的人力成本。</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202101/zebra-android-device-management/images/zebra-android-device-management-01.webp" width="1400" height="746" alt="Zebra 如何提供管理大量 Android 裝置的產品 — 用逆向工程的角度去思考如何實現技術（圖 1）" loading="lazy" decoding="async"></p>
+<p>近年來無論是物流、警衛、超商店員，他們身上都配有一個平板電腦，用來協助進銷庫存盤點、巡邏地點定位；而許多知名的連鎖餐飲業者也將點餐的方式改為讓客人使用平板來選擇，這樣不但能呈現更多的菜色，也能減少許多營運上的人力成本。</p>
+<p>這些大公司使用到的平板少則數百台，多則數萬台；如何管理、設定這些設備就是一個很好的議題，這篇文章我會以 <a href="https://www.zebra.com/ap/en/products/software/mobile-computers/mobile-app-utilities/stagenow.html">Zebra</a> 這間公司提出的解決方案用逆向工程的角度與大家分享他們是如何實現這個技術的。</p>
+<pre tabindex="0"><code>文章會探討的議題及技術如下：
+一、 企業在使用 MDM 的過程中遇到了什麼困擾？
+二、 Zebra 公司的解決方案為何？
+三、 使 App 變成 Device Owner
+四、 有哪些方式可以變成 Device Owner 呢？
+五、 結語
+</code></pre><h2 id="一-企業在使用-mdm-的過程中遇到了什麼困擾">一、 企業在使用 MDM 的過程中遇到了什麼困擾？<a class="h-anchor" href="#%e4%b8%80-%e4%bc%81%e6%a5%ad%e5%9c%a8%e4%bd%bf%e7%94%a8-mdm-%e7%9a%84%e9%81%8e%e7%a8%8b%e4%b8%ad%e9%81%87%e5%88%b0%e4%ba%86%e4%bb%80%e9%ba%bc%e5%9b%b0%e6%93%be" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li><strong>人力</strong>：需要分配或是僱傭員工去幫平板做安裝及連線設定，有些操作甚至需要經過教育訓練才能完成。</li>
+<li><strong>時間成本</strong>：依據每個人的熟悉度不同，不但操作的速有差異外，遇到特殊例外的處理能力也有所不同，這在無形中浪費了很多時間。</li>
+<li><strong>失誤率</strong>：只要是由人所操作的一定會有失誤率，而這些人為所造成的失誤在未來會影響到終端客戶的使用觀感以及公司營收上面；如果事情嚴重可能會有機台退換貨的狀況發生。</li>
+</ul>
+<h2 id="二zebra-公司的解決方案為何">二、Zebra 公司的解決方案為何？<a class="h-anchor" href="#%e4%ba%8czebra-%e5%85%ac%e5%8f%b8%e7%9a%84%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88%e7%82%ba%e4%bd%95" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li><strong>產品功能</strong>：公司提供一個簡單的管理工具，讓管理者操作簡單的介面就可以將這些機器設定成你希望的配置；目前看說明書，他們可以讓使用者設定以下內容：Wi-fi 網路、語言及輸入法、安裝證書、業務用App、作業系統。</li>
+<li><strong>Android 裝置註冊</strong>：這項產品主打的功能就是讓管理者擁有機器完整的權限，為了達到這個目標他們需要<em>讓<strong>機器進行註冊</strong></em>，註冊的方式是掃描 barcode 或是 NFC 標籤，這個動作除了讓機器完成註冊外同時也讓他們安裝了一個不可刪除讓管理者達成遠端設置目標的 App。</li>
+</ul>
+<h2 id="三-使-app-變成-device-owner">三、 使 App 變成 Device Owner<a class="h-anchor" href="#%e4%b8%89-%e4%bd%bf-app-%e8%ae%8a%e6%88%90-device-owner" aria-label="這個段落的連結"></a></h2>
+<p>接下來要思考如何讓 Android 裝置掃描 barcode 或是 NFC 標籤就能獲取完成存取權，原本以為要透過很多複雜的手續，結果一 Google 發現這是 Android 所提供的一個 api。</p>
+<p>看參考資料得知，這是在 Android 5.1 之後才擁有的功能，官方名稱為<strong><em>Provisioning methods</em></strong>，具體有哪些方法在下一段會詳細說明；基本的概念就是在使用了這個方法後裝置上會安裝一個 Device Owner 的 App，這個 App 有點類似「大管家」，基本上什麼事都能幹。而且成為 Device Owner 的 App 不能被卸載，不能被禁用。</p>
+<h2 id="四-有哪些方式可以變成-device-owner-呢">四、 有哪些方式可以變成 Device Owner 呢？<a class="h-anchor" href="#%e5%9b%9b-%e6%9c%89%e5%93%aa%e4%ba%9b%e6%96%b9%e5%bc%8f%e5%8f%af%e4%bb%a5%e8%ae%8a%e6%88%90-device-owner-%e5%91%a2" aria-label="這個段落的連結"></a></h2>
+<p>根據 <a href="https://developers.google.com/android/management/provision-device#provisioning_methods">android 官方文件</a>所說，有以下方式可以使用：</p>
+<ol>
+<li><strong>Sign-in URL</strong>：我猜測 Zebra 就是在掃描 barcode 的時候會跑出一個已經設定好給某個企業使用的登入連結來做綁定</li>
+<li><strong>QR code</strong>：要 <em>Android 7.0+</em> 以上才能使用，基本上掃描 QR code 做好註冊就可以了。</li>
+<li><strong>NFC</strong>：要 <em>Android 6.0+</em>才能使用，基本上製作好 NFC 標籤碰一下就能完成註冊。</li>
+<li><strong>DPC identifier</strong>：看官方文件說這個方法是在沒辦法透過 QR code、NFC 方式註冊時才使用，需要 IT 人員依照步驟操作，看起來並不是一個好方法。</li>
+<li><strong>Zero-touch enrollment</strong>：要<em>Android 8.0+ (Pixel 7.1+)</em>才能使用，顧名思義，就是機器購買時就已經安裝好這個 App 了。</li>
+</ol>
+<h2 id="五-結語">五、 結語<a class="h-anchor" href="#%e4%ba%94-%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>在看完 Google 官方的文件後就能理解為什麼 Zebra 這間公司為什麼提供這兩種方式了，因為掃描 barcode 這個功能基本上只要是 Android 手機都能夠辦得到，而如果有 NFC 裝置的手機則可以加快機器的註冊效率(畢竟靠近就好了)</p>
+<p>以上是我透過分析使用者需求、Zebra 提供的產品、Google 官方文件三者結合的文章，分析產品功能反推使用的技術也是一件挺有趣的事情(雖然實際的技術未必跟我想的一樣)，希望看到這篇文章的觀眾有成功增加一些冷知識XD</p>
+<hr>
+<pre tabindex="0"><code>以下是我整理 MDM 的相關資源，想更進一步了解的朋友可以參考看看：
+👍 MDM 是什麼？被應用在哪寫地方？我的生活被 MDM 入侵了嗎？
+👍 透過試用 TinyMDM 的服務來一窺公司網管能對你手上的『公司機』做什麼事
+</code></pre><p>參考資源：<a href="https://kknews.cc/zh-tw/tech/2k42gqe.html">如何使App變成Device Owner</a>、<a href="https://developers.google.com/android/management/provision-device#provisioning_methods">anrdroid官方文件</a></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

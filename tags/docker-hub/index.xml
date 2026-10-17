@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Docker Hub｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/docker-hub/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 08 Apr 2021 14:28:48 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/docker-hub/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub</title>
+      <link>https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/</link>
+      <pubDate>Thu, 08 Apr 2021 14:28:48 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟。</description>
+      <content:encoded><![CDATA[<p>每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟；整體操作流程個人感覺非常簡單，大家不要被新的技術嚇到了，通常新技術的門檻比想像的更低一點。</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-01.webp" width="1400" height="786" alt="在 Mac 將 Nuxt.js 專案 Build 成 Docker Image 發佈到 dockerhub（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>一、事先準備
+ ➤ 創建 Nuxt.js 專案
+ ➤ 下載 &amp; 安裝 Docker
+二、在 local 把 Nuxt.js 專案 Build 成 Docker Image
+ ➤ 撰寫 dockerfile &amp; .dockerignore
+ ➤ 把 Nuxt.js 專案 build 成 Docker Image
+三、將 Docker Image 發佈到 dockerhub 上面
+</code></pre><h2 id="一事先準備">一、事先準備<a class="h-anchor" href="#%e4%b8%80%e4%ba%8b%e5%85%88%e6%ba%96%e5%82%99" aria-label="這個段落的連結"></a></h2>
+<h3 id="-創建-nuxtjs-專案">➤ 創建 Nuxt.js 專案<a class="h-anchor" href="#-%e5%89%b5%e5%bb%ba-nuxtjs-%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>如果你已經有 Nuxt.js 的專案可以跳過下面的操作流程</p>
+</blockquote>
+<p><strong>STEP 1：</strong>創建一個 Nuxt.js 專案</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ yarn create nuxt-app nuxtjs-tutorial
+</span></span></code></pre></div><p>在創建過程中會問你一些問題，你可以參考筆者的選擇：</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-02.webp" width="1400" height="555" alt="創建 Nuxt.js 專案（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2：</strong>讓 Nuxt.js 專案跑起來</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ cd nuxtjs-tutorial 
+</span></span><span style="display:flex;"><span>$ yarn dev
+</span></span></code></pre></div><figure class="figure"><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-03.webp" width="1400" height="1149" alt="看到這樣的狀況就是跑起來成功嚕" loading="lazy" decoding="async">
+  <figcaption>看到這樣的狀況就是跑起來成功嚕</figcaption>
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-04.webp" width="1400" height="775" alt="開啟 http://localhost:3000/ 可以順利看到畫面了喔！" loading="lazy" decoding="async">
+  <figcaption>開啟 <a href="http://localhost:3000/">http://localhost:3000/</a> 可以順利看到畫面了喔！</figcaption>
+</figure>
+
+<h3 id="-下載--安裝-docker">➤ 下載 &amp; 安裝 Docker<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89--%e5%ae%89%e8%a3%9d-docker" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1：</strong>下載 Docker</p>
+<p><strong>前往官網<a href="https://docs.docker.com/docker-for-mac/install/">下載 Docker 安裝檔</a></strong></p>
+<blockquote>
+<p>安裝過程就是狂按下一步，就不在多做介紹，下載後要把 App 打開依照步驟執行才算是完成安裝喔！</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-05.webp" width="1184" height="437" alt="下載 &amp; 安裝 Docker（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2：</strong>註冊 Docker</p>
+<p>在官網<a href="https://hub.docker.com/signup">註冊 docker 帳號</a></p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-06.webp" width="1184" height="866" alt="下載 &amp; 安裝 Docker（圖 6）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3：</strong>在 local 端登入 docker</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ docker login
+</span></span></code></pre></div><p>輸入剛剛註冊的帳號密碼</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-07.webp" width="1400" height="179" alt="下載 &amp; 安裝 Docker（圖 7）" loading="lazy" decoding="async"></p>
+<h2 id="二在-local-把-nuxtjs-專案-build-成-docker-image">二、在 local 把 Nuxt.js 專案 Build 成 docker image<a class="h-anchor" href="#%e4%ba%8c%e5%9c%a8-local-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image" aria-label="這個段落的連結"></a></h2>
+<h3 id="-撰寫-dockerfile--dockerignore">➤ 撰寫 dockerfile &amp; .dockerignore<a class="h-anchor" href="#-%e6%92%b0%e5%af%ab-dockerfile--dockerignore" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1：先用指令建立這兩個檔案</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ touch dockerfile
+</span></span><span style="display:flex;"><span>$ touch .dockerignore
+</span></span></code></pre></div><p><strong>STEP 2：撰寫 </strong>dockerfile</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># node 運行環境</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">FROM</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">node:12.19.0</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 存放image的目錄</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> mkdir -p /app<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">COPY</span> . /app<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">WORKDIR</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">/app</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 如果需要相關的環境變數請自行調整路徑</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#COPY ./env/.prod-env /app/env/.prod-env</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 對外的port</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">ENV</span> HOST 0.0.0.0 <span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">EXPOSE</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">3000</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝套件並build專案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> yarn<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">RUN</span> yarn build<span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 執行專案</span><span style="color:#f85149">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CMD</span> [ <span style="color:#a5d6ff">&#34;yarn&#34;</span>, <span style="color:#a5d6ff">&#34;start&#34;</span> ]<span style="color:#f85149">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/647663b391da8292d80089d445f3e7e6" rel="noopener">dockerfile</a>（GitHub Gist）</p>
+<p><strong>STEP 2：撰寫 </strong>.dockerignore</p>
+<pre tabindex="0"><code>npm-debug.log
+node_modules
+</code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/3d2509de3aba92d14d42b530c2e654ed" rel="noopener">.dockerignore</a>（GitHub Gist）</p>
+<h3 id="-把-nuxtjs-專案-build-成-docker-image">➤ 把 Nuxt.js 專案 build 成 Docker Image<a class="h-anchor" href="#-%e6%8a%8a-nuxtjs-%e5%b0%88%e6%a1%88-build-%e6%88%90-docker-image" aria-label="這個段落的連結"></a></h3>
+<p><strong>STEP 1</strong>：Build Docker Image</p>
+<p>在專案目錄下輸入指令後耐心等待打包，<strong>docker_example</strong> 是這個 image 的名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker build -t docker_example .
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-08.webp" width="1400" height="510" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 2</strong>：Run Docker Image</p>
+<p>輸入指令確認 image 是否成功</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run -it — rm -p 80:3000 docker_example
+</span></span></code></pre></div><blockquote>
+<p>特別注意『80 是對外 port，3000 是 container 的 port』，<strong>docker_example </strong>就是剛剛建立的 image 名稱</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-09.webp" width="1400" height="469" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 9）" loading="lazy" decoding="async"></p>
+<p>上圖 172.xx.xx.x:3000 的網址點開來是沒有畫面的，因為我們已經透過指令改變對外 port 到 80 了，在網址列上輸入 <a href="http://localhost/">http://localhost/</a> 就能成功看到供果嚕～</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-10.webp" width="1226" height="792" alt="把 Nuxt.js 專案 build 成 Docker Image（圖 10）" loading="lazy" decoding="async"></p>
+<h2 id="三將-docker-image-發佈到-dockerhub-上面">三、將 Docker Image 發佈到 dockerhub 上面<a class="h-anchor" href="#%e4%b8%89%e5%b0%87-docker-image-%e7%99%bc%e4%bd%88%e5%88%b0-dockerhub-%e4%b8%8a%e9%9d%a2" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP 1</strong>：給剛剛建立的 Image 一個 tag，username 是你 Doacker 的帳戶，xxximage是你希望這個 Image 在 dockerhub 上呈現的名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker tag docker_example username/xxximage
+</span></span></code></pre></div><p><strong>STEP 2</strong>：列出目前存在的 Images</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker images
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-11.webp" width="1400" height="144" alt="三、將 Docker Image 發佈到 dockerhub 上面（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：把這個 Image 丟到 dockerhub 的 repositories</p>
+<blockquote>
+<p>這個 push 的過程會根據你產生 Image 的大小決定，通常要等一段時間</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker push username/xxximage
+</span></span></code></pre></div><p><strong>STEP 4</strong>：在自己的 Docker 帳戶上看到剛剛上傳的 Docker Image</p>
+<p><img src="https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/images/nuxtjs-docker-image-dockerhub-12.webp" width="1217" height="273" alt="三、將 Docker Image 發佈到 dockerhub 上面（圖 12）" loading="lazy" decoding="async"></p>
+<p>之後要部署這個 Docker Image 到其他 Server 就只需要輸入下面指令就能獲得嚕～</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker pull username/xxximage
+</span></span></code></pre></div><hr>
+<p>希望這篇文章有幫助到使用 Mac 開發 Nuxt.js 專案的朋友們～</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

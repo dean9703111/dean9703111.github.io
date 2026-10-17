@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Ubuntu｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/ubuntu/</link>
+    <description>林鼎淵（Dean Lin）的部落格：外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 17 Aug 2022 17:59:44 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/ubuntu/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>那些沒人教你又超實用的 Linux 指令</title>
+      <link>https://deanlin.net/blog/202208/useful-linux-commands/</link>
+      <pubDate>Wed, 17 Aug 2022 17:59:44 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202208/useful-linux-commands/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>儘管在 Linux 用 cd、vi、mv、cp、rm、ls 這些基礎指令就能滿足大部分的需求，但遇到一些特殊狀況時，這些指令就不夠用了。這篇文章彙整了筆者常用的 Linux 指令，以「vim 編輯器、查詢 Server 各項資源、檢查網路環境」為主。</description>
+      <content:encoded><![CDATA[<p>儘管在 Linux 用 cd、vi、mv、cp、rm、ls 這些基礎指令就能滿足大部分的需求，但遇到一些特殊狀況時，這些指令就不夠用了。</p>
+<p>這篇文章彙整了筆者常用的 Linux 指令，以「vim 編輯器、查詢 Server 各項資源、檢查網路環境」為主。</p>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-01.webp" width="1400" height="730" alt="那些沒人教你又超實用的 Linux 指令（圖 1）" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+▋ vim 編輯器常用指令
+ ➤ 顯示行數（:set number）
+ ➤ 前往指定行數（:行數）
+ ➤ 刪除多行
+ ➤ 大量註解/反註解
+ ➤ 搜尋文字並取代
+▋ 查詢 Server 各項資源
+ ➤ Server 啟動多久了（uptime）
+ ➤ 找出最耗費資源的程式（top）
+ ➤ 以目錄形式呈現目前磁碟使用狀況（ncdu）
+ ➤ 搜尋檔案（find）
+ ➤ 搜尋歷史指令（Control+R）
+▋ 檢查網路環境
+ ➤ 網路診斷瑞士刀（nc）
+ ➤ 設定好 DNS 後，確認回應是否正常（nslookup）
+ ➤ 查詢佔用的 port（lsof）
+</code></pre><h2 id="-vim-編輯器常用指令">vim 編輯器常用指令<a class="h-anchor" href="#-vim-%e7%b7%a8%e8%bc%af%e5%99%a8%e5%b8%b8%e7%94%a8%e6%8c%87%e4%bb%a4" aria-label="這個段落的連結"></a></h2>
+<p>有時我們會需要進入 Server 做一些緊急調整（ex：Debug 時），搭配下面的操作可以增進你的效率。</p>
+<h3 id="-顯示行數set-number">➤ 顯示行數（:set number）<a class="h-anchor" href="#-%e9%a1%af%e7%a4%ba%e8%a1%8c%e6%95%b8set-number" aria-label="這個段落的連結"></a></h3>
+<p>方便與 Local 端程式做比對。</p>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-02.webp" width="1400" height="944" alt="顯示行數（:set number）（圖 2）" loading="lazy" decoding="async"></p>
+<h3 id="-前往指定行數行數">➤ 前往指定行數（:行數）<a class="h-anchor" href="#-%e5%89%8d%e5%be%80%e6%8c%87%e5%ae%9a%e8%a1%8c%e6%95%b8%e8%a1%8c%e6%95%b8" aria-label="這個段落的連結"></a></h3>
+<p>直接跳轉到你要修改的位置。</p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-03.webp" width="950" height="658" aria-label="前往指定行數（:行數）（圖 3）" data-gifv>
+    <source src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-03.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<h3 id="-刪除多行">➤ 刪除多行<a class="h-anchor" href="#-%e5%88%aa%e9%99%a4%e5%a4%9a%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>刪除一行的指令是「<code>dd</code>」，但如果有幾十行甚至上百行需要刪除，那會 dd 到崩潰，而且很容易有誤刪的情形。</p>
+<ul>
+<li>刪除從游標開始的 N 行（ex：刪除 5 行就是 <code>5dd</code>）</li>
+</ul>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-04.webp" width="960" height="651" aria-label="可以觀察右下角，會看到我的輸入" data-gifv>
+    <source src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-04.mp4" type="video/mp4">
+  </video>
+  <figcaption>可以觀察右下角，會看到我的輸入</figcaption>
+</figure>
+
+<ul>
+<li>刪除指定開始、結束的行 <code>:[start],[end]d</code> （ex：刪除第 3~17 行 <code>3,17d</code>）</li>
+</ul>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-05.webp" width="960" height="651" aria-label="刪除多行（圖 5）" data-gifv>
+    <source src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-05.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<h3 id="-大量註解反註解">➤ 大量註解/反註解<a class="h-anchor" href="#-%e5%a4%a7%e9%87%8f%e8%a8%bb%e8%a7%a3%e5%8f%8d%e8%a8%bb%e8%a7%a3" aria-label="這個段落的連結"></a></h3>
+<p>有時我們不是要刪除程式，只是想要把一定範圍內的程式註解起來做一些測試或是 Debug，如果你依靠「<code>i</code>」來慢慢編輯，真的會心死。</p>
+<ul>
+<li><strong>大量註解</strong>：先將游標移至想開始註解的行，按「Control+v」進入 VISUAL BLOCK 模式，接著選擇想要註解的區塊；按下「Shift+i」進入編輯模式填寫註解符號（ex：<code>//</code>），按「Esc」離開。</li>
+</ul>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-06.webp" width="960" height="651" aria-label="大量註解/反註解（圖 6）" data-gifv>
+    <source src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-06.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<ul>
+<li><strong>反註解</strong>：先將游標移至想開始註解的行，按「Control+v」進入 VISUAL BLOCK 模式，接著選擇想要反註解的區塊（因為我的註解用<code>//</code>所以要按右鍵刪除兩列）；按下「d」刪除註解。</li>
+</ul>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-07.webp" width="960" height="651" aria-label="大量註解/反註解（圖 7）" data-gifv>
+    <source src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-07.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<h3 id="-搜尋文字並取代">➤ 搜尋文字並取代<a class="h-anchor" href="#-%e6%90%9c%e5%b0%8b%e6%96%87%e5%ad%97%e4%b8%a6%e5%8f%96%e4%bb%a3" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code>:[範圍]s/[比對字串]/[取代字串]/g
+</code></pre><ul>
+<li>將全部的「test」取代為「try」： <code>:%s/test/try/g</code></li>
+</ul>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-08.webp" width="960" height="651" aria-label="搜尋文字並取代（圖 8）" data-gifv>
+    <source src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-08.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<ul>
+<li>將 1~10 行的「test」取代為「try」：<code>:1,10s/test/try/g</code></li>
+</ul>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-09.webp" width="960" height="651" aria-label="搜尋文字並取代（圖 9）" data-gifv>
+    <source src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-09.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<hr>
+<h2 id="-查詢-server-各項資源">查詢 Server 各項資源<a class="h-anchor" href="#-%e6%9f%a5%e8%a9%a2-server-%e5%90%84%e9%a0%85%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h2>
+<p>了解資源的使用狀況，可以幫你更快地找出問題點，與優化方向。</p>
+<h3 id="-server-啟動多久了uptime">➤ Server 啟動多久了（uptime）<a class="h-anchor" href="#-server-%e5%95%9f%e5%8b%95%e5%a4%9a%e4%b9%85%e4%ba%86uptime" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-10.webp" width="1400" height="87" alt="Server 啟動多久了（uptime）（圖 10）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>21:21:33</strong>：系統時間</li>
+<li><strong>up 6 days, 7:40</strong>：Server 已執行時間，時間越大代表越穩定。</li>
+<li><strong>1 user</strong>：使用者總連線數（注意不是使用者數！）。</li>
+<li><strong>load average：</strong>系統平均負載狀況，顯示1 / 5 / 15 分鐘的系統平均負載（以單核 CPU 來說，建議數值不大於 3，超過 5 就需要注意了）。</li>
+</ul>
+<h3 id="-找出最耗費資源的程式top">➤ 找出最耗費資源的程式（top）<a class="h-anchor" href="#-%e6%89%be%e5%87%ba%e6%9c%80%e8%80%97%e8%b2%bb%e8%b3%87%e6%ba%90%e7%9a%84%e7%a8%8b%e5%bc%8ftop" aria-label="這個段落的連結"></a></h3>
+<p><code>top</code> 這個指令會顯示 Server 即時的資源使用狀況。</p>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-11.webp" width="1400" height="979" alt="找出最耗費資源的程式（top）（圖 11）" loading="lazy" decoding="async"></p>
+<p>top 也可以指定欄位做排序，以下面的指令（ <code>top -b -o +%MEM | head -n 17</code>）為例，他是指：</p>
+<ul>
+<li><strong>-b</strong>：以 batch 模式輸出報表。</li>
+<li><strong>-o</strong>：我們使用「%MEM」這個欄位，以「正序」來排序。</li>
+<li><strong>head -n 17</strong>：因為上面的資訊就佔了 7 行，所以你想要顯示前 10 名就要用 10+7=17。</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-12.webp" width="1400" height="696" alt="找出最耗費資源的程式（top）（圖 12）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>在找出最耗費資源的程式後，有時會搭配 <code>kill [PID]</code> 的方式來終止程式；如果無法順利終止，可使用 <code>kill -9 [PID]</code> 來強行終止。</p>
+</blockquote>
+<h3 id="-以目錄形式呈現目前磁碟使用狀況ncdu">➤ 以目錄形式呈現目前磁碟使用狀況（ncdu）<a class="h-anchor" href="#-%e4%bb%a5%e7%9b%ae%e9%8c%84%e5%bd%a2%e5%bc%8f%e5%91%88%e7%8f%be%e7%9b%ae%e5%89%8d%e7%a3%81%e7%a2%9f%e4%bd%bf%e7%94%a8%e7%8b%80%e6%b3%81ncdu" aria-label="這個段落的連結"></a></h3>
+<p>如果發現磁碟空間快滿了，又不確定哪個資料夾佔用了大量空間，<code>ncdu</code> 可以幫你高效率的檢查（指令會以你當前的目錄來做顯示，）。</p>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-13.webp" width="1400" height="302" alt="以目錄形式呈現目前磁碟使用狀況（ncdu）（圖 13）" loading="lazy" decoding="async"></p>
+<p>如果你想要掃描根目錄硬碟使用狀況，請使用 <code>ncdu -x /</code>，若要退出請按 <code>q</code> 。</p>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-14.webp" width="1400" height="322" alt="以目錄形式呈現目前磁碟使用狀況（ncdu）（圖 14）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>此指令並非預設安裝，Ubuntu 環境下的安裝指令為： <code>apt-get -y install ncdu</code></p>
+</blockquote>
+<h3 id="-搜尋檔案find">➤ 搜尋檔案（find）<a class="h-anchor" href="#-%e6%90%9c%e5%b0%8b%e6%aa%94%e6%a1%88find" aria-label="這個段落的連結"></a></h3>
+<p>假使我們想從根目錄開始搜尋「php.ini」在哪裡：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo find / -name php.ini
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-15.webp" width="1400" height="335" alt="搜尋檔案（find）（圖 15）" loading="lazy" decoding="async"></p>
+<p>如果我們不確定檔名，也可以透過「?」來進行模糊搜尋：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo find / -name ph?.ini
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-16.webp" width="1400" height="326" alt="搜尋檔案（find）（圖 16）" loading="lazy" decoding="async"></p>
+<h3 id="-搜尋歷史指令controlr">➤ 搜尋歷史指令（Control+R）<a class="h-anchor" href="#-%e6%90%9c%e5%b0%8b%e6%ad%b7%e5%8f%b2%e6%8c%87%e4%bb%a4controlr" aria-label="這個段落的連結"></a></h3>
+<p>有時我們會用到帶有一長串噁心的參數的指令，這些指令只要下過一次後 history 就會記住。</p>
+<p>因此我們下次想要再使用它時，只要按下「Control+R」輸入要搜尋的字串，bash 就會顯示最近一項匹配的指令；連續按「Control+R」則繼續搜尋更早的歷史指令，按「Enter」則會執行顯示的指令。</p>
+<figure class="figure figure-video">
+  <video class="gifv" muted loop playsinline controls preload="none" poster="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-17.webp" width="960" height="645" aria-label="搜尋歷史指令（Control&#43;R）（圖 17）" data-gifv>
+    <source src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-17.mp4" type="video/mp4">
+  </video>
+</figure>
+
+<hr>
+<h2 id="-檢查網路環境">檢查網路環境<a class="h-anchor" href="#-%e6%aa%a2%e6%9f%a5%e7%b6%b2%e8%b7%af%e7%92%b0%e5%a2%83" aria-label="這個段落的連結"></a></h2>
+<p>想要知道網路彼此環境的狀況，除了用最基礎的 <code>ping</code> 以外，下面這些指令可以幫你獲得更詳盡的資訊。</p>
+<h3 id="-網路診斷瑞士刀nc">➤ 網路診斷瑞士刀（nc）<a class="h-anchor" href="#-%e7%b6%b2%e8%b7%af%e8%a8%ba%e6%96%b7%e7%91%9e%e5%a3%ab%e5%88%80nc" aria-label="這個段落的連結"></a></h3>
+<p>Netcat （nc）能夠做到的事情很多，這邊跟大家分享常用的功能。</p>
+<ul>
+<li><strong>測試目標 Server 特定的 port 是否開啟： <code>nc -v [host] [port]</code></strong></li>
+</ul>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-18.webp" width="1400" height="256" alt="網路診斷瑞士刀（nc）（圖 18）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>在兩台 Server 間複製檔案</strong></li>
+</ul>
+<p>在接收檔案的 Server 上執行 <code>nc -l 5000 &gt; demo.js</code> ，在傳送檔案的 Server 上執行 <code>nc [host] 5000 &lt; demo.js</code></p>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-19.webp" width="1400" height="190" alt="網路診斷瑞士刀（nc）（圖 19）" loading="lazy" decoding="async"></p>
+<p>這個操作跟 <code>scp</code> 很類似，但特別的地方在於不需要登入的動作（不需要帳號密碼），假使遇到兩台 Server 無法互相登入時， 他就是一個解決方案。</p>
+<blockquote>
+<p>Netcat 還有非常多的功能，有興趣的可以再自行鑽研。</p>
+</blockquote>
+<h3 id="-設定好-dns-後確認回應是否正常nslookup">➤ 設定好 DNS 後，確認回應是否正常（nslookup）<a class="h-anchor" href="#-%e8%a8%ad%e5%ae%9a%e5%a5%bd-dns-%e5%be%8c%e7%a2%ba%e8%aa%8d%e5%9b%9e%e6%87%89%e6%98%af%e5%90%a6%e6%ad%a3%e5%b8%b8nslookup" aria-label="這個段落的連結"></a></h3>
+<p>下面以查詢 google.com 的 ip 為例： <code>nslookup google.com</code></p>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-20.webp" width="1156" height="324" alt="設定好 DNS 後，確認回應是否正常（nslookup）（圖 20）" loading="lazy" decoding="async"></p>
+<p>在執行結果中「192.168.220.186」是查詢的 DNS Server，而「172.217.160.110」則是返回的 ip。</p>
+<blockquote>
+<p>在內網/外網執行時會有不同回應，可用來確認設定是否符合預期。</p>
+</blockquote>
+<h3 id="-查詢佔用的-portlsof">➤ 查詢佔用的 port（lsof）<a class="h-anchor" href="#-%e6%9f%a5%e8%a9%a2%e4%bd%94%e7%94%a8%e7%9a%84-portlsof" aria-label="這個段落的連結"></a></h3>
+<p>lsof （List Open Files）可以列出所有被行程打開的檔案，筆者會透過這個指令來看 port 被哪個行程佔用了。</p>
+<pre tabindex="0"><code>lsof -i -P | grep :443
+</code></pre><p><code>-i</code> 是查找網路連線， <code>-P</code> 是列出實際的 port，最後透過 <code>grep</code> 將 port 為 443 的顯示出來。</p>
+<p><img src="https://deanlin.net/blog/202208/useful-linux-commands/images/useful-linux-commands-21.webp" width="1400" height="127" alt="查詢佔用的 port（lsof）（圖 21）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>以上是筆者常用的 Linux 指令，如果你平常有用到其他實用的指令，也歡迎留言分享喔！</p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>Ubuntu 用 Atlas 實現 MySQL Proxy 讀寫分離 read/write splitting</title>
+      <link>https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/</link>
+      <pubDate>Mon, 29 Mar 2021 08:50:19 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令正確分流</description>
+      <content:encoded><![CDATA[<p>在『<a href="https://deanlin.net/blog/202103/mysql-master-slave-replication/">MySQL Master Slave Replication 主從式架構設定教學</a>』這篇文章的結尾有提到如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅 ，除非你的 Slave server 只是用來做資料分析 🤔；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令分流到正確的 server。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-01.webp" width="1400" height="761" alt="此為設計架構圖" loading="lazy" decoding="async">
+  <figcaption>此為設計架構圖</figcaption>
+</figure>
+
+<pre tabindex="0"><code>一、前置作業
+二、MySQL Proxy 的選擇
+三、Atlas 功能介紹
+四、在 Ubunut 安裝 Atlas
+五、連到 Atlas 管理 server
+六、實際測試透過 Atlas Proxy 是否達成讀寫分離
+</code></pre><h2 id="一前置作業">一、前置作業<a class="h-anchor" href="#%e4%b8%80%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>OS version、MySQL 是筆者安裝時的環境，ip 是給大家參考對應的</p>
+</blockquote>
+<h3 id="-準備一台要當-mysql-proxy-的-ubuntu-server">➤ 準備一台要當 MySQL Proxy 的 ubuntu server<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e8%a6%81%e7%95%b6-mysql-proxy-%e7%9a%84-ubuntu-server" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>OS version：ubuntu 16.04</li>
+<li>MySQL：5.7</li>
+<li>ip ：172.16.9.39</li>
+</ul>
+<h3 id="-準備一台-master-server-負責寫入">➤ 準備一台 Master server 負責寫入<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0-master-server-%e8%b2%a0%e8%b2%ac%e5%af%ab%e5%85%a5" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>OS version：ubuntu 16.04</li>
+<li>MySQL：5.7</li>
+<li>ip ：172.16.9.32</li>
+</ul>
+<h3 id="-準備一台以上的-slave-server-負責讀取">➤ 準備一台以上的 Slave server 負責讀取<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e4%bb%a5%e4%b8%8a%e7%9a%84-slave-server-%e8%b2%a0%e8%b2%ac%e8%ae%80%e5%8f%96" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>準備兩台以上測試 load balance 才會準確，這塊有興趣的讀者可以自己嘗試</p>
+</blockquote>
+<ul>
+<li>OS version：ubuntu 16.04</li>
+<li>MySQL：5.7</li>
+<li>ip ：172.16.9.32</li>
+</ul>
+<h3 id="-在-master-server-裡面增加給-proxy-server-使用的使用者並創建測試用-table">➤ 在 Master Server 裡面增加給 Proxy server 使用的使用者，並創建測試用 table<a class="h-anchor" href="#-%e5%9c%a8-master-server-%e8%a3%a1%e9%9d%a2%e5%a2%9e%e5%8a%a0%e7%b5%a6-proxy-server-%e4%bd%bf%e7%94%a8%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e5%89%b5%e5%bb%ba%e6%b8%ac%e8%a9%a6%e7%94%a8-table" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*建立proxy server使用者*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">CREATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">USER</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;proxy_account&#39;</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#a5d6ff">&#39;%&#39;</span><span style="color:#6e7681"> </span>IDENTIFIED<span style="color:#6e7681"> </span><span style="color:#ff7b72">BY</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;proxy_password&#39;</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*給使用者權限*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">GRANT</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">ALL</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">ON</span><span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">*</span>.<span style="color:#ff7b72;font-weight:bold">*</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">TO</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;proxy_account&#39;</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#a5d6ff">&#39;%&#39;</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*使權限生效*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span>FLUSH<span style="color:#6e7681"> </span><span style="color:#ff7b72">PRIVILEGES</span>;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*創建測試用資料庫*/</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">CREATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">DATABASE</span><span style="color:#6e7681"> </span>proxy_test;<span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/3c818b9e9a1294cd7e33f108985884e0" rel="noopener">create_proxy_user.sql</a>（GitHub Gist）</p>
+<h2 id="二mysql-proxy-的選擇">二、MySQL Proxy 的選擇<a class="h-anchor" href="#%e4%ba%8cmysql-proxy-%e7%9a%84%e9%81%b8%e6%93%87" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li><strong>MySQL Proxy</strong>：原本想使用官方工具來處理讀寫分離，但一上<strong>官網發現連他自己都不推薦使用</strong>😱，所以就不在多費心力研究。</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-02.webp" width="1296" height="398" alt="二、MySQL Proxy 的選擇（圖 2）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>MySQL Router</strong>：根據官方的指引認真的研究這個工具後發現雖然設定上簡單，但並不是很符合需求，他的<strong>讀寫分離是同一台伺服器分成兩個 port 來處理</strong>，雖然現在主流框架都支援這樣的操作，但我認為這樣的方式並不優雅</li>
+<li><strong>kingshard</strong>：是基於 Go 語言開發的 MySQL Proxy，在 github 上面擁有高人氣；但實際使用心得真的是滿滿的陰影…<strong>官方安裝指引非常的爛</strong>，鬼才知道要自己切換 branch 才能使用啊？設定檔根本要用錯誤嘗試法，沒說清楚必填選填，上面這些問題也就罷了，安裝成功後居然告訴我只有 windows 的電腦可以測試 <a href="https://github.com/flike/kingshard/issues/591#issuecomment-776367532">mac 電腦不行</a>😡，作者是在開玩笑嗎？總之我非常的不推薦。</li>
+<li><strong>Atlas</strong>：是基於 MySQL-Proxy 0.8.2 版本開發的工具，由 360 公司推出，在 github 上面找到最新的版本是 2015 年推出的，至於為什麼不再更新的理由，360 公司表示因為這個工具已經夠棒了🥴，沒什麼繼續優化的必要性了；事實上這個工具也是筆者最後選用的，儘管安裝過程滿滿的坑😓</li>
+</ul>
+<h2 id="三atlas-功能介紹">三、Atlas 功能介紹<a class="h-anchor" href="#%e4%b8%89atlas-%e5%8a%9f%e8%83%bd%e4%bb%8b%e7%b4%b9" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>讀寫分離</li>
+<li>slave server 的 load balance</li>
+<li>IP filter</li>
+<li>DBA 可以輕鬆的上下線 DB（有指令支持）</li>
+<li>自動移除當機的 DB（但如果當機的是 master server，就只剩讀取功能）</li>
+</ol>
+<h2 id="四在-ubunut-安裝-atlas">四、在 Ubunut 安裝 Atlas<a class="h-anchor" href="#%e5%9b%9b%e5%9c%a8-ubunut-%e5%ae%89%e8%a3%9d-atlas" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>筆者在安裝過程中感受到滿滿的惡意</p>
+</blockquote>
+<p><strong>STEP 1</strong>：下載 &amp; 安裝 Atlas</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-03.webp" width="1259" height="340" alt="四、在 Ubunut 安裝 Atlas（圖 3）" loading="lazy" decoding="async"></p>
+<p>你可以在官方 <a href="https://github.com/Qihoo360/Atlas/releases">github release </a>中找到 deb 的安裝包下載他</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wget https://github.com/Qihoo360/Atlas/releases/download/2.2/Atlas-2.2-debian6.0-x86_64.deb
+</span></span></code></pre></div><p>執行安裝</p>
+<pre tabindex="0"><code>dpkg -i Atlas-2.2-debian6.0-x86_64.deb
+</code></pre><p><strong>STEP 2</strong>：調整 Atlas 的設定檔</p>
+<p>Atlas 的安裝路徑是/usr/local/mysql-proxy ，執行時的參數會參考 conf 目錄下的 test.cnf 檔案</p>
+<pre tabindex="0"><code>vi /usr/local/mysql-proxy/conf/test.cnf
+</code></pre><p>下面幾個需要特別調整，其他用默認的就可以了</p>
+<ul>
+<li><strong>proxy-backend-addresses</strong>：填寫 Master server 的 ip</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-04.webp" width="1196" height="88" alt="四、在 Ubunut 安裝 Atlas（圖 4）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>proxy-read-only-backend-addresses</strong>：填寫 Slave server 的 ip</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-05.webp" width="1400" height="122" alt="四、在 Ubunut 安裝 Atlas（圖 5）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>pwds</strong>：請使用於前置作業 Master server 新增專門給 Proxy Server 使用的帳號密碼，密碼要用下面的指令作加密</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 前往加密的目錄</span>
+</span></span><span style="display:flex;"><span>cd /usr/local/mysql-proxy/bin
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 對密碼加密</span>
+</span></span><span style="display:flex;"><span>./encrypt proxy_password
+</span></span></code></pre></div><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-06.webp" width="1332" height="126" alt="四、在 Ubunut 安裝 Atlas（圖 6）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-07.webp" width="1400" height="136" alt="四、在 Ubunut 安裝 Atlas（圖 7）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>sql-log</strong>：預設是 OFF 不會紀錄，但為了方便觀察讀寫是否分離，我們將它設定為 REALTIME</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-08.webp" width="1400" height="138" alt="四、在 Ubunut 安裝 Atlas（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>STEP 3</strong>：啟動 Atlas</p>
+<p>輸入下面指令即可啟動 Atlas</p>
+<pre tabindex="0"><code>/usr/local/mysql-proxy/bin/mysql-proxyd test start
+</code></pre><p>不過應該有 99% 的人會在這個步驟失敗</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-09.webp" width="1400" height="90" alt="這是另外一種啟動方式，反正只是給大家看會有什麼錯誤而已" loading="lazy" decoding="async">
+  <figcaption>這是另外一種啟動方式，反正只是給大家看會有什麼錯誤而已</figcaption>
+</figure>
+
+<p>你可以在 log 裡面看錯誤訊息</p>
+<pre tabindex="0"><code>vi /usr/local/mysql-proxy/log/test.log
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-10.webp" width="1400" height="192" alt="四、在 Ubunut 安裝 Atlas（圖 10）" loading="lazy" decoding="async"></p>
+<p><strong>解決方式：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 安裝套件相關套件</span>
+</span></span><span style="display:flex;"><span>apt-get install libmysqlclient-dev
+</span></span><span style="display:flex;"><span>apt-get install mysql-client
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 下載缺失的 libmysqlclient.so.16 套件，我是在這個網站找到的</span>
+</span></span><span style="display:flex;"><span>wget http://files.directadmin.com/services/debian_5.0_64/libmysqlclient.so.16
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 將 libmysqlclient.so.16 搬移到 lib 目錄下</span>
+</span></span><span style="display:flex;"><span>mv libmysqlclient.so.16 /usr/lib/x86_64-linux-gnu/
+</span></span></code></pre></div><p>再次啟動 Atlas</p>
+<pre tabindex="0"><code>/usr/local/mysql-proxy/bin/mysql-proxyd test start
+</code></pre><p>看到 <strong>OK: MySQL-Proxy of test is started</strong> 的提示就成功嚕！</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-11.webp" width="1400" height="73" alt="四、在 Ubunut 安裝 Atlas（圖 11）" loading="lazy" decoding="async"></p>
+<p>檢查 Atlas 服務狀態</p>
+<pre tabindex="0"><code>/usr/local/mysql-proxy/bin/mysql-proxyd test status
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-12.webp" width="1400" height="104" alt="四、在 Ubunut 安裝 Atlas（圖 12）" loading="lazy" decoding="async"></p>
+<h2 id="五連到-atlas-管理-server">五、連到 Atlas 管理 server<a class="h-anchor" href="#%e4%ba%94%e9%80%a3%e5%88%b0-atlas-%e7%ae%a1%e7%90%86-server" aria-label="這個段落的連結"></a></h2>
+<p>Atlas 預設的管理 port 為 2345，ip 填寫 Proxy server ip，如果 admin 的帳號密碼沒換就是跟下面一樣</p>
+<pre tabindex="0"><code>mysql -h172.16.9.39 -P2345 -uuser -ppwd
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-13.webp" width="1400" height="553" alt="五、連到 Atlas 管理 server（圖 13）" loading="lazy" decoding="async"></p>
+<h3 id="-查看-atlas-的管理命令">➤ 查看 Atlas 的管理命令<a class="h-anchor" href="#-%e6%9f%a5%e7%9c%8b-atlas-%e7%9a%84%e7%ae%a1%e7%90%86%e5%91%bd%e4%bb%a4" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code>mysql&gt; select * from help;
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-14.webp" width="1400" height="529" alt="查看 Atlas 的管理命令（圖 14）" loading="lazy" decoding="async"></p>
+<h3 id="-查看-mysql-讀寫分離設定是否生效">➤ 查看 MySQL 讀寫分離設定是否生效<a class="h-anchor" href="#-%e6%9f%a5%e7%9c%8b-mysql-%e8%ae%80%e5%af%ab%e5%88%86%e9%9b%a2%e8%a8%ad%e5%ae%9a%e6%98%af%e5%90%a6%e7%94%9f%e6%95%88" aria-label="這個段落的連結"></a></h3>
+<p>rw 為讀寫權限，ro 代表只有讀的權限</p>
+<pre tabindex="0"><code>mysql&gt; select * from backends;
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-15.webp" width="942" height="320" alt="查看 MySQL 讀寫分離設定是否生效（圖 15）" loading="lazy" decoding="async"></p>
+<p>到這步其實就可以完結撒花惹 😊😊😊😊😊😊</p>
+<h2 id="六實際測試透過-atlas-proxy-是否達成讀寫分離">六、實際測試透過 Atlas Proxy 是否達成讀寫分離<a class="h-anchor" href="#%e5%85%ad%e5%af%a6%e9%9a%9b%e6%b8%ac%e8%a9%a6%e9%80%8f%e9%81%8e-atlas-proxy-%e6%98%af%e5%90%a6%e9%81%94%e6%88%90%e8%ae%80%e5%af%ab%e5%88%86%e9%9b%a2" aria-label="這個段落的連結"></a></h2>
+<p>Atlas 預設的proxy port 為 1234，ip 填寫 Proxy server ip，登入的帳號密碼填寫你在 Master 申請給 Atlas Proxy 使用的那組</p>
+<pre tabindex="0"><code>mysql -h172.16.9.39 -P1234 -uproxy_account -pproxy_password
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-16.webp" width="1400" height="536" alt="六、實際測試透過 Atlas Proxy 是否達成讀寫分離（圖 16）" loading="lazy" decoding="async"></p>
+<h3 id="-測試寫入功能">➤ 測試寫入功能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e5%af%ab%e5%85%a5%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code># 先選擇之前創建的測試資料庫
+mysql&gt; use proxy_test;
+# 創建表並塞入一寫資料
+mysql&gt; CREATE TABLE department (id INT,name varchar(50));
+mysql&gt; INSERT INTO department VALUES (1, &#39;Sales&#39;);
+mysql&gt; INSERT INTO department VALUES (2, &#39;Operator&#39;);
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-17.webp" width="1062" height="308" alt="測試寫入功能（圖 17）" loading="lazy" decoding="async"></p>
+<h3 id="-測試讀取功能">➤ 測試讀取功能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e8%ae%80%e5%8f%96%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code># 先選擇之前創建的測試資料庫
+mysql&gt; use proxy_test;
+# 讀取剛剛創建的 table
+mysql&gt; SELECT * FROM department;
+</code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-18.webp" width="536" height="308" alt="測試讀取功能（圖 18）" loading="lazy" decoding="async"></p>
+<h3 id="-觀察-sql-運行的-log">➤ 觀察 sql 運行的 log<a class="h-anchor" href="#-%e8%a7%80%e5%af%9f-sql-%e9%81%8b%e8%a1%8c%e7%9a%84-log" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>記得把 Atla 設定檔的 ssql-log 參數調整為 REALTIME 才會有喔！</p>
+</blockquote>
+<p>前往 log file</p>
+<pre tabindex="0"><code>tail /usr/local/mysql-proxy/log/sql_test.log
+</code></pre><p>從下圖我們可以觀察到，負責變更資料庫的是 Master server(172.16.3.32)，讀取的則是 Slave Server(172.16.3.33)，恭喜自己大功告成</p>
+<p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-19.webp" width="1400" height="530" alt="觀察 sql 運行的 log（圖 19）" loading="lazy" decoding="async"></p>
+<hr>
+<p>希望這篇文章有幫助到使用 Ubuntu 架設 MySQL 並且想做到讀寫分離的開發人員，網路上對這塊的資訊相對來說比較零散，有些甚至都是錯誤，整理起來這些文件也真的很費力，如果對你有幫助的話可以幫我按個拍手👏給我一點繼續分享技術文章的動力。</p>
+<pre tabindex="0"><code>如果你想了解資料庫主從式架構的設定歡迎參考我的文章：
+👍 MySQL Master Slave Replication 主從式架構設定教學
+👍 在 MySQL 5.7 解決主從複製的延遲問題
+</code></pre><hr>
+<p><strong>參考資訊</strong>：<a href="http://files.directadmin.com/services/debian_5.0_64/libmysqlclient.so.16">下載libmysqlclient.so.16檔案</a>、<a href="https://www.jianshu.com/p/67d4b34b2af4">讀寫分離測試</a>、<a href="https://zhuanlan.zhihu.com/p/94279867">Mysql访问中间件 — Atlas初探</a>、<a href="https://www.jianshu.com/p/b68e429d09c7">Atlas</a>、<a href="https://github.com/Qihoo360/Atlas/blob/master/README_ZH.md">Atlas Github</a></p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>Ubuntu Server基本環境</title>
+      <link>https://deanlin.net/blog/202006/ubuntu-server-basic-setup/</link>
+      <pubDate>Mon, 15 Jun 2020 14:50:44 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202006/ubuntu-server-basic-setup/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>這篇文章是以部署網頁為導向的環境設定</description>
+      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202006/ubuntu-server-basic-setup/images/ubuntu-server-basic-setup-01.webp" width="1200" height="630" alt="Ubuntu Server基本環境（圖 1）" loading="lazy" decoding="async"></p>
+<p>這篇文章是以部署網頁為導向的環境設定</p>
+<h2 id="1ssh的安裝為了ssh連線">1、ssh的安裝(為了ssh連線)<a class="h-anchor" href="#1ssh%e7%9a%84%e5%ae%89%e8%a3%9d%e7%82%ba%e4%ba%86ssh%e9%80%a3%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install ssh -y
+</span></span></code></pre></div><p><strong>如果遇到：package ‘ssh’ has no installation candidate的錯誤，要記得更新</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apt-get update
+</span></span></code></pre></div><h2 id="2生成金鑰">2、生成金鑰<a class="h-anchor" href="#2%e7%94%9f%e6%88%90%e9%87%91%e9%91%b0" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh-keygen
+</span></span><span style="display:flex;"><span>cd .ssh
+</span></span><span style="display:flex;"><span>mv id_rsa.pub authorized_keys
+</span></span></code></pre></div><h2 id="3修改配置文件etcsshsshd_config">3、修改配置文件，/etc/ssh/sshd_config<a class="h-anchor" href="#3%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6etcsshsshd_config" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/ssh/sshd_config
+</span></span></code></pre></div><p>將# AuthorizedKeysFile %h/.ssh/authorized_keys，把前面的#去掉即可，這個是允許ssh登入的檔案路徑</p>
+<p>註:如果server有安裝gitlab，可能會被拒絕連線，要再加上這個設定:StrictModes no</p>
+<p>修改完記得要將ssh重啟才會生效：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo service ssh restart
+</span></span></code></pre></div><h2 id="4windows上啟動putty進行如下配置">4、windows上啟動putty，進行如下配置<a class="h-anchor" href="#4windows%e4%b8%8a%e5%95%9f%e5%8b%95putty%e9%80%b2%e8%a1%8c%e5%a6%82%e4%b8%8b%e9%85%8d%e7%bd%ae" aria-label="這個段落的連結"></a></h2>
+<p>（1）Session-Logging-Hostname:填上你的linux的ip</p>
+<p>（2）Windows －Translation － 在下拉選單裡選上UTF－8，這裡不設定，登入後將會出現中文亂碼。</p>
+<p>（3）Connection- Data — Auto login username:填上你登入ubuntu時用的使用者名稱。</p>
+<p>（4）Connection- SSH-Auth-Private key file for authentication:選上id_rsa.ppk；</p>
+<h2 id="5設定-authorized_keys-信任清單">5、設定 Authorized_keys 信任清單<a class="h-anchor" href="#5%e8%a8%ad%e5%ae%9a-authorized_keys-%e4%bf%a1%e4%bb%bb%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<pre tabindex="0"><code>vi authorized_keys
+</code></pre><p>進去後貼上rsa key</p>
+<h2 id="6確定能用ssh-key登入後再去修改配置文件">6、確定能用ssh key登入後再去修改配置文件<a class="h-anchor" href="#6%e7%a2%ba%e5%ae%9a%e8%83%bd%e7%94%a8ssh-key%e7%99%bb%e5%85%a5%e5%be%8c%e5%86%8d%e5%8e%bb%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/ssh/sshd_config
+</span></span></code></pre></div><p>修改：PasswordAuthentication no 禁止使用者用密碼登入</p>
+<p>之後記得重啟</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo service ssh restart
+</span></span></code></pre></div><h2 id="7-ubuntu-based-gnulinux-上的防火牆">7、 Ubuntu based GNU/Linux 上的防火牆<a class="h-anchor" href="#7-ubuntu-based-gnulinux-%e4%b8%8a%e7%9a%84%e9%98%b2%e7%81%ab%e7%89%86" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install ufw
+</span></span><span style="display:flex;"><span>sudo ufw enable
+</span></span><span style="display:flex;"><span>sudo ufw allow from 192.168.0.0/12<span style="color:#ff7b72;font-weight:bold">(</span>你允許的網路環境<span style="color:#ff7b72;font-weight:bold">)</span>
+</span></span></code></pre></div><h2 id="8每台的ubuntu-default-editor都改成vim">8、每台的ubuntu default editor都改成vim<a class="h-anchor" href="#8%e6%af%8f%e5%8f%b0%e7%9a%84ubuntu-default-editor%e9%83%bd%e6%94%b9%e6%88%90vim" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo update-alternatives — set editor /usr/bin/vim.basic
+</span></span></code></pre></div><h2 id="9將ip改為static-ip">9、將ip改為static ip<a class="h-anchor" href="#9%e5%b0%87ip%e6%94%b9%e7%82%bastatic-ip" aria-label="這個段落的連結"></a></h2>
+<p>先看新增的網卡名稱</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd /proc/sys/net/ipv4/conf
+</span></span></code></pre></div><p><strong>Ubuntu 16作法：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/network/interfaces
+</span></span><span style="display:flex;"><span>auto ens160
+</span></span><span style="display:flex;"><span>iface ens160 inet static
+</span></span><span style="display:flex;"><span>address 192.168.3.60
+</span></span><span style="display:flex;"><span>netmask 255.255.0.0
+</span></span><span style="display:flex;"><span>gateway 192.168.1.254
+</span></span><span style="display:flex;"><span>dns-nameservers 168.95.1.1 168.95.192.1
+</span></span></code></pre></div><p>改完後</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /etc/init.d/networking restart
+</span></span></code></pre></div><p><strong>Ubuntu 18作法：</strong></p>
+<pre tabindex="0"><code>vi /etc/netplan/50-cloud-init.yaml
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#7ee787">network</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ethernets</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span><span style="color:#7ee787">enp0s3</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">192.168.0.10</span><span style="color:#a5d6ff">/24]</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">gateway4</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">192.168.0.1</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">nameservers</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">              </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">8.8.8.8</span>,<span style="color:#a5d6ff">8.8.4.4</span>]<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">            </span><span style="color:#7ee787">dhcp4</span>:<span style="color:#6e7681"> </span><span style="color:#79c0ff">no</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">2</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/d0fcc16dd59df0e5152449c27cd6d1f9" rel="noopener">50-cloud-init.yaml</a>（GitHub Gist）</p>
+<p>改完後</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo netplan try
+</span></span></code></pre></div><p><strong>Ubuntu 20作法：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/netplan/00-installer-config.yaml
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># This is the network config written by &#39;subiquity&#39;</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#7ee787">network</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">ethernets</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#7ee787">ens160</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">your_ip_address/12]</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">gateway4</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">your_gateway</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">optional</span>:<span style="color:#6e7681"> </span><span style="color:#79c0ff">true</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">nameservers</span>:<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">        </span><span style="color:#7ee787">addresses</span>:<span style="color:#6e7681"> </span>[<span style="color:#a5d6ff">168.95.1.1</span>,<span style="color:#a5d6ff">168.95.192.1</span>,<span style="color:#a5d6ff">8.8.8.8</span>,<span style="color:#a5d6ff">8.8.4.4</span>]<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">      </span><span style="color:#7ee787">dhcp4</span>:<span style="color:#6e7681"> </span><span style="color:#79c0ff">no</span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#7ee787">version</span>:<span style="color:#6e7681"> </span><span style="color:#a5d6ff">2</span><span style="color:#6e7681">
+</span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/33b1639b9d52bae158f0c0eb363f025b" rel="noopener">00-installer-config.yaml</a>（GitHub Gist）</p>
+<blockquote>
+<p>PS.如果發現改成靜態網址後無法ssh登入，請把 addresses 的遮罩改為 <code>/12</code></p>
+</blockquote>
+<h2 id="10ubuntu新增使用者並設成-sudo-user">10、ubuntu新增使用者並設成 Sudo user<a class="h-anchor" href="#10ubuntu%e6%96%b0%e5%a2%9e%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e8%a8%ad%e6%88%90-sudo-user" aria-label="這個段落的連結"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo adduser newuser
+</span></span><span style="display:flex;"><span>$ usermod -aG sudo newuser
+</span></span></code></pre></div><p>如果要取消這位使用者的 sudoer 資格</p>
+<pre tabindex="0"><code>$sudo deluser newuser sudo
+</code></pre><p>如果要刪除這位使用者</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo deluser — remove-home userNameHere
+</span></span></code></pre></div><p>Add public key to allow remote SSH login for the new user</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>su — newuser
+</span></span><span style="display:flex;"><span>mkdir ~/.ssh
+</span></span><span style="display:flex;"><span>vim ~/.ssh/authorized_keys
+</span></span></code></pre></div><p>查詢帳號有 sudoer 的權限</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo cat /etc/group | grep sudo
+</span></span><span style="display:flex;"><span>$ sudo cat /etc/group | grep admin
+</span></span></code></pre></div><h2 id="11linux與windows間傳送檔案">11、Linux與Windows間傳送檔案<a class="h-anchor" href="#11linux%e8%88%87windows%e9%96%93%e5%82%b3%e9%80%81%e6%aa%94%e6%a1%88" aria-label="這個段落的連結"></a></h2>
+<p>複製本機檔案到linux</p>
+<pre tabindex="0"><code>pscp d:\path\file_name account@192.10.3.64:/path
+</code></pre><h2 id="12lvm-storage相關問題">12、LVM storage相關問題<a class="h-anchor" href="#12lvm-storage%e7%9b%b8%e9%97%9c%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>因為ubuntu 18.4使用的時候，不知道設定為何默認初始硬碟只有4GB，如果要釋放出剩餘的硬碟空間，用以下指令即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo lvextend -rl +100%FREE /dev/mapper/ubuntu — vg-ubuntu — lv
+</span></span></code></pre></div><p>參考資源：</p>
+<p><a href="https://www.peterdavehello.org/2016/01/ubuntu-based-gnulinux-firewall-ufw-essential-config/"><strong>Ufw防火牆設定</strong></a></p>
+<p><a href="https://www.howtoing.com/deploy-node-js-application-with-pm2-on-ubuntu"><strong>如何在Ubuntu 16.04上使用PM2部署Node.js应用程序</strong></a></p>
+<p><a href="https://tw.saowen.com/a/45fd6b0293c602372e720ea216d07c8ac0751f49c19e235126260221367818e6"><strong>windows下如何使用ssh遠端登入Linux</strong></a></p>
+<p><a href="https://loveamberbird.wordpress.com/2013/08/21/%E3%80%90%E7%AD%86%E8%A8%98%E3%80%91%E5%9C%A8linux%E8%88%87windows%E9%96%93%E5%82%B3%E9%80%81%E6%AA%94%E6%A1%88%E6%AD%A5%E9%A9%9F%E6%95%99%E5%AD%B8/"><strong>在Linux與Windows間傳送檔案 — 步驟教學</strong></a></p>
+<p><a href="https://stackoverflow.com/questions/31813080/windows-10-ssh-keys"><strong>win10如果要產生登入的SSH KEY</strong></a></p>
+<p><a href="https://blog.csdn.net/youyudexiaowangzi/article/details/48729897"><strong>sudo被玩壞參考</strong></a></p>
+<p><a href="https://askubuntu.com/questions/1090773/understanding-free-space-volumes-on-ubuntu%20https://blog.xuite.net/lichangying/wretch/214360626-%E5%A6%82%E4%BD%95%E5%8B%95%E6%85%8B%E6%94%BE%E5%A4%A7LVM&#43;on&#43;Linux">LVM storage釋放剩餘空間</a></p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

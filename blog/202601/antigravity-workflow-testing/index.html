@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="市場不會為爛產品買單，而自動化測試，是讓 Vibe Coding 成果，從玩具走向產品的過程！如果你已經開始嘗試用 Vibe Coding 開發專案，一定會遇到以下問題：➤穩定性 你一定遇過請 AI 解決目前遇到的問題，結果改完後發現過去…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202601/antigravity-workflow-testing/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.42da68ddb0e41b872b002d2060c3b0480e5b44aff52ecc0a97f909c64535668d.css" integrity="sha256-Qtpo3bDkG4crAC0gYMOwSA5bRK/1LswKl/kJxkU1Zo0=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！">
+  <meta property="og:description" content="市場不會為爛產品買單，而自動化測試，是讓 Vibe Coding 成果，從玩具走向產品的過程！如果你已經開始嘗試用 Vibe Coding 開發專案，一定會遇到以下問題：➤穩定性 你一定遇過請 AI 解決目前遇到的問題，結果改完後發現過去…">
+  <meta property="og:url" content="https://deanlin.net/blog/202601/antigravity-workflow-testing/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2026-01-19T12:02:37&#43;08:00">
+  <meta property="article:modified_time" content="2026-01-19T12:02:37&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="AI 實戰">
+  <meta property="article:tag" content="Vibe Coding">
+  <meta property="article:tag" content="Antigravity">
+  <meta property="article:tag" content="AI">
+  <meta property="article:tag" content="Test Automation">
+  <meta property="article:tag" content="Workflow">
+  <meta property="og:image" content="https://deanlin.net/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-og.jpg">
+  <meta name="twitter:title" content="【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！">
+  <meta name="twitter:description" content="市場不會為爛產品買單，而自動化測試，是讓 Vibe Coding 成果，從玩具走向產品的過程！如果你已經開始嘗試用 Vibe Coding 開發專案，一定會遇到以下問題：➤穩定性 你一定遇過請 AI 解決目前遇到的問題，結果改完後發現過去…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202601/antigravity-workflow-testing/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"AI 實戰"},"articleSection":"AI 實戰","author":{"@id":"https://deanlin.net/#person"},"dateModified":"2026-01-19T12:02:37+08:00","datePublished":"2026-01-19T12:02:37+08:00","description":"市場不會為爛產品買單，而自動化測試，是讓 Vibe Coding 成果，從玩具走向產品的過程！如果你已經開始嘗試用 Vibe Coding 開發專案，一定會遇到以下問題：➤穩定性 你一定遇過請 AI 解決目前遇到的問題，結果改完後發現過去…","headline":"【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！","image":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-og.jpg","width":1200},"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"Google Antigravity","url":"https://deanlin.net/series/antigravity/"}],"keywords":"Vibe Coding, Antigravity, AI, Test Automation, Workflow","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202601/antigravity-workflow-testing/","@type":"WebPage"},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://dean-lin.medium.com/antigravity-workflow-%E5%AF%A6%E6%88%B0-%E5%BB%BA%E7%AB%8B%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6-%E8%A7%A3%E6%B1%BA-vibe-coding-%E7%97%9B%E9%BB%9E-a666fad7e502"],"timeRequired":"PT16M","url":"https://deanlin.net/blog/202601/antigravity-workflow-testing/","wordCount":7778},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","image":"https://deanlin.net/images/about/portrait.webp","knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/ai/","name":"AI 實戰","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202601/antigravity-workflow-testing/","name":"【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰</a></li>
+        <li><a href="/categories/tech/">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/" aria-current="page">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/ai/">AI 實戰</a>
+      </nav>
+      <h1 class="article-title">【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！</h1>
+      <p class="article-lede">市場不會為爛產品買單，而自動化測試，是讓 Vibe Coding 成果，從玩具走向產品的過程！</p>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2026-01-19">2026.01.19</time>
+              <span>閱讀約 16 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・Google Antigravity <b>3</b>/ 4</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li class="is-sub"><a href="#%e7%a9%a9%e5%ae%9a%e6%80%a7">➤穩定性</a></li><li class="is-sub"><a href="#-%e8%a4%87%e9%9b%9c%e5%ba%a6">➤ 複雜度</a></li><li class="is-sub"><a href="#-%e6%93%b4%e5%85%85%e6%80%a7">➤ 擴充性</a></li><li><a href="#%e4%b8%80%e4%b8%8d%e5%af%ab%e6%b8%ac%e8%a9%a6%e6%89%8d%e6%9c%83%e6%b2%92%e6%9c%89%e6%99%82%e9%96%93">一、不寫測試，才會沒有時間</a></li><li class="is-sub"><a href="#-%e7%99%bb%e5%85%a5%e9%a0%81%e9%9d%a2">➤ 登入頁面</a></li><li class="is-sub"><a href="#-%e4%bd%bf%e7%94%a8-mock-api-%e6%a8%a1%e6%93%ac%e6%83%85%e5%a2%83">➤ 使用 Mock API 模擬情境</a></li><li class="is-sub"><a href="#-%e8%a7%92%e8%89%b2%e6%ac%8a%e9%99%90%e8%88%87%e6%86%91%e8%ad%89">➤ 角色權限與憑證</a></li><li><a href="#%e4%ba%8c%e7%94%a8-ai-%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f">二、用 AI 撰寫測試程式</a></li><li class="is-sub"><a href="#-%e8%a7%92%e8%89%b2%e6%89%ae%e6%bc%94">➤ 角色扮演</a></li><li class="is-sub"><a href="#-step-1-%e5%bb%ba%e7%ab%8b%e5%ad%98%e6%94%be%e6%96%87%e4%bb%b6%e7%9a%84%e8%b3%87%e6%96%99%e5%a4%be">➤ STEP 1: 建立存放文件的資料夾</a></li><li class="is-sub"><a href="#-step-2-%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6%e6%a1%88%e4%be%8b%e6%b8%85%e5%96%ae">➤ STEP 2: 撰寫測試案例清單</a></li><li class="is-sub"><a href="#-step-3-ai-%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f">➤ STEP 3: AI 撰寫測試程式</a></li><li class="is-sub"><a href="#-step-4-%e9%a9%97%e8%ad%89%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f">➤ STEP 4: 驗證測試程式</a></li><li class="is-sub"><a href="#-step-5-%e9%99%90%e5%88%b6%e6%b8%ac%e8%a9%a6%e6%ac%a1%e6%95%b8">➤ STEP 5: 限制測試次數</a></li><li><a href="#%e4%b8%89%e7%94%a8-github-action-%e5%9f%b7%e8%a1%8c%e8%87%aa%e5%8b%95%e5%8c%96%e6%b8%ac%e8%a9%a6">三、用 GitHub Action 執行自動化測試</a></li><li><a href="#%e5%9b%9b%e8%a8%ad%e8%a8%88-rules-%e4%bf%9d%e8%ad%b7%e5%b0%88%e6%a1%88%e6%b8%ac%e8%a9%a6%e9%80%9a%e9%81%8e%e6%89%8d%e8%83%bd%e5%90%88%e4%bd%b5">四、設計 Rules 保護專案，測試通過才能合併</a></li><li><a href="#%e7%b5%90%e8%aa%9e%e7%94%a8%e8%87%aa%e5%8b%95%e5%8c%96%e6%b8%ac%e8%a9%a6%e5%ae%88%e4%bd%8f%e7%b3%bb%e7%b5%b1%e7%9a%84%e5%ba%95%e7%b7%9a">結語：用自動化測試，守住系統的底線</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-01.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-01_hu_d0a57bb2de447dee.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="788" alt="【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！（圖 1）" loading="lazy" decoding="async"></p>
+<p>如果你已經開始嘗試用 Vibe Coding 開發專案，一定會遇到以下問題：</p>
+<h2 class="h-minor" id="穩定性">➤穩定性<a class="h-anchor" href="#%e7%a9%a9%e5%ae%9a%e6%80%a7" aria-label="這個段落的連結"></a></h2>
+<p>你一定遇過請 AI 解決目前遇到的問題，結果改完後發現過去正常的功能被改壞了。</p>
+<h2 class="h-minor" id="-複雜度">➤ 複雜度<a class="h-anchor" href="#-%e8%a4%87%e9%9b%9c%e5%ba%a6" aria-label="這個段落的連結"></a></h2>
+<p>隨著專案不斷完善，功能肯定會持續增加；如果還是依靠人工去確認流程的正確性，是非常浪費時間、沒有效率的。</p>
+<h2 class="h-minor" id="-擴充性">➤ 擴充性<a class="h-anchor" href="#-%e6%93%b4%e5%85%85%e6%80%a7" aria-label="這個段落的連結"></a></h2>
+<p>Vibe Coding 在初期可以加速開發，但隨著專案架構逐漸複雜，功能之間開始有相依性時，任何修改都可能引發連鎖影響；最怕的就是程式看起來可以跑，但背後的商業邏輯一團糟，出狀況時，你連問題都不知道如何定位。</p>
+<blockquote class="pullquote"><p>如果這幾個問題能引起你的共鳴，先給自己比個讚，因為這代表你已經進入了下個階段。</p>
+</blockquote>
+<p>而今天這篇文章，就是要跟大家分享如何導入「自動化測試」，讓 Vibe Coding 的成果更加可靠。</p>
+<p>並一口氣解決前面提到「穩定性、複雜度、擴充性」的問題。</p>
+<blockquote>
+<p>完整的 Demo，可以觀看 YT 喔 👉</p>
+<p>對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。</p>
+</blockquote>
+<div class="yt" data-yt="Rb0_LutRIaw" data-title="YouTube 影片">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=Rb0_LutRIaw" target="_blank" rel="noopener" aria-label="播放影片：YouTube 影片">
+    <img src="https://i.ytimg.com/vi/Rb0_LutRIaw/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">YouTube 影片</span>
+  </a>
+</div>
+
+<p><strong>假使你有把 Vibe Coding 成果產品化的打算，我強烈建議大家把這篇文章儲存下來，這樣之後才能得到喔！</strong></p>
+<p>我會透過實際專案，帶你掌握以下知識：</p>
+<p>① 哪些地方需要寫測試</p>
+<p>② 怎麼設計工作流，讓 AI 幫你寫測試</p>
+<p>③ 如何設計 GitHub Action 建立自動化測試</p>
+<p>④ 建立 Rule 保護主分支的技巧</p>
+<blockquote class="pullquote"><p><strong>記住，市場不會為爛產品買單；而加入自動化測試，是讓 Vibe Coding 的成果，從玩具走向產品的過程！</strong></p>
+</blockquote>
+<hr>
+<h2 id="一不寫測試才會沒有時間">一、不寫測試，才會沒有時間<a class="h-anchor" href="#%e4%b8%80%e4%b8%8d%e5%af%ab%e6%b8%ac%e8%a9%a6%e6%89%8d%e6%9c%83%e6%b2%92%e6%9c%89%e6%99%82%e9%96%93" aria-label="這個段落的連結"></a></h2>
+<p>這邊我用 Vibe Coding 寫了一個有「登入頁、儀表板、管理後台、Mock API」的前端專案。</p>
+<p><a href="https://github.com/deancourse/vibe-coding-testing-practice">https://github.com/deancourse/vibe-coding-testing-practice</a></p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-02.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-02_hu_7e40d66684ae230f.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-02.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="709" alt="一、不寫測試，才會沒有時間（圖 2）" loading="lazy" decoding="async"></p>
+<p>如果你有興趣從頭開始，我有把專案初始化的提示詞放在 GitHub 的專案上，可以直接複製貼上體驗。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-03.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-03_hu_7a84dc03a3fe0f02.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-03.webp 1145w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1145" height="765" alt="一、不寫測試，才會沒有時間（圖 3）" loading="lazy" decoding="async"></p>
+<p>不過今天文章的主軸是「自動化測試」，所以我建議你可以直接下載我放在 GitHub 的專案，然後跟著練習。</p>
+<blockquote>
+<p>如果你是第一次接觸 Git 與 Node.js 的朋友，<a href="https://youtu.be/5DEV_K0JauQ">可以參考我過去拍的影片，裡面有詳細的操作教學</a>。</p>
+</blockquote>
+<p>這邊我建議大家點擊 fork，將專案複製到自己的帳號下。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-04.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-04_hu_384afabe497c985a.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-04.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="一、不寫測試，才會沒有時間（圖 4）" loading="lazy" decoding="async"></p>
+<p>然後點擊 Code，從裡面複製專案網址。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-05.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-05_hu_f95a25010bda0da8.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-05.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="一、不寫測試，才會沒有時間（圖 5）" loading="lazy" decoding="async"></p>
+<p>接著打開你熟悉的程式碼編輯器，這邊我以 Google 最近推出的 Antigravity 來示範。</p>
+<blockquote>
+<p>第一次接觸程式碼編輯器的朋友也不用擔心，可以參考我過去分享的影片，不管 <a href="https://youtu.be/kVniOF36GEk">Cursor</a> 還是 <a href="https://youtu.be/-FW5DgQEV0M">Antigravity</a> 都有對應的教學。</p>
+</blockquote>
+<p>好的，我們再把注意力轉回 Antigravity，點擊 <code>Clone Repository</code>，貼上剛剛複製的網址。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-06.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-06_hu_a3806607897a7b8f.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-06.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="一、不寫測試，才會沒有時間（圖 6）" loading="lazy" decoding="async"></p>
+<p>選擇下載的路徑後就會開始下載，把專案下載好後，把視角切換到 <code>package.json</code>，其中 <code>dependencies</code> 與 <code>devDependencies</code> 是專案用到的套件。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-07.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-07_hu_47343c6c26a31864.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-07.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="一、不寫測試，才會沒有時間（圖 7）" loading="lazy" decoding="async"></p>
+<p>我們打開終端機，輸入 <code>npm install</code> 就能夠安裝這些套件，安裝好的套件會存放到 <code>node_modules</code> 的資料夾中。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-08.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-08_hu_8c1cd9c9c0be064d.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-08.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="一、不寫測試，才會沒有時間（圖 8）" loading="lazy" decoding="async"></p>
+<p>另外上面 scripts 的部分，則是專案能使用的指令，輸入 <code>npm run dev</code> 就可以啟動專案了。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-09.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-09_hu_c847b101bb9395d0.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-09.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="一、不寫測試，才會沒有時間（圖 9）" loading="lazy" decoding="async"></p>
+<p>當然你也可以直接打開與 AI 的對話視窗，跟他說 <code>幫我安裝套件並啟動專案</code> 就能搞定一切；但多了解專案的架構，Vibe Coding 可以走得更遠。</p>
+<h3 id="-登入頁面">➤ 登入頁面<a class="h-anchor" href="#-%e7%99%bb%e5%85%a5%e9%a0%81%e9%9d%a2" aria-label="這個段落的連結"></a></h3>
+<p>這邊先從登入頁開始，跟大家說明系統功能，以及要測試的情境：</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-10.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-10_hu_d1d035d332646fc.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-10.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="登入頁面（圖 10）" loading="lazy" decoding="async"></p>
+<p>可以看到要輸入「電子郵件」與「密碼」才能登入系統，看起來很簡單，但其實這裡是<strong>第一道防線</strong>。</p>
+<p>以網頁系統來說，會分成「前端」跟「後端」，我們看到的視覺頁面是前端。</p>
+<p>假使使用者輸入的「電子郵件格式錯誤」，或者「密碼沒有英數字混合並大於 8 碼」，<strong>因為格式錯誤，所以根本不需要呼叫後端 API，來增加伺服器的負擔</strong>。</p>
+<p>至於有沒有傳送到後端，我們可以打開 F12，或是點擊滑鼠右鍵，選擇檢查，來開啟「開發人員工具」，點擊「網路」的分頁。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-11.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-11_hu_7b2e33c070eb2ff0.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-11.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="登入頁面（圖 11）" loading="lazy" decoding="async"></p>
+<p>在基礎格式錯誤的狀態下，可以用前端驗證擋住；所以你會發現，即使按下登入也不會呼叫後端 API。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-12.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-12_hu_9a9ceadae72482e3.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-12.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="登入頁面（圖 12）" loading="lazy" decoding="async"></p>
+<p>將兩者格式改為正確之後，才會呼叫 API：</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-13.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-13_hu_3869cd4dca67b31b.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-13.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="登入頁面（圖 13）" loading="lazy" decoding="async"></p>
+<p>以剛才的操作來說，就至少涵蓋了 3 種測試情境：</p>
+<ul>
+<li>使用者格式輸入錯誤的時候，前端會擋住</li>
+<li>不同的格式錯誤，會有對應錯誤訊息</li>
+<li>只有格式正確時，才會呼叫 API</li>
+</ul>
+<p>在程式加入這些測試情境後，未來請 AI 修改程式時，你才知道是否會影響到既有功能。</p>
+<h3 id="-使用-mock-api-模擬情境">➤ 使用 Mock API 模擬情境<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8-mock-api-%e6%a8%a1%e6%93%ac%e6%83%85%e5%a2%83" aria-label="這個段落的連結"></a></h3>
+<p>另外在真實的世界中，呼叫後端 API 並不會永遠成功，以登入來說，可能會有密碼錯誤、帳號不存在、系統出問題等狀況。</p>
+<p>所以我這邊用 <strong>Mock Service Worker</strong> 來模擬後端，讓我們可以測試不同的情境，比如：</p>
+<ul>
+<li>密碼錯誤時，有錯誤提示</li>
+<li>帳號不存在時，有錯誤提示</li>
+<li>並確認成功後，有沒有拿到 Token</li>
+</ul>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-14.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-14_hu_8f78518fc638df18.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-14.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="使用 Mock API 模擬情境（圖 14）" loading="lazy" decoding="async"></p>
+<blockquote class="pullquote"><p>Mock API 給我們帶來的幫助，就是除了測試成功情境外，還能模擬錯誤情境。</p>
+</blockquote>
+<p>而且實際與後端串接時，如果 API 回傳有問題，也可以即時釐清問題。</p>
+<h3 id="-角色權限與憑證">➤ 角色權限與憑證<a class="h-anchor" href="#-%e8%a7%92%e8%89%b2%e6%ac%8a%e9%99%90%e8%88%87%e6%86%91%e8%ad%89" aria-label="這個段落的連結"></a></h3>
+<p>登入後，我們把分頁切換到「應用程式 → 本機儲存空間 → localhost 的網址」</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-15.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-15_hu_afb6217762a76c55.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-15.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="角色權限與憑證（圖 15）" loading="lazy" decoding="async"></p>
+<p>這邊可以看到有一個「msw_user_role」的金鑰，系統的前端就是用它來判斷<strong>使用者的權限，決定前端頁面要如何渲染。</strong></p>
+<p>像我們身份為 admin 的狀態下，頁面才會「管理後台」，至於「auth_token 」這個欄位，則是你取得的登入憑證，以測試來說，可以有一個基礎的判斷：</p>
+<ul>
+<li><strong>有 Token</strong>，才會用它來呼叫後續的 API</li>
+<li><strong>沒有 Token</strong>，直接導向到登入頁</li>
+</ul>
+<p>Token 是決定呼叫後端 API 時，能取得哪些資源的憑證，比如這邊我使用「清除 Token」後，可以看到除了 auth_token 移除外，頁面也重新導向到登入頁。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-16.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-16_hu_71a81621d419c.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-16.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="角色權限與憑證（圖 16）" loading="lazy" decoding="async"></p>
+<p><strong>因為對系統來說，你已經沒有憑證了。</strong></p>
+<p>接著我把權限切換到一般使用者，登入後你會發現<strong>「msw_user_role」的角色切換成了 user，上方的「管理後台」也不見了</strong>：</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-17.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-17_hu_89164fd07ff63a42.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-17.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="角色權限與憑證（圖 17）" loading="lazy" decoding="async"></p>
+<p>這邊示範的就是權限測試的重要性：</p>
+<ul>
+<li>要確保一般用戶不會看到管理者功能</li>
+<li>並且不能讓一般用戶誤闖管理者後台</li>
+</ul>
+<blockquote class="pullquote"><p><strong>權限的設計如果不完善，那對系統來說就是重大事故！</strong></p>
+</blockquote>
+<p>在這總結一下，我剛剛跟大家示範的流程涵蓋： 「<strong>登入功能、API 回傳、角色權限、Token 驗證、介面差異</strong>」 這些情境都應該設計對應的測試案例。</p>
+<p>因為在 Vibe Coding 的世界， 我們很常改流程、改權限、改 API，<strong>如果少了測試案例，那你根本無法判斷這次修改 會不會動到其他系統功能。</strong></p>
+<p>千萬不要嫌寫測試很浪費時間，別忘記現在已經有 AI 可以幫忙了。</p>
+<p><strong>根據我過去十幾年的開發經驗，其實寫測試是在幫助你加速開發；因為他讓你可以更放心新增與修改功能，在遇到問題時也可以快速定位。</strong></p>
+<p>另外測試案例不太可能一次到位，他會隨著規格變更、實際操作而有所調整；但有了它，需求規格的內容才能真正被驗證。</p>
+<p><strong>同時提醒一下大家，我們在前端做的格式驗證（ex:帳號格式、密碼格式），後端也不能少。</strong></p>
+<p>因為知道 API 路徑的人，也能直接繞過前端打 API，這些都是設計上要注意的細節。</p>
+<hr>
+<h2 id="二用-ai-撰寫測試程式">二、用 AI 撰寫測試程式<a class="h-anchor" href="#%e4%ba%8c%e7%94%a8-ai-%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<p>這篇文章我使用 Google 最新推出的 Antigravity 來給大家做示範。</p>
+<p>目前登入 Google 帳號就可以使用，但如果付費升級到 Pro 會有更高的使用額度。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-18.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-18_hu_3205975ed1a1782d.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-18.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="二、用 AI 撰寫測試程式（圖 18）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>但如果你熟悉的是 Cursor 或者是其他 AI 編輯器，也可以跟著操作。</p>
+</blockquote>
+<p>這邊我們點擊右上角的「…」，選擇「Customizations」來做客製化。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-19.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-19_hu_3108704ed515817b.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-19.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="二、用 AI 撰寫測試程式（圖 19）" loading="lazy" decoding="async"></p>
+<p>Rules 的部分，我是參考 Cursor 內部員工的 Rules 範例，其實提示詞都是通用的：</p>
+<pre tabindex="0"><code>DO NOT GIVE ME HIGH LEVEL SHIT, IF I ASK FOR FIX OR EXPLANATION, I WANT ACTUAL CODE OR EXPLANATION!!! I DON&#39;T WANT &#34;Here&#39;s how you can blablabla&#34;
+
+- Be casual unless otherwise specified
+- Be terse
+- Suggest solutions that I didn&#39;t think about—anticipate my needs
+- Treat me as an expert
+- Be accurate and thorough
+- Give the answer immediately. Provide detailed explanations and restate my query in your own words if necessary after giving the answer
+- Value good arguments over authorities, the source is irrelevant
+- Consider new technologies and contrarian ideas, not just the conventional wisdom
+- You may use high levels of speculation or prediction, just flag it for me
+- No moral lectures
+- Discuss safety only when it&#39;s crucial and non-obvious
+- If your content policy is an issue, provide the closest acceptable response and explain the content policy issue afterward
+- Cite sources whenever possible at the end, not inline
+- No need to mention your knowledge cutoff
+- No need to disclose you&#39;re an AI
+- Please respect my prettier preferences when you provide code.
+- Split into multiple responses if one response isn&#39;t enough to answer the question.
+
+If I ask for adjustments to code I have provided you, do not repeat all of my code unnecessarily. Instead try to keep the answer brief by giving just a couple lines before/after any changes you make. Multiple code blocks are ok.
+</code></pre><p>而這次撰寫測試的部分，我們要使用 Workflow，讓 AI 根據我們的流程來執行。</p>
+<p>如果你是下載我提供的練習專案，你會看到<strong>兩個在 Workspace 底下的 Workflow，這代表 Workflow 只會在這個專案中執行：</strong></p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-20.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-20_hu_493e0fb1dc6deb69.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-20.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="二、用 AI 撰寫測試程式（圖 20）" loading="lazy" decoding="async"></p>
+<p>這邊我點進去跟大家說明，主要的 Workflow 是 <code>gen-test-cases</code>，Description 是這個工作流的描述，我就寫 <code>生成測試案例工作流</code> ，而 Content 則是說明這個工作流要做的事。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-21.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-21_hu_fe8489c348c1499e.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-21.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="二、用 AI 撰寫測試程式（圖 21）" loading="lazy" decoding="async"></p>
+<h3 id="-角色扮演">➤ 角色扮演<a class="h-anchor" href="#-%e8%a7%92%e8%89%b2%e6%89%ae%e6%bc%94" aria-label="這個段落的連結"></a></h3>
+<p><code>扮演一位經驗豐富的軟體測試專家，根據以下步驟進行協作</code></p>
+<p>首先我讓他扮演一位經驗豐富的軟體測試專家。</p>
+<h3 id="-step-1-建立存放文件的資料夾">➤ STEP 1: 建立存放文件的資料夾<a class="h-anchor" href="#-step-1-%e5%bb%ba%e7%ab%8b%e5%ad%98%e6%94%be%e6%96%87%e4%bb%b6%e7%9a%84%e8%b3%87%e6%96%99%e5%a4%be" aria-label="這個段落的連結"></a></h3>
+<p><code>STEP 1: 檢查專案底下是否建立 `doc/test` 資料夾，若無則建立</code></p>
+<p>一開始先請他檢查專案底下是否有建立 test 資料夾，我們會在這裡面保存 Markdown 格式的測試清單，方便日後閱讀檢視。</p>
+<h3 id="-step-2-撰寫測試案例清單">➤ STEP 2: 撰寫測試案例清單<a class="h-anchor" href="#-step-2-%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6%e6%a1%88%e4%be%8b%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<p><code>STEP 2: 根據選擇範圍撰寫測試案例清單，撰寫格式請參考 `.agent/workflows/test/template.md`，並將發想的結果用 Markdown 格式寫入 `doc/test` 底下，完成後進行 Reivew 不要直接生成測試程式，確認符合預期後再下一步</code></p>
+<p>然後請他撰寫測試案例清單，這邊用了一個技巧叫做 reference，直接給他一個參考模板，避免 AI 每次生成的格式都不一樣。</p>
+<p>我們開一下這個模板，這就是寫給 AI 參考的撰寫範例，要有<strong>測試的類型、說明、範例輸入、期待輸出</strong>等資訊。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-22.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-22_hu_efa70dbd2faedc75.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-22.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 2: 撰寫測試案例清單（圖 22）" loading="lazy" decoding="async"></p>
+<p>同時用了一個小技巧，就是以「狀態」的概念來管理，有測試通過才會標記；並給他幾個測試類型的範例參考。</p>
+<p>接著我們再回到一開始的工作流，這邊我有要求他要把這些發想的測試清單，寫到 test 資料夾下， 然後再完成這個任務後，我要求他將這個 Markdown 文件存到專案資料夾中，並讓我們 Review，這樣我們才能確認 AI 給的測試情境是否有遺漏的狀況。</p>
+<h3 id="-step-3-ai-撰寫測試程式">➤ STEP 3: AI 撰寫測試程式<a class="h-anchor" href="#-step-3-ai-%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code>STEP 3: 參考上一步完成的 `doc/test` 撰寫測試程式，不同頁面需建立獨立檔案
+
+**重要規則：**
+- 第二層 `describe()` 必須為「測試類型」，下面每一個 `it()` 描述必須為對應的測試案例的「測試說明」
+- `it()` 內的文字描述請「直接使用 Markdown 的原文，不需翻譯、不需重新命名」
+</code></pre><p>在我們確認要測試的範圍符合需求後，就可以讓 AI 開始撰寫測試程式了。</p>
+<p>這邊有一個特別的「重要規則」，就是要求他程式內的描述，要跟剛剛文件撰寫的測試說明一致，這樣才方便我們比對。</p>
+<h3 id="-step-4-驗證測試程式">➤ STEP 4: 驗證測試程式<a class="h-anchor" href="#-step-4-%e9%a9%97%e8%ad%89%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p><code>STEP 4: 驗證測試程式，若結果符合預期，請去 doc/test 底下，將 Markdown 打勾</code></p>
+<p>在 AI 生成測試程式完成後，我們要求他自主驗證程式正確性，若通過要去文件內打勾。</p>
+<h3 id="-step-5-限制測試次數">➤ STEP 5: 限制測試次數<a class="h-anchor" href="#-step-5-%e9%99%90%e5%88%b6%e6%b8%ac%e8%a9%a6%e6%ac%a1%e6%95%b8" aria-label="這個段落的連結"></a></h3>
+<p><code>STEP 5: 若測試不符預期，重複 STEP 3–4，最多 5 次，仍失敗就討論原因</code></p>
+<p>因為撰寫的程式可能會有問題，所以我讓他可以重複 STEP 3 跟 4 的動作，但最多嘗試 5 次；<strong>這個限制是為了避免 AI 在錯誤的方向狂奔</strong>，我們適時地介入，去確認問題發生的原因。</p>
+<blockquote>
+<p>這套工作流主要是用來撰寫前端專案的單元測試為主，你可以根據自己的需求自行調整。</p>
+</blockquote>
+<p>再設計好 Workflow 並儲存後，點擊「Back to Agent」回到對話窗，此時我們按下「/」就會看到剛剛設計好的 Workflow。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-23.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-23_hu_90985a6d9f0501fa.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-23.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 5: 限制測試次數（圖 23）" loading="lazy" decoding="async"></p>
+<p>這邊我用 <code>gen-test-cases</code> 示範給大家看，我們把視角移到左側的專案，我們專案的三個頁面，都被放到 pages 的資料夾底下。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-24.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-24_hu_a77deac9af7e5036.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-24.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 5: 限制測試次數（圖 24）" loading="lazy" decoding="async"></p>
+<p><strong>我建議大家請 AI 撰寫測試程式時，不要讓他一口氣生成，而是先放一個檔案。</strong></p>
+<p>確認他執行的結果與我們的期待相符，否則一口氣生成，如果結果不是你要的，那不但浪費時間還浪費 Token。</p>
+<p>這邊把檔案拖曳進去後，只要按下 Enter，AI 就會開始閱讀程式碼根據工作流開始運作了。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-25.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-25_hu_c931494c82cab5df.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-25.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 5: 限制測試次數（圖 25）" loading="lazy" decoding="async"></p>
+<p>首先我們會看到，他有要求我們建立對應的「 doc/test」資料夾來存放文件，點擊 Accept 接受就好。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-26.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-26_hu_8ef1c08ba79ff033.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-26.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 5: 限制測試次數（圖 26）" loading="lazy" decoding="async"></p>
+<p>接著稍等一段時間，他就參考我們提供的 Markdown 文件來撰寫測試案例文件，可以看到初始的狀態都是空的。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-27.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-27_hu_fa6c2cd3a4f0c631.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-27.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 5: 限制測試次數（圖 27）" loading="lazy" decoding="async"></p>
+<p>並且有根據測試類型進行分類，這可以幫我們快速理解測試的意圖，然後可以從輸入輸出的描述，判斷他想測試的情境跟你的期待是否相符。</p>
+<p>如果覺得有缺少，就可以直接跟他討論；覺得沒問題，就請他<code>繼續</code> 。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-28.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-28_hu_859a2075264bff7f.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-28.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 5: 限制測試次數（圖 28）" loading="lazy" decoding="async"></p>
+<p>但我也在這邊跟大家說，<strong>AI 給予的測試案例，可能會有錯誤或者多餘的狀況，建議大家看一下</strong>。</p>
+<p>並提醒一下大家，<strong>如果你看不懂 AI 執行的指令，建議把指令複製起來詢問一下比較保險。全部無腦點擊 Accept，有可能會出大事</strong>。</p>
+<p>因為有時 AI 會執行一些危險的操作，之前就曾經有網友遇過 <strong>AI 直接把整個 D 槽硬碟刪除的悲劇</strong>：</p>
+<figure class="figure"><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-29.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-29_hu_2be9b9a0c8f9702c.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-29.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="https://www.reddit.com/r/google_antigravity/comments/1p82or6/google_antigravity_just_deleted_the_contents_of/" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.reddit.com/r/google_antigravity/comments/1p82or6/google_antigravity_just_deleted_the_contents_of/">https://www.reddit.com/r/google_antigravity/comments/1p82or6/google_antigravity_just_deleted_the_contents_of/</a></figcaption>
+</figure>
+
+<p>稍等一段時間後，AI 就幫我們把測試程式完成了，點擊 Accept 讓他執行測試前，我們先看一下他有沒有按照工作流的指示撰寫。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-30.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-30_hu_e46078f9f4fbda7b.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-30.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 5: 限制測試次數（圖 30）" loading="lazy" decoding="async"></p>
+<p>在「describe」這邊有幫我們做基礎的分組，另外「it」的描述也與文件吻合；這次的話很幸運，一次就成功了；如果有問題他就會多嘗試幾次。</p>
+<blockquote>
+<p>這邊也提醒一下大家，儘管我們的 Workflow 說最多嘗試 5 次，但隨著執行次數增加；AI 可能會忽略這個規則，這是需要注意的。</p>
+</blockquote>
+<p>AI 完成一個頁面的測試案例，並驗證通過後，就會回頭更新測試清單，這邊我們可以看到上面都標注通過了。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-31.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-31_hu_80134480c28268c4.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-31.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 5: 限制測試次數（圖 31）" loading="lazy" decoding="async"></p>
+<p>如果你做到了這一步，請給自己一點掌聲，恭喜你用 AI 撰寫了測試程式，並跑完了一個頁面的功能驗證！</p>
+<p>一般來說，我會建議每個頁面都有獨立的測試程式，這樣日後修改遇到問題時，可以快速定位。</p>
+<p>在第一個頁面的測試程式撰寫並測試完成後，<strong>其實這個工作流你要放兩個檔案進去也是可以的。</strong></p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-32.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-32_hu_d41f7761ae5ecbfd.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-32.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 5: 限制測試次數（圖 32）" loading="lazy" decoding="async"></p>
+<p>稍等一段時間後，對應的測試程式就完成了，並且對應的驗證邏輯也通過了；你可以看到光是 3 個功能不多的頁面，就能涵蓋這麼多的測試情境。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-33.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-33_hu_b7460d7ab8382716.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-33.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="STEP 5: 限制測試次數（圖 33）" loading="lazy" decoding="async"></p>
+<p><strong>如果用人工測試，即便是小專案；你都要花個好幾分鐘才能手動把流程跑過一遍，甚至可能還會有遺漏的項目。</strong></p>
+<p><strong>但加入自動化測試後，你放給他跑就好了；隨著專案擴增，你更會體會到他給你帶來的幫助。</strong></p>
+<p>因為以市面上的大型專案來說，功能動輒成千上萬，彼此間又有各種複雜的關聯性。</p>
+<p>沒有自動化測試，專案就像是個危樓，任何不起眼的改動，都可能導致問題在你想不到的地方炸裂。</p>
+<blockquote>
+<p>今天分享的這個工作流只是一個雛形，如果大家有更好的方案，也歡迎交流分享。</p>
+</blockquote>
+<hr>
+<h2 id="三用-github-action-執行自動化測試">三、用 GitHub Action 執行自動化測試<a class="h-anchor" href="#%e4%b8%89%e7%94%a8-github-action-%e5%9f%b7%e8%a1%8c%e8%87%aa%e5%8b%95%e5%8c%96%e6%b8%ac%e8%a9%a6" aria-label="這個段落的連結"></a></h2>
+<p>完成專案的測試案例後，下一步就要把測試的步驟加入 GitHub Action。</p>
+<p>這樣我們每次更新程式時，都會自動執行測試，確保基礎功能的基礎流程都是正常的。</p>
+<p>不過在這之前，我先跟大家簡介一下 Git Flow，Git 是用來版本控制的工具，Git Flow 則是分支合作的策略。</p>
+<p>目前我們還在 main 的這個主分支上：</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-34.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-34_hu_d61ab9ff7e32a207.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-34.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="三、用 GitHub Action 執行自動化測試（圖 34）" loading="lazy" decoding="async"></p>
+<p><strong>你可以想一下，如果把邏輯錯誤，或功能不完善的版本更新上去，那產品不就壞掉了嗎？</strong></p>
+<p><strong>所以在開發上，我會建議至少要有一個 develop 的開發分支，日常更新推送到上面就好，等功能完善後再合併到 main 這個主分支。</strong></p>
+<p>雖然 Git Flow 還有新增功能用的 feature 分支、發佈上線版本的 release 分支、以及處理緊急問題的 hotfix 分支。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-35.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-35_hu_1638076aa62d59ac.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-35.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="三、用 GitHub Action 執行自動化測試（圖 35）" loading="lazy" decoding="async"></p>
+<p>但如果你是第一次接觸，可以先從 main 分支出 develop，來了解為什麼需要用不同分支開發。</p>
+<p>這邊先打開終端機，在下面輸入 <code>git checkout -b develop</code> ，就可以從 main 切出一個 develop 的分支。</p>
+<p>然後到與 AI 的對話窗中輸入以下內容：</p>
+<pre tabindex="0"><code>我希望在 GitHub Action 加入自動化測試的流程
+每一個分支將更新推送到 GitHub 都會觸發一次自動化測試
+測試完畢後，要生成覆蓋率報告讓我下載
+</code></pre><p>等 AI 將 GitHub Action 內容更新完畢後，我們就可以將變更推送到 GitHub 上面</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-36.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-36_hu_1e03cd0cacb9c93b.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-36.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="三、用 GitHub Action 執行自動化測試（圖 36）" loading="lazy" decoding="async"></p>
+<p>Commit 的部分可以由 AI 自動生成，或是自己手動輸入，這邊我選擇貼上準備好的訊息：</p>
+<pre tabindex="0"><code>1. 撰寫 pages 頁面下的測試案例
+2. 在 GitHub Action 增加自動測試的流程
+</code></pre><p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-37.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-37_hu_8358daca27293898.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-37.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="三、用 GitHub Action 執行自動化測試（圖 37）" loading="lazy" decoding="async"></p>
+<p>送出去後，我們把視角切換到 GitHub，點擊 Action 的分頁，這邊你可以看到 GitHub Action 執行的狀況，成功成的話會是綠色勾勾，失敗則是紅色叉叉。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-38.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-38_hu_b647778cd3d2000c.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-38.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="三、用 GitHub Action 執行自動化測試（圖 38）" loading="lazy" decoding="async"></p>
+<p>這邊我們很幸運的看到是綠色勾勾，點進去後，你可以看到測試的細節：</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-39.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-39_hu_20e7b316b3a760d5.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-39.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="三、用 GitHub Action 執行自動化測試（圖 39）" loading="lazy" decoding="async"></p>
+<p>回到 Summary，在「Artifacts」的部分會有測試報告可以下載：</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-40.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-40_hu_3cade705be6e400c.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-40.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="三、用 GitHub Action 執行自動化測試（圖 40）" loading="lazy" decoding="async"></p>
+<p>這樣每次有新功能完成後，如果主管想要看測試報告，就有東西可以給他們參考嚕。</p>
+<p>下載後會得到一個 zip 檔案，解壓縮後點擊「index.html」檔案就可以看到專案的測試覆蓋率了：</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-41.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-41_hu_b3dab70c00059dc2.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-41.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="三、用 GitHub Action 執行自動化測試（圖 41）" loading="lazy" decoding="async"></p>
+<p>透過這份報告，你就可以了解專案中哪些功能測試比較多，比如像是剛剛撰寫測試程式的 pages 就接近覆蓋率 100%。</p>
+<p>而其他沒有被測試到的頁面，我們就可以再去補一些測試情境。</p>
+<blockquote class="pullquote"><p>但提醒一下大家，在測試覆蓋率這塊，我們沒必要追求 100%；而是重要的邏輯都要測試到，這才是最重要的。</p>
+</blockquote>
+<hr>
+<h2 id="四設計-rules-保護專案測試通過才能合併">四、設計 Rules 保護專案，測試通過才能合併<a class="h-anchor" href="#%e5%9b%9b%e8%a8%ad%e8%a8%88-rules-%e4%bf%9d%e8%ad%b7%e5%b0%88%e6%a1%88%e6%b8%ac%e8%a9%a6%e9%80%9a%e9%81%8e%e6%89%8d%e8%83%bd%e5%90%88%e4%bd%b5" aria-label="這個段落的連結"></a></h2>
+<p>我們剛剛更新的分支是 develop，要透過 pull request 這個操作，才能將更新合併到 main 這個主分支。</p>
+<p>但如果你希望只有「通過測試」的分支才能合併到主分支，你需要多做一設定。</p>
+<p>我們回到 GitHub 頁面，選擇 Settings，然後選擇 Rules 下面的「Ruleset」，這邊我們要根據分支來做設計，所以選擇「New branch ruleset」。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-42.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-42_hu_b056183c79b1153b.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-42.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 42）" loading="lazy" decoding="async"></p>
+<p>name 的部分你可以輸入「Protect main branch」，然後「Enforcement status」這個記得要切換到 Active 才會生效。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-43.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-43_hu_4415c54014403b17.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-43.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 43）" loading="lazy" decoding="async"></p>
+<p>Target branch 選擇「Include default branch」</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-44.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-44_hu_912f74e4f4e92848.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-44.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 44）" loading="lazy" decoding="async"></p>
+<p>然後把「Require a pull request before merging」這個必須「用 PR 才能合併的選項」打勾。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-45.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-45_hu_eef5043b1967390a.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-45.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 45）" loading="lazy" decoding="async"></p>
+<p>並將「Require status checks to pass」打勾，以及下面的「Require branches to be up to date before merging」也打勾，這是在設定「測試必須通過才能合併」。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-46.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-46_hu_94ed51d14ee37f5e.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-46.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 46）" loading="lazy" decoding="async"></p>
+<p>接著點擊「Add Checks」，搜尋 <code>test</code>，然後把他打勾，這就是要檢查的項目。</p>
+<blockquote>
+<p>如果「test」搜尋不到結果，可以到 Github 這個 Repository 的 Actions 下，確認命名。</p>
+</blockquote>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-47.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-47_hu_fd452ea76a3e14b2.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-47.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 47）" loading="lazy" decoding="async"></p>
+<p>完成以上設定後，我們滑到最下面，點擊「Create」保存設定。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-48.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-48_hu_f547927b4b1b9bd9.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-48.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 48）" loading="lazy" decoding="async"></p>
+<p>接著回到 Antigravity，故意做一個測試失敗的，看看「pull request」是否會無法合併。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-49.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-49_hu_9449c8ab751ec834.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-49.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 49）" loading="lazy" decoding="async"></p>
+<p>我們到專案挑一個測試案例，故意把裡面的結果弄壞；此時如果在終端機執行 <code>npm run test</code>，就會看到有一個錯誤。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-50.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-50_hu_9a2a740629a59dc5.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-50.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 50）" loading="lazy" decoding="async"></p>
+<p>然後我們將這個錯誤更新上去，commit 就填寫 <code>test PR failure condition</code> ，推上去後回到 GitHub，此時點擊「pull request」。</p>
+<p>如果你是 fork 我的專案，這邊要特別注意，base 你要改成自己的帳號：</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-51.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-51_hu_9fe31135b0eaf633.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-51.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 51）" loading="lazy" decoding="async"></p>
+<p>然後 compare 要選擇 develop，因為我們的目標是把 develop 的內容更新到 main。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-52.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-52_hu_b0e6ce65223ffd6f.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-52.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 52）" loading="lazy" decoding="async"></p>
+<p>在建立 pull request 的時候，建議填寫裡面的 description，這是為了幫助其他人，以及未來的自己了解我們做了什麼更新。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-53.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-53_hu_5a8f95e92af2d2bb.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-53.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 53）" loading="lazy" decoding="async"></p>
+<p>你會發現因為測試有錯誤，所以合併的按鈕是灰色，符合我們的預期。</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-54.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-54_hu_d713eac6cace6bbc.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-54.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 54）" loading="lazy" decoding="async"></p>
+<p>接著回到專案，把這個問題修正回來，commit 就填寫 <code>test PR success condition</code> 。</p>
+<p>更新後再回到 GitHub，稍等一段時間，你會發現合併的按鈕變成綠色，可以順利合併了！</p>
+<p><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-55.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-55_hu_771f0644799dd798.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-55.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="815" alt="四、設計 Rules 保護專案，測試通過才能合併（圖 55）" loading="lazy" decoding="async"></p>
+<p>有了 Rule 保護專案的主分支後，我們至少能保證合併進來的功能都是經過基礎驗證的。</p>
+<hr>
+<h2 id="結語用自動化測試守住系統的底線">結語：用自動化測試，守住系統的底線<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e7%94%a8%e8%87%aa%e5%8b%95%e5%8c%96%e6%b8%ac%e8%a9%a6%e5%ae%88%e4%bd%8f%e7%b3%bb%e7%b5%b1%e7%9a%84%e5%ba%95%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
+<p>測試的領域博大精深，今天的分享只是帶大家入門而已。</p>
+<p>同時提醒大家，加入測試，不代表專案無懈可擊，但至少能守住專案的底線；也相信把影片看到這裡的你，充分了解到 Vibe Coding 是需要學習的。</p>
+<p><strong>也許用一行指令就能生成系統，但能穩定運行、並且有擴充性的系統才是有價值的。</strong></p>
+<p>突然想到前陣子跟一些老闆聊天時，有聊到<strong>目前企業導入 AI 遇到的瓶頸</strong>。</p>
+<p>其中一個是邀請講師來企業內訓的時候，同仁都用得很開心；但隔天上班，想實際應用到工作時卻感覺非常卡。</p>
+<p>當時我就跟他說：「<strong>因為講師在設計教材時，給予的是最佳體驗路徑；但換個情境，一定會遇到許多問題。</strong>」</p>
+<p>就像今天這支影片，如果你直接使用我提供的專案操作，通常可以順利完成每個步驟。</p>
+<p><strong>但這只代表你對測試有了初步的概念，並不代表你已經掌握了自動化測試。</strong></p>
+<p>把我的指令搬到其他專案執行時，可能會遇到不一樣的問題；這個時候不要氣餒，因為你遇到的問題才是屬於自己的護城河。</p>
+<p><strong>學習 AI 並不是搜集一大堆指令複製貼上就好；更重要的是了解應用情境後，透過實踐調整為適合自己的工作流。</strong></p>
+<blockquote class="pullquote"><p>讓 AI 成為你的助手，而不是取代自己的思考與判斷。</p>
+</blockquote>
+<p>最後總結一下，為什麼測試對專案來說如此重要：</p>
+<ul>
+<li>因為有測試，你才有辦法驗證規格書上的功能你都有做到。</li>
+<li>因為有測試，當需求變更時你才敢大膽修改程式，不怕改壞原有功能。</li>
+<li>因為有測試，當遇到錯誤時，你可以快速定位問題，而不是一個個慢慢嘗試。</li>
+</ul>
+<p>再了解測試的好處後，跟大家介紹一種開發模式，叫做 TDD(Test-Driven Development)，也就是測試驅動開發。</p>
+<p>相比於大家熟悉的先完成功能再寫測試，他則是先撰寫測試再去開發，之後有機會再跟大家深入分享。</p>
+<p><strong>如果過去沒有寫過測試程式，我認為先養成撰寫測試的習慣才是最重要的。</strong></p>
+<blockquote class="pullquote"><p>建立自動化測試，你才知道 AI 是否改動到邏輯；掌握關鍵知識，你才能走得更遠。</p>
+</blockquote>
+<p>另外今天這支影片，我都是用 Mock API 來代替後端；所以在接下來的 Vibe Coding 系列影片中，我打算在這支影片的基礎上做延伸。</p>
+<p><strong>跟大家分享後端與資料庫的設計，帶大家把這些模擬的 API 都變成真實可用的。</strong></p>
+<p>如果這篇文章對你有幫助，可以順手按個讚，把文章分享給正在 Vibe Coding 的朋友們。</p>
+<figure class="figure"><img src="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-56.webp" srcset="/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-56_hu_b56b9783c6044813.webp 720w, /blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-56.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="914" alt="https://www.tenlong.com.tw/products/9786264142083" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg><span>本文最初發表於 Medium（2026.01.19）</span><a href="https://dean-lin.medium.com/antigravity-workflow-%E5%AF%A6%E6%88%B0-%E5%BB%BA%E7%AB%8B%E8%87%AA%E5%8B%95%E5%8C%96%E6%B8%AC%E8%A9%A6-%E8%A7%A3%E6%B1%BA-vibe-coding-%E7%97%9B%E9%BB%9E-a666fad7e502" target="_blank" rel="noopener">Medium 原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/vibe-coding/">Vibe Coding</a>
+            <a class="chip chip-hash" href="/tags/antigravity/">Antigravity</a>
+            <a class="chip chip-hash" href="/tags/ai/">AI</a>
+            <a class="chip chip-hash" href="/tags/test-automation/">Test Automation</a>
+            <a class="chip chip-hash" href="/tags/workflow/">Workflow</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202601%2Fantigravity-workflow-testing%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202601%2Fantigravity-workflow-testing%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202601/antigravity-workflow-testing/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202601/antigravity-workflow-testing/" data-title="【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/antigravity/">Google Antigravity</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>3</b> 篇・共 4 篇</p>
+          </div>
+          <ol class="steps">
+            <li>
+              <a href="/blog/202512/google-antigravity-full-stack/"><span class="n">01</span><span>【Google Antigravity 教學】把想法化為現實！用 Vibe Coding 完成可部署上線的輕量級全端專案</span></a>
+            </li>
+            <li>
+              <a href="/blog/202512/vibe-coding-learning-map/"><span class="n">02</span><span>【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">03</span><span>【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202602/antigravity-agent-skills/"><span class="n">04</span><span>【Antigravity Agent Skills 教學】用實戰搞懂原理，讓 AI 從庸才變專家</span></a>
+            </li>
+          </ol>
+          <a class="sb-next" href="/blog/202602/antigravity-agent-skills/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">【Antigravity Agent Skills 教學】用實戰搞懂原理，讓 AI 從庸才變專家</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202601/personal-brand-and-trust/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">機會只給被信任的人，而個人品牌決定你會不會被選中</span></a>
+          <a class="next" href="/blog/202602/antigravity-agent-skills/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">【Antigravity Agent Skills 教學】用實戰搞懂原理，讓 AI 從庸才變專家</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li class="is-sub"><a href="#%e7%a9%a9%e5%ae%9a%e6%80%a7">➤穩定性</a></li><li class="is-sub"><a href="#-%e8%a4%87%e9%9b%9c%e5%ba%a6">➤ 複雜度</a></li><li class="is-sub"><a href="#-%e6%93%b4%e5%85%85%e6%80%a7">➤ 擴充性</a></li><li><a href="#%e4%b8%80%e4%b8%8d%e5%af%ab%e6%b8%ac%e8%a9%a6%e6%89%8d%e6%9c%83%e6%b2%92%e6%9c%89%e6%99%82%e9%96%93">一、不寫測試，才會沒有時間</a></li><li class="is-sub"><a href="#-%e7%99%bb%e5%85%a5%e9%a0%81%e9%9d%a2">➤ 登入頁面</a></li><li class="is-sub"><a href="#-%e4%bd%bf%e7%94%a8-mock-api-%e6%a8%a1%e6%93%ac%e6%83%85%e5%a2%83">➤ 使用 Mock API 模擬情境</a></li><li class="is-sub"><a href="#-%e8%a7%92%e8%89%b2%e6%ac%8a%e9%99%90%e8%88%87%e6%86%91%e8%ad%89">➤ 角色權限與憑證</a></li><li><a href="#%e4%ba%8c%e7%94%a8-ai-%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f">二、用 AI 撰寫測試程式</a></li><li class="is-sub"><a href="#-%e8%a7%92%e8%89%b2%e6%89%ae%e6%bc%94">➤ 角色扮演</a></li><li class="is-sub"><a href="#-step-1-%e5%bb%ba%e7%ab%8b%e5%ad%98%e6%94%be%e6%96%87%e4%bb%b6%e7%9a%84%e8%b3%87%e6%96%99%e5%a4%be">➤ STEP 1: 建立存放文件的資料夾</a></li><li class="is-sub"><a href="#-step-2-%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6%e6%a1%88%e4%be%8b%e6%b8%85%e5%96%ae">➤ STEP 2: 撰寫測試案例清單</a></li><li class="is-sub"><a href="#-step-3-ai-%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f">➤ STEP 3: AI 撰寫測試程式</a></li><li class="is-sub"><a href="#-step-4-%e9%a9%97%e8%ad%89%e6%b8%ac%e8%a9%a6%e7%a8%8b%e5%bc%8f">➤ STEP 4: 驗證測試程式</a></li><li class="is-sub"><a href="#-step-5-%e9%99%90%e5%88%b6%e6%b8%ac%e8%a9%a6%e6%ac%a1%e6%95%b8">➤ STEP 5: 限制測試次數</a></li><li><a href="#%e4%b8%89%e7%94%a8-github-action-%e5%9f%b7%e8%a1%8c%e8%87%aa%e5%8b%95%e5%8c%96%e6%b8%ac%e8%a9%a6">三、用 GitHub Action 執行自動化測試</a></li><li><a href="#%e5%9b%9b%e8%a8%ad%e8%a8%88-rules-%e4%bf%9d%e8%ad%b7%e5%b0%88%e6%a1%88%e6%b8%ac%e8%a9%a6%e9%80%9a%e9%81%8e%e6%89%8d%e8%83%bd%e5%90%88%e4%bd%b5">四、設計 Rules 保護專案，測試通過才能合併</a></li><li><a href="#%e7%b5%90%e8%aa%9e%e7%94%a8%e8%87%aa%e5%8b%95%e5%8c%96%e6%b8%ac%e8%a9%a6%e5%ae%88%e4%bd%8f%e7%b3%bb%e7%b5%b1%e7%9a%84%e5%ba%95%e7%b7%9a">結語：用自動化測試，守住系統的底線</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202601%2Fantigravity-workflow-testing%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202601%2Fantigravity-workflow-testing%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202601/antigravity-workflow-testing/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202601/antigravity-workflow-testing/" data-title="【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202602/antigravity-agent-skills/images/antigravity-agent-skills-01_hu_6ec185e93ac6c7ea.webp" srcset="/blog/202602/antigravity-agent-skills/images/antigravity-agent-skills-01_hu_472b2f5836d82347.webp 240w, /blog/202602/antigravity-agent-skills/images/antigravity-agent-skills-01_hu_739299bba5fc919c.webp 480w, /blog/202602/antigravity-agent-skills/images/antigravity-agent-skills-01_hu_fbaf386a4726d6d9.webp 800w, /blog/202602/antigravity-agent-skills/images/antigravity-agent-skills-01_hu_6ec185e93ac6c7ea.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a><span class="sep" aria-hidden="true">/</span><a href="/series/antigravity/">Google Antigravity</a></div>
+
+    <h3 class="card-title"><a href="/blog/202602/antigravity-agent-skills/">【Antigravity Agent Skills 教學】用實戰搞懂原理，讓 AI 從庸才變專家</a></h3>
+    <p class="card-desc">安裝專業技能、掌握客製化技巧、節省 Token 額度</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2026-02-02">2026.02.02</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>15 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-01_hu_31bdcdac7df2b729.webp" srcset="/blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-01_hu_342afa7beeb8defc.webp 240w, /blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-01_hu_8da7c8f4cf571412.webp 480w, /blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-01_hu_e8dc27ca49ad6ee0.webp 800w, /blog/202512/google-antigravity-full-stack/images/google-antigravity-full-stack-01_hu_31bdcdac7df2b729.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a><span class="sep" aria-hidden="true">/</span><a href="/series/antigravity/">Google Antigravity</a></div>
+
+    <h3 class="card-title"><a href="/blog/202512/google-antigravity-full-stack/">【Google Antigravity 教學】把想法化為現實！用 Vibe Coding 完成可部署上線的輕量級全端專案</a></h3>
+    <p class="card-desc">如果市場上找不到工具，那就自己動手實現！</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2025-12-08">2025.12.08</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>10 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img src="/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-01_hu_5a3fd1cc5dc01f43.webp" srcset="/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-01_hu_29b9be49fcf3303a.webp 240w, /blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-01_hu_364767131c00bd97.webp 480w, /blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-01_hu_52fcad1ed118a16.webp 800w, /blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-01_hu_5a3fd1cc5dc01f43.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/ai/">AI 實戰</a><span class="sep" aria-hidden="true">/</span><a href="/series/antigravity/">Google Antigravity</a></div>
+
+    <h3 class="card-title"><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></h3>
+    <p class="card-desc">掌握 AI 工具應用場景，Vibe Coding 不迷路</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2025-12-19">2025.12.19</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>12 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202601/antigravity-workflow-testing/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 21 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>
