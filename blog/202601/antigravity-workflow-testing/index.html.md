@@ -1,0 +1,451 @@
+# 【Antigravity Workflow 實戰】建立自動化測試，解決 Vibe Coding 痛點！
+
+- 作者：林鼎淵（Dean Lin）
+- 網址：https://deanlin.net/blog/202601/antigravity-workflow-testing/
+- 發布：2026-01-19
+- 主題：AI 實戰
+- 系列：Google Antigravity
+- 標籤：Vibe Coding、Antigravity、AI、Test Automation、Workflow
+- 摘要：市場不會為爛產品買單，而自動化測試，是讓 Vibe Coding 成果，從玩具走向產品的過程！
+
+如果你已經開始嘗試用 Vibe Coding 開發專案，一定會遇到以下問題：
+
+### ➤穩定性
+
+你一定遇過請 AI 解決目前遇到的問題，結果改完後發現過去正常的功能被改壞了。
+
+### ➤ 複雜度
+
+隨著專案不斷完善，功能肯定會持續增加；如果還是依靠人工去確認流程的正確性，是非常浪費時間、沒有效率的。
+
+### ➤ 擴充性
+
+Vibe Coding 在初期可以加速開發，但隨著專案架構逐漸複雜，功能之間開始有相依性時，任何修改都可能引發連鎖影響；最怕的就是程式看起來可以跑，但背後的商業邏輯一團糟，出狀況時，你連問題都不知道如何定位。
+
+如果這幾個問題能引起你的共鳴，先給自己比個讚，因為這代表你已經進入了下個階段。
+
+而今天這篇文章，就是要跟大家分享如何導入「自動化測試」，讓 Vibe Coding 的成果更加可靠。
+
+並一口氣解決前面提到「穩定性、複雜度、擴充性」的問題。
+
+完整的 Demo，可以觀看 YT 喔 👉
+
+對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。
+
+[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=Rb0_LutRIaw)
+
+**假使你有把 Vibe Coding 成果產品化的打算，我強烈建議大家把這篇文章儲存下來，這樣之後才能得到喔！**
+
+我會透過實際專案，帶你掌握以下知識：
+
+① 哪些地方需要寫測試
+
+② 怎麼設計工作流，讓 AI 幫你寫測試
+
+③ 如何設計 GitHub Action 建立自動化測試
+
+④ 建立 Rule 保護主分支的技巧
+
+**記住，市場不會為爛產品買單；而加入自動化測試，是讓 Vibe Coding 的成果，從玩具走向產品的過程！**
+
+## 一、不寫測試，才會沒有時間
+
+這邊我用 Vibe Coding 寫了一個有「登入頁、儀表板、管理後台、Mock API」的前端專案。
+
+[https://github.com/deancourse/vibe-coding-testing-practice](https://github.com/deancourse/vibe-coding-testing-practice)
+
+如果你有興趣從頭開始，我有把專案初始化的提示詞放在 GitHub 的專案上，可以直接複製貼上體驗。
+
+不過今天文章的主軸是「自動化測試」，所以我建議你可以直接下載我放在 GitHub 的專案，然後跟著練習。
+
+如果你是第一次接觸 Git 與 Node.js 的朋友，[可以參考我過去拍的影片，裡面有詳細的操作教學](https://youtu.be/5DEV_K0JauQ)。
+
+這邊我建議大家點擊 fork，將專案複製到自己的帳號下。
+
+然後點擊 Code，從裡面複製專案網址。
+
+接著打開你熟悉的程式碼編輯器，這邊我以 Google 最近推出的 Antigravity 來示範。
+
+第一次接觸程式碼編輯器的朋友也不用擔心，可以參考我過去分享的影片，不管 [Cursor](https://youtu.be/kVniOF36GEk) 還是 [Antigravity](https://youtu.be/-FW5DgQEV0M) 都有對應的教學。
+
+好的，我們再把注意力轉回 Antigravity，點擊 `Clone Repository`，貼上剛剛複製的網址。
+
+選擇下載的路徑後就會開始下載，把專案下載好後，把視角切換到 `package.json`，其中 `dependencies` 與 `devDependencies` 是專案用到的套件。
+
+我們打開終端機，輸入 `npm install` 就能夠安裝這些套件，安裝好的套件會存放到 `node_modules` 的資料夾中。
+
+另外上面 scripts 的部分，則是專案能使用的指令，輸入 `npm run dev` 就可以啟動專案了。
+
+當然你也可以直接打開與 AI 的對話視窗，跟他說 `幫我安裝套件並啟動專案` 就能搞定一切；但多了解專案的架構，Vibe Coding 可以走得更遠。
+
+### ➤ 登入頁面
+
+這邊先從登入頁開始，跟大家說明系統功能，以及要測試的情境：
+
+可以看到要輸入「電子郵件」與「密碼」才能登入系統，看起來很簡單，但其實這裡是**第一道防線**。
+
+以網頁系統來說，會分成「前端」跟「後端」，我們看到的視覺頁面是前端。
+
+假使使用者輸入的「電子郵件格式錯誤」，或者「密碼沒有英數字混合並大於 8 碼」，**因為格式錯誤，所以根本不需要呼叫後端 API，來增加伺服器的負擔**。
+
+至於有沒有傳送到後端，我們可以打開 F12，或是點擊滑鼠右鍵，選擇檢查，來開啟「開發人員工具」，點擊「網路」的分頁。
+
+在基礎格式錯誤的狀態下，可以用前端驗證擋住；所以你會發現，即使按下登入也不會呼叫後端 API。
+
+將兩者格式改為正確之後，才會呼叫 API：
+
+以剛才的操作來說，就至少涵蓋了 3 種測試情境：
+
+- 使用者格式輸入錯誤的時候，前端會擋住
+- 不同的格式錯誤，會有對應錯誤訊息
+- 只有格式正確時，才會呼叫 API
+
+在程式加入這些測試情境後，未來請 AI 修改程式時，你才知道是否會影響到既有功能。
+
+### ➤ 使用 Mock API 模擬情境
+
+另外在真實的世界中，呼叫後端 API 並不會永遠成功，以登入來說，可能會有密碼錯誤、帳號不存在、系統出問題等狀況。
+
+所以我這邊用 **Mock Service Worker** 來模擬後端，讓我們可以測試不同的情境，比如：
+
+- 密碼錯誤時，有錯誤提示
+- 帳號不存在時，有錯誤提示
+- 並確認成功後，有沒有拿到 Token
+
+Mock API 給我們帶來的幫助，就是除了測試成功情境外，還能模擬錯誤情境。
+
+而且實際與後端串接時，如果 API 回傳有問題，也可以即時釐清問題。
+
+### ➤ 角色權限與憑證
+
+登入後，我們把分頁切換到「應用程式 → 本機儲存空間 → localhost 的網址」
+
+這邊可以看到有一個「msw_user_role」的金鑰，系統的前端就是用它來判斷**使用者的權限，決定前端頁面要如何渲染。**
+
+像我們身份為 admin 的狀態下，頁面才會「管理後台」，至於「auth_token 」這個欄位，則是你取得的登入憑證，以測試來說，可以有一個基礎的判斷：
+
+- **有 Token**，才會用它來呼叫後續的 API
+- **沒有 Token**，直接導向到登入頁
+
+Token 是決定呼叫後端 API 時，能取得哪些資源的憑證，比如這邊我使用「清除 Token」後，可以看到除了 auth_token 移除外，頁面也重新導向到登入頁。
+
+**因為對系統來說，你已經沒有憑證了。**
+
+接著我把權限切換到一般使用者，登入後你會發現**「msw_user_role」的角色切換成了 user，上方的「管理後台」也不見了**：
+
+這邊示範的就是權限測試的重要性：
+
+- 要確保一般用戶不會看到管理者功能
+- 並且不能讓一般用戶誤闖管理者後台
+
+**權限的設計如果不完善，那對系統來說就是重大事故！**
+
+在這總結一下，我剛剛跟大家示範的流程涵蓋： 「**登入功能、API 回傳、角色權限、Token 驗證、介面差異**」 這些情境都應該設計對應的測試案例。
+
+因為在 Vibe Coding 的世界， 我們很常改流程、改權限、改 API，**如果少了測試案例，那你根本無法判斷這次修改 會不會動到其他系統功能。**
+
+千萬不要嫌寫測試很浪費時間，別忘記現在已經有 AI 可以幫忙了。
+
+**根據我過去十幾年的開發經驗，其實寫測試是在幫助你加速開發；因為他讓你可以更放心新增與修改功能，在遇到問題時也可以快速定位。**
+
+另外測試案例不太可能一次到位，他會隨著規格變更、實際操作而有所調整；但有了它，需求規格的內容才能真正被驗證。
+
+**同時提醒一下大家，我們在前端做的格式驗證（ex:帳號格式、密碼格式），後端也不能少。**
+
+因為知道 API 路徑的人，也能直接繞過前端打 API，這些都是設計上要注意的細節。
+
+## 二、用 AI 撰寫測試程式
+
+這篇文章我使用 Google 最新推出的 Antigravity 來給大家做示範。
+
+目前登入 Google 帳號就可以使用，但如果付費升級到 Pro 會有更高的使用額度。
+
+但如果你熟悉的是 Cursor 或者是其他 AI 編輯器，也可以跟著操作。
+
+這邊我們點擊右上角的「…」，選擇「Customizations」來做客製化。
+
+Rules 的部分，我是參考 Cursor 內部員工的 Rules 範例，其實提示詞都是通用的：
+
+```
+DO NOT GIVE ME HIGH LEVEL SHIT, IF I ASK FOR FIX OR EXPLANATION, I WANT ACTUAL CODE OR EXPLANATION!!! I DON'T WANT "Here's how you can blablabla"
+
+- Be casual unless otherwise specified
+- Be terse
+- Suggest solutions that I didn't think about—anticipate my needs
+- Treat me as an expert
+- Be accurate and thorough
+- Give the answer immediately. Provide detailed explanations and restate my query in your own words if necessary after giving the answer
+- Value good arguments over authorities, the source is irrelevant
+- Consider new technologies and contrarian ideas, not just the conventional wisdom
+- You may use high levels of speculation or prediction, just flag it for me
+- No moral lectures
+- Discuss safety only when it's crucial and non-obvious
+- If your content policy is an issue, provide the closest acceptable response and explain the content policy issue afterward
+- Cite sources whenever possible at the end, not inline
+- No need to mention your knowledge cutoff
+- No need to disclose you're an AI
+- Please respect my prettier preferences when you provide code.
+- Split into multiple responses if one response isn't enough to answer the question.
+
+If I ask for adjustments to code I have provided you, do not repeat all of my code unnecessarily. Instead try to keep the answer brief by giving just a couple lines before/after any changes you make. Multiple code blocks are ok.
+
+```
+
+而這次撰寫測試的部分，我們要使用 Workflow，讓 AI 根據我們的流程來執行。
+
+如果你是下載我提供的練習專案，你會看到**兩個在 Workspace 底下的 Workflow，這代表 Workflow 只會在這個專案中執行：**
+
+這邊我點進去跟大家說明，主要的 Workflow 是 `gen-test-cases`，Description 是這個工作流的描述，我就寫 `生成測試案例工作流` ，而 Content 則是說明這個工作流要做的事。
+
+### ➤ 角色扮演
+
+`扮演一位經驗豐富的軟體測試專家，根據以下步驟進行協作`
+
+首先我讓他扮演一位經驗豐富的軟體測試專家。
+
+### ➤ STEP 1: 建立存放文件的資料夾
+
+`STEP 1: 檢查專案底下是否建立 `doc/test` 資料夾，若無則建立`
+
+一開始先請他檢查專案底下是否有建立 test 資料夾，我們會在這裡面保存 Markdown 格式的測試清單，方便日後閱讀檢視。
+
+### ➤ STEP 2: 撰寫測試案例清單
+
+`STEP 2: 根據選擇範圍撰寫測試案例清單，撰寫格式請參考 `.agent/workflows/test/template.md`，並將發想的結果用 Markdown 格式寫入 `doc/test` 底下，完成後進行 Reivew 不要直接生成測試程式，確認符合預期後再下一步`
+
+然後請他撰寫測試案例清單，這邊用了一個技巧叫做 reference，直接給他一個參考模板，避免 AI 每次生成的格式都不一樣。
+
+我們開一下這個模板，這就是寫給 AI 參考的撰寫範例，要有**測試的類型、說明、範例輸入、期待輸出**等資訊。
+
+同時用了一個小技巧，就是以「狀態」的概念來管理，有測試通過才會標記；並給他幾個測試類型的範例參考。
+
+接著我們再回到一開始的工作流，這邊我有要求他要把這些發想的測試清單，寫到 test 資料夾下， 然後再完成這個任務後，我要求他將這個 Markdown 文件存到專案資料夾中，並讓我們 Review，這樣我們才能確認 AI 給的測試情境是否有遺漏的狀況。
+
+### ➤ STEP 3: AI 撰寫測試程式
+
+```
+STEP 3: 參考上一步完成的 `doc/test` 撰寫測試程式，不同頁面需建立獨立檔案
+
+**重要規則：**
+- 第二層 `describe()` 必須為「測試類型」，下面每一個 `it()` 描述必須為對應的測試案例的「測試說明」
+- `it()` 內的文字描述請「直接使用 Markdown 的原文，不需翻譯、不需重新命名」
+
+```
+
+在我們確認要測試的範圍符合需求後，就可以讓 AI 開始撰寫測試程式了。
+
+這邊有一個特別的「重要規則」，就是要求他程式內的描述，要跟剛剛文件撰寫的測試說明一致，這樣才方便我們比對。
+
+### ➤ STEP 4: 驗證測試程式
+
+`STEP 4: 驗證測試程式，若結果符合預期，請去 doc/test 底下，將 Markdown 打勾`
+
+在 AI 生成測試程式完成後，我們要求他自主驗證程式正確性，若通過要去文件內打勾。
+
+### ➤ STEP 5: 限制測試次數
+
+`STEP 5: 若測試不符預期，重複 STEP 3–4，最多 5 次，仍失敗就討論原因`
+
+因為撰寫的程式可能會有問題，所以我讓他可以重複 STEP 3 跟 4 的動作，但最多嘗試 5 次；**這個限制是為了避免 AI 在錯誤的方向狂奔**，我們適時地介入，去確認問題發生的原因。
+
+這套工作流主要是用來撰寫前端專案的單元測試為主，你可以根據自己的需求自行調整。
+
+再設計好 Workflow 並儲存後，點擊「Back to Agent」回到對話窗，此時我們按下「/」就會看到剛剛設計好的 Workflow。
+
+這邊我用 `gen-test-cases` 示範給大家看，我們把視角移到左側的專案，我們專案的三個頁面，都被放到 pages 的資料夾底下。
+
+**我建議大家請 AI 撰寫測試程式時，不要讓他一口氣生成，而是先放一個檔案。**
+
+確認他執行的結果與我們的期待相符，否則一口氣生成，如果結果不是你要的，那不但浪費時間還浪費 Token。
+
+這邊把檔案拖曳進去後，只要按下 Enter，AI 就會開始閱讀程式碼根據工作流開始運作了。
+
+首先我們會看到，他有要求我們建立對應的「 doc/test」資料夾來存放文件，點擊 Accept 接受就好。
+
+接著稍等一段時間，他就參考我們提供的 Markdown 文件來撰寫測試案例文件，可以看到初始的狀態都是空的。
+
+並且有根據測試類型進行分類，這可以幫我們快速理解測試的意圖，然後可以從輸入輸出的描述，判斷他想測試的情境跟你的期待是否相符。
+
+如果覺得有缺少，就可以直接跟他討論；覺得沒問題，就請他`繼續` 。
+
+但我也在這邊跟大家說，**AI 給予的測試案例，可能會有錯誤或者多餘的狀況，建議大家看一下**。
+
+並提醒一下大家，**如果你看不懂 AI 執行的指令，建議把指令複製起來詢問一下比較保險。全部無腦點擊 Accept，有可能會出大事**。
+
+因為有時 AI 會執行一些危險的操作，之前就曾經有網友遇過 **AI 直接把整個 D 槽硬碟刪除的悲劇**：
+
+  [https://www.reddit.com/r/google_antigravity/comments/1p82or6/google_antigravity_just_deleted_the_contents_of/](https://www.reddit.com/r/google_antigravity/comments/1p82or6/google_antigravity_just_deleted_the_contents_of/)
+
+稍等一段時間後，AI 就幫我們把測試程式完成了，點擊 Accept 讓他執行測試前，我們先看一下他有沒有按照工作流的指示撰寫。
+
+在「describe」這邊有幫我們做基礎的分組，另外「it」的描述也與文件吻合；這次的話很幸運，一次就成功了；如果有問題他就會多嘗試幾次。
+
+這邊也提醒一下大家，儘管我們的 Workflow 說最多嘗試 5 次，但隨著執行次數增加；AI 可能會忽略這個規則，這是需要注意的。
+
+AI 完成一個頁面的測試案例，並驗證通過後，就會回頭更新測試清單，這邊我們可以看到上面都標注通過了。
+
+如果你做到了這一步，請給自己一點掌聲，恭喜你用 AI 撰寫了測試程式，並跑完了一個頁面的功能驗證！
+
+一般來說，我會建議每個頁面都有獨立的測試程式，這樣日後修改遇到問題時，可以快速定位。
+
+在第一個頁面的測試程式撰寫並測試完成後，**其實這個工作流你要放兩個檔案進去也是可以的。**
+
+稍等一段時間後，對應的測試程式就完成了，並且對應的驗證邏輯也通過了；你可以看到光是 3 個功能不多的頁面，就能涵蓋這麼多的測試情境。
+
+**如果用人工測試，即便是小專案；你都要花個好幾分鐘才能手動把流程跑過一遍，甚至可能還會有遺漏的項目。**
+
+**但加入自動化測試後，你放給他跑就好了；隨著專案擴增，你更會體會到他給你帶來的幫助。**
+
+因為以市面上的大型專案來說，功能動輒成千上萬，彼此間又有各種複雜的關聯性。
+
+沒有自動化測試，專案就像是個危樓，任何不起眼的改動，都可能導致問題在你想不到的地方炸裂。
+
+今天分享的這個工作流只是一個雛形，如果大家有更好的方案，也歡迎交流分享。
+
+## 三、用 GitHub Action 執行自動化測試
+
+完成專案的測試案例後，下一步就要把測試的步驟加入 GitHub Action。
+
+這樣我們每次更新程式時，都會自動執行測試，確保基礎功能的基礎流程都是正常的。
+
+不過在這之前，我先跟大家簡介一下 Git Flow，Git 是用來版本控制的工具，Git Flow 則是分支合作的策略。
+
+目前我們還在 main 的這個主分支上：
+
+**你可以想一下，如果把邏輯錯誤，或功能不完善的版本更新上去，那產品不就壞掉了嗎？**
+
+**所以在開發上，我會建議至少要有一個 develop 的開發分支，日常更新推送到上面就好，等功能完善後再合併到 main 這個主分支。**
+
+雖然 Git Flow 還有新增功能用的 feature 分支、發佈上線版本的 release 分支、以及處理緊急問題的 hotfix 分支。
+
+但如果你是第一次接觸，可以先從 main 分支出 develop，來了解為什麼需要用不同分支開發。
+
+這邊先打開終端機，在下面輸入 `git checkout -b develop` ，就可以從 main 切出一個 develop 的分支。
+
+然後到與 AI 的對話窗中輸入以下內容：
+
+```
+我希望在 GitHub Action 加入自動化測試的流程
+每一個分支將更新推送到 GitHub 都會觸發一次自動化測試
+測試完畢後，要生成覆蓋率報告讓我下載
+
+```
+
+等 AI 將 GitHub Action 內容更新完畢後，我們就可以將變更推送到 GitHub 上面
+
+Commit 的部分可以由 AI 自動生成，或是自己手動輸入，這邊我選擇貼上準備好的訊息：
+
+```
+1. 撰寫 pages 頁面下的測試案例
+2. 在 GitHub Action 增加自動測試的流程
+
+```
+
+送出去後，我們把視角切換到 GitHub，點擊 Action 的分頁，這邊你可以看到 GitHub Action 執行的狀況，成功成的話會是綠色勾勾，失敗則是紅色叉叉。
+
+這邊我們很幸運的看到是綠色勾勾，點進去後，你可以看到測試的細節：
+
+回到 Summary，在「Artifacts」的部分會有測試報告可以下載：
+
+這樣每次有新功能完成後，如果主管想要看測試報告，就有東西可以給他們參考嚕。
+
+下載後會得到一個 zip 檔案，解壓縮後點擊「index.html」檔案就可以看到專案的測試覆蓋率了：
+
+透過這份報告，你就可以了解專案中哪些功能測試比較多，比如像是剛剛撰寫測試程式的 pages 就接近覆蓋率 100%。
+
+而其他沒有被測試到的頁面，我們就可以再去補一些測試情境。
+
+但提醒一下大家，在測試覆蓋率這塊，我們沒必要追求 100%；而是重要的邏輯都要測試到，這才是最重要的。
+
+## 四、設計 Rules 保護專案，測試通過才能合併
+
+我們剛剛更新的分支是 develop，要透過 pull request 這個操作，才能將更新合併到 main 這個主分支。
+
+但如果你希望只有「通過測試」的分支才能合併到主分支，你需要多做一設定。
+
+我們回到 GitHub 頁面，選擇 Settings，然後選擇 Rules 下面的「Ruleset」，這邊我們要根據分支來做設計，所以選擇「New branch ruleset」。
+
+name 的部分你可以輸入「Protect main branch」，然後「Enforcement status」這個記得要切換到 Active 才會生效。
+
+Target branch 選擇「Include default branch」
+
+然後把「Require a pull request before merging」這個必須「用 PR 才能合併的選項」打勾。
+
+並將「Require status checks to pass」打勾，以及下面的「Require branches to be up to date before merging」也打勾，這是在設定「測試必須通過才能合併」。
+
+接著點擊「Add Checks」，搜尋 `test`，然後把他打勾，這就是要檢查的項目。
+
+如果「test」搜尋不到結果，可以到 Github 這個 Repository 的 Actions 下，確認命名。
+
+完成以上設定後，我們滑到最下面，點擊「Create」保存設定。
+
+接著回到 Antigravity，故意做一個測試失敗的，看看「pull request」是否會無法合併。
+
+我們到專案挑一個測試案例，故意把裡面的結果弄壞；此時如果在終端機執行 `npm run test`，就會看到有一個錯誤。
+
+然後我們將這個錯誤更新上去，commit 就填寫 `test PR failure condition` ，推上去後回到 GitHub，此時點擊「pull request」。
+
+如果你是 fork 我的專案，這邊要特別注意，base 你要改成自己的帳號：
+
+然後 compare 要選擇 develop，因為我們的目標是把 develop 的內容更新到 main。
+
+在建立 pull request 的時候，建議填寫裡面的 description，這是為了幫助其他人，以及未來的自己了解我們做了什麼更新。
+
+你會發現因為測試有錯誤，所以合併的按鈕是灰色，符合我們的預期。
+
+接著回到專案，把這個問題修正回來，commit 就填寫 `test PR success condition` 。
+
+更新後再回到 GitHub，稍等一段時間，你會發現合併的按鈕變成綠色，可以順利合併了！
+
+有了 Rule 保護專案的主分支後，我們至少能保證合併進來的功能都是經過基礎驗證的。
+
+## 結語：用自動化測試，守住系統的底線
+
+測試的領域博大精深，今天的分享只是帶大家入門而已。
+
+同時提醒大家，加入測試，不代表專案無懈可擊，但至少能守住專案的底線；也相信把影片看到這裡的你，充分了解到 Vibe Coding 是需要學習的。
+
+**也許用一行指令就能生成系統，但能穩定運行、並且有擴充性的系統才是有價值的。**
+
+突然想到前陣子跟一些老闆聊天時，有聊到**目前企業導入 AI 遇到的瓶頸**。
+
+其中一個是邀請講師來企業內訓的時候，同仁都用得很開心；但隔天上班，想實際應用到工作時卻感覺非常卡。
+
+當時我就跟他說：「**因為講師在設計教材時，給予的是最佳體驗路徑；但換個情境，一定會遇到許多問題。**」
+
+就像今天這支影片，如果你直接使用我提供的專案操作，通常可以順利完成每個步驟。
+
+**但這只代表你對測試有了初步的概念，並不代表你已經掌握了自動化測試。**
+
+把我的指令搬到其他專案執行時，可能會遇到不一樣的問題；這個時候不要氣餒，因為你遇到的問題才是屬於自己的護城河。
+
+**學習 AI 並不是搜集一大堆指令複製貼上就好；更重要的是了解應用情境後，透過實踐調整為適合自己的工作流。**
+
+讓 AI 成為你的助手，而不是取代自己的思考與判斷。
+
+最後總結一下，為什麼測試對專案來說如此重要：
+
+- 因為有測試，你才有辦法驗證規格書上的功能你都有做到。
+- 因為有測試，當需求變更時你才敢大膽修改程式，不怕改壞原有功能。
+- 因為有測試，當遇到錯誤時，你可以快速定位問題，而不是一個個慢慢嘗試。
+
+再了解測試的好處後，跟大家介紹一種開發模式，叫做 TDD(Test-Driven Development)，也就是測試驅動開發。
+
+相比於大家熟悉的先完成功能再寫測試，他則是先撰寫測試再去開發，之後有機會再跟大家深入分享。
+
+**如果過去沒有寫過測試程式，我認為先養成撰寫測試的習慣才是最重要的。**
+
+建立自動化測試，你才知道 AI 是否改動到邏輯；掌握關鍵知識，你才能走得更遠。
+
+另外今天這支影片，我都是用 Mock API 來代替後端；所以在接下來的 Vibe Coding 系列影片中，我打算在這支影片的基礎上做延伸。
+
+**跟大家分享後端與資料庫的設計，帶大家把這些模擬的 API 都變成真實可用的。**
+
+如果這篇文章對你有幫助，可以順手按個讚，把文章分享給正在 Vibe Coding 的朋友們。
+
+  [https://www.tenlong.com.tw/products/9786264142083](https://www.tenlong.com.tw/products/9786264142083)
+
+---
+
+關於作者：林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。（https://deanlin.net/about/）
+引用時請附上原文網址：https://deanlin.net/blog/202601/antigravity-workflow-testing/
