@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>背景執行｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/%E8%83%8C%E6%99%AF%E5%9F%B7%E8%A1%8C/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>背景執行｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/%E8%83%8C%E6%99%AF%E5%9F%B7%E8%A1%8C/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Sat, 10 Oct 2020 10:44:44 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/%E8%83%8C%E6%99%AF%E5%9F%B7%E8%A1%8C/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！</title>
+      <link>https://deanlin.net/blog/202010/fb-ig-crawler-day-25/</link>
+      <pubDate>Sat, 10 Oct 2020 10:44:44 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/fb-ig-crawler-day-25/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>我想很多人跟我一樣不小心順手把終端機(Terminal)給關了 (或是很乾脆地把 VScode 關了)，但視窗關閉後排程其實還在背景持續運行，下面提供一個快速的解決方案：</description>
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-og_hu_ba086503eb4ab915.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>如果一個套件無法解決問題，那就用兩個吧！</p>
+</blockquote>
+<h2 id="思考一下昨天的排程有什麼缺點">思考一下昨天的排程有什麼缺點<a class="h-anchor" href="#%e6%80%9d%e8%80%83%e4%b8%80%e4%b8%8b%e6%98%a8%e5%a4%a9%e7%9a%84%e6%8e%92%e7%a8%8b%e6%9c%89%e4%bb%80%e9%ba%bc%e7%bc%ba%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<p><strong>昨天完成的排程其實有幾個缺點：</strong></p>
+<ol>
+<li>在終端機(Terminal)執行排程後你<code>必須保持開啟</code>的狀態你才知道他有沒有正確執行</li>
+<li>如果不小心把執行排程的終端機(Terminal)關掉你會很困擾，因為你關掉的是終端機不是排程，<code>你想關掉排程還要另外下幾個指令</code></li>
+<li>管理困難，<code>啟動、停止、重啟你都要在專案資料夾</code>下處理</li>
+<li>如果運行過程中程式<code>意外關閉需要手動重開</code></li>
+<li><code>在排程運行中你修改爬蟲json裡面的粉專列表是無效的</code>，實驗看看就會發現觸發爬蟲時跑的是舊版的粉專列表</li>
+</ol>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>砍掉執行中的排程</li>
+<li>使用套件 <code>forever</code> 來管理排程</li>
+<li>在 package.json 中加入驅動 forever 的 scripts</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-砍掉執行中的排程">1. 砍掉執行中的排程<a class="h-anchor" href="#1-%e7%a0%8d%e6%8e%89%e5%9f%b7%e8%a1%8c%e4%b8%ad%e7%9a%84%e6%8e%92%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<p>我想很多人跟我一樣不小心順手把終端機(Terminal)給關了 (或是很乾脆地把 VScode 關了)，但<code>視窗關閉後排程其實還在背景持續運行</code>，下面提供一個快速的解決方案：</p>
+<pre tabindex="0"><code>ps aux | grep [搜尋關鍵字]
+kill [程式的PID]
+</code></pre><h3 id="ps-process-status---顯示進程狀態的指令">ps (process status) - 顯示進程狀態的指令<a class="h-anchor" href="#ps-process-status---%e9%a1%af%e7%a4%ba%e9%80%b2%e7%a8%8b%e7%8b%80%e6%85%8b%e7%9a%84%e6%8c%87%e4%bb%a4" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>參數說明
+<ul>
+<li>a : 列出所有使用者與 terminal 無關的所有 process</li>
+<li>u : 以使用者名稱顯示的格式</li>
+<li>x : 列出與 terminal 有關的所有 process (通常與 a 搭配使用)</li>
+</ul>
+</li>
+<li>顯示欄位 : USER PID %CPU %MEM VSZ RSS TTY STAT START TIME COMMAND</li>
+</ul>
+<h3 id="kill---刪除執行中的-process">kill - 刪除執行中的 process<a class="h-anchor" href="#kill---%e5%88%aa%e9%99%a4%e5%9f%b7%e8%a1%8c%e4%b8%ad%e7%9a%84-process" aria-label="這個段落的連結"></a></h3>
+<p>我們需要找到執行程式的 process PID 才能將其刪除 <code>(PID 就在 ps 進程狀態的第二欄)</code></p>
+<h3 id="實際操作範例">實際操作範例<a class="h-anchor" href="#%e5%af%a6%e9%9a%9b%e6%93%8d%e4%bd%9c%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>找出正在運行的排程</p>
+<pre tabindex="0"><code>ps aux | grep cron.js
+</code></pre><blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-01.webp" width="1024" height="112" alt="實際操作範例（圖 1）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>你可以看到執行排程的 PID 是 23888，把他複製起來用 kill 指令刪除</p>
+<pre tabindex="0"><code>kill 23888
+</code></pre><p>刪除後查詢進程，確認是否刪除成功</p>
+<pre tabindex="0"><code>ps aux | grep cron.js
+</code></pre><blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-02.webp" width="1024" height="87" alt="實際操作範例（圖 2）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-使用套件-forever-來管理排程">2. 使用套件 <code>forever</code> 來管理排程<a class="h-anchor" href="#2-%e4%bd%bf%e7%94%a8%e5%a5%97%e4%bb%b6-forever-%e4%be%86%e7%ae%a1%e7%90%86%e6%8e%92%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
+<p>單純使用 cron 套件會讓你遇到開頭所說的各種問題，所以遇到過這個問題的高手們也寫了一個<code>讓 Node.js 程式運行永不停止的套件：forever</code>，這個套件操作極其簡單，不僅能讓排程在背景穩定執行，還能在終端機的任何位置做管理</p>
+<ul>
+<li>
+<p>首先要請你<code>全域安裝</code>這個套件，這樣才能在任何一個位置執行它</p>
+<pre tabindex="0"><code>[sudo] npm install forever -g
+</code></pre></li>
+<li>
+<p>基礎指令（以操作專案的 cron.js 為範例）</p>
+<ul>
+<li>
+<p><strong>啟動程式</strong></p>
+<pre tabindex="0"><code>forever --minUptime=1000 --spinSleepTime=1000 start tools/cron.js
+</code></pre><blockquote>
+<p>如果你沒加上 <code>--minUptime=1000 --spinSleepTime=1000</code> 的參數 會有警告如下圖</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-03.webp" width="1024" height="89" alt="2. 使用套件 forever 來管理排程（圖 3）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p><strong>監聽檔案更動並自動重啟</strong></p>
+<pre tabindex="0"><code>forever --minUptime=1000 --spinSleepTime=1000 -w start tools/cron.js
+</code></pre><blockquote>
+<ul>
+<li>
+<p>這個指令可以<code>監控檔案的變更</code>，解決過去爬蟲json資料變更但是執行時跑舊資料的問題</p>
+</li>
+<li>
+<p>要在專案資料夾下<code>新增 .foreverignore 的檔案</code>，被列入的檔案/資料夾在偵測變更時會被忽略</p>
+<h3 id="foreverignore">.foreverignore<a class="h-anchor" href="#foreverignore" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code>node_modules
+.env
+chromedriver.exe
+debug.log
+</code></pre></li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p><strong>顯示所有運行的狀態</strong></p>
+<pre tabindex="0"><code>forever list
+</code></pre><blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-04.webp" width="1024" height="85" alt=".foreverignore（圖 4）" loading="lazy" decoding="async"></p>
+<ul>
+<li>可以在 <code>logfile</code> 裡面看到排程執行的狀況</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p><strong>關閉所有運行的程式</strong></p>
+<pre tabindex="0"><code>forever stopall
+</code></pre><blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-05.webp" width="1024" height="75" alt=".foreverignore（圖 5）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p><strong>重新啟動程式</strong></p>
+<pre tabindex="0"><code>forever restart tools/cron.js
+</code></pre><blockquote>
+<ul>
+<li>請注意如果你 <code>修改了 .env 裡面的資料，則必須要重啟才會生效</code></li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>
+<p>執行 forever 時你可能會遇到警告如下</p>
+<pre tabindex="0"><code>(node:30512) Warning: Accessing non-existent property &#39;padLevels&#39; of module exports inside circular dependency
+</code></pre><ul>
+<li>這個警告是因為 forever 有相依套件在 node v14 之後不再支援，<code>但這些警告不影響套件運行</code></li>
+<li>Node.js 的版本更新的非常快速，許多套件都可能在更新後不支援，<strong>所以更新版本後請切記要運行一次確保正常</strong></li>
+<li>目前 <code>Node.js 的 LTS 版本為 12.19.0，如果你使用這個穩定的版本就能避免這個問題</code></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="3-在-packagejson-中加入驅動-forever-的-scripts">3. 在 package.json 中加入驅動 forever 的 scripts<a class="h-anchor" href="#3-%e5%9c%a8-packagejson-%e4%b8%ad%e5%8a%a0%e5%85%a5%e9%a9%85%e5%8b%95-forever-%e7%9a%84-scripts" aria-label="這個段落的連結"></a></h2>
+<p>將昨天 cron 的 scripts 改為 forever 的版本</p>
+<ul>
+<li>為了避免重複啟動，這個 scipts 的執行邏輯為：<code>先暫停所有運行的 forever 程式，然後再啟動程式</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#a5d6ff">&#34;forever&#34;</span><span style="color:#f85149">:</span><span style="color:#a5d6ff">&#34;forever stopall &amp;&amp; forever --minUptime=1000 --spinSleepTime=1000 -w start tools/cron.js&#34;</span>
+</span></span></code></pre></div><hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令啟動排程</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn forever
+</span></span></code></pre></div><blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-06.webp" width="1024" height="145" alt="執行程式（圖 6）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>然後再執行指令 <strong>forever list</strong> 確認排程正在背景運行</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-07.webp" width="1024" height="67" alt="執行程式（圖 7）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day25">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day24_sample_code.zip">壓縮檔</a>，你可以在乾淨的環境嘗試用forever來控管排程吧
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>要在tools/google_sheets資料夾放上自己的憑證，申請流程請參考<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+<li>調整fanspages資料夾內目標爬蟲的粉專網址</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+<li>填上SPREADSHEET_ID</li>
+<li>填上爬蟲執行時間(CRONJOB_TIME)</li>
+</ul>
+</li>
+<li>在終端機下指令 <strong>npm install forever -g</strong> ，讓你在終端機的任何位置都能管控排程</li>
+</ul>
+</li>
+</ul>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://medium.com/mess-up/%E5%A6%82%E6%9E%9Cctrl-c%E6%B2%92%E6%B3%95%E7%B5%82%E6%AD%A2%E6%80%8E%E9%BA%BC%E8%BE%A6-5e720fd66e32">如果ctrl + c沒法終止怎麼辦?</a></li>
+<li><a href="http://puremonkey2010.blogspot.com/2011/02/linux-linux-ps-l-ps-aux-ps-axjf.html">Linux 程序管理 ( ps -l / ps aux / ps axjf )</a></li>
+<li><a href="https://andy6804tw.github.io/2018/01/17/api-forever/">[Node.js打造API] 使用forever運行API永遠不停止</a></li>
+</ol>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-08.webp" width="1024" height="233" alt="參考資源（圖 8）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>【Day16】不藏私，加上5行程式就能優化爬蟲的小技巧 ＆ 學會爬蟲，之後呢？</title>
+      <link>https://deanlin.net/blog/202010/fb-ig-crawler-day-16/</link>
+      <pubDate>Thu, 01 Oct 2020 09:42:52 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/fb-ig-crawler-day-16/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>1.1 優化分成哪些面向?1.2 優化執行效率及穩定度1.3 背景執行並減少記憶體的消耗</description>
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-og_hu_85b86f4edaac7d5b.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>當技術為你的生活帶來便利，他才有存在的意義</p>
+</blockquote>
+<h2 id="為什麼寫這篇文章">為什麼寫這篇文章<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>如果你跟著這幾天的教學走還是遇到一些莫名其妙的問題，希望在今天的文章有得到你想要的解答</li>
+<li>這幾天所教的技巧足以讓你爬下絕大多數的網頁資訊了，<code>學習爬蟲只是一個過程，我們的目標是希望能靠這些數據給我們帶來便利</code>，所以今天也分享一些思路給大家</li>
+</ol>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-優化爬蟲">1. 優化爬蟲<a class="h-anchor" href="#1-%e5%84%aa%e5%8c%96%e7%88%ac%e8%9f%b2" aria-label="這個段落的連結"></a></h3>
+<p>1.1 優化分成哪些面向?<br>1.2 優化執行效率及穩定度<br>1.3 背景執行並減少記憶體的消耗</p>
+<h3 class="h-nomark" id="2-學會爬蟲之後呢">2. 學會爬蟲，之後呢？<a class="h-anchor" href="#2-%e5%ad%b8%e6%9c%83%e7%88%ac%e8%9f%b2%e4%b9%8b%e5%be%8c%e5%91%a2" aria-label="這個段落的連結"></a></h3>
+<hr>
+<h2 class="h-nomark" id="1-優化爬蟲-1">1. 優化爬蟲<a class="h-anchor" href="#1-%e5%84%aa%e5%8c%96%e7%88%ac%e8%9f%b2-1" aria-label="這個段落的連結"></a></h2>
+<p>昨天我們已經完成爬蟲所需要的功能了，下一步要思考的是如何優化</p>
+<h3 class="h-nomark" id="11-優化分成哪些面向">1.1 優化分成哪些面向?<a class="h-anchor" href="#11-%e5%84%aa%e5%8c%96%e5%88%86%e6%88%90%e5%93%aa%e4%ba%9b%e9%9d%a2%e5%90%91" aria-label="這個段落的連結"></a></h3>
+<p>前面<a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-13/">【Day13】refactor-重構程式碼，讓合作夥伴對你比讚</a>在討論如何讓你在開發上更有效率，原則上不影響輸出的結果；而今天討論的優化是一個多面向的問題，我把他區分成<code>顯性及隱性</code>兩種：</p>
+<ul>
+<li><strong>顯性</strong>：使用者<code>肉眼可見</code>
+<ul>
+<li>改善使用者操作流程、介面</li>
+<li>程式執行過程的畫面優化</li>
+</ul>
+</li>
+<li><strong>隱性</strong>：使用者覺得自己的<code>電腦變順</code>了(不過他們通常不會聯想到是程式優化了)
+<ul>
+<li>更好地執行效率</li>
+<li>使用更少的記憶體</li>
+<li>執行的穩定性</li>
+</ul>
+</li>
+</ul>
+<p>優化是一條沒有盡頭的路，上面我只是提了幾個常見要注意的點而已，接下來我們就來實際優化現在的爬蟲吧～</p>
+<hr>
+<h3 class="h-nomark" id="12-優化執行效率及穩定度">1.2 優化執行效率及穩定度<a class="h-anchor" href="#12-%e5%84%aa%e5%8c%96%e5%9f%b7%e8%a1%8c%e6%95%88%e7%8e%87%e5%8f%8a%e7%a9%a9%e5%ae%9a%e5%ba%a6" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p><strong>遇到的問題</strong></p>
+<ol>
+<li>在 driver.wait 加上等待時間後偶爾還是會出現登入失敗或是抓不到追蹤人數的問題</li>
+<li>在爬蟲的時候會影響到我看 youtube 的流暢程度</li>
+</ol>
+</li>
+<li>
+<p><strong>判斷造成的原因</strong></p>
+<ol>
+<li>本身的<code>網路速度太慢</code>，造成網頁過了 driver.wait 的等待時間後依舊還沒完成載入</li>
+<li>FB、IG 粉專都是<code>充滿圖片的頁面</code>，載入這些資源時消耗太多流量</li>
+</ol>
+</li>
+<li>
+<p><strong>優化的方式</strong><br>因為本專案<code>爬蟲所分析的內容都跟圖片無關，所以只要不載入這些資源</code>就有以下好處：</p>
+<ol>
+<li>減少瀏覽器使用流量</li>
+<li>減少瀏覽器載入時間</li>
+</ol>
+<p>想要知道如何不載入圖片，你可以在 Google 搜尋 <strong>selenium chrome參數</strong> ，有很多熱心的大神已經幫你整理好常用的參數了</p>
+<ul>
+<li>
+<p>打開 <strong>initDrive.js</strong> 在 chrome 的 option 加入<code>不載入圖片</code>的參數</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>options.addArguments(<span style="color:#a5d6ff">&#39;blink-settings=imagesEnabled=false&#39;</span>)<span style="color:#8b949e;font-style:italic">//不加載圖片提高效率
+</span></span></span></code></pre></div><p>加上這段程式後，在專案資料夾的終端機(Terminal)執行指令 <strong>yarn start</strong> ，便可以很明顯的感受到<code>網頁載入速度變快很多，並且所有圖片都沒有載入</code>(下圖)</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01.webp" width="1024" height="671" alt="1.2 優化執行效率及穩定度（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="13-背景執行並減少記憶體的消耗">1.3 背景執行並減少記憶體的消耗<a class="h-anchor" href="#13-%e8%83%8c%e6%99%af%e5%9f%b7%e8%a1%8c%e4%b8%a6%e6%b8%9b%e5%b0%91%e8%a8%98%e6%86%b6%e9%ab%94%e7%9a%84%e6%b6%88%e8%80%97" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>遇到的問題</strong>
+<ol>
+<li>有時爬蟲執行到一半手賤點一下爬蟲瀏覽器導致程式拋出例外</li>
+<li>爬蟲執行時候的畫面一直閃好煩</li>
+<li>在記憶體 8G 的電腦執行爬蟲時覺得電腦變得很頓</li>
+</ol>
+</li>
+<li><strong>判斷造成的原因</strong>
+<ol>
+<li>人有時控制不住自己的手</li>
+<li>執行爬蟲時<code>干擾到使用者的日常工作</code></li>
+<li><code>chrome 吃太多記憶體</code></li>
+</ol>
+</li>
+<li><strong>優化的方式</strong><br>在爬蟲每個步驟及功能都穩定後，其實不需跳出瀏覽器視窗來觀察他的動作，<code>讓瀏覽器在背景執行不但不會干擾使用者工作更能減少記憶體的浪費</code>
+<ul>
+<li>
+<p>打開 <strong>initDrive.js</strong> 並在 chrome 的 option 加入<code>不打開瀏覽器視窗</code>的參數如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>options.addArguments(<span style="color:#a5d6ff">&#39;--headless&#39;</span>)<span style="color:#8b949e;font-style:italic">//瀏覽器不提供頁面觀看，linux下如果系統是純文字介面不加這條會啓動失敗
+</span></span></span><span style="display:flex;"><span>options.addArguments(<span style="color:#a5d6ff">&#39;--log-level=3&#39;</span>)<span style="color:#8b949e;font-style:italic">//這個option可以讓你跟headless時網頁端的console.log說掰掰
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//下面參數能提升爬蟲穩定性    
+</span></span></span><span style="display:flex;"><span>options.addArguments(<span style="color:#a5d6ff">&#39;--disable-dev-shm-usage&#39;</span>)<span style="color:#8b949e;font-style:italic">//使用共享內存RAM
+</span></span></span><span style="display:flex;"><span>options.addArguments(<span style="color:#a5d6ff">&#39;--disable-gpu&#39;</span>)<span style="color:#8b949e;font-style:italic">//規避部分chrome gpu bug
+</span></span></span></code></pre></div><p>設定完這些後，在專案資料夾的終端機(Terminal)執行指令 <strong>yarn start</strong> ，就會發現<code>爬蟲變成背景執行，並且電腦順暢許多</code></p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="2-學會爬蟲之後呢-1">2. 學會爬蟲，之後呢？<a class="h-anchor" href="#2-%e5%ad%b8%e6%9c%83%e7%88%ac%e8%9f%b2%e4%b9%8b%e5%be%8c%e5%91%a2-1" aria-label="這個段落的連結"></a></h2>
+<p><code>原本我打算用兩天的文章來教取得當日貼文數量的方法，但文章寫完後就刪掉了，因為讀者完全有能力用這幾天所教的技術自行實踐這項功能；我希望用這30天分享更多不同的技術及有幫助的觀念</code></p>
+<blockquote>
+<p><strong>授人以魚不如授人以漁</strong><br>使用模擬瀏覽器來爬蟲我認為是最符合初學者的，你不用去分析複雜的 api，去猜裡面的參數是甚麼意義<br>你需要做的只是把你平常操作的流程用程式的方式來替你做一遍，然後抓取你所需要的資訊<br>我寫的文章只是爬蟲的技巧的冰山一角，但只要有了開頭以及研究的方向我相信你是有能力獨立完成其他網頁的爬蟲</p>
+</blockquote>
+<p>現在人工智慧流行，大數據當道，爬蟲是取得大數據的方法之一，你能透過這些數據分析的東西太多了，我在這裡簡單舉例：</p>
+<ul>
+<li><strong>追蹤人數爆減/爆增</strong>
+<ul>
+<li>是因為某一篇貼文引起的嗎?</li>
+<li>當天是否有媒體新聞的報導?</li>
+<li>粉專經營者是否有特殊決策?</li>
+</ul>
+</li>
+<li><strong>發文頻率與追蹤人數的關係</strong>
+<ul>
+<li>發文頻率是否與追蹤人數成長正相關</li>
+<li>怎麼樣的發文頻率是最恰當的</li>
+<li>不同行業的發文頻率比較</li>
+</ul>
+</li>
+<li><strong>貼文按讚與回應</strong>
+<ul>
+<li>什麼樣的貼文會獲得最多迴響</li>
+<li>獲得最多讚的貼文有什麼共同特徵</li>
+</ul>
+</li>
+</ul>
+<p>隨便舉的例子都能獨立出來都能成為一篇論文或是商品，<code>爬蟲是一個很強的武器，但這把武器的強度要看使用者如何發揮他</code>，我想會看這系列教學文章的讀者心中都有想要爬蟲的目標，開始動手實作吧！</p>
+<p><em>再次提醒，技術沒有善惡，人的使用方式才會有善惡，希望這份技術可以幫大家節省時間以及避免重工；如果你把它拿來盜取智慧財產、個人檔案及機敏資訊請自行負擔後續法律責任</em></p>
+<hr>
+<blockquote>
+<p><strong>筆者碎碎念</strong><br>我希望看完文章的讀者能夠吸收到問題思考的方式，不要只是單純的 copy &amp; paste ，這樣對技術長期來講是在累積負債<br>如果你是程式的新手，你可以透過修改一些參數來看看結果會有什麼樣的變化，少加哪些參數是不是真的會有錯誤<br>不要害怕犯錯，因為學習程式的路上幾乎不存在一條完美的道路<br>你現在滿意的程式往往在幾個月後你會覺得當時怎麼寫的這麼爛<br>當你誕生出這個想法的時候就是成長了</p>
+</blockquote>
+<hr>
+<h3 class="h-nomark" id="-下個階段">⏭️ 下個階段<a class="h-anchor" href="#-%e4%b8%8b%e5%80%8b%e9%9a%8e%e6%ae%b5" aria-label="這個段落的連結"></a></h3>
+<p>關於使用網頁爬蟲的技術文章就分享到今天，接下來我們要來研究 <code>爬蟲資料如何儲存</code> ，敬請期待</p>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day16">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day15_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來實作今天json改寫的部分喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+</ul>
+</li>
+<li>調整fanspages資料夾內目標爬蟲的粉專網址</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://stackoverflow.max-everyday.com/2019/12/selenium-chrome-options/">selenium啓動Chrome的進階配置參數</a></li>
+</ol>
+<blockquote>
+<p><em>免責聲明:文章技術僅抓取公開數據作爲研究，任何組織和個人不得以此技術盜取他人智慧財產、造成網站損害，否則一切后果由該組織或個人承擔。作者不承擔任何法律及連帶責任！</em></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-02.webp" width="1024" height="233" alt="參考資源（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

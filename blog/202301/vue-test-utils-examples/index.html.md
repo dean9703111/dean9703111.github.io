@@ -49,7 +49,7 @@
 
 假使我們要設計一個登入頁，可以訂製如下規格：
 
-### ➤ 基礎元件功能
+### 基礎元件功能
 
 - 確認 email、password、LoginBtn 元素存在
 - 確認 Email 輸入框可以填資料
@@ -57,21 +57,21 @@
 - Email、Password 輸入後，data 對應的 formData 有存入相應的值
 - 預設 Password 輸入框的 type 為 password，不直接顯示
 
-### ➤ 測試錯誤的 Email、Password 情境
+### 測試錯誤的 Email、Password 情境
 
 - 當 Email 沒有填寫時，跳出 Required 的錯誤訊息
 - 當 Email 格式錯誤時，跳出相關錯誤訊息
 - 當 Password 沒有填寫時，跳出 Required 的錯誤訊息
 - 當 Password 字數不滿 8 位時，跳出相關錯誤訊息
 
-### ➤ 會讓元件屬性改變的行為
+### 會讓元件屬性改變的行為
 
 - 當 Email、Password 未填寫時，登入按鈕為 Disabled
 - 當 Email、Password 格式錯誤時，登入按鈕為 Disabled
 - 當 Email、Password 格式正確時，登入按鈕可點擊
 - 點擊顯示 Password 的 icon 時，type 會轉換成 text
 
-### ➤ 登入功能
+### 登入功能
 
 - 輸入錯誤的帳號密碼，會彈出警視窗
 - 確認 Router 可以順利導向
@@ -176,7 +176,7 @@ const login = () => {
 
 這邊會取幾個測試案例來做解說，完成的範例請參考[筆者的 Github](https://github.com/dean9703111/-vuetify-vite-ts-test-exmaples)（順手點個 Star 會讓筆者會開心一整天）。
 
-### ▶︎ 測試檔案初始設定
+### 測試檔案初始設定
 
 我們在 views 資料夾下新增「test」資料夾，並新增「Login.spec.ts」的測試檔案：
 
@@ -201,7 +201,7 @@ beforeEach(async () => {
 
 ```
 
-### ▶︎ 用 get 找出元素（element），並確認是有顯示在畫面上的（isVisible）
+### 用 get 找出元素（element），並確認是有顯示在畫面上的（isVisible）
 
 find 也可以達到一樣的效果，但沒找到時並不會回傳錯誤訊息。
 
@@ -214,7 +214,7 @@ it("確認 Email、Password、LoginBtn 元素存在", () => {
 
 ```
 
-### ▶︎ 透過 getComponent 取出元件，並指定「input」來 setValue
+### 透過 getComponent 取出元件，並指定「input」來 setValue
 
 因為 Vuetify 的 v-text-field 是 div 層，所以需要再透過 get 往下找到 input 這個元素。
 
@@ -227,7 +227,7 @@ it("確認 Email 輸入框可以填資料", async () => {
 
 ```
 
-### ▶︎ 在輸入框輸入後，用 wrapper.vm.xxx 確定 data 的有成功寫入
+### 在輸入框輸入後，用 wrapper.vm.xxx 確定 data 的有成功寫入
 
 ```
 it("Email、Password 輸入後，data 對應的 formData 有寫入相應的值", async () => {
@@ -246,7 +246,7 @@ it("Email、Password 輸入後，data 對應的 formData 有寫入相應的值",
 
 ```
 
-### ▶︎ 取得元素的 attributes，確認設定符合預期
+### 取得元素的 attributes，確認設定符合預期
 
 ```
 it("預設 Password 輸入框的 type 為 password，不直接顯示", async () => {
@@ -256,7 +256,7 @@ it("預設 Password 輸入框的 type 為 password，不直接顯示", async () 
 
 ```
 
-### ▶︎ 模擬使用者點擊輸入框（focus）輸入文字，然後離開（blur）的動作；並確認操作錯誤時，能捕捉預期的 error message
+### 模擬使用者點擊輸入框（focus）輸入文字，然後離開（blur）的動作；並確認操作錯誤時，能捕捉預期的 error message
 
 ```
 it("當 Email 沒有填寫時，跳出 Required 的錯誤訊息", async () => {
@@ -271,7 +271,7 @@ it("當 Email 沒有填寫時，跳出 Required 的錯誤訊息", async () => {
 
 ```
 
-### ▶︎ 使用者操作系統時，元件的 attributes 如預期改變（ex：Email、Password 填寫正確，登入按鈕 Disabled 移除）
+### 使用者操作系統時，元件的 attributes 如預期改變（ex：Email、Password 填寫正確，登入按鈕 Disabled 移除）
 
 ```
 it("當 Email、Password 格式正確時，登入按鈕可點擊", async () => {
@@ -296,7 +296,7 @@ it("當 Email、Password 格式正確時，登入按鈕可點擊", async () => {
 
 ```
 
-### ▶︎ 模擬使用者 trigger button 事件，觀察頁面是否如預期跳轉（Vue Router）
+### 模擬使用者 trigger button 事件，觀察頁面是否如預期跳轉（Vue Router）
 
 ```
 it("確認 Router 可以順利導向", async () => {

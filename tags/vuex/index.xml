@@ -38,30 +38,30 @@ Nuxt.js
 <blockquote>
 <p>一個優秀的 Javascript 框架</p>
 </blockquote>
-<h3 id="-過去只有-javascripthtmlcss-時有什麼問題">➤ 過去只有 Javascript、HTML、CSS 時有什麼問題？<a class="h-anchor" href="#-%e9%81%8e%e5%8e%bb%e5%8f%aa%e6%9c%89-javascripthtmlcss-%e6%99%82%e6%9c%89%e4%bb%80%e9%ba%bc%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<h3 id="-過去只有-javascripthtmlcss-時有什麼問題">過去只有 Javascript、HTML、CSS 時有什麼問題？<a class="h-anchor" href="#-%e9%81%8e%e5%8e%bb%e5%8f%aa%e6%9c%89-javascripthtmlcss-%e6%99%82%e6%9c%89%e4%bb%80%e9%ba%bc%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
 <ul>
 <li><strong>難以維護</strong>：專案結構龐大時 Javascript、HTML、CSS 維護難度會成幾何式上升，各式各樣的邏輯都集中在 Javascript 裡面導致程式可讀性極低</li>
 <li><strong>效能低落</strong>：如果 Javascript 頻繁操作 DOM 元素時會不斷觸發 Reflow &amp; Repaint 的流程，頁面重複渲染的過程會消耗大量效能</li>
 </ul>
-<h3 id="-框架的優勢">➤ 框架的優勢<a class="h-anchor" href="#-%e6%a1%86%e6%9e%b6%e7%9a%84%e5%84%aa%e5%8b%a2" aria-label="這個段落的連結"></a></h3>
+<h3 id="-框架的優勢">框架的優勢<a class="h-anchor" href="#-%e6%a1%86%e6%9e%b6%e7%9a%84%e5%84%aa%e5%8b%a2" aria-label="這個段落的連結"></a></h3>
 <ul>
 <li><strong>資料與 UI 分離</strong>：過去 Javascript 要動態的去更新 DOM 來塞入資料，但框架透過資料雙向綁定，工程師可以專注處理資料的邏輯面</li>
 <li><strong>模組化的 UI</strong>：一個網站會有許多重複出現的元素(按鈕、表單、表格…)，在框架中可以這些常用的元素設計成 component，要使用時再根據實際需求填入資料及參數即可，大幅提升工程師理解與維護的能力。</li>
 <li><strong>更好的效能</strong>：採取 <strong>Virtual DOM</strong> 概念，當資料變動時先計算好要變動的地方，以此抵銷無意義的變更，並且重複使用已存在的 DOM 元素</li>
 </ul>
 <h2 id="vuex">Vuex<a class="h-anchor" href="#vuex" aria-label="這個段落的連結"></a></h2>
-<h3 id="-vue過去傳值時面臨什麼問題">➤ Vue過去傳值時面臨什麼問題？<a class="h-anchor" href="#-vue%e9%81%8e%e5%8e%bb%e5%82%b3%e5%80%bc%e6%99%82%e9%9d%a2%e8%87%a8%e4%bb%80%e9%ba%bc%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<h3 id="-vue過去傳值時面臨什麼問題">Vue過去傳值時面臨什麼問題？<a class="h-anchor" href="#-vue%e9%81%8e%e5%8e%bb%e5%82%b3%e5%80%bc%e6%99%82%e9%9d%a2%e8%87%a8%e4%bb%80%e9%ba%bc%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
 <p>過去 Vue 裡面 component 的參數傳遞都是採用 <code>emit</code>跟 <code>props</code> ，但如果 component 的關係並非 parent/child 而是像下圖想要將 Component B 的資訊傳到 Component C ，這種操作不但需要很多 <code>emit</code>跟 <code>props</code> 還會造成程式碼閱讀困難</p>
 <p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-02.webp" width="1400" height="409" alt="Vue過去傳值時面臨什麼問題？（圖 2）" loading="lazy" decoding="async"></p>
-<h3 id="-如何解決這個問題">➤ 如何解決這個問題？<a class="h-anchor" href="#-%e5%a6%82%e4%bd%95%e8%a7%a3%e6%b1%ba%e9%80%99%e5%80%8b%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<h3 id="-如何解決這個問題">如何解決這個問題？<a class="h-anchor" href="#-%e5%a6%82%e4%bd%95%e8%a7%a3%e6%b1%ba%e9%80%99%e5%80%8b%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
 <p>根據上面的問題，官方推出專門用來『狀態管理』的工具，你可以把它想像成 Vue 裡面的全域變數，將狀態(state)全部放在倉庫(store)來進行管理。</p>
 <p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-03.webp" width="701" height="551" alt="如何解決這個問題？（圖 3）" loading="lazy" decoding="async"></p>
 <p><strong>更新 state</strong>：在 <strong>Vuex</strong> 裡面，儲存狀態的為 <strong>State</strong>，component 需要更動 <strong>State </strong>時，需要透過 <strong>Actions </strong>發出一個 <strong>Commit</strong> 去呼叫 <strong>Mutations</strong>，再由 <strong>Mutations </strong>去更改 <strong>State</strong>。</p>
 <p><strong>取得 state</strong>：而 component 的資料更新可以在 <strong>compute</strong> 裡面使用 <strong>mapGetters</strong> 使用 <strong>getters</strong> 的 function 或是用 <strong>mapState</strong> 直接取用 state 的資料</p>
 <h2 id="vuetify">Vuetify<a class="h-anchor" href="#vuetify" aria-label="這個段落的連結"></a></h2>
-<h3 id="-提供前端工程師豐富的-md-component">➤ 提供前端工程師豐富的 MD component<a class="h-anchor" href="#-%e6%8f%90%e4%be%9b%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e8%b1%90%e5%af%8c%e7%9a%84-md-component" aria-label="這個段落的連結"></a></h3>
+<h3 id="-提供前端工程師豐富的-md-component">提供前端工程師豐富的 MD component<a class="h-anchor" href="#-%e6%8f%90%e4%be%9b%e5%89%8d%e7%ab%af%e5%b7%a5%e7%a8%8b%e5%b8%ab%e8%b1%90%e5%af%8c%e7%9a%84-md-component" aria-label="這個段落的連結"></a></h3>
 <p>你可以把 Vuetify 當成 Vue 的 Material Design framework，他不但省去了你自己手工打造 UI component 的時間，還為每個 component 提供許多可以自由定義的 property 讓版型更加靈活。</p>
-<h3 id="-強大的社群支持並穩定更新">➤ 強大的社群支持並穩定更新<a class="h-anchor" href="#-%e5%bc%b7%e5%a4%a7%e7%9a%84%e7%a4%be%e7%be%a4%e6%94%af%e6%8c%81%e4%b8%a6%e7%a9%a9%e5%ae%9a%e6%9b%b4%e6%96%b0" aria-label="這個段落的連結"></a></h3>
+<h3 id="-強大的社群支持並穩定更新">強大的社群支持並穩定更新<a class="h-anchor" href="#-%e5%bc%b7%e5%a4%a7%e7%9a%84%e7%a4%be%e7%be%a4%e6%94%af%e6%8c%81%e4%b8%a6%e7%a9%a9%e5%ae%9a%e6%9b%b4%e6%96%b0" aria-label="這個段落的連結"></a></h3>
 <p>截至今天在 Github 上有高達 30K 的星星，如果你在開發上遇到問題在他們 <a href="https://discord.com/invite/s93b7Fv">discord社區</a>上發問也能很快得到解答。</p>
 <p><img src="https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/images/vue-vuex-vuetify-nuxt-explained-04.webp" width="1400" height="107" alt="強大的社群支持並穩定更新（圖 4）" loading="lazy" decoding="async"></p>
 <p>官方每個禮拜都會穩定更新版本，相比於其他 Vue 的 framework 是非常穩定的</p>
@@ -69,12 +69,12 @@ Nuxt.js
   <figcaption>image from:<a href="https://vuetifyjs.com/en/introduction/why-vuetify/#why-vuetify3f">https://vuetifyjs.com/en/introduction/why-vuetify/#why-vuetify3f</a></figcaption>
 </figure>
 
-<h3 id="-自由決定導入-component">➤ 自由決定導入 component<a class="h-anchor" href="#-%e8%87%aa%e7%94%b1%e6%b1%ba%e5%ae%9a%e5%b0%8e%e5%85%a5-component" aria-label="這個段落的連結"></a></h3>
+<h3 id="-自由決定導入-component">自由決定導入 component<a class="h-anchor" href="#-%e8%87%aa%e7%94%b1%e6%b1%ba%e5%ae%9a%e5%b0%8e%e5%85%a5-component" aria-label="這個段落的連結"></a></h3>
 <p>官方稱為 <strong>Auto treeshaking</strong>，在使用 Vuetify 時你可能覺得他非常『肥』，裡面包了一堆你專案中用不到 component，但因為有 <strong>Auto treeshaking </strong>的機制所以只會導入你有使用的 component</p>
 <h2 id="nuxtjs">Nuxt.js<a class="h-anchor" href="#nuxtjs" aria-label="這個段落的連結"></a></h2>
-<h3 id="-vuejs-的應用框架">➤ Vue.js 的應用框架<a class="h-anchor" href="#-vuejs-%e7%9a%84%e6%87%89%e7%94%a8%e6%a1%86%e6%9e%b6" aria-label="這個段落的連結"></a></h3>
+<h3 id="-vuejs-的應用框架">Vue.js 的應用框架<a class="h-anchor" href="#-vuejs-%e7%9a%84%e6%87%89%e7%94%a8%e6%a1%86%e6%9e%b6" aria-label="這個段落的連結"></a></h3>
 <p>把 webpack、vue loader、vuex、router 的設定都集中在一起，減少使用者的配置成本</p>
-<h3 id="-ssr-伺服器端渲染">➤ SSR 伺服器端渲染<a class="h-anchor" href="#-ssr-%e4%bc%ba%e6%9c%8d%e5%99%a8%e7%ab%af%e6%b8%b2%e6%9f%93" aria-label="這個段落的連結"></a></h3>
+<h3 id="-ssr-伺服器端渲染">SSR 伺服器端渲染<a class="h-anchor" href="#-ssr-%e4%bc%ba%e6%9c%8d%e5%99%a8%e7%ab%af%e6%b8%b2%e6%9f%93" aria-label="這個段落的連結"></a></h3>
 <p>因為由 server 端組成 HTML 後回傳，所以 Google 在 SEO 解析時可以很好的分析 DOM 元素，藉此提升網站的 SEO 水平</p>
 <blockquote>
 <p>Nuxt.js 也是能做 SPA(無SSR)、產生靜態網頁</p>

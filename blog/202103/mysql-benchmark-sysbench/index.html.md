@@ -12,7 +12,7 @@ sysbench 是我目前使用上最順手的一個測試工具，安裝、使用�
 
 ## 一、在 Mac 上操作 sysbench
 
-### ➤ 安裝 sysbench
+### 安裝 sysbench
 
 如果還沒安裝過 brew 請[參考官網](https://brew.sh/index_zh-tw)
 
@@ -30,7 +30,7 @@ sysbench — version
 
 我安裝的版本為 `1.0.20` 這個會跟下面的指令路徑有關，如果你安裝的是其他版本要自行修改這個版本路徑
 
-### ➤ 測試 MySQL 性能
+### 測試 MySQL 性能
 
 mac 的範例是本地端的測試，針對 read 這塊
 
@@ -115,7 +115,7 @@ cleanup
 
 ## 一、在 Ubuntu 上操作 sysbench
 
-### ➤ 安裝 sysbench
+### 安裝 sysbench
 
 ```
 sudo apt-get install sysbench -y
@@ -129,7 +129,7 @@ sysbench — version
 
 ```
 
-### ➤ 測試 MySQL 性能
+### 測試 MySQL 性能
 
 ubuntu 的範例是遠端的測試，針對 write這塊
 

@@ -228,7 +228,7 @@ signalTraps.forEach(type => {
 
 建議使用有分頁功能的終端機（如 iTerm2），這樣比較好觀察與操作。
 
-### ➤ 1 個 Producer VS 1 個 Consumer
+### 1 個 Producer VS 1 個 Consumer
 
 在專案根目錄下輸入 `node producer.js` 模擬「生產者傳送消息」，並在另一個分頁輸入 `node consumer.js` 模擬「消費者消費消息」。
 
@@ -236,19 +236,19 @@ signalTraps.forEach(type => {
 
 確認消息可以順利生產與消費後，記得透過「Crontrol + C」將程式關閉。
 
-### ➤ Kafka 持久化驗證
+### Kafka 持久化驗證
 
 這邊我們再做一個**持久化**的實驗，我們把「consumer.js」裏面 groupId 的值改為「test-group2」，來確認是否可以重新消費過去的消息。
 
 通過下圖我們可以得知 Kafka 的資料是持久化的，不會因為有消費者消費而消失；因此擴張的時候，只需要增加消費者來處理資料即可。
 
-### ➤ 1 個 Partition 的數據只允許 Consumer Group 中的某個 Consumer 消費
+### 1 個 Partition 的數據只允許 Consumer Group 中的某個 Consumer 消費
 
 接著我們來驗證，在 Producer 的 Partition 只有 1 個的情境下，是不是相同的 group_id 下只會有一個 consumer 進行消費；這次要開啟 3 個分頁，1 個模擬生產者，2 個模擬消費者。
 
 透過下面的 Gif，大家可以看到在同一個 Consumer Group 中，的確只會有一個 Consumer 進行消費。
 
-### ➤ 2 個 Partition VS 2 個 Consumer
+### 2 個 Partition VS 2 個 Consumer
 
 先前有說到 Partition 數量最好與 Consumer 的數量相等，這樣效率才會最高（一個人一個碗）；這裡一樣是開啟 3 個分頁，1 個模擬生產者，2 個模擬消費者；同時對「producer.js」裡面的程式做微調如下：
 

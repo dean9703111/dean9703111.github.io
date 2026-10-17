@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>License｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/license/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>License｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/license/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Sat, 19 Sep 2020 08:46:29 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/license/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day4】建立Node.js專案 &amp; 全面解析專案管家package.json</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-04/</link>
+      <pubDate>Sat, 19 Sep 2020 08:46:29 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-04/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>前幾天都在分享一些概念以及開發環境的設定，今天我們要正式開始寫程式惹～</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-04/images/fb-ig-crawler-day-04-og_hu_e96ee18ce758fcbc.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<h2 id="前情提要">前情提要<a class="h-anchor" href="#%e5%89%8d%e6%83%85%e6%8f%90%e8%a6%81" aria-label="這個段落的連結"></a></h2>
+<p>前幾天都在分享一些概念以及開發環境的設定，今天我們要正式開始寫程式惹～</p>
+<p>在開始前我會建議你在<a href="https://github.com/">github官網</a>上面開一個帳號，這個網站是一個管理專案非常方便的工具，透過版本控管，你可以很清楚自己每天做了什麼事情，如果 commit 寫詳細一點會讓你未來想要復活某一個已經刪除的功能時有很大幫助(或是找出 bug 兇手時很有用XD)</p>
+<p>昨天所提到 Clean Code 的議題是困擾工程師的日常，我每天也還在為了達到這些目標而努力，而想要掌握 Clean Code 最快的方法就是實戰，你實戰的經驗越多，你的程式也會越朝著 Clean Code 前進</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-建立-nodejs-專案">1. 建立 Node.js 專案<a class="h-anchor" href="#1-%e5%bb%ba%e7%ab%8b-nodejs-%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="2-在終端機下指令執行-nodejs">2. 在終端機下指令執行 Node.js<a class="h-anchor" href="#2-%e5%9c%a8%e7%b5%82%e7%ab%af%e6%a9%9f%e4%b8%8b%e6%8c%87%e4%bb%a4%e5%9f%b7%e8%a1%8c-nodejs" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="3-認識-packagejson">3. 認識 package.json<a class="h-anchor" href="#3-%e8%aa%8d%e8%ad%98-packagejson" aria-label="這個段落的連結"></a></h3>
+<p>3.1 了解 package.json 各項參數的意義<br>3.2 善用 scipts(腳本) 來執行 Node.js<br>3.3 使用 license 保護自己的權益</p>
+<hr>
+<h2 class="h-nomark" id="1-建立-nodejs-專案-1">1. 建立 Node.js 專案<a class="h-anchor" href="#1-%e5%bb%ba%e7%ab%8b-nodejs-%e5%b0%88%e6%a1%88-1" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>
+<p>請你先建立好專案的資料夾，並使用 VScode 打開它</p>
+</li>
+<li>
+<p>接著新增一個 <strong>index.js</strong> 的檔案，內容如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">function</span> helloWorld () { <span style="color:#8b949e;font-style:italic">// 創建函式
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> content <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;helloWorld&#39;</span> <span style="color:#8b949e;font-style:italic">// 給變數內容
+</span></span></span><span style="display:flex;"><span>    console.log(content) <span style="color:#8b949e;font-style:italic">// 用日誌將內容印出來
+</span></span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>helloWorld() <span style="color:#8b949e;font-style:italic">// 觸發
+</span></span></span></code></pre></div></li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-在終端機下指令執行-nodejs-1">2. 在終端機下指令執行 Node.js<a class="h-anchor" href="#2-%e5%9c%a8%e7%b5%82%e7%ab%af%e6%a9%9f%e4%b8%8b%e6%8c%87%e4%bb%a4%e5%9f%b7%e8%a1%8c-nodejs-1" aria-label="這個段落的連結"></a></h2>
+<p><strong>STEP1：</strong> 新增完檔案後打開終端機(Termial)如下圖</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-04/images/fb-ig-crawler-day-04-01.webp" width="1024" height="106" alt="2. 在終端機下指令執行 Node.js（圖 1）" loading="lazy" decoding="async"></p>
+<p><strong>STEP2：</strong> 在專案資料夾的終端機(Terminal)輸入指令並按下 Enter 執行</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>node index.js
+</span></span></code></pre></div><p><strong>STEP3：</strong> 如果有印出 <code>helloWorld</code> 的字串那就代表你踏出成功的第一步了</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-04/images/fb-ig-crawler-day-04-02.webp" width="1024" height="54" alt="2. 在終端機下指令執行 Node.js（圖 2）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 class="h-nomark" id="3-認識-packagejson-1">3. 認識 package.json<a class="h-anchor" href="#3-%e8%aa%8d%e8%ad%98-packagejson-1" aria-label="這個段落的連結"></a></h2>
+<p>他是一種<code>描述專案的檔案，裡面包含你專案的各項資訊(名稱、描述、版本、作者、協議...)</code><br>在昨天的文章有提到<strong>不要重複造輪子</strong>，多使用別人已經完善的套件，一個專案除了你自己的程式外通常還需要大量引入其他人寫的程式套件，<code>package.json 能幫助你管理這些套件的版本</code>(明天文章會詳細說明)</p>
+<ul>
+<li>
+<p><strong>初始化 package.json</strong><br>請打開終端機(terminal)輸入如下指令，輸入後系統會要求你填寫這個專案相關的參數(這些參數之後都可以修改)</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm init
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="31-了解-packagejson-各項參數的意義">3.1 了解 package.json 各項參數的意義<a class="h-anchor" href="#31-%e4%ba%86%e8%a7%a3-packagejson-%e5%90%84%e9%a0%85%e5%8f%83%e6%95%b8%e7%9a%84%e6%84%8f%e7%be%a9" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>真實的 package.json 不可以用 //來當備註喔，下面範例加上備註只是為了讓大家方便理解</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;name&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;crawler&#34;</span>,<span style="color:#8b949e;font-style:italic">// 專案名稱，全部小寫，不允許空格
+</span></span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;version&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;0.0.1&#34;</span>,<span style="color:#8b949e;font-style:italic">// 須符合x.x.x的格式
+</span></span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;description&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;FB &amp; IG 爬蟲30天鐵人文章&#34;</span>,<span style="color:#8b949e;font-style:italic">//專案描述
+</span></span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;author&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;dean lin&#34;</span>,<span style="color:#8b949e;font-style:italic">//作者名字
+</span></span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;dependencies&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {},<span style="color:#8b949e;font-style:italic">//在正式環境中會用到的pacakge
+</span></span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;devDependencies&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {},<span style="color:#8b949e;font-style:italic">//在開發、測試環境中會用到的pacakge
+</span></span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;scripts&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {},<span style="color:#8b949e;font-style:italic">//你可以撰寫支援的command作爲腳本
+</span></span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;main&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;index.js&#34;</span>,<span style="color:#8b949e;font-style:italic">//入口檔案
+</span></span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;license&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;MIT&#34;</span><span style="color:#8b949e;font-style:italic">//專案協議
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>參數中的 <strong>scripts</strong> 能增加工作效率、<strong>license</strong> 關乎權益，這兩個在下方會特別介紹</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="32-善用-scripts腳本-執行程式">3.2 善用 scripts(腳本) 執行程式<a class="h-anchor" href="#32-%e5%96%84%e7%94%a8-scripts%e8%85%b3%e6%9c%ac-%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>隨著專案的成長，執行程式需要輸入的指令會越來越複雜，但記住這些指令並且正確無誤的輸入實在太考驗人類的記憶力了；我們應該要善用 scripts 的功能，有了他我們可以<strong>把精力放在寫程式而不是浪費時間在記住、輸入指令上面</strong></p>
+<ul>
+<li>
+<p><strong>腳本結構</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;scripts&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;script名稱&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;你要執行的command(指令)&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;script名稱2&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;你要執行的command(指令)&#34;</span>,
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p><strong>優點</strong></p>
+<ol>
+<li>透過 scripts 讓指令長度大幅縮減</li>
+<li>可自定義多組 script 名稱，以處理不同的需求</li>
+<li>可以在 package.json 裡面管理指令，再也不用特別開一個記事本來儲存了XD</li>
+</ol>
+</li>
+<li>
+<p><strong>筆者經驗範例</strong><br>下面是筆者前端網頁在 merge branch 時所需要下的指令，我想如果是人工來下應該會崩潰吧？</p>
+<ul>
+<li>
+<p><strong>執行內容</strong>：<code>移除local端套件→重新安裝套件→更新套件→根據開發環境執行</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>rm -rf node_modules package-lock.json .nuxt yarn.lock yarn-error.log <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> yarn <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> yarn upgrade <span style="color:#ff7b72;font-weight:bold">&amp;&amp;</span> yarn dev
+</span></span></code></pre></div></li>
+<li>
+<p>但是改寫成腳本後你只需要輸入指令 <code>yarn clean_start</code> 就能執行嚕</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;scripts&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;clean_start&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;rm -rf node_modules package-lock.json .nuxt yarn.lock yarn-error.log &amp;&amp; yarn &amp;&amp; yarn upgrade &amp;&amp; yarn dev&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong>撰寫本專案執行的 scripts</strong></p>
+<ul>
+<li>
+<p>我們實際在 package.json 增加一個 scripts，並用這個 scripts 讓終端機(Terminal)印出helloWorld</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;scripts&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;start&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;node index.js&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p>使用 <strong>npm</strong> 執行 scripts</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm start
+</span></span></code></pre></div></li>
+<li>
+<p>如果你有乖乖安裝 <strong>yarn</strong> 的環境，也可以用它執行喔</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div></li>
+</ul>
+<p>未來隨著專案成長 scripts 也會隨著需求改寫，就讓我們跟著專案一起做中學吧～</p>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="32-使用-license-保護自己的權益">3.2 使用 license 保護自己的權益<a class="h-anchor" href="#32-%e4%bd%bf%e7%94%a8-license-%e4%bf%9d%e8%ad%b7%e8%87%aa%e5%b7%b1%e7%9a%84%e6%ac%8a%e7%9b%8a" aria-label="這個段落的連結"></a></h3>
+<p>我想應該不少人建立 package.json 時都是不停按下一步使用默認參數，但如果你正在開發一個商業用專案，卻把這份專案的 license 設定成 BSD 這類可以讓其他人改寫甚至商業化的 license 就搞笑了</p>
+<p><code>選擇 license 前請了解他的作用範圍，因為他會影響到這份專案的使用權益</code></p>
+<ul>
+<li>
+<p><strong>依據流程圖釐清自己的需求</strong>來做選擇，<a href="https://progressbar.tw/posts/61">圖片來源</a></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-04/images/fb-ig-crawler-day-04-03.webp" width="800" height="491" alt="3.2 使用 license 保護自己的權益（圖 3）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p><strong>用表格看是否符合需求</strong>，<a href="https://noob.tw/open-source-licenses/">表格來源</a></p>
+<table>
+  <thead>
+      <tr>
+          <th>條款</th>
+          <th>GPL</th>
+          <th>LGPL</th>
+          <th>BSD</th>
+          <th>APACHE</th>
+          <th>MIT</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>公開原始碼</td>
+          <td>✓</td>
+          <td>✓</td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>以同樣方式授權</td>
+          <td>✓</td>
+          <td>✓</td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>標註修改的部分</td>
+          <td>✓</td>
+          <td>✓</td>
+          <td></td>
+          <td>✓</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>必須包含 Copyright</td>
+          <td>✓</td>
+          <td>✓</td>
+          <td>✓</td>
+          <td>✓</td>
+          <td>✓</td>
+      </tr>
+      <tr>
+          <td>必須包含 License</td>
+          <td>✓</td>
+          <td>✓</td>
+          <td></td>
+          <td>✓</td>
+          <td>✓</td>
+      </tr>
+  </tbody>
+</table>
+</li>
+</ul>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<p>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day4">這裡</a>找到喔</p>
+<blockquote>
+<p>如果大家對於文章的內容有任何想法歡迎討論，希望這篇文章有給正在學習程式的人一些幫助與方向</p>
+</blockquote>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://progressbar.tw/posts/3">開始使用 GitHub， 註冊與建立repo</a></li>
+<li><a href="https://choosealicense.com/">Choose an open source license</a></li>
+<li><a href="https://noob.tw/open-source-licenses/">常見的五個開源專案授權條款，使用軟體更自由</a></li>
+<li><a href="https://progressbar.tw/posts/61">在開源時代的興起下，如何透過License共享並保有權益</a></li>
+<li><a href="http://jamestw.logdown.com/posts/1378697-egghead-how-to-use-npm-scripts-as-your-build-tool">如何使用 npm script 變成你的建立工具</a></li>
+</ol>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-04/images/fb-ig-crawler-day-04-04.webp" width="1024" height="233" alt="參考資源（圖 4）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

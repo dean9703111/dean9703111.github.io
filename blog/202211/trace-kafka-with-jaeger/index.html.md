@@ -40,7 +40,7 @@
 
 因此在某些情況下，自定義追蹤的 Parent & Child 關聯是有必要的；下面筆者擷取關鍵的程式碼來做說明：
 
-### ➤ 透過 W3CTraceContextPropagator 把 span 資訊 inject 到 carrier
+### 透過 W3CTraceContextPropagator 把 span 資訊 inject 到 carrier
 
 ```
 let span = tracer.startSpan('example');
@@ -55,7 +55,7 @@ span.end()
 
 ```
 
-### ➤ 透過 W3CTraceContextPropagator extract carrier 資訊，使其成為能使用的 Context
+### 透過 W3CTraceContextPropagator extract carrier 資訊，使其成為能使用的 Context
 
 ```
 const propagator = new W3CTraceContextPropagator();
@@ -92,7 +92,7 @@ span.end()
 
 上面是比較完整的業務邏輯，建議讀者可以自行實做看看，下面筆者就單純示範透過 Kafka 傳遞 carrier 資訊的部分：
 
-### ➤ 在 Producer 的 value 放上 carrier 的資訊（記得要轉為字串）
+### 在 Producer 的 value 放上 carrier 的資訊（記得要轉為字串）
 
 ```
 await producer.connect()
@@ -107,7 +107,7 @@ await producer
 
 ```
 
-### ➤ 從 Consumer 收到的 message 中取出 carrier 的資訊
+### 從 Consumer 收到的 message 中取出 carrier 的資訊
 
 ```
 await consumer.connect()

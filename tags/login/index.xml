@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Login｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/login/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Login｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/login/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Sat, 26 Sep 2020 08:44:52 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/login/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day11】舉一反三，帶你了解IG爬蟲不可忽略的細節</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-11/</link>
+      <pubDate>Sat, 26 Sep 2020 08:44:52 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-11/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>有了 Facebook 爬蟲的經驗後，我相信這篇大家是有能力獨自完成的，建議大家先用自己的方式來完成今日目標，這篇文章適合實作遇到問題或是你實作完成後再來參考</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-og_hu_639b6a34d672f5c9.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>學習，從複製開始</p>
+</blockquote>
+<h2 id="筆者有話先說">筆者有話先說<a class="h-anchor" href="#%e7%ad%86%e8%80%85%e6%9c%89%e8%a9%b1%e5%85%88%e8%aa%aa" aria-label="這個段落的連結"></a></h2>
+<p>有了 Facebook 爬蟲的經驗後，我相信這篇大家是有能力獨自完成的，<code>建議大家先用自己的方式來完成今日目標</code>，這篇文章適合實作遇到問題或是你實作完成後再來參考</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-完成-ig-自動登入">1. 完成 IG 自動登入<a class="h-anchor" href="#1-%e5%ae%8c%e6%88%90-ig-%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5" aria-label="這個段落的連結"></a></h3>
+<p>1.1 分析 IG 登入頁面的元件<br>1.2 改用 css 抓取元件，完成 IG 自動登入</p>
+<h3 class="h-nomark" id="2-從畫面判斷使用者是否登入成功">2. 從畫面判斷使用者是否登入成功<a class="h-anchor" href="#2-%e5%be%9e%e7%95%ab%e9%9d%a2%e5%88%a4%e6%96%b7%e4%bd%bf%e7%94%a8%e8%80%85%e6%98%af%e5%90%a6%e7%99%bb%e5%85%a5%e6%88%90%e5%8a%9f" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="3-前往-ig-帳號並取得追蹤人數">3. 前往 IG 帳號並取得追蹤人數<a class="h-anchor" href="#3-%e5%89%8d%e5%be%80-ig-%e5%b8%b3%e8%99%9f%e4%b8%a6%e5%8f%96%e5%be%97%e8%bf%bd%e8%b9%a4%e4%ba%ba%e6%95%b8" aria-label="這個段落的連結"></a></h3>
+<p>3.1 了解響應式網頁對爬蟲的影響<br>3.2 設定瀏覽器開啟時的視窗大小<br>3.3 完成前往 IG 帳號並取得追蹤人數的程式</p>
+<hr>
+<h2 class="h-nomark" id="1-ig-自動登入">1. IG 自動登入<a class="h-anchor" href="#1-ig-%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-分析-ig-登入頁面的元件">1.1 分析 IG 登入頁面的元件<a class="h-anchor" href="#11-%e5%88%86%e6%9e%90-ig-%e7%99%bb%e5%85%a5%e9%a0%81%e9%9d%a2%e7%9a%84%e5%85%83%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>我在反覆使用 <a href="https://www.instagram.com/accounts/login">IG 登入</a> 時發現<code>登入的畫面偶爾會長不一樣</code>(如下圖)導致Xpath路徑錯誤</p>
+<table>
+  <thead>
+      <tr>
+          <th>版本1</th>
+          <th>版本2</th>
+      </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-01.webp" width="1400" height="1267" alt="Imgur" loading="lazy" decoding="async"></p>
+<p>|</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-02.webp" width="1400" height="1267" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>先<code>進入開發者模式</code>確認紅框內元件的特徵</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-03.webp" width="1400" height="1267" alt="Imgur" loading="lazy" decoding="async"></p>
+<ul>
+<li>在下圖我們觀察到 <strong>電話號碼、用戶名稱或電子郵件</strong> 以及 <strong>密碼</strong> 這兩個元件的 <strong>共通點</strong>：
+<ol>
+<li>
+<p>都是 <code>input 的 html 標籤</code></p>
+</li>
+<li>
+<p>用 <code>name 這個 attribute</code> 來表示他們的作用</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-04.webp" width="968" height="142" alt="1.1 分析 IG 登入頁面的元件（圖 4）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-05.webp" width="946" height="142" alt="1.1 分析 IG 登入頁面的元件（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+<li><strong>登入按鈕</strong> 則用以下條件來取出：
+<ol>
+<li>
+<p>使用 <code>button 的 html 標籤</code></p>
+</li>
+<li>
+<p>用 <code>type 這個 attribute</code> 來表示他要執行的動作</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-06.webp" width="1024" height="302" alt="1.1 分析 IG 登入頁面的元件（圖 6）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="12-改用-css-抓取元件完成-ig-自動登入">1.2 改用 css 抓取元件，完成 IG 自動登入<a class="h-anchor" href="#12-%e6%94%b9%e7%94%a8-css-%e6%8a%93%e5%8f%96%e5%85%83%e4%bb%b6%e5%ae%8c%e6%88%90-ig-%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>根據上面的分析後我們<code>改用 css 抓取 IG 登入的元件</code>來操作</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//填入ig登入資訊
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> ig_username_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;input[name=&#39;username&#39;]&#34;</span>)));
+</span></span><span style="display:flex;"><span>ig_username_ele.sendKeys(ig_username)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> ig_password_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;input[name=&#39;password&#39;]&#34;</span>)));
+</span></span><span style="display:flex;"><span>ig_password_ele.sendKeys(ig_userpass)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//抓到登入按鈕然後點擊
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> login_elem <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;button[type=&#39;submit&#39;]&#34;</span>)))
+</span></span><span style="display:flex;"><span>login_elem.click()
+</span></span></code></pre></div><blockquote>
+<ul>
+<li>
+<p>別忘記在 .env檔填寫 IG登入的帳號密碼</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#填寫自己登入IG的真實資訊(建議開小帳號來實驗，因為帳號使用太頻繁會被官方鎖住)</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">IG_USERNAME</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;ig username&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">IG_PASSWORD</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;ig password&#39;</span>
+</span></span></code></pre></div></li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="2-判斷使用者是否登入成功">2. 判斷使用者是否登入成功<a class="h-anchor" href="#2-%e5%88%a4%e6%96%b7%e4%bd%bf%e7%94%a8%e8%80%85%e6%98%af%e5%90%a6%e7%99%bb%e5%85%a5%e6%88%90%e5%8a%9f" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>
+<p>與 FB 類似，<code>IG 要登入之後才會有右上角功能列</code>，這裡我使用他作為判斷登入與否</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-07.webp" width="1024" height="1013" alt="2. 判斷使用者是否登入成功（圖 7）" loading="lazy" decoding="async"></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//登入後才會有右上角功能列，我們以這個來判斷是否登入
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;react-root&#34;]//*[contains(@class,&#34;_47KiJ&#34;)]`</span>)))
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="3-抓出-ig-追蹤人數">3. 抓出 IG 追蹤人數<a class="h-anchor" href="#3-%e6%8a%93%e5%87%ba-ig-%e8%bf%bd%e8%b9%a4%e4%ba%ba%e6%95%b8" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="31-了解響應式網頁對爬蟲的影響">3.1 了解響應式網頁對爬蟲的影響<a class="h-anchor" href="#31-%e4%ba%86%e8%a7%a3%e9%9f%bf%e6%87%89%e5%bc%8f%e7%b6%b2%e9%a0%81%e5%b0%8d%e7%88%ac%e8%9f%b2%e7%9a%84%e5%bd%b1%e9%9f%bf" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>響應式網頁設計(RWD)是什麼？</strong>：網頁會根據瀏覽器解析度的不同重新排版，同一個網頁你在手機、平板、電腦看到的畫面配置都是不一樣的</li>
+<li>如果你跟我一樣充滿實驗精神，你會發現 <code>IG 的頁面會隨著螢幕寬度更改而重新排版</code>，Xpath 的路徑也會跟著改變
+<ul>
+<li>
+<p><strong>寬螢幕</strong> Xpath</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-08.webp" width="640" height="94" alt="Imgur" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>//*[@id=&#34;react-root&#34;]/section/main/div/header/section/ul/li[2]/a/span
+</code></pre></li>
+<li>
+<p><strong>窄螢幕</strong> Xpath</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-09.webp" width="640" height="71" alt="Imgur" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>//*[@id=&#34;react-root&#34;]/section/main/div/ul/li[2]/a/span
+</code></pre></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="32-設定瀏覽器開啟時的視窗大小">3.2 設定瀏覽器開啟時的視窗大小<a class="h-anchor" href="#32-%e8%a8%ad%e5%ae%9a%e7%80%8f%e8%a6%bd%e5%99%a8%e9%96%8b%e5%95%9f%e6%99%82%e7%9a%84%e8%a6%96%e7%aa%97%e5%a4%a7%e5%b0%8f" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>為了避免因為螢幕寬度不一樣造成 Xpath 不同，所以我們要<code>設定瀏覽器開啟時的視窗大小</code>(本專案以寬螢幕作為範例)，這樣才能保證你的爬蟲在不同電腦有一樣的執行結果</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 建立browser的類型
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> driver <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> <span style="color:#ff7b72">new</span> webdriver.Builder().forBrowser(<span style="color:#a5d6ff">&#34;chrome&#34;</span>).withCapabilities(options).build();
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//考慮到ig在不同螢幕寬度時的Xpath不一樣，所以我們要在這裡設定統一的視窗大小
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> driver.manage().window().setRect({ width<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1280</span>, height<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">800</span>, x<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">0</span>, y<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">0</span> });
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="33-完成前往-ig-帳號並取得追蹤人數的程式">3.3 完成前往 IG 帳號並取得追蹤人數的程式<a class="h-anchor" href="#33-%e5%ae%8c%e6%88%90%e5%89%8d%e5%be%80-ig-%e5%b8%b3%e8%99%9f%e4%b8%a6%e5%8f%96%e5%be%97%e8%bf%bd%e8%b9%a4%e4%ba%ba%e6%95%b8%e7%9a%84%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>在固定螢幕寬度後，使用 Xpath 就能穩定的抓出帳號追蹤人數</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//登入成功後要前往粉專頁面
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fanpage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.instagram.com/baobaonevertell/&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> driver.get(fanpage)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> driver.sleep(<span style="color:#a5d6ff">3000</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> ig_trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>;<span style="color:#8b949e;font-style:italic">//這是紀錄IG追蹤人數
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> ig_trace_xpath <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`//*[@id=&#34;react-root&#34;]/section/main/div/header/section/ul/li[2]/a/span`</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> ig_trace_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(ig_trace_xpath)))
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// ig因為當人數破萬時文字不會顯示，所以改抓title
+</span></span></span><span style="display:flex;"><span>ig_trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> ig_trace_ele.getAttribute(<span style="color:#a5d6ff">&#39;title&#39;</span>)
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">`追蹤人數：</span><span style="color:#a5d6ff">${</span>ig_trace<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>driver.quit();
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div></li>
+<li>
+<p>你會看到 Instagram 自動登入 → 跳轉到指定帳號 → 關閉</p>
+</li>
+<li>
+<p>確認輸出正確的粉專追蹤人數你就成功嚕～</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-10.webp" width="1024" height="133" alt="執行程式（圖 10）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<p>到目前為止我們已經可以抓出 FB &amp; IG 粉專的追蹤人數了，充滿好奇心的讀者可以先試著看看利用爬蟲爬完 FB 粉專後繼續爬 IG</p>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day11">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天FB爬蟲的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day10_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來實作今天的功能喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>調整你.env檔填上IG登入資訊</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://stackoverflow.com/a/49940401">Filling in login forms in Instagram using selenium and webdriver (chrome) python OSX</a></li>
+</ol>
+<blockquote>
+<p><em>免責聲明:文章技術僅抓取公開數據作爲研究，任何組織和個人不得以此技術盜取他人智慧財產、造成網站損害，否則一切后果由該組織或個人承擔。作者不承擔任何法律及連帶責任！</em></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-11.webp" width="1024" height="233" alt="參考資源（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

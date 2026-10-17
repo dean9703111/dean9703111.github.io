@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Http 狀態碼｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/http-%E7%8B%80%E6%85%8B%E7%A2%BC/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Http 狀態碼｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/http-%E7%8B%80%E6%85%8B%E7%A2%BC/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Mon, 12 Oct 2020 08:33:53 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/http-%E7%8B%80%E6%85%8B%E7%A2%BC/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</title>
+      <link>https://deanlin.net/blog/202010/fb-ig-crawler-day-27/</link>
+      <pubDate>Mon, 12 Oct 2020 08:33:53 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/fb-ig-crawler-day-27/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>在通知這個部分我選擇使用 LINE Notify 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager... 等通訊軟體來通知喔</description>
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-og_hu_f8605744d95f3eff.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>爬蟲完成後沒發出通知，就像是黯然銷魂飯少了洋蔥</p>
+</blockquote>
+<h2 id="為什麼通知很重要">為什麼通知很重要？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e9%80%9a%e7%9f%a5%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>在爬蟲的運作完全自動化的狀態下你需要<code>透過接收通知，知道爬蟲執行完畢</code></li>
+<li>通知的內容要簡述這次爬蟲的狀況，因為實際上使用者只有在要報告或是寫文章的時候才會去 Google Sheets 看爬蟲的詳細數據，平常他只需要<code>知道爬蟲有沒有穩定執行</code>就好</li>
+</ol>
+<p>在通知這個部分我<code>選擇使用 LINE Notify</code> 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager&hellip; 等通訊軟體來通知喔</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-取得-line-notify-權杖">1. 取得 LINE Notify 權杖<a class="h-anchor" href="#1-%e5%8f%96%e5%be%97-line-notify-%e6%ac%8a%e6%9d%96" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="2-使用-postman-測試-line-notify">2. 使用 POSTMAN 測試 LINE Notify<a class="h-anchor" href="#2-%e4%bd%bf%e7%94%a8-postman-%e6%b8%ac%e8%a9%a6-line-notify" aria-label="這個段落的連結"></a></h3>
+<p>2.1 為什麼要先用 POSTMAN 測試 LINE Notify 呢？<br>2.2 用 POSTMAN 發出 LINE 的訊息<br>2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思</p>
+<hr>
+<h2 class="h-nomark" id="1-取得-line-notify-權杖-1">1. 取得 LINE Notify 權杖<a class="h-anchor" href="#1-%e5%8f%96%e5%be%97-line-notify-%e6%ac%8a%e6%9d%96-1" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>
+<p>請以 LINE 帳號<a href="https://notify-bot.line.me/zh_TW/">登入 LINE Notify</a>，登入後選擇 <code>個人頁面</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01.webp" width="1024" height="425" alt="1. 取得 LINE Notify 權杖（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>為了要獲得控制 LINE Notify 發訊息的權限，我們要 <code>發行權杖</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-02.webp" width="1024" height="729" alt="1. 取得 LINE Notify 權杖（圖 2）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在發行權杖的彈窗中，<strong>權杖名稱</strong>請<code>填寫與功能相關的名稱</code>，<strong>接收通知的聊天室</strong>可選擇 <code>1對1、任意聊天室</code> 這兩種，確認無誤後按 <code>發行</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-03.webp" width="1024" height="728" alt="1. 取得 LINE Notify 權杖（圖 3）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>接著我們要將這組權杖(Token) <code>複製</code> 下來</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-04.webp" width="1024" height="566" alt="1. 取得 LINE Notify 權杖（圖 4）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>關閉彈窗後能看到 <strong>已連動的服務中</strong> 有我們剛剛新增的服務</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-05.webp" width="1024" height="566" alt="1. 取得 LINE Notify 權杖（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>同時你收到 LINE Notify 帳號啟用權杖的訊息</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-06.webp" width="1024" height="603" alt="1. 取得 LINE Notify 權杖（圖 6）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>將發行的權杖(Token)加入 <strong>.env</strong> 環境檔，在明天的教學會使用到</p>
+<h3 id="envexmaple">.env.exmaple<a class="h-anchor" href="#envexmaple" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code>#放LINE Notify申請的權杖
+LINE_TOKEN=&#39;XXXXXX&#39;
+</code></pre></li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-使用-postman-測試-line-notify-1">2. 使用 POSTMAN 測試 LINE Notify<a class="h-anchor" href="#2-%e4%bd%bf%e7%94%a8-postman-%e6%b8%ac%e8%a9%a6-line-notify-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-為什麼要先用-postman-測試-line-notify-呢">2.1 為什麼要先用 POSTMAN 測試 LINE Notify 呢？<a class="h-anchor" href="#21-%e7%82%ba%e4%bb%80%e9%ba%bc%e8%a6%81%e5%85%88%e7%94%a8-postman-%e6%b8%ac%e8%a9%a6-line-notify-%e5%91%a2" aria-label="這個段落的連結"></a></h3>
+<p>說明這個問題之前，我們先來探討為什麼 POSTMAN 會這麼被工程師推崇，在這我歸納成以下幾點：</p>
+<ol>
+<li>對 <strong>後端工程師</strong> 而言，可以向合作夥伴證明自己寫的 api 沒有在唬爛，真的可以 work</li>
+<li>對 <strong>前端工程師、App工程師、有使用 api 需求的人</strong> 來說，能在串接 api 前先用 POSTMAN 確認這些 api 真的可以 work</li>
+<li>有了這個工具作輔助，我們就能<code>將前後端責任歸屬的很清楚</code>。ex：如果 POSTMAN 上面可以正常 work，那前端就要去思考自己 api 哪裡沒串好</li>
+<li><code>工具操作難度極低</code>，只需要對網路的世界有基礎的認知就能快速上手</li>
+</ol>
+<p>所以我們先用 POSTMAN 測試 LINE Notify 的理由是：</p>
+<ol>
+<li>確保 LINE Notify api <code>執行所需的 Request 參數、Respone 的結果與說明書一致</code>（這點非常重要，因為我看過很多 api 回傳的結構跟說明書完全不一樣）</li>
+<li><code>在一行程式都不用寫</code>的狀態下測試所有的可能性</li>
+<li>在 POSTMAN 驗證後就能專心寫程式，因為<code>如果程式無法發出 LINE 的通知一定是自己的問題</code></li>
+</ol>
+<blockquote>
+<h4 id="補充">補充：<a class="h-anchor" href="#%e8%a3%9c%e5%85%85" aria-label="這個段落的連結"></a></h4>
+<ul>
+<li><strong>POSTMAN</strong> 在工程師的世界中素有 <code>API測試神器</code>之稱，如果你對 POSTMAN 一無所知的話你可以先透過<a href="https://tw.alphacamp.co/blog/postman-api-tutorial-for-beginners">這篇文章</a>了解一下他是做什麼的</li>
+<li>他可以直接用 Gmail帳號登入在<a href="https://www.postman.com/">網頁使用</a>，也能<a href="https://www.postman.com/downloads/">下載桌面版 App</a>，相同帳號的操作記錄在兩邊都會同步</li>
+</ul>
+</blockquote>
+<hr>
+<h3 class="h-nomark" id="22-用-postman-發出-line-的訊息">2.2 用 POSTMAN 發出 LINE 的訊息<a class="h-anchor" href="#22-%e7%94%a8-postman-%e7%99%bc%e5%87%ba-line-%e7%9a%84%e8%a8%8a%e6%81%af" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>設定 Request 的參數
+<ul>
+<li>
+<p><strong>URL</strong>：https://notify-api.line.me/api/notify</p>
+</li>
+<li>
+<p><strong>Method</strong>：POST</p>
+</li>
+<li>
+<p><strong>Authorization</strong>：</p>
+<ul>
+<li><strong>TYPE</strong>：Bearer Token</li>
+<li><strong>Token</strong>：填入你剛剛在 LINE Notify 申請的權杖</li>
+</ul>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-07.webp" width="912" height="419" alt="2.2 用 POSTMAN 發出 LINE 的訊息（圖 7）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p><strong>Body</strong>：</p>
+<ul>
+<li><strong>form-data</strong>：
+<table>
+  <thead>
+      <tr>
+          <th>key</th>
+          <th>value</th>
+          <th>DESCRIPTION</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>message</td>
+          <td>來自寶寶的爬蟲通知</td>
+          <td>純文字(必填)</td>
+      </tr>
+      <tr>
+          <td>stickerPackageId</td>
+          <td>2</td>
+          <td>貼圖的PackageId</td>
+      </tr>
+      <tr>
+          <td>stickerId</td>
+          <td>144</td>
+          <td>貼圖的Id</td>
+      </tr>
+      <tr>
+          <td>imageFile</td>
+          <td>icon.png</td>
+          <td>電腦上的圖片檔</td>
+      </tr>
+  </tbody>
+</table>
+</li>
+</ul>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-08.webp" width="896" height="420" alt="2.2 用 POSTMAN 發出 LINE 的訊息（圖 8）" loading="lazy" decoding="async"></p>
+<p>DESCRIPTION 是我對參數描述，實作上可以不避填<br>如果你想深入的了解可以參考<a href="https://notify-bot.line.me/doc/en/">官方文件</a></p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>完成 Request 參數填寫後按下 <code>Send</code> 發出 LINE 訊息
+<ul>
+<li>
+<p>看到 Response 的結果，status 為 200 代表傳送成功</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-09.webp" width="836" height="189" alt="2.2 用 POSTMAN 發出 LINE 的訊息（圖 9）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在發行權杖的聊天室中，看到 POSTMAN 傳送的 <strong>訊息、貼圖、圖片</strong></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-10.webp" width="760" height="880" alt="2.2 用 POSTMAN 發出 LINE 的訊息（圖 10）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 class="h-nomark" id="23-透過-postman-傳送錯誤參數來了解-http狀態碼的意思">2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思<a class="h-anchor" href="#23-%e9%80%8f%e9%81%8e-postman-%e5%82%b3%e9%80%81%e9%8c%af%e8%aa%a4%e5%8f%83%e6%95%b8%e4%be%86%e4%ba%86%e8%a7%a3-http%e7%8b%80%e6%85%8b%e7%a2%bc%e7%9a%84%e6%84%8f%e6%80%9d" aria-label="這個段落的連結"></a></h3>
+<p>我們剛剛在 POSTMAN 的 Response 看到 HTTP狀態碼為 200，接下來我們故意做一些錯誤測試來看看會有什麼樣的 Response</p>
+<blockquote>
+<p><code>請注意並不是每隻 api Response data 中的 status 都等於 HTTP狀態碼</code>，只是 LINE Notify 剛好是依照這個邏輯顯示，我們可以用它來幫助我們對 HTTP狀態碼的了解</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-11.webp" width="829" height="189" alt="2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思（圖 11）" loading="lazy" decoding="async"></p>
+</blockquote>
+<ol>
+<li><strong>不填寫 LINE Notify 的權杖</strong>
+<ul>
+<li>
+<p>HTTP狀態碼為 401，代表需要授權才能使用</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-12.webp" width="919" height="506" alt="2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思（圖 12）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+<li><strong>在 Body 中不填寫 message 的參數</strong>
+<ul>
+<li>
+<p>HTTP狀態碼為 400，意味伺服器收到無效的語法</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-13.webp" width="896" height="643" alt="2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思（圖 13）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+</ol>
+<p>透過上面的範例回傳的資訊，我們可以了解到不同 HTTP狀態碼的意思：<code>200 代表成功、400可能是參數錯誤、401是沒有授權</code>，當然 HTTP狀態碼不只這些，如果你想更深入的了解可以參考<a href="https://blog.poychang.net/http-status-code/">這篇文章</a></p>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://dotblogs.com.tw/TingI/2019/02/12/182723">[API連線測試]使用Postman測試LINE Notify的訊息推送</a></li>
+<li><a href="https://notify-bot.line.me/doc/en/">LINE Notify API Document</a></li>
+<li><a href="https://tw.alphacamp.co/blog/postman-api-tutorial-for-beginners">Postman 新手教學</a></li>
+<li><a href="https://blog.poychang.net/http-status-code/">HTTP 狀態碼一覽表</a></li>
+</ol>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-14.webp" width="1024" height="233" alt="參考資源（圖 14）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

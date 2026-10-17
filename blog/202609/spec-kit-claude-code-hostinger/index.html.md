@@ -88,7 +88,7 @@
 
 另外我們會使用到 Node.js 開發專案、Git 版本控制、GitHub 做雲端同步，並用 Docker 啟動資料庫容器。
 
-### ➤ 環境檢查
+### 環境檢查
 
 這邊先打開你熟悉的程式碼編輯器，我用的是 Cursor，你想用 VS Code、Antigravity 也都可以
 
@@ -103,7 +103,7 @@ nvm -v; node -v; git -v; docker -v
 
 如果版號都有顯示，就代表安裝完成
 
-### ➤ 安裝 Python 與 uv
+### 安裝 Python 與 uv
 
 接下來要安裝 Python 與 uv，因為 Spec-Kit 的指令列工具是用 Python 寫的
 
@@ -127,7 +127,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 
 裝完開啟一個新的終端機，輸入 `uv –version`，出現版號就代表你成功嚕
 
-### ➤ 安裝 Spec-Kit，建立專案
+### 安裝 Spec-Kit，建立專案
 
 接著我們能透過 uv 來安裝 Spec-Kit
 
@@ -161,7 +161,7 @@ cursor .
 
 而下面的「.specify」則是存放規格流程需要的模板與腳本。
 
-### ➤ 安裝 Chrome MCP
+### 安裝 Chrome MCP
 
 接著我們打開終端機，為了讓 AI 可以操作 Chrome 瀏覽器完成自動化測試，我們要先裝一個 MCP 外掛。
 
@@ -174,13 +174,13 @@ claude mcp add chrome-devtools -s user -- npx -y chrome-devtools-mcp@latest
 
 這邊因為我已經安裝過，所以他說這個工具已經存在了。
 
-### ➤ 確認 MCP 與 Skill 安裝完成
+### 確認 MCP 與 Skill 安裝完成
 
 完成後在終端機輸入「claude」，然後在對話輸入「/mcp」，就可以看到剛剛安裝的 chrome-devtools 連線成功。
 
 按下 esc 離開後，接著輸入「/speckit」，可以看到相關的 Skill 都已經安裝完成。
 
-### ➤ 下載 CC0（可商用）的美術與音效
+### 下載 CC0（可商用）的美術與音效
 
 但在撰寫規格前，先做一件很多人會忽略的事情，那就是給 AI 準備可以使用的素材，這能讓最終的成果有風格一致的美術效果。
 
@@ -217,7 +217,7 @@ claude mcp add chrome-devtools -s user -- npx -y chrome-devtools-mcp@latest
 
 稍等一段時間後，AI 就將資源下載好了，有興趣的朋友可以在 ASSETS.md 的檔案中深入了解每個素材的用途。
 
-### ➤ 提供撰寫遊戲的說明書
+### 提供撰寫遊戲的說明書
 
 另外這次遊戲我採用 Phaser 4 作為開發框架，他在處理 2D 遊戲上有很棒的表現：
 
@@ -242,7 +242,7 @@ cp -R phaser-tmp/skills/* .claude/skills/ && rm -rf phaser-tmp
 
 在完成前置作業後，我們先回到與 Claude 的對話視窗，接下來要使用 Spec-Kit 來開發遊戲。
 
-### ➤ STEP 1：/speckit-constitution 建立專案規則
+### STEP 1：/speckit-constitution 建立專案規則
 
 首先我們要建立這個專案要共同遵守的原則，設定好後，接下來的規格文件與執行計畫都會參考他
 
@@ -270,7 +270,7 @@ cp -R phaser-tmp/skills/* .claude/skills/ && rm -rf phaser-tmp
 
 底部還有版本號與批准日期，日後要求 AI 調整這份專案規則時，版本號也會自我更新。
 
-### ➤ STEP 2：/speckit-specify 撰寫規格
+### STEP 2：/speckit-specify 撰寫規格
 
 在設定好專案規則後，下一步就可以讓 AI 開始撰寫規格，這一步我們要說明遊戲外型、使用規則、驗收標準：
 
@@ -320,7 +320,7 @@ cp -R phaser-tmp/skills/* .claude/skills/ && rm -rf phaser-tmp
 
 在這個階段調整，會比後續 AI 做出來不符預期大改更有性價比。
 
-### ➤ STEP 3：/speckit-clarify 釐清
+### STEP 3：/speckit-clarify 釐清
 
 如果你自己也看不出哪些有問題，那可以在對話窗輸入
 
@@ -335,7 +335,7 @@ cp -R phaser-tmp/skills/* .claude/skills/ && rm -rf phaser-tmp
 
 其實這個來回對答的流程，也是在告訴大家「規格不可能一次就完善」，**所以不要再被那些一行指令就生成完美系統的話術給騙了。**
 
-### ➤ STEP 4：/speckit-plan 技術規劃
+### STEP 4：/speckit-plan 技術規劃
 
 在釐清專案「要做什麼」之後，接下來就能進入到「怎麼做」的環節
 
@@ -360,7 +360,7 @@ cp -R phaser-tmp/skills/* .claude/skills/ && rm -rf phaser-tmp
 
 等專案技術規劃完畢後，你會看到他生成了許多文件，涵蓋技術脈絡、相關決策、資料流、API 設計與後續啟動與驗證的文件。
 
-### ➤ STEP 5：/speckit-tasks 與 /speckit-analyze
+### STEP 5：/speckit-tasks 與 /speckit-analyze
 
 做到這一步，專案的規格文件已經非常詳細了，接下來只要輸入 `/speckit-tasks`，就能把複雜的計畫拆解成可執行的任務清單。
 
@@ -370,7 +370,7 @@ cp -R phaser-tmp/skills/* .claude/skills/ && rm -rf phaser-tmp
 
 另外如果你對目前的設計還不夠放心，可以執行 `/speckit-analyze` 做交叉檢查；他能協助確認規格(spec)、計畫(plan)、任務(task)三份文件是否存在矛盾，以及是否有漏掉的需求。
 
-### ➤ STEP 6：/speckit-implement 開始實作
+### STEP 6：/speckit-implement 開始實作
 
 另外提醒大家，與 AI 對話的內容越多，會對 Token 造成較多的消耗。
 
@@ -396,7 +396,7 @@ cp -R phaser-tmp/skills/* .claude/skills/ && rm -rf phaser-tmp
 
 OK，大體上都符合預期，並且玩完這局後，可以看到我們是有進入排行榜的；並且金幣有保留，可以用來升級角色。
 
-### ➤ 修復問題
+### 修復問題
 
 接下來我們再回到與 Claude 的對話，請他協助修復我們遇到的問題，直接跟他說：
 
@@ -413,7 +413,7 @@ OK，大體上都符合預期，並且玩完這局後，可以看到我們是有
 
 在初步確認遊戲基礎功能符合需求後，我們要給這個專案加上版本控制，這邊會使用到 Git 這個工具。這樣就算 AI 未來把專案改壞了，我們都還有回頭路可以走。
 
-### ➤ 建立第一個存檔點
+### 建立第一個存檔點
 
 這邊先請 AI 幫我們產生 commit，可以直接在對話中跟 AI 說
 
@@ -434,7 +434,7 @@ OK，大體上都符合預期，並且玩完這局後，可以看到我們是有
 
 像是填寫隱私資訊的環境變數、存放套件與建置產物的資料夾、日誌暫存檔這些都是不需要加入專案版本控制的。
 
-### ➤ 推上 GitHub，為部署做準備
+### 推上 GitHub，為部署做準備
 
 commit 完成後，我建議把專案推上 GitHub，除了多一份雲端備份，後面部署上線時也會用到。
 
@@ -444,7 +444,7 @@ commit 完成後，我建議把專案推上 GitHub，除了多一份雲端備份
 
 推送成功後，點擊「在 GitHub 上開啟」，看到專案的資料有上傳上去，就代表你成功嚕！
 
-### ➤ 用 Spec-Kit 優化專案
+### 用 Spec-Kit 優化專案
 
 有了存檔點後，我們就可以來繼續優化專案了，像這邊我就發現這款遊戲有以下問題：
 
@@ -484,13 +484,13 @@ commit 完成後，我建議把專案推上 GitHub，除了多一份雲端備份
 
 ```
 
-### ➤ 驗收變更符合預期
+### 驗收變更符合預期
 
 重啟後，我們打開瀏覽器直接玩一局，先按 F12 切換成手機的顯示模式，可以看到主選單的排版有優化過。
 
 開始遊戲後，確認可以單指操控，玩到一半也可以暫停，並且升級時有明確的介紹與武器圖片。
 
-### ➤ Commit & Push
+### Commit & Push
 
 接下來回到程式碼編輯器，先輸入`/clear`開啟一個新對話視窗，然後請 AI 幫我們把變更 commit 並更新到 GitHub：
 
@@ -509,7 +509,7 @@ commit 完成後，我建議把專案推上 GitHub，除了多一份雲端備份
 
 因為這次的專案涵蓋前端、後端、資料庫，所以會需要一台雲端伺服器；這邊我以 Hostinger 的 VPS 來做部署示範。
 
-### ➤ 建立 VPS：方案、價格與優惠碼
+### 建立 VPS：方案、價格與優惠碼
 
 進入 Hostinger 官網後，可以透過 Google 帳號註冊與登入
 
@@ -527,7 +527,7 @@ commit 完成後，我建議把專案推上 GitHub，除了多一份雲端備份
 
 如果輸入我的優惠碼「DEANLIN」，會再獲得 10% 的優惠。
 
-### ➤ 安裝 Hostinger MCP
+### 安裝 Hostinger MCP
 
 這個範例我以「KVM 2」來進行示範，在 VPS 建立完成後，我們要來安裝 Hostinger 的 MCP。
 
@@ -599,7 +599,7 @@ commit 完成後，我建議把專案推上 GitHub，除了多一份雲端備份
 
 這邊我們先確認可以不登入遊玩，然後再來測試註冊帳號的流程是否正常，並且遊戲的商店以及排行榜功能都是符合預期的。
 
-### ➤ 使用專屬網域
+### 使用專屬網域
 
 最後補充一點，雖然 IP 也能用，但如果給朋友遊玩時丟給他一串 IP，看起來真的很像詐騙集團。
 
@@ -622,7 +622,7 @@ Hostinger 也有提供網域購買的服務，購買後還可以直接請 AI 幫
 
 ## 結語：你不知道你不知道
 
-### ➤ OpenSpec VS Spec-Kit
+### OpenSpec VS Spec-Kit
 
 在影片的最後，跟大家分享同為規格驅動開發的 OpenSpec，[過去我有做一隻影片專門介紹](https://youtu.be/FeQv7mngg6Q)，當時是以人力資源系統作為範例。
 
@@ -632,7 +632,7 @@ Hostinger 也有提供網域購買的服務，購買後還可以直接請 AI 幫
 
 規格詳細是好事，但當它大到一個程度時，人類的理解能力會大幅下降。我們只能抓重點讀，或是請 AI 幫忙摘要。
 
-### ➤ 系統的隱患
+### 系統的隱患
 
 回到今天的主題，儘管我們在 Spec-Kit 的幫助下，用白話文生成了全端系統的網頁遊戲，又透過 Hostinger MCP 完成部署作業。
 

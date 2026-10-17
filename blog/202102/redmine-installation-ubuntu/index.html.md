@@ -291,7 +291,7 @@
 
 角色： redmine
 
-### ➤ 下載官方 image
+### 下載官方 image
 
 ```
 1. 到[官方網站](https://www.redmine.org/projects/redmine/wiki/Download)了解最新的stable版本（筆者安裝版本為 4.1.1）
@@ -319,7 +319,7 @@
 
 原始碼：[redmine_download.md](https://gist.github.com/dean9703111/523ff799ed15fd78787e5664bcd589e3)（GitHub Gist）
 
-### ➤ 調整 redmine 裡面的資料庫設定
+### 調整 redmine 裡面的資料庫設定
 
 ```
 1. 將 redmine 的資料庫範例設定檔複製一份
@@ -346,7 +346,7 @@
 
 原始碼：[redmine_database_config.md](https://gist.github.com/dean9703111/9cb24f48fd8b8fa969c4138a12186a76)（GitHub Gist）
 
-### ➤ 下載相關套件
+### 下載相關套件
 
 ```
 1. 先確認當前資料夾為 `/data/redmine/current`
@@ -368,7 +368,7 @@
 
 原始碼：[redmine_install_package.md](https://gist.github.com/dean9703111/540d8de42ff10326664acdb6f29c08d4)（GitHub Gist）
 
-### ➤ 初始化 redmine
+### 初始化 redmine
 
 ```
 1. 先確認當前資料夾為 /data/redmine/current

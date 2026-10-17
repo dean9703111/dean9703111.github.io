@@ -8,8 +8,230 @@
     <generator>Hugo</generator>
     <language>zh-tw</language>
     <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
-    <lastBuildDate>Tue, 10 Aug 2021 16:13:57 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 29 Sep 2021 08:46:22 +0800</lastBuildDate>
     <atom:link href="https://deanlin.net/tags/event-loop/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[面試][後端]請簡述 Node.js 的 Event Loop</title>
+      <link>https://deanlin.net/blog/202109/fullstack-career-notes-day-14/</link>
+      <pubDate>Wed, 29 Sep 2021 08:46:22 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202109/fullstack-career-notes-day-14/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>職涯成長</category>
+      <description>這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。</description>
+      <media:content url="https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-og_hu_ea527c026df80005.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>熟悉的起手式：「我方便問你一個 Node.js 核心的問題嗎？」</p>
+</blockquote>
+<p>這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。</p>
+<h2 id="大綱">大綱<a class="h-anchor" href="#%e5%a4%a7%e7%b6%b1" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li><strong>請簡述 Node.js 的 Event Loop</strong>
+<ul>
+<li>1.1 面試官為什麼會問？</li>
+<li>1.2 面試官想從答案確認什麼？</li>
+<li>1.3 筆者提供的簡答</li>
+</ul>
+</li>
+<li><strong>回答問題所需具備的知識</strong>
+<ul>
+<li>2.1 Event Loop 執行的邏輯</li>
+<li>2.2 用 Node.js 範例程式確認自己是否理解 Event Loop</li>
+<li>2.3 解析 Node.js 範例程式執行順序</li>
+</ul>
+</li>
+<li><strong>衍伸問題</strong>
+<ul>
+<li>3.1 可以簡述 Node.js 跟 JavaScript 的差異嗎？</li>
+<li>3.2 readFile 和 createReadStream 函式的差異？</li>
+<li>3.3 REPL 是什麼？</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-請簡述-nodejs-的-event-loop">1. 請簡述 Node.js 的 Event Loop<a class="h-anchor" href="#1-%e8%ab%8b%e7%b0%a1%e8%bf%b0-nodejs-%e7%9a%84-event-loop" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-面試官為什麼會問">1.1 面試官為什麼會問？<a class="h-anchor" href="#11-%e9%9d%a2%e8%a9%a6%e5%ae%98%e7%82%ba%e4%bb%80%e9%ba%bc%e6%9c%83%e5%95%8f" aria-label="這個段落的連結"></a></h3>
+<p>只要你的<code>履歷上有 Node.js</code>，10 間公司至少有 3 間會問這個<code>常見面試題</code>；而且問題的起手式出奇的一致：「我方便問你一個 Node.js 核心的問題嗎？」</p>
+<hr>
+<h3 class="h-nomark" id="12-面試官想從答案確認什麼">1.2 面試官想從答案確認什麼？<a class="h-anchor" href="#12-%e9%9d%a2%e8%a9%a6%e5%ae%98%e6%83%b3%e5%be%9e%e7%ad%94%e6%a1%88%e7%a2%ba%e8%aa%8d%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>你了解 Event Loop 對 Node.js 的重要性</li>
+<li>你能大概說明 Event Loop 每個階段的任務</li>
+<li>如果出白板題要你解釋程式執行的順序，你可以正確回答</li>
+</ul>
+<h3 class="h-nomark" id="13-筆者提供的簡答">1.3 筆者提供的簡答<a class="h-anchor" href="#13-%e7%ad%86%e8%80%85%e6%8f%90%e4%be%9b%e7%9a%84%e7%b0%a1%e7%ad%94" aria-label="這個段落的連結"></a></h3>
+<p><code>Node.js 之所以高效，是因為採取單執行緒與 Event Loop 的概念</code>；將所有需要等待結果、請求外部資源的函式，全部丟到 Event Loop 中等待；而 Event Loop 的邏輯是 Node.js 底層用 C 語言撰寫的 libuv 庫來運行的。</p>
+<hr>
+<h2 class="h-nomark" id="2-回答問題所需具備的知識">2. 回答問題所需具備的知識<a class="h-anchor" href="#2-%e5%9b%9e%e7%ad%94%e5%95%8f%e9%a1%8c%e6%89%80%e9%9c%80%e5%85%b7%e5%82%99%e7%9a%84%e7%9f%a5%e8%ad%98" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-event-loop-執行的邏輯">2.1 Event Loop 執行的邏輯<a class="h-anchor" href="#21-event-loop-%e5%9f%b7%e8%a1%8c%e7%9a%84%e9%82%8f%e8%bc%af" aria-label="這個段落的連結"></a></h3>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-01.webp" width="1024" height="579" alt="2.1 Event Loop 執行的邏輯（圖 1）" loading="lazy" decoding="async"></p>
+<ul>
+<li><strong>了解 MacroTask 的 6 個階段</strong>
+<ul>
+<li><strong>Timer</strong><br>等計時器（setTimeout、setInterval）的時間一到，會把他們的 callback 放在這裡等待執行。</li>
+<li><strong>Pending callbacks</strong><br>作業系統層級使用（ex：TCP errors、sockets 連線被拒絕）。</li>
+<li><strong>Idle, Prepare</strong><br>內部使用。</li>
+<li><strong>Polling：</strong>
+<ul>
+<li>如果 Queue 不為空，依次取出 callback 函數執行，直到 Queue 為空或是抵達系統最大限制。</li>
+<li>如果 Queue 為空但有設置「setImmediate」就進入 Check 階段。</li>
+<li>如果 Queue 為空但沒有設置「setImmediate」就會在 Polling 階段等待，直到 Queue 有東西或是 Timer 時間抵達。</li>
+</ul>
+</li>
+<li><strong>Check</strong><br>處理 setImmediate 的 callback。</li>
+<li><strong>Close callbacks</strong><br>處理關閉連線、檔案的 callback。</li>
+</ul>
+</li>
+</ul>
+<p><code>Macrotask Queue 在 Evevnt Loop 優先層級較低，接下來介紹優先層級更高的兩個 Queue。</code></p>
+<ul>
+<li>
+<p><strong>NextTick Queue 優先層級最高</strong><br>「process.nextTick()」的 callback 可以隨意插隊；只要這個 Queue 有東西就會優先執行。</p>
+</li>
+<li>
+<p><strong>MicroTask Queue 優先層級次高</strong><br>「Promise」的狀態從 pending 轉變為 resolve 或 reject 時，執行的 callback 會進入這個 Queue。</p>
+<blockquote>
+<p><strong>注意</strong>：<code>Promise 在創建時是同步的</code>，不會進入 Event Loop。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="22-用-nodejs-範例程式確認自己是否理解-event-loop">2.2 用 Node.js 範例程式確認自己是否理解 Event Loop<a class="h-anchor" href="#22-%e7%94%a8-nodejs-%e7%af%84%e4%be%8b%e7%a8%8b%e5%bc%8f%e7%a2%ba%e8%aa%8d%e8%87%aa%e5%b7%b1%e6%98%af%e5%90%a6%e7%90%86%e8%a7%a3-event-loop" aria-label="這個段落的連結"></a></h3>
+<p>大家可以先用紙筆模擬看看下面程式的執行順序：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;start&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>process.nextTick(<span style="color:#ff7b72">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;nextTick1&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>setTimeout(<span style="color:#ff7b72">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;setTimeout&#34;</span>);
+</span></span><span style="display:flex;"><span>}, <span style="color:#a5d6ff">0</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">new</span> Promise(<span style="color:#ff7b72">function</span> (resolve, reject) {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;promise&#34;</span>);
+</span></span><span style="display:flex;"><span>  resolve(<span style="color:#a5d6ff">&#34;resolve&#34;</span>);
+</span></span><span style="display:flex;"><span>}).then(<span style="color:#ff7b72">function</span> (result) {
+</span></span><span style="display:flex;"><span>  console.log(result);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;async&#34;</span>);
+</span></span><span style="display:flex;"><span>})();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>setImmediate(<span style="color:#ff7b72">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;setImmediate&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>process.nextTick(<span style="color:#ff7b72">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;nextTick2&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;end&#34;</span>);
+</span></span></code></pre></div><p>如果答案跟下面結果一樣，那代表你很了解 Node.js 的 Event Loop 邏輯：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>start
+</span></span><span style="display:flex;"><span>promise
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span>
+</span></span><span style="display:flex;"><span>end
+</span></span><span style="display:flex;"><span>nextTick1
+</span></span><span style="display:flex;"><span>nextTick2
+</span></span><span style="display:flex;"><span>resolve
+</span></span><span style="display:flex;"><span>setTimeout
+</span></span><span style="display:flex;"><span>setImmediate
+</span></span></code></pre></div><hr>
+<h3 class="h-nomark" id="23-解析-nodejs-範例程式執行順序">2.3 解析 Node.js 範例程式執行順序<a class="h-anchor" href="#23-%e8%a7%a3%e6%9e%90-nodejs-%e7%af%84%e4%be%8b%e7%a8%8b%e5%bc%8f%e5%9f%b7%e8%a1%8c%e9%a0%86%e5%ba%8f" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>SETP 1：</strong> 順序執行，先把同步函式解決。
+<ol>
+<li>
+<p>因為 <code>Promise</code> 在創建時是同步的，所以會先執行。</p>
+</li>
+<li>
+<p>在 function 前面加上 async 宣告為異步函式，執行時會被轉換為 Promise。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;start&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">new</span> Promise(<span style="color:#ff7b72">function</span> (resolve, reject) {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;promise&#34;</span>);
+</span></span><span style="display:flex;"><span>  resolve(<span style="color:#a5d6ff">&#34;resolve&#34;</span>);
+</span></span><span style="display:flex;"><span>}).then(<span style="color:#ff7b72">function</span> (result) {
+</span></span><span style="display:flex;"><span>  console.log(result);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;async&#34;</span>);
+</span></span><span style="display:flex;"><span>})();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#34;end&#34;</span>);
+</span></span></code></pre></div></li>
+</ol>
+</li>
+<li><strong>STEP 2：</strong> 進入 Event Loop。
+<ol>
+<li>
+<p>如果執行過程中遇到 <code>NextTick Queue</code> 就優先執行。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>process.nextTick(<span style="color:#ff7b72">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;nextTick1&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>process.nextTick(<span style="color:#ff7b72">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;nextTick2&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div></li>
+<li>
+<p>在處理完最高優先層級後，如果執行過程中遇到 <code>MicroTask Queue</code> 就執行。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">new</span> Promise(<span style="color:#ff7b72">function</span> (resolve, reject) {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;promise&#34;</span>);
+</span></span><span style="display:flex;"><span>  resolve(<span style="color:#a5d6ff">&#34;resolve&#34;</span>);
+</span></span><span style="display:flex;"><span>}).then(<span style="color:#ff7b72">function</span> (result) {
+</span></span><span style="display:flex;"><span>  console.log(result);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div></li>
+<li>
+<p>在前兩個高優先層級的 Queue 清空後，返回 Event Loop 繼續執行，<code>setTimeout</code> 設定的時間已到先執行。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>setTimeout(<span style="color:#ff7b72">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;setTimeout&#34;</span>);
+</span></span><span style="display:flex;"><span>}, <span style="color:#a5d6ff">0</span>);
+</span></span></code></pre></div></li>
+<li>
+<p>接著再在「Check」 階段執行 <code>setImmediate</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>setImmediate(<span style="color:#ff7b72">function</span> () {
+</span></span><span style="display:flex;"><span>  console.log(<span style="color:#a5d6ff">&#34;setImmediate&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div></li>
+</ol>
+</li>
+</ul>
+<p>以上步驟執行完成後就是範例程式的解答啦～希望對大家理解 Event Loop 有幫助。</p>
+<hr>
+<h2 class="h-nomark" id="3-衍伸問題">3. 衍伸問題<a class="h-anchor" href="#3-%e8%a1%8d%e4%bc%b8%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="31-可以簡述-nodejs-跟-javascript-的差異嗎">3.1 可以簡述 Node.js 跟 JavaScript 的差異嗎？<a class="h-anchor" href="#31-%e5%8f%af%e4%bb%a5%e7%b0%a1%e8%bf%b0-nodejs-%e8%b7%9f-javascript-%e7%9a%84%e5%b7%ae%e7%95%b0%e5%97%8e" aria-label="這個段落的連結"></a></h3>
+<p><code>考點：確認求職者是否理解自己天天使用的工具</code></p>
+<p>JavaScript 是程式語言，可以在合適的瀏覽器中運行；而 Node.js 是一個能執行JavaScript 的環境，它以 Chrome V8 引擎為核心，再加上 C/C++套件，讓 Sever 端也可以執行 JavaScript。</p>
+<hr>
+<h3 class="h-nomark" id="32-readfile-和-createreadstream-函式的差異">3.2 readFile 和 createReadStream 函式的差異？<a class="h-anchor" href="#32-readfile-%e5%92%8c-createreadstream-%e5%87%bd%e5%bc%8f%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h3>
+<p><code>考點：判斷求職者過去專案中使否使用過這類函式，並理解差異</code></p>
+<p><code>readFile</code> 函式會將讀取到的完整內容<code>存在記憶體</code>後傳給使用者，而 <code>createReadStream</code> 函式則是<code>逐塊讀取</code>檔案，不是全部存在記憶體中；因此要讀取較大的檔案時，建議使用 createReadStream ，利用其逐塊讀取的特性能減少使用者等待時間。</p>
+<hr>
+<h3 class="h-nomark" id="33-repl-是什麼">3.3 REPL 是什麼？<a class="h-anchor" href="#33-repl-%e6%98%af%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h3>
+<p><code>考點：對專有名詞是否熟悉，能否解釋</code></p>
+<p>REPL（Read Eval Print Loop）是一個用來<code>執行程式語言的虛擬環境</code>。</p>
+<p>就像是我們在瀏覽器的 Console 可以執行 JavaScript 程式碼；在安裝完 Node.js 後，新增一個 JavaScript 檔，在終端機輸入<code>node xxx.js</code>便可以執行它。</p>
+<hr>
+<p>感謝大家的閱讀，如果喜歡我的文章可以<code>訂閱</code>接收通知；如果有幫助到你，按<code>Like</code>可以讓我更有寫文的動力，我們明天見～</p>
+<h3 id="參考資源">參考資源：<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://medium.com/dean-lin/c7129063d0f4">Node.js 的 Event Loop (事件輪詢)到底在做什麼？(筆者部落格)</a></li>
+<li><a href="https://www.gushiciku.cn/pl/gOTo/zh-tw">15 個常見的 Node.js 面試問題及答案</a></li>
+<li><a href="https://ithelp.ithome.com.tw/articles/10230126">你有沒有想過，到底 Server 是如何「同時處理多個 requests」的？ - Node.js 篇</a></li>
+</ol>
+<hr>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-02.webp" width="1024" height="233" alt="參考資源：（圖 2）" loading="lazy" decoding="async"></p>
+<p>在許多人的幫助下，本系列文章已成功出版，除了添加新的篇章，更完善了每個案例的應對進退；如果對現在的職涯感到迷茫，也許這本書能帶給你不一樣的觀點～</p>
+<p><strong>天瓏書局：</strong> <a href="https://www.tenlong.com.tw/products/9786263334571">https://www.tenlong.com.tw/products/9786263334571</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
     <item>
       <title>Node.js 的 Event Loop (事件輪詢)到底在做什麼？</title>
       <link>https://deanlin.net/blog/202108/nodejs-event-loop/</link>
@@ -90,7 +312,7 @@
   <figcaption>Node.js 的 Event Loop</figcaption>
 </figure>
 
-<h3 id="-了解-macrotask-的-6-個階段">➤ 了解 MacroTask 的 6 個階段<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3-macrotask-%e7%9a%84-6-%e5%80%8b%e9%9a%8e%e6%ae%b5" aria-label="這個段落的連結"></a></h3>
+<h3 id="-了解-macrotask-的-6-個階段">了解 MacroTask 的 6 個階段<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3-macrotask-%e7%9a%84-6-%e5%80%8b%e9%9a%8e%e6%ae%b5" aria-label="這個段落的連結"></a></h3>
 <p><strong>Timer</strong>：等計時器（setTimeout、setInterval）的時間一到，會把他們的 callback 放在這裡等待執行。</p>
 <p><strong>Pending callbacks</strong>：作業系統層級使用（TCP errors、sockets 連線被拒絕）。</p>
 <p><strong>Idle, Prepare</strong>：內部使用。</p>
@@ -105,16 +327,16 @@
 <blockquote>
 <p>Macrotask Queue 在 Evevnt Loop 優先層級較低，接下來介紹優先層級更高的兩個 Queue。</p>
 </blockquote>
-<h3 id="-nexttick-queue-優先層級最高">➤ NextTick Queue 優先層級最高<a class="h-anchor" href="#-nexttick-queue-%e5%84%aa%e5%85%88%e5%b1%a4%e7%b4%9a%e6%9c%80%e9%ab%98" aria-label="這個段落的連結"></a></h3>
+<h3 id="-nexttick-queue-優先層級最高">NextTick Queue 優先層級最高<a class="h-anchor" href="#-nexttick-queue-%e5%84%aa%e5%85%88%e5%b1%a4%e7%b4%9a%e6%9c%80%e9%ab%98" aria-label="這個段落的連結"></a></h3>
 <p>「process.nextTick()」的 callback 可以隨意插隊；只要這個 Queue 有東西就會優先執行。</p>
-<h3 id="-microtask-queue-優先層級次高">➤ MicroTask Queue 優先層級次高<a class="h-anchor" href="#-microtask-queue-%e5%84%aa%e5%85%88%e5%b1%a4%e7%b4%9a%e6%ac%a1%e9%ab%98" aria-label="這個段落的連結"></a></h3>
+<h3 id="-microtask-queue-優先層級次高">MicroTask Queue 優先層級次高<a class="h-anchor" href="#-microtask-queue-%e5%84%aa%e5%85%88%e5%b1%a4%e7%b4%9a%e6%ac%a1%e9%ab%98" aria-label="這個段落的連結"></a></h3>
 <p>「Promise 」的狀態從 pending 轉變為 resolve 或 reject 時，此時執行的 callback 會進入這個 Queue。</p>
 <blockquote>
 <p>注意：Promise 在創建時是同步的，不會進入 Event Loop。</p>
 </blockquote>
 <hr>
 <h2 id="四解析一開始-nodejs-範例程式執行順序">四、解析一開始 Node.js 範例程式執行順序<a class="h-anchor" href="#%e5%9b%9b%e8%a7%a3%e6%9e%90%e4%b8%80%e9%96%8b%e5%a7%8b-nodejs-%e7%af%84%e4%be%8b%e7%a8%8b%e5%bc%8f%e5%9f%b7%e8%a1%8c%e9%a0%86%e5%ba%8f" aria-label="這個段落的連結"></a></h2>
-<h3 id="-順序執行先把同步函式解決">➤ 順序執行，先把同步函式解決<a class="h-anchor" href="#-%e9%a0%86%e5%ba%8f%e5%9f%b7%e8%a1%8c%e5%85%88%e6%8a%8a%e5%90%8c%e6%ad%a5%e5%87%bd%e5%bc%8f%e8%a7%a3%e6%b1%ba" aria-label="這個段落的連結"></a></h3>
+<h3 id="-順序執行先把同步函式解決">順序執行，先把同步函式解決<a class="h-anchor" href="#-%e9%a0%86%e5%ba%8f%e5%9f%b7%e8%a1%8c%e5%85%88%e6%8a%8a%e5%90%8c%e6%ad%a5%e5%87%bd%e5%bc%8f%e8%a7%a3%e6%b1%ba" aria-label="這個段落的連結"></a></h3>
 <ol>
 <li>因為 Promise 在創建時是同步的，所以會先執行</li>
 <li>在 function 前面加上 async 宣告為異步函式，執行時會被轉換為 Promise</li>
@@ -138,7 +360,7 @@
 </span></span><span style="display:flex;"><span>promise
 </span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span>
 </span></span><span style="display:flex;"><span>end
-</span></span></code></pre></div><h3 id="-進入-event-loop">➤ 進入 Event Loop<a class="h-anchor" href="#-%e9%80%b2%e5%85%a5-event-loop" aria-label="這個段落的連結"></a></h3>
+</span></span></code></pre></div><h3 id="-進入-event-loop">進入 Event Loop<a class="h-anchor" href="#-%e9%80%b2%e5%85%a5-event-loop" aria-label="這個段落的連結"></a></h3>
 <ol>
 <li>如果執行過程中遇到 NextTick Queue 就優先執行</li>
 </ol>

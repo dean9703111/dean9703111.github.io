@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>JSON｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/json/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>JSON｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/json/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 30 Sep 2020 08:51:22 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/json/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day15】json x 爬蟲 = 瑣事自動化，生命應該浪費在美好的事情上</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-15/</link>
+      <pubDate>Wed, 30 Sep 2020 08:51:22 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-15/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>專案在需求規格中有一條是在自己的電腦執行，在分析完各種檔案格式的優缺點後我決定使用json格式：</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-og_hu_7790493b192e9de8.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>即使客戶不懂程式，你也可以讓他學習一點工程師的知識</p>
+</blockquote>
+<h2 id="我們要請客戶將爬蟲的網址列表填寫到什麼檔案呢">我們要請客戶將爬蟲的網址列表填寫到什麼檔案呢?<a class="h-anchor" href="#%e6%88%91%e5%80%91%e8%a6%81%e8%ab%8b%e5%ae%a2%e6%88%b6%e5%b0%87%e7%88%ac%e8%9f%b2%e7%9a%84%e7%b6%b2%e5%9d%80%e5%88%97%e8%a1%a8%e5%a1%ab%e5%af%ab%e5%88%b0%e4%bb%80%e9%ba%bc%e6%aa%94%e6%a1%88%e5%91%a2" aria-label="這個段落的連結"></a></h2>
+<p>專案在需求規格中有一條是<code>在自己的電腦執行</code>，在分析完各種檔案格式的優缺點後我決定使用json格式：</p>
+<ul>
+<li><strong>txt</strong>
+<ul>
+<li>優點：在所有作業系統中都能夠打開做編輯</li>
+<li>缺點：<code>格式難以律定</code>，只要使用者多個空格、表點符號&hellip;都容易造成程式的誤判</li>
+</ul>
+</li>
+<li><strong>excel</strong>
+<ul>
+<li>優點：這是對使用者而言最友善的一種編輯器了，視覺化良好、操作友善</li>
+<li>缺點：<code>不是所有人電腦都有安裝 excel</code> 編輯器(像我朋友就沒有)</li>
+</ul>
+</li>
+<li><strong>json</strong>
+<ul>
+<li>優點：在所有作業系統中都能夠打開做編輯，<code>key-value 的格式易於理解、程式可直接讀取</code></li>
+<li>缺點：使用者需要花幾分鐘時間理解 json 格式的規則</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-了解-json-格式與基本規則並建立-json-格式的粉專清單">1. 了解 json 格式與基本規則，並建立 json 格式的粉專清單<a class="h-anchor" href="#1-%e4%ba%86%e8%a7%a3-json-%e6%a0%bc%e5%bc%8f%e8%88%87%e5%9f%ba%e6%9c%ac%e8%a6%8f%e5%89%87%e4%b8%a6%e5%bb%ba%e7%ab%8b-json-%e6%a0%bc%e5%bc%8f%e7%9a%84%e7%b2%89%e5%b0%88%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<p>1.1 json 格式與基本規則<br>1.2 在專案中建立 json 格式的粉專清單</p>
+<h3 class="h-nomark" id="2-讓程式讀取-json-裡面的資料進行爬蟲">2. 讓程式讀取 json 裡面的資料進行爬蟲<a class="h-anchor" href="#2-%e8%ae%93%e7%a8%8b%e5%bc%8f%e8%ae%80%e5%8f%96-json-%e8%a3%a1%e9%9d%a2%e7%9a%84%e8%b3%87%e6%96%99%e9%80%b2%e8%a1%8c%e7%88%ac%e8%9f%b2" aria-label="這個段落的連結"></a></h3>
+<p>2.1 在專案引入 json 檔案<br>2.2 批量爬蟲程式撰寫</p>
+<hr>
+<h2 class="h-nomark" id="1-了解-json-格式與基本規則並建立一份-json-格式的粉專清單">1. 了解 json 格式與基本規則，並建立一份 json 格式的粉專清單<a class="h-anchor" href="#1-%e4%ba%86%e8%a7%a3-json-%e6%a0%bc%e5%bc%8f%e8%88%87%e5%9f%ba%e6%9c%ac%e8%a6%8f%e5%89%87%e4%b8%a6%e5%bb%ba%e7%ab%8b%e4%b8%80%e4%bb%bd-json-%e6%a0%bc%e5%bc%8f%e7%9a%84%e7%b2%89%e5%b0%88%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<p>今天說的這個部分應該是大部分小編最關心的，要每天手動瀏覽那麼多的粉專想想都很崩潰<br>所以要來跟大家介紹的一個很棒的文本格式：<strong>json</strong> (JavaScript Object Notation) ，<code>他能幫助我們批量爬蟲，同時也是網頁 api 最常見的一種回傳格式</code></p>
+<h3 class="h-nomark" id="11-json格式與基本規則">1.1 json格式與基本規則<a class="h-anchor" href="#11-json%e6%a0%bc%e5%bc%8f%e8%88%87%e5%9f%ba%e6%9c%ac%e8%a6%8f%e5%89%87" aria-label="這個段落的連結"></a></h3>
+<p>json 可以包含 <code>object (物件)</code> 與 <code>array (陣列)</code></p>
+<ul>
+<li><strong>物件</strong>
+<ul>
+<li>
+<p>為 key-value 的格式，用<code>{...}</code>包起來</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>{ <span style="color:#a5d6ff">&#34;key&#34;</span> <span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;value&#34;</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>{ <span style="color:#a5d6ff">&#34;姓名&#34;</span> <span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;寶寶不說&#34;</span> } <span style="color:#8b949e;font-style:italic">//通常用於描寫一項屬性的數值
+</span></span></span></code></pre></div></li>
+<li>
+<p>多個物件使用 , 做為分隔</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>{ <span style="color:#a5d6ff">&#34;key&#34;</span> <span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;value&#34;</span> , <span style="color:#a5d6ff">&#34;key&#34;</span> <span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;value&#34;</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>{ <span style="color:#a5d6ff">&#34;姓名&#34;</span> <span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;寶寶不說&#34;</span> , <span style="color:#a5d6ff">&#34;性別&#34;</span> <span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;不明&#34;</span> } <span style="color:#8b949e;font-style:italic">//多個物件可表達一個東西的多種屬性
+</span></span></span></code></pre></div></li>
+</ul>
+</li>
+<li><strong>陣列</strong>
+<ul>
+<li>
+<p>多個 value 之間使用 , 分隔，用<code>[...]</code>包起來</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>[ value, value ]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 陣列與物件裡面value可以使用多種資料型態如下
+</span></span></span><span style="display:flex;"><span>[ <span style="color:#a5d6ff">0</span> , { <span style="color:#a5d6ff">&#34;傳奇寶寶&#34;</span> <span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span> } , <span style="color:#a5d6ff">&#34;string&#34;</span> , <span style="color:#79c0ff">false</span> , [<span style="color:#a5d6ff">&#39;test&#39;</span>] ]
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ul>
+<h3 class="h-nomark" id="12-在專案中建立json格式的粉專清單">1.2 在專案中建立json格式的粉專清單<a class="h-anchor" href="#12-%e5%9c%a8%e5%b0%88%e6%a1%88%e4%b8%ad%e5%bb%ba%e7%ab%8bjson%e6%a0%bc%e5%bc%8f%e7%9a%84%e7%b2%89%e5%b0%88%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<p><strong>建構邏輯：</strong></p>
+<ol>
+<li>
+<p>我們有<code>許多粉專需要去追蹤</code>，所以最外層會用 <code>陣列(array)</code></p>
+</li>
+<li>
+<p>而<code>每個粉專都有自己的屬性</code>(title為粉專名稱、url為粉專網址)，所以陣列裡面的 value 採用 <code>物件(object)</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>[
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;title&#34;</span>: <span style="color:#a5d6ff">&#34;粉專A&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;url&#34;</span>: <span style="color:#a5d6ff">&#34;粉專A連結&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;title&#34;</span>: <span style="color:#a5d6ff">&#34;粉專B&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;url&#34;</span>: <span style="color:#a5d6ff">&#34;粉專B連結&#34;</span>
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>在專案建立的步驟：</strong></p>
+<ol>
+<li>在專案資料夾中<code>建立 fanspages 的資料夾</code>，專門存放粉專頁面爬蟲要使用的json檔案</li>
+<li>在 <code>fanspages 資料夾中新增 ig.json、fb.json</code> 這兩個檔案，並依照上述json結構填上你要爬蟲的資訊</li>
+<li>你可以先複製下方範例做測試(筆者是以下貼圖的狂熱愛好者，歡迎一起追蹤按愛心XD)</li>
+</ol>
+<h4 id="igjson">ig.json<a class="h-anchor" href="#igjson" aria-label="這個段落的連結"></a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>[
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;title&#34;</span>: <span style="color:#a5d6ff">&#34;寶寶不說&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;url&#34;</span>: <span style="color:#a5d6ff">&#34;https://www.instagram.com/baobaonevertell/&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;title&#34;</span>: <span style="color:#a5d6ff">&#34;松尼&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;url&#34;</span>: <span style="color:#a5d6ff">&#34;https://www.instagram.com/sweethouse.sl/&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;title&#34;</span>: <span style="color:#a5d6ff">&#34;麻糬爸&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;url&#34;</span>: <span style="color:#a5d6ff">&#34;https://www.instagram.com/mochi_dad/&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;title&#34;</span>: <span style="color:#a5d6ff">&#34;好想兔&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;url&#34;</span>: <span style="color:#a5d6ff">&#34;https://www.instagram.com/chien_chien0608/&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;title&#34;</span>: <span style="color:#a5d6ff">&#34;ㄇㄚˊ幾兔&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;url&#34;</span>: <span style="color:#a5d6ff">&#34;https://www.instagram.com/machiko324/&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div><hr>
+<h2 class="h-nomark" id="2-讓爬蟲程式讀取-json-裡面的資料">2. 讓爬蟲程式讀取 json 裡面的資料<a class="h-anchor" href="#2-%e8%ae%93%e7%88%ac%e8%9f%b2%e7%a8%8b%e5%bc%8f%e8%ae%80%e5%8f%96-json-%e8%a3%a1%e9%9d%a2%e7%9a%84%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-在專案引入-json-檔案">2.1 在專案引入 json 檔案<a class="h-anchor" href="#21-%e5%9c%a8%e5%b0%88%e6%a1%88%e5%bc%95%e5%85%a5-json-%e6%aa%94%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>引入 json 檔案時請注意相對路徑，建議先用 <code>console.log 確認是否有正確引入</code></li>
+<li>因為這個檔案是人工撰寫，可能會不小心複製到重複粉專，所以使用 <code>filter 來過濾</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> fanpage_array <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;../fanspages/ig.json&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//過濾掉重複的粉專頁面，減少資源浪費
+</span></span></span><span style="display:flex;"><span>fanpage_array <span style="color:#ff7b72;font-weight:bold">=</span> fanpage_array.filter((fanpage, index, self) =&gt;
+</span></span><span style="display:flex;"><span>    index <span style="color:#ff7b72;font-weight:bold">===</span> self.findIndex(f =&gt; f.url <span style="color:#ff7b72;font-weight:bold">===</span> fanpage.url)
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>console.log(fanpage_array)
+</span></span></code></pre></div><h3 class="h-nomark" id="22-批量爬蟲程式撰寫">2.2 批量爬蟲程式撰寫<a class="h-anchor" href="#22-%e6%89%b9%e9%87%8f%e7%88%ac%e8%9f%b2%e7%a8%8b%e5%bc%8f%e6%92%b0%e5%af%ab" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>將前往粉專頁面與爬蟲的部分用 <code>for/of迴圈</code> 包起來(因迴圈內用到 <strong>async/await</strong>)，讓他依序前往粉專頁面抓資料</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">for</span> (fanpage <span style="color:#ff7b72">of</span> fanpage_array) {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 撰寫你要對fanpage做的事       
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p>我們要當個好爬蟲，每個頁面設定爬蟲停留 3-6 秒，<code>不要因為自己的爬蟲造成別人伺服器的負擔</code></p>
+<blockquote>
+<p>這裡我們使用Math.random()取得區間亂數</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">await</span> driver.sleep((Math.floor(Math.random()<span style="color:#ff7b72;font-weight:bold">*</span><span style="color:#a5d6ff">4</span>)<span style="color:#ff7b72;font-weight:bold">+</span><span style="color:#a5d6ff">3</span>)<span style="color:#ff7b72;font-weight:bold">*</span><span style="color:#a5d6ff">1000</span>)
+</span></span></code></pre></div></li>
+<li>
+<p>統整後完整程式如下</p>
+<h4 id="crawlerigjs">crawlerIG.js<a class="h-anchor" href="#crawlerigjs" aria-label="這個段落的連結"></a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> fanpage_array <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;../fanspages/ig.json&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//過濾掉重複的粉專頁面，減少資源浪費
+</span></span></span><span style="display:flex;"><span>fanpage_array <span style="color:#ff7b72;font-weight:bold">=</span> fanpage_array.filter((fanpage, index, self) =&gt;
+</span></span><span style="display:flex;"><span>    index <span style="color:#ff7b72;font-weight:bold">===</span> self.findIndex(f =&gt; f.url <span style="color:#ff7b72;font-weight:bold">===</span> fanpage.url)
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> ig_username <span style="color:#ff7b72;font-weight:bold">=</span> process.env.IG_USERNAME
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> ig_userpass <span style="color:#ff7b72;font-weight:bold">=</span> process.env.IG_PASSWORD
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { By, until } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver&#39;</span>)
+</span></span><span style="display:flex;"><span>exports.crawlerIG <span style="color:#ff7b72;font-weight:bold">=</span> crawlerIG;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> crawlerIG (driver) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> isLogin <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> loginInstagram(driver, By, until)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (isLogin) {
+</span></span><span style="display:flex;"><span>        console.log(<span style="color:#a5d6ff">`IG開始爬蟲`</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">for</span> (fanpage <span style="color:#ff7b72">of</span> fanpage_array) { <span style="color:#8b949e;font-style:italic">// 用迴圈爬蟲每個粉專
+</span></span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">let</span> trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">null</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">const</span> isGoFansPage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> goFansPage(driver, fanpage.url)
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">if</span> (isGoFansPage) {
+</span></span><span style="display:flex;"><span>                <span style="color:#8b949e;font-style:italic">//每個頁面爬蟲停留3~6秒，不要造成別人的伺服器負擔
+</span></span></span><span style="display:flex;"><span>                <span style="color:#ff7b72">await</span> driver.sleep((Math.floor(Math.random() <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">4</span>) <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">3</span>) <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>)
+</span></span><span style="display:flex;"><span>                trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> getTrace(driver, By, until)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">if</span> (trace <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">null</span>) {
+</span></span><span style="display:flex;"><span>                console.log(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>fanpage.title<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">無法抓取追蹤人數`</span>)
+</span></span><span style="display:flex;"><span>            } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>                console.log(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>fanpage.title<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">追蹤人數：</span><span style="color:#a5d6ff">${</span>trace<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>.<span style="color:#8b949e;font-style:italic">//後面程式一樣
+</span></span></span><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>.
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div></li>
+<li>
+<p>確認畫面執行順序如你預期：Instagram自動登入 → 依序跳轉到指定帳號 → Facebook自動登入 → 依序跳轉到粉絲頁 → 關閉</p>
+</li>
+<li>
+<p>大概裝完一壺水的時間後，你就能看到 FB &amp; IG 的追蹤人數嚕～</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01.webp" width="1024" height="422" alt="執行程式（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<p>搭配上json後有沒有覺得自己功力大增XD，上面的是IG的範例，大家可以自己嘗試看看FB部分的如何改寫喔～</p>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day15">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day14_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來實作今天json改寫的部分喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+</ul>
+</li>
+<li>調整fanspages資料夾內目標爬蟲的粉專網址</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://www.footmark.info/programming-language/javascript/json-format-and-javascript/">JSON 格式與 JavaScript 解析教學範例</a></li>
+<li><a href="https://ithelp.ithome.com.tw/articles/10197904">用Math.random()取得亂數的技巧</a></li>
+</ol>
+<blockquote>
+<p><em>免責聲明:文章技術僅抓取公開數據作爲研究，任何組織和個人不得以此技術盜取他人智慧財產、造成網站損害，否則一切后果由該組織或個人承擔。作者不承擔任何法律及連帶責任！</em></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-02.webp" width="1024" height="233" alt="參考資源（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

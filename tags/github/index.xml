@@ -8,8 +8,247 @@
     <generator>Hugo</generator>
     <language>zh-tw</language>
     <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
-    <lastBuildDate>Fri, 05 Jun 2020 16:03:36 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 03 Oct 2020 09:08:54 +0800</lastBuildDate>
     <atom:link href="https://deanlin.net/tags/github/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day18】Google Sheets - 加入版控後被github警告了，官方範例做了什麼？</title>
+      <link>https://deanlin.net/blog/202010/fb-ig-crawler-day-18/</link>
+      <pubDate>Sat, 03 Oct 2020 09:08:54 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/fb-ig-crawler-day-18/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>在跟著官方步驟完成後，這些也是我們要注意的事情</description>
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-og_hu_aef1d4095d05b9f5.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>盡信書不如無書</p>
+</blockquote>
+<h2 id="你知道官方範例在做什麼事情嗎">你知道官方範例在做什麼事情嗎?<a class="h-anchor" href="#%e4%bd%a0%e7%9f%a5%e9%81%93%e5%ae%98%e6%96%b9%e7%af%84%e4%be%8b%e5%9c%a8%e5%81%9a%e4%bb%80%e9%ba%bc%e4%ba%8b%e6%83%85%e5%97%8e" aria-label="這個段落的連結"></a></h2>
+<p>在跟著官方步驟完成後，這些也是我們要注意的事情</p>
+<ol>
+<li><strong>我們安裝了什麼套件?</strong>
+<ul>
+<li>如果你有用 github 版控在做這份專案，<code>你應該會收到 github 給你的警告通知</code>，今天會說明如何閱讀這個通知並解決他</li>
+</ul>
+</li>
+<li><strong>官方的範例程式在做什麼?</strong>
+<ul>
+<li>會教你如何觀察官方的範例程式，知道他運行的邏輯，<code>學會改寫，拒絕只當 copycat</code></li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-了解-github-警告通知的原因並處理">1. 了解 github 警告通知的原因並處理<a class="h-anchor" href="#1-%e4%ba%86%e8%a7%a3-github-%e8%ad%a6%e5%91%8a%e9%80%9a%e7%9f%a5%e7%9a%84%e5%8e%9f%e5%9b%a0%e4%b8%a6%e8%99%95%e7%90%86" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="2-改寫官方範例讀取自己指定的-google-sheets">2. 改寫官方範例讀取自己指定的 Google Sheets<a class="h-anchor" href="#2-%e6%94%b9%e5%af%ab%e5%ae%98%e6%96%b9%e7%af%84%e4%be%8b%e8%ae%80%e5%8f%96%e8%87%aa%e5%b7%b1%e6%8c%87%e5%ae%9a%e7%9a%84-google-sheets" aria-label="這個段落的連結"></a></h3>
+<p>2.1 分析官方範例程式<br>2.2 取得自己的 spreadsheetId 並加入程式<br>2.3 撰寫函式 <code>listMySheet</code> 來讀取自己的 sheet</p>
+<hr>
+<h2 class="h-nomark" id="1-了解-github-警告通知的原因並處理-1">1. 了解 github 警告通知的原因並處理<a class="h-anchor" href="#1-%e4%ba%86%e8%a7%a3-github-%e8%ad%a6%e5%91%8a%e9%80%9a%e7%9f%a5%e7%9a%84%e5%8e%9f%e5%9b%a0%e4%b8%a6%e8%99%95%e7%90%86-1" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>
+<p>昨天雖然我們按照官方給的範例完成了，但你把 code 上傳到 github 後應該會收到警告通知如下</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-01.webp" width="1024" height="313" alt="1. 了解 github 警告通知的原因並處理（圖 1）" loading="lazy" decoding="async"></p>
+<ol>
+<li>
+<p>我們先點開 <strong>high severity(高嚴重性)</strong> 的通知，閱讀後發現這是<code>相依套件版本過低造成的警告</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-02.webp" width="1024" height="484" alt="1. 了解 github 警告通知的原因並處理（圖 2）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>接著我們以 <strong>node-forge</strong> 為關鍵字在 <strong>yarn.lock</strong> 檔案裡面搜尋，發現真的版本過低</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-03.webp" width="1024" height="100" alt="1. 了解 github 警告通知的原因並處理（圖 3）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>同時發現這個套件是跟 <strong>google</strong> 有關聯性的，一路順藤摸瓜往上查會發現<code>根源就是昨天安裝的 googleapis</code> 這個套件</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-04.webp" width="1024" height="150" alt="1. 了解 github 警告通知的原因並處理（圖 4）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>來回顧一下昨天<code>官方是指定我們安裝 39</code> 這個版本的</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-05.webp" width="1024" height="187" alt="1. 了解 github 警告通知的原因並處理（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>接著我們直接搜尋 <strong>googleapis npm</strong> 來看看套件的資訊，你就會發現<code>最新的套件已經來到了 59</code> 這個版本</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-06.webp" width="1024" height="497" alt="1. 了解 github 警告通知的原因並處理（圖 6）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+<li>
+<p>官方建議安裝的套件版本跟最新的套件版本<code>整整差了 20 個大版</code>，雖然每次更新版本都會有 release note，但我相信會認真看的沒有幾個，所以這20個大版本改了多少功能也是我們所不清楚的，<code>固定的版本可以給你穩定的功能，但是潛在的漏洞你無法知曉，所以如果在確認最新版本功能穩定的狀態下我會更新套件</code></p>
+<ol>
+<li>
+<p>輸入指令安裝最新版本的 googleapis 套件</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn add googleapis@59
+</span></span></code></pre></div></li>
+<li>
+<p><code>每次更新版本後記得執行程式確認有無異常</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>node tools/google_sheets/index.js
+</span></span></code></pre></div><ul>
+<li>
+<p>可能遇到的的錯誤</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-07.webp" width="1024" height="134" alt="1. 了解 github 警告通知的原因並處理（圖 7）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在 google 搜尋 <strong>googleapis export { default as v1 } from &lsquo;./v1.js&rsquo;;</strong> 就能找到問題是出在 node.js 版本上面，輸入指令安裝並套用新版本(請選用<a href="https://nodejs.org/en/">LTS版本</a>)就能解決嚕</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nvm install 12.19
+</span></span><span style="display:flex;"><span>nvm use 12.19
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="2-改寫官方範例讀取自己指定的-google-sheets-1">2. 改寫官方範例讀取自己指定的 Google Sheets<a class="h-anchor" href="#2-%e6%94%b9%e5%af%ab%e5%ae%98%e6%96%b9%e7%af%84%e4%be%8b%e8%ae%80%e5%8f%96%e8%87%aa%e5%b7%b1%e6%8c%87%e5%ae%9a%e7%9a%84-google-sheets-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-分析官方範例程式">2.1 分析官方範例程式<a class="h-anchor" href="#21-%e5%88%86%e6%9e%90%e5%ae%98%e6%96%b9%e7%af%84%e4%be%8b%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>以下說明建議你<a href="https://github.com/dean9703111/ithelp_30days/blob/master/day17/tools/google_sheets/index.js">打開昨日的範例程式</a>方便相互印證</p>
+<ul>
+<li>首先要理解 Google 提供範例程式，<code>理解程式最快的方式的就是從輸出結果的位置開始回推</code>，所以我反推的順序會是：
+<ol>
+<li>找到輸出結果 <strong>console.log()</strong> 的位置 → <em>console.log(&lsquo;Name, Major:&rsquo;);</em></li>
+<li>這個結果是在哪個 <strong>function</strong> 輸出的 → <em>listMajors(auth)</em></li>
+<li>程式在哪裏呼叫 <strong>listMajors</strong> 這個 function → <em>authorize(JSON.parse(content), listMajors)</em></li>
+<li><code>程式的根源</code>：<strong>要先要取得憑證才能 authorize(授權)</strong> → <em>fs.readFile(&rsquo;tools/google_sheets/credentials.json&rsquo;&hellip;)</em></li>
+</ol>
+</li>
+<li>根據上面的架構分析，我們先觀察輸出console.log()的函式： <code>listMajors</code>，裡面有兩個參數我們要特別注意：
+<ol>
+<li><strong>spreadsheetId</strong>：你的Google Sheets id</li>
+<li><strong>range</strong>：你指定讀取的範圍</li>
+</ol>
+</li>
+<li>知道要處理的參數後我們就能開始改寫了，步驟：
+<ol>
+<li>取得自己的 <strong>spreadsheetId</strong> 並加入程式</li>
+<li>撰寫函式：<code>listMySheet</code> 讀取自己的sheet</li>
+</ol>
+</li>
+</ul>
+<h3 class="h-nomark" id="22-取得自己的-spreadsheetid-並加入程式">2.2 取得自己的 spreadsheetId 並加入程式<a class="h-anchor" href="#22-%e5%8f%96%e5%be%97%e8%87%aa%e5%b7%b1%e7%9a%84-spreadsheetid-%e4%b8%a6%e5%8a%a0%e5%85%a5%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>我們先觀察官方對 <code>listMajors</code> 這隻函式的註解</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"> * Prints the names and majors of students in a sample spreadsheet:
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">* @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">* @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">*/</span>
+</span></span></code></pre></div></li>
+<li>
+<p>再觀察裡面 <code>spreadsheetId</code> 的參數</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>spreadsheetId<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms&#39;</span>
+</span></span></code></pre></div><p>就會發現 <code>spreadsheetId</code> 這個參數在範例網址中間：<br>docs.google.com/spreadsheets/d/ <code>1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms</code> /edit</p>
+</li>
+<li>
+<p>我們建立好 Google Sheets 後<code>把 spreadsheetId 替換成自己的</code>(實際網頁位置如下圖紅框處)</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-08.webp" width="1024" height="45" alt="2.2 取得自己的 spreadsheetId 並加入程式（圖 8）" loading="lazy" decoding="async"></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>spreadsheetId<span style="color:#ff7b72;font-weight:bold">:</span> process.env.SPREADSHEET_ID
+</span></span></code></pre></div><ul>
+<li>
+<p>因為 spreadsheetId 並不適合公開放到git上面(你應該不會想公布這份 Google Sheets 給全世界吧)，所以我們要把<code>spreadsheetId 複製起來放到 .env 裡面設定為環境變數</code>，以下是目前環境檔需要做的設定</p>
+<h4 id="envexmaple">.env.exmaple<a class="h-anchor" href="#envexmaple" aria-label="這個段落的連結"></a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#填寫自己登入IG的真實資訊(建議開小帳號來實驗，因為帳號使用太頻繁會被官方鎖住)</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">IG_USERNAME</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;ig username&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">IG_PASSWORD</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;ig password&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#填寫自己登入FB的真實資訊(建議開小帳號來實驗，因為帳號使用太頻繁會被官方鎖住)</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">FB_USERNAME</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;fb username&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">FB_PASSWORD</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;fb password&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#FB跑經典版還是新版(classic/new)</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">FB_VERSION</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;new&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#填寫你目標放入的spreadsheetId</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">SPREADSHEET_ID</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;your spreadsheetId&#39;</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ol>
+<h3 class="h-nomark" id="23-撰寫函式-listmysheet-來讀取自己的-sheet">2.3 撰寫函式 <code>listMySheet</code> 來讀取自己的 sheet<a class="h-anchor" href="#23-%e6%92%b0%e5%af%ab%e5%87%bd%e5%bc%8f-listmysheet-%e4%be%86%e8%ae%80%e5%8f%96%e8%87%aa%e5%b7%b1%e7%9a%84-sheet" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>你可以由官方範例的<a href="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit">Google Sheets</a> 發現昨天程式印出來的是這個 Sheets <strong>第一欄、第五欄</strong> 的值</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-09.webp" width="1024" height="638" alt="2.3 撰寫函式 listMySheet 來讀取自己的 sheet（圖 9）" loading="lazy" decoding="async"></p>
+<ul>
+<li>
+<p>看看官方範例是如何印出這兩欄的數值</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">&#39;Name, Major:&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// Print columns A and E, which correspond to indices 0 and 4.
+</span></span></span><span style="display:flex;"><span>rows.map((row) =&gt; {
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>row[<span style="color:#a5d6ff">0</span>]<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">, </span><span style="color:#a5d6ff">${</span>row[<span style="color:#a5d6ff">4</span>]<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>接下來我們<strong>把原本 Google 範例程式的 listMajors() 刪除</strong>，<code>改寫成非同步函式listMySheet()</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> listMySheet (auth) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> sheets <span style="color:#ff7b72;font-weight:bold">=</span> google.sheets({ version<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;v4&#39;</span>, auth });
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> title <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;我的sheet&#39;</span><span style="color:#8b949e;font-style:italic">//請你更改成自己設定的sheet(工作表)名稱
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> request <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>        spreadsheetId<span style="color:#ff7b72;font-weight:bold">:</span> process.env.SPREADSHEET_ID,
+</span></span><span style="display:flex;"><span>        range<span style="color:#ff7b72;font-weight:bold">:</span> [
+</span></span><span style="display:flex;"><span>            <span style="color:#8b949e;font-style:italic">//這是指抓取的範圍，你也可以改寫成A1:A300(抓第1欄的第1列到第300列)
+</span></span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">`&#39;</span><span style="color:#a5d6ff">${</span>title<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">&#39;!A:ZZ`</span>
+</span></span><span style="display:flex;"><span>        ],
+</span></span><span style="display:flex;"><span>        valueRenderOption<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;FORMULA&#34;</span><span style="color:#8b949e;font-style:italic">//FORMATTED_VALUE|UNFORMATTED_VALUE|FORMULA
+</span></span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//這裡改寫為await，之後會有順序執行的需求
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> values <span style="color:#ff7b72;font-weight:bold">=</span> (<span style="color:#ff7b72">await</span> sheets.spreadsheets.values.get(request)).data.values;
+</span></span><span style="display:flex;"><span>        console.log(values)
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>        console.error(err);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><blockquote>
+<p><strong>valueRenderOption</strong> 這個參數是把資料抓出來時的類型，感興趣可參考<a href="https://developers.google.com/sheets/api/reference/rest/v4/ValueRenderOption">Google官方文件</a></p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>先在自己的 Google Sheets 表格上隨機輸入文字</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-10.webp" width="1024" height="428" alt="執行程式（圖 10）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>node tools/google_sheets/index.js
+</span></span></code></pre></div></li>
+<li>
+<p>看看輸出的結果是否與你 Google Sheets 上的一致呢～</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-11.webp" width="1024" height="165" alt="執行程式（圖 11）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day18">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day17_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來改寫Google Sheets的範例喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>要在tools/google_sheets資料夾放上自己的憑證，今天的程式才能執行喔，申請流程請參考<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-12.webp" width="1024" height="233" alt="ℹ️ 專案原始碼（圖 12）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
     <item>
       <title>嫌Google Form太醜？那就把他當後台吧XD</title>
       <link>https://deanlin.net/blog/202006/google-form-as-backend/</link>
@@ -18,7 +257,7 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>Google Form &   Google sheet & HTML & github 結合應用</description>
-      <media:content url="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-og_hu_196e6e64d45dd190.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-og_hu_ccb8baea55aaf4e.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202006/google-form-as-backend/images/google-form-as-backend-01.webp" width="1400" height="714" alt="嫌Google Form太醜？那就把他當後台吧XD（圖 1）" loading="lazy" decoding="async"></p>
 <blockquote>
 <p>為什麼撰寫這篇文章</p>

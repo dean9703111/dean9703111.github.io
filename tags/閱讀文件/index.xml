@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>閱讀文件｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/%E9%96%B1%E8%AE%80%E6%96%87%E4%BB%B6/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>閱讀文件｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/%E9%96%B1%E8%AE%80%E6%96%87%E4%BB%B6/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Sun, 04 Oct 2020 09:23:48 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/%E9%96%B1%E8%AE%80%E6%96%87%E4%BB%B6/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day19】Google Sheets - 你在文件迷路了嗎？用兩個處理Sheet的範例帶你攻略官方文件</title>
+      <link>https://deanlin.net/blog/202010/fb-ig-crawler-day-19/</link>
+      <pubDate>Sun, 04 Oct 2020 09:23:48 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/fb-ig-crawler-day-19/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>接下來幾天的目標是將之前的爬蟲資料放入 Google Sheets，實踐上會分成幾個步驟：</description>
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-og_hu_7adbf8696d7624af.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>如果說爬蟲是在鍛鍊你分析網頁的能力，那麼 Google Sheets 就是在教你閱讀官方文件的技巧</p>
+</blockquote>
+<h2 id="爬蟲資料如何自動化的塞入google-sheets">爬蟲資料如何自動化的塞入Google Sheets?<a class="h-anchor" href="#%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e5%a6%82%e4%bd%95%e8%87%aa%e5%8b%95%e5%8c%96%e7%9a%84%e5%a1%9e%e5%85%a5google-sheets" aria-label="這個段落的連結"></a></h2>
+<p>接下來幾天的目標是將之前的爬蟲資料放入 Google Sheets，實踐上會分成幾個步驟：</p>
+<ol>
+<li>取得放 FB、IG爬蟲資料的 Sheet 資訊(今日目標)</li>
+<li>將 FB、IG爬蟲資料寫入各自的 Sheet <a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-20/">Day20</a></li>
+<li>插入新的爬蟲資料前先分析粉專欄位，再將資料放入正確的位置 <a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/">Day21</a></li>
+<li>將新的爬蟲資料改為插入第二欄，日期由近而遠排列 <a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-22/">Day22</a></li>
+<li>調整 Google Sheets 的外觀，讓他閱讀起來更友善 <a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/">Day23</a></li>
+</ol>
+<hr>
+<h2 id="筆者有話先說">筆者有話先說<a class="h-anchor" href="#%e7%ad%86%e8%80%85%e6%9c%89%e8%a9%b1%e5%85%88%e8%aa%aa" aria-label="這個段落的連結"></a></h2>
+<p><code>使用 Google api 時你要煩惱的不是沒有功能，而是你找不到功能在哪裡</code>，因為<strong>這份 api 文件實在是太龐大了</strong>，對新手來說非常容易在文件中迷路&hellip;</p>
+<p>所以今天的文章重點在<code>如何從官方文件找出需要的資源</code>，希望能幫助到剛接觸巨型文件的朋友們</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-讀取-google-sheets-內的-sheet-資訊">1. 讀取 Google Sheets 內的 Sheet 資訊<a class="h-anchor" href="#1-%e8%ae%80%e5%8f%96-google-sheets-%e5%85%a7%e7%9a%84-sheet-%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+<p>1.1 在官方文件尋找 <strong>讀取Sheet</strong> 的範例<br>1.2 調整範例以符合專案需求：<code>getSheets</code></p>
+<h3 class="h-nomark" id="2-取得-fb粉專ig帳號的-sheet-資訊getfbigsheet">2. 取得 FB粉專、IG帳號的 Sheet 資訊：<code>getFBIGSheet</code><a class="h-anchor" href="#2-%e5%8f%96%e5%be%97-fb%e7%b2%89%e5%b0%88ig%e5%b8%b3%e8%99%9f%e7%9a%84-sheet-%e8%b3%87%e8%a8%8agetfbigsheet" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="3-建立放-fb粉專ig帳號爬蟲資料的-sheet">3. 建立放 FB粉專、IG帳號爬蟲資料的 Sheet<a class="h-anchor" href="#3-%e5%bb%ba%e7%ab%8b%e6%94%be-fb%e7%b2%89%e5%b0%88ig%e5%b8%b3%e8%99%9f%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e7%9a%84-sheet" aria-label="這個段落的連結"></a></h3>
+<p>3.1 在官方文件尋找 <strong>新增Sheet</strong> 的範例<br>3.2 調整範例以符合專案需求：<code>addSheets</code></p>
+<h3 class="h-nomark" id="4-重新架構-google-sheets-程式">4. 重新架構 Google Sheets 程式<a class="h-anchor" href="#4-%e9%87%8d%e6%96%b0%e6%9e%b6%e6%a7%8b-google-sheets-%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>4.1 建立外部函式模組：<code>updateGoogleSheets</code><br>4.2 將取得 auth(認證)的步驟改寫為函式：<code>getAuth</code></p>
+<h3 class="h-nomark" id="5-讓主程式呼叫外部函式updategooglesheets">5. 讓主程式呼叫外部函式：<code>updateGoogleSheets</code><a class="h-anchor" href="#5-%e8%ae%93%e4%b8%bb%e7%a8%8b%e5%bc%8f%e5%91%bc%e5%8f%ab%e5%a4%96%e9%83%a8%e5%87%bd%e5%bc%8fupdategooglesheets" aria-label="這個段落的連結"></a></h3>
+<hr>
+<h2 class="h-nomark" id="1-讀取-google-sheets-內的-sheet-資訊-1">1. 讀取 Google Sheets 內的 Sheet 資訊<a class="h-anchor" href="#1-%e8%ae%80%e5%8f%96-google-sheets-%e5%85%a7%e7%9a%84-sheet-%e8%b3%87%e8%a8%8a-1" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>建議你所需要的功能都先從<code>有範例的文件</code>找起，因為沒範例的文件你還要自己瞎猜程式結構</p>
+</blockquote>
+<h3 class="h-nomark" id="11-在官方文件尋找-讀取sheet-的範例">1.1 在官方文件尋找 <code>讀取Sheet</code> 的範例<a class="h-anchor" href="#11-%e5%9c%a8%e5%ae%98%e6%96%b9%e6%96%87%e4%bb%b6%e5%b0%8b%e6%89%be-%e8%ae%80%e5%8f%96sheet-%e7%9a%84%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>進入官方文件<a href="https://developers.google.com/sheets/api/samples">範例首頁</a>後 <code>先觀察大標題的描述</code>（可用關鍵字 <strong>sheet</strong> 搜尋來輔助）</p>
+<blockquote>
+<p>標題 <strong>Sheet Operations</strong> 的描述上比較符合我們需求，因為我們要<code>找出 spreadsheet 底下的 sheet 資訊</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-01.webp" width="1024" height="474" alt="1.1 在官方文件尋找 讀取Sheet 的範例（圖 1）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>進入<a href="https://developers.google.com/sheets/api/samples/sheet">Sheet Operations</a>頁面後<code>一樣先從標題下手</code></p>
+<blockquote>
+<p>標題 <strong>Determine sheet ID and other properties</strong> 跟 <code>sheet 的詳細資訊</code>有關</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-02.webp" width="1024" height="357" alt="1.1 在官方文件尋找 讀取Sheet 的範例（圖 2）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>看<a href="https://developers.google.com/sheets/api/samples/sheet#determine_sheet_id_and_other_properties">Determine sheet ID and other properties</a>的描述</p>
+<blockquote>
+<p>第一段給了一個連結，並說 <code>這個方法能取得特定 spreadsheet 底下 sheet 的屬性</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-03.webp" width="1024" height="291" alt="1.1 在官方文件尋找 讀取Sheet 的範例（圖 3）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>接下來要確認 <a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/get">spreadsheets.get</a> 這個方法是否真的符合我們的需求</p>
+<blockquote>
+<ol>
+<li>
+<p>首先我們看到 <code>Google 非常貼心提供線上測試 api 的地方</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-04.webp" width="1024" height="473" alt="1.1 在官方文件尋找 讀取Sheet 的範例（圖 4）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>進入測試 api 全螢幕模式後，<code>填寫自己的 spreadsheetId、憑證權限</code> 接著按下 <strong>EXCUTE</strong> 即可在右下角看到 api 的回傳資訊</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-05.webp" width="1024" height="699" alt="1.1 在官方文件尋找 讀取Sheet 的範例（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>打開自己的 Google Sheets 來與 api 的回傳資訊做對照</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-06.webp" width="1024" height="349" alt="1.1 在官方文件尋找 讀取Sheet 的範例（圖 6）" loading="lazy" decoding="async"></p>
+<ul>
+<li>
+<p>從回傳的 json 我們就能知道所需的資訊被放在 <code>sheets</code> 這個陣列中，並且可用 <code>sheets[].properties.title</code> 這個參數判斷 &lsquo;FB粉專&rsquo;、&lsquo;IG帳號&rsquo; 的 Sheet 是否已經建立</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-07.webp" width="689" height="374" alt="1.1 在官方文件尋找 讀取Sheet 的範例（圖 7）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+</li>
+<li>
+<p>確認這個 api 能取得我們所需要的資訊後，我們便可參考官方提供的<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/get#examples">範例程式</a>開始實作啦</p>
+</li>
+</ol>
+<h3 class="h-nomark" id="12-調整範例以符合專案需求getsheets">1.2 調整範例以符合專案需求：<code>getSheets</code><a class="h-anchor" href="#12-%e8%aa%bf%e6%95%b4%e7%af%84%e4%be%8b%e4%bb%a5%e7%ac%a6%e5%90%88%e5%b0%88%e6%a1%88%e9%9c%80%e6%b1%82getsheets" aria-label="這個段落的連結"></a></h3>
+<p>這個函式的目標是 <code>取得指定 spreadsheetId 下 sheets 資訊</code>，根據上面 api 回傳的 json 結構分析，我們所需要的資料就在<code>response.sheets</code>裡面</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> getSheets (auth) {<span style="color:#8b949e;font-style:italic">//取得Google Sheets所有的sheet
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> sheets <span style="color:#ff7b72;font-weight:bold">=</span> google.sheets({ version<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;v4&#39;</span>, auth });
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> request <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>        spreadsheetId<span style="color:#ff7b72;font-weight:bold">:</span> process.env.SPREADSHEET_ID,
+</span></span><span style="display:flex;"><span>        includeGridData<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">false</span>,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> response <span style="color:#ff7b72;font-weight:bold">=</span> (<span style="color:#ff7b72">await</span> sheets.spreadsheets.get(request)).data;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> sheets_info <span style="color:#ff7b72;font-weight:bold">=</span> response.sheets
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> sheets_info
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>        console.error(err);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 class="h-nomark" id="2-取得-fb粉專ig帳號的-sheet-資訊getfbigsheet-1">2. 取得 FB粉專、IG帳號的 Sheet 資訊：<code>getFBIGSheet</code><a class="h-anchor" href="#2-%e5%8f%96%e5%be%97-fb%e7%b2%89%e5%b0%88ig%e5%b8%b3%e8%99%9f%e7%9a%84-sheet-%e8%b3%87%e8%a8%8agetfbigsheet-1" aria-label="這個段落的連結"></a></h2>
+<p>這隻函式是今天功能的核心，我們將<code>取得 FB粉專、IG帳號的 sheet 資訊</code>分成幾個步驟</p>
+<ol>
+<li>先取得線上的 sheets：<code>getSheets</code></li>
+<li>判斷 &lsquo;FB粉專&rsquo;、&lsquo;IG帳號&rsquo; 是否在<code>getSheets</code>回傳的資料裡面
+<ul>
+<li>存在就將 sheetId 資訊儲存</li>
+<li>不存在就用函式新增一個 Sheet：<code>addSheet</code></li>
+</ul>
+</li>
+<li>回傳更新後的 sheets 資訊</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> getFBIGSheet (auth) {<span style="color:#8b949e;font-style:italic">// 取得FB粉專、IG帳號的Sheet資訊
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> sheets <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#8b949e;font-style:italic">//我們Google Sheets需要的sheet
+</span></span></span><span style="display:flex;"><span>        { title<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;FB粉專&#39;</span>, id<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span> },
+</span></span><span style="display:flex;"><span>        { title<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;IG帳號&#39;</span>, id<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">null</span> }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> online_sheets <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> getSheets(auth)<span style="color:#8b949e;font-style:italic">//抓目前存在的sheet
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">for</span> (sheet <span style="color:#ff7b72">of</span> sheets) {
+</span></span><span style="display:flex;"><span>        online_sheets.forEach(online_sheet =&gt; {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">if</span> (sheet.title <span style="color:#ff7b72;font-weight:bold">==</span> online_sheet.properties.title) {
+</span></span><span style="display:flex;"><span>                <span style="color:#8b949e;font-style:italic">// 如果線上已經存在相同的sheet title就直接使用相同id
+</span></span></span><span style="display:flex;"><span>                sheet.id <span style="color:#ff7b72;font-weight:bold">=</span> online_sheet.properties.sheetId
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> (sheet.id <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#79c0ff">null</span>) {<span style="color:#8b949e;font-style:italic">//如果該sheet尚未被建立，則建立
+</span></span></span><span style="display:flex;"><span>            console.log(sheet.title <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;:not exsit&#39;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>                sheet.id <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> addSheet(sheet.title, auth)        
+</span></span><span style="display:flex;"><span>            } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>                console.error(e)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> sheets;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 class="h-nomark" id="3-建立放-fb粉專ig帳號爬蟲資料的-sheet-1">3. 建立放 FB粉專、IG帳號爬蟲資料的 Sheet<a class="h-anchor" href="#3-%e5%bb%ba%e7%ab%8b%e6%94%be-fb%e7%b2%89%e5%b0%88ig%e5%b8%b3%e8%99%9f%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e7%9a%84-sheet-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="31-在官方文件尋找-新增sheet-的範例">3.1 在官方文件尋找 <code>新增Sheet</code> 的範例<a class="h-anchor" href="#31-%e5%9c%a8%e5%ae%98%e6%96%b9%e6%96%87%e4%bb%b6%e5%b0%8b%e6%89%be-%e6%96%b0%e5%a2%9esheet-%e7%9a%84%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>由<code>讀取Sheet的經驗</code>可以知道想要操作 Sheet 就要在<a href="https://developers.google.com/sheets/api/samples/sheet">Sheet Operations</a>這個頁面尋找資源</p>
+<blockquote>
+<p>標題 <strong>Add a sheet</strong> 超級直觀，就是他惹！</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-08.webp" width="1024" height="357" alt="3.1 在官方文件尋找 新增Sheet 的範例（圖 8）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>看<a href="https://developers.google.com/sheets/api/samples/sheet#add_a_sheet">Add a sheet</a>的描述</p>
+<blockquote>
+<ul>
+<li>
+<p>第一段提供一個連結，並說<code>這方法能新增 sheet 到 spreadsheet</code></p>
+</li>
+<li>
+<p>下方提供了 request 的範例，讓我們能大概了解<code>新增 Sheet 可以調整哪些參數</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-09.webp" width="1024" height="695" alt="3.1 在官方文件尋找 新增Sheet 的範例（圖 9）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>接著來確認<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/batchUpdate">Method: spreadsheets.batchUpdate</a>是否符合需求</p>
+<blockquote>
+<ol>
+<li>
+<p>打開 Try this API(在最下方)，<code>Request body 請依下圖設定</code>，title 的內容可以自行調整</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-10.webp" width="1024" height="800" alt="3.1 在官方文件尋找 新增Sheet 的範例（圖 10）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>按下 <strong>EXCUTE</strong> 按鈕後，確認自己的 Google Sheets<code>真的成功新增一個 title 為 test1 的 Sheet</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-11.webp" width="1024" height="319" alt="3.1 在官方文件尋找 新增Sheet 的範例（圖 11）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>從回傳資料中找出 sheetId 的位置：<code>replies[0].addSheet.properties.sheetId</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-12.webp" width="672" height="357" alt="3.1 在官方文件尋找 新增Sheet 的範例（圖 12）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</blockquote>
+</li>
+<li>
+<p>確認這個 api 能新增 Sheet 後，我們便可參考官方提供的<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/batchUpdate#examples">範例程式</a>開始實作啦</p>
+</li>
+</ol>
+<h3 class="h-nomark" id="32-調整範例以符合專案需求addsheets">3.2 調整範例以符合專案需求：<code>addSheets</code><a class="h-anchor" href="#32-%e8%aa%bf%e6%95%b4%e7%af%84%e4%be%8b%e4%bb%a5%e7%ac%a6%e5%90%88%e5%b0%88%e6%a1%88%e9%9c%80%e6%b1%82addsheets" aria-label="這個段落的連結"></a></h3>
+<p>這個函式的目標是 <code>用提供的 title 建立一個新 Sheet</code>，Google Sheets 在新增一個 Sheet 時會自動產生一個不重複的 sheetId，我們<code>將 sheetId 回傳代表我們新增成功</code>(sheetId 在後面的章節會使用到)</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> addSheet (title, auth) {<span style="color:#8b949e;font-style:italic">//新增一個sheet到指定的Google Sheets
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> sheets <span style="color:#ff7b72;font-weight:bold">=</span> google.sheets({ version<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;v4&#39;</span>, auth });
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> request <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// The ID of the spreadsheet
+</span></span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;spreadsheetId&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> process.env.SPREADSHEET_ID,
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;resource&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;requests&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> [{
+</span></span><span style="display:flex;"><span>                <span style="color:#a5d6ff">&#34;addSheet&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#8b949e;font-style:italic">//這個request的任務是addSheet
+</span></span></span><span style="display:flex;"><span>                <span style="color:#8b949e;font-style:italic">// 你想給這個sheet的屬性
+</span></span></span><span style="display:flex;"><span>                <span style="color:#a5d6ff">&#34;properties&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>                    <span style="color:#a5d6ff">&#34;title&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> title
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>            }]
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> response <span style="color:#ff7b72;font-weight:bold">=</span> (<span style="color:#ff7b72">await</span> sheets.spreadsheets.batchUpdate(request)).data;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> sheetId <span style="color:#ff7b72;font-weight:bold">=</span> response.replies[<span style="color:#a5d6ff">0</span>].addSheet.properties.sheetId
+</span></span><span style="display:flex;"><span>        console.log(<span style="color:#a5d6ff">&#39;added sheet:&#39;</span> <span style="color:#ff7b72;font-weight:bold">+</span> title)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> sheetId
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>        console.log(<span style="color:#a5d6ff">&#39;The API returned an error: &#39;</span> <span style="color:#ff7b72;font-weight:bold">+</span> err);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 class="h-nomark" id="4-重新架構-google-sheets-程式-1">4. 重新架構 Google Sheets 程式<a class="h-anchor" href="#4-%e9%87%8d%e6%96%b0%e6%9e%b6%e6%a7%8b-google-sheets-%e7%a8%8b%e5%bc%8f-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="41-建立外部函式模組updategooglesheets">4.1 建立外部函式模組：<code>updateGoogleSheets</code><a class="h-anchor" href="#41-%e5%bb%ba%e7%ab%8b%e5%a4%96%e9%83%a8%e5%87%bd%e5%bc%8f%e6%a8%a1%e7%b5%84updategooglesheets" aria-label="這個段落的連結"></a></h3>
+<p>別忘記我們學習 Google Sheets 是為了寫入爬蟲的資料，所以要建立一個給主程式<code>用來更新 Google Sheets 的外部函式模組</code>，這個函式今天有兩個任務：</p>
+<ol>
+<li>取得 Google Sheets 授權：<code>getAuth</code></li>
+<li>取得 FB粉專、IG帳號的 sheet 資訊：<code>getFBIGSheet</code></li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//讓其他程式在引入時可以使用這個函式
+</span></span></span><span style="display:flex;"><span>exports.updateGoogleSheets <span style="color:#ff7b72;font-weight:bold">=</span> updateGoogleSheets;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> updateGoogleSheets () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> auth <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> getAuth()
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> sheets <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> getFBIGSheet(auth)<span style="color:#8b949e;font-style:italic">//取得線上FB、IG的sheet資訊
+</span></span></span><span style="display:flex;"><span>        console.log(sheets)
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>        console.error(<span style="color:#a5d6ff">&#39;更新Google Sheets失敗&#39;</span>);
+</span></span><span style="display:flex;"><span>        console.error(err);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 class="h-nomark" id="42-將取得-auth認證的步驟改寫為函式getauth">4.2 將取得 auth(認證)的步驟改寫為函式：<code>getAuth</code><a class="h-anchor" href="#42-%e5%b0%87%e5%8f%96%e5%be%97-auth%e8%aa%8d%e8%ad%89%e7%9a%84%e6%ad%a5%e9%a9%9f%e6%94%b9%e5%af%ab%e7%82%ba%e5%87%bd%e5%bc%8fgetauth" aria-label="這個段落的連結"></a></h3>
+<p>考慮到 <code>Google Sheets 的 api 都需要通過憑證取得授權才能操作，所以我把這個步驟獨立成一個函式</code>，由於取得授權這塊採用 callback 的函式，所以我們要用 Promise 的方式來處理。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">function</span> getAuth () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#ff7b72">new</span> Promise((resolve, reject) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> content <span style="color:#ff7b72;font-weight:bold">=</span> JSON.parse(fs.readFileSync(<span style="color:#a5d6ff">&#39;tools/google_sheets/credentials.json&#39;</span>))
+</span></span><span style="display:flex;"><span>        authorize(content, auth =&gt; {
+</span></span><span style="display:flex;"><span>            resolve(auth)
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>        console.error(<span style="color:#a5d6ff">&#39;憑證錯誤&#39;</span>);
+</span></span><span style="display:flex;"><span>        reject(err)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 class="h-nomark" id="5-讓主程式呼叫外部函式updategooglesheets-1">5. 讓主程式呼叫外部函式：<code>updateGoogleSheets</code><a class="h-anchor" href="#5-%e8%ae%93%e4%b8%bb%e7%a8%8b%e5%bc%8f%e5%91%bc%e5%8f%ab%e5%a4%96%e9%83%a8%e5%87%bd%e5%bc%8fupdategooglesheets-1" aria-label="這個段落的連結"></a></h2>
+<p>要爬蟲完成後才會把資料寫入 Google Sheet，所以將 updateGoogleSheets 這個函式放在最後執行</p>
+<blockquote>
+<p>為了方便測試今天的功能先把爬蟲的功能暫時註解</p>
+</blockquote>
+<h3 id="indexjs">index.js<a class="h-anchor" href="#indexjs" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config(); <span style="color:#8b949e;font-style:italic">//載入.env環境檔
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { initDrive } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/initDrive.js&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { crawlerFB } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/crawlerFB.js&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { crawlerIG } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/crawlerIG.js&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { updateGoogleSheets } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/google_sheets&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> crawler () {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// const driver = await initDrive();
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// if (!driver) {//driver不存在就結束程式
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//     return
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// }
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// //因為有些人是用FB帳號登入IG，為了避免增加FB登出的動作，所以採取先對IG進行爬蟲
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// await crawlerIG(driver)
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// await crawlerFB(driver)
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// driver.quit();
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//處理Google Sheets相關動作
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> updateGoogleSheets()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>crawler()
+</span></span></code></pre></div><hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div><blockquote>
+<p>你會遇到如下的錯誤：</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-13.webp" width="1024" height="238" alt="執行程式（圖 13）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p><strong>The API returned an error: Error: Insufficient Permission</strong> 的錯誤是<code>因為 Google Sheets 權限不足(原本只有readonly)</code>，所以我們要重新申請 token</p>
+<ol>
+<li>
+<p><strong>刪除原本的 token.json</strong></p>
+</li>
+<li>
+<p><code>修改憑證的執行權限</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 原本的範本是有readonly，這樣只有讀取權限，將它拿掉後才擁有修改的權限
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// const SCOPES = [&#39;https://www.googleapis.com/auth/spreadsheets.readonly&#39;];
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> SCOPES <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">&#39;https://www.googleapis.com/auth/spreadsheets&#39;</span>];
+</span></span></code></pre></div></li>
+</ol>
+</li>
+<li>
+<p>在專案資料夾的終端機(Terminal)再次執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div></li>
+<li>
+<p>Google 會要求你再點一次連結重新取得授權碼，貼上後你會看到線上的 Google Sheets 成功新增 sheets 了</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-14.webp" width="1024" height="309" alt="執行程式（圖 14）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-15.webp" width="936" height="368" alt="執行程式（圖 15）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>如果你重複執行指令 <code>yarn start</code> ，只會回傳建立好的 sheetId 給你，不會再重新建立</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-16.webp" width="1024" height="112" alt="執行程式（圖 16）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day19">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day18_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來實作今天Google Sheets的Sheet處理喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>要在tools/google_sheets資料夾放上自己的憑證，申請流程請參考<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+<li>調整你.env檔填上SPREADSHEET_ID</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<p><a href="https://noob.tw/js-async/">callback、Promise 和 async/await 那些事兒</a></p>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-17.webp" width="1024" height="233" alt="參考資源（圖 17）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

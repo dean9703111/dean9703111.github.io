@@ -44,17 +44,17 @@
 
 DB 我選擇的是 MySQL，而 Table 的設計如下：
 
-### ➤ users（顧客）
+### users（顧客）
 
 延伸閱讀：[Table](https://sheetsu.com/tables/b96042fd7f)
 
-### ➤ orders（訂單）
+### orders（訂單）
 
 延伸閱讀：[Table](https://sheetsu.com/tables/74b89104e6)
 
 設計「user_id、user_name」是為了對比文字欄位（ex：VARCHAR）與數值欄位（ex：INTEGER）的差異，**皆有建立 Foreign Key**。
 
-### ➤ items（購買的商品）
+### items（購買的商品）
 
 延伸閱讀：[Table](https://sheetsu.com/tables/5417e3d700)
 
@@ -193,7 +193,7 @@ test()//什麼都沒有設定的
 
 ## 五、模擬每個情境，取得測試結果
 
-### ➤ 情境 A： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index
+### 情境 A： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index
 
 - ER Diagram
 
@@ -212,7 +212,7 @@ test()//什麼都沒有設定的
 - VARCHAR 多筆查詢：773.861ms
 - VARCHAR 設定條件的批量查詢：6.049s
 
-### ➤ 情境 B： 將 Foreign Key 的設計拿掉，改為使用 Index
+### 情境 B： 將 Foreign Key 的設計拿掉，改為使用 Index
 
 - ER Diagram
 
@@ -229,7 +229,7 @@ test()//什麼都沒有設定的
 - VARCHAR 多筆查詢：549.225ms
 - VARCHAR 設定條件的批量查詢：4.824s
 
-### ➤ 情境 C： 把 Index 全部拿掉，來看看到底有多慘
+### 情境 C： 把 Index 全部拿掉，來看看到底有多慘
 
 - ER Diagram
 

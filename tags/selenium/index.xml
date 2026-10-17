@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Selenium｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/selenium/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Selenium｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/selenium/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 23 Sep 2020 13:45:10 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/selenium/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-08/</link>
+      <pubDate>Wed, 23 Sep 2020 13:45:10 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-08/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-og_hu_4f36ba988aa5f60a.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<h2 id="為什麼選爬蟲作為主題">為什麼選爬蟲作為主題?<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e9%81%b8%e7%88%ac%e8%9f%b2%e4%bd%9c%e7%82%ba%e4%b8%bb%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<p>在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：</p>
+<ol>
+<li><strong>爬蟲道德觀</strong>：有些網路文章道德觀崩壞，把一個好的技術變成智慧財產的盜賊</li>
+<li><strong>中文資源缺乏，技術過時</strong>：中文的教學文章較少，許多範例的技術到今天已經無法使用了</li>
+<li><strong>缺乏系統性的整合</strong>：網路上的資源相對零碎，學習上缺乏系統性，容易在學習過程中遇到問題而半途而廢</li>
+</ol>
+<hr>
+<h2 id="學習爬蟲對我有什麼好處">學習爬蟲對我有什麼好處?<a class="h-anchor" href="#%e5%ad%b8%e7%bf%92%e7%88%ac%e8%9f%b2%e5%b0%8d%e6%88%91%e6%9c%89%e4%bb%80%e9%ba%bc%e5%a5%bd%e8%99%95" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li><strong>如果你是工程師</strong>
+<ol>
+<li>最直接的好處就是讓你在<code>未來職涯上有更多的選擇</code></li>
+<li>可以大量<code>訓練你對網頁架構的認知</code></li>
+<li>當你學會爬蟲時，你就能寫出相對來說<code>反爬蟲的網頁</code>了</li>
+</ol>
+</li>
+<li><strong>如果你是行銷廣告、電商小編</strong>
+<ol>
+<li>你可以透過爬蟲來<code>了解網路世界在資料這塊的邏輯</code></li>
+<li>就算你看完文章後還是無法完全掌握，但當你請工程師來撰寫爬蟲時，你能很具體地<code>說出你的需求並與工程師溝通順暢</code></li>
+<li>我認為掌握<code>分析資料能力</code>的人才最有機會做出能說服公司的策略</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>知道如何選擇適合的爬蟲工具</li>
+<li>使用 selenium-webdriver 套件開啟瀏覽器：<code>openCrawlerWeb</code></li>
+<li>解決 windows 無法自動讀取 chromedriver.exe 路徑的問題
+<ul>
+<li>寫判斷 Driver 是否設定的函式：<code>checkDriver</code></li>
+</ul>
+</li>
+<li>將 <code>checkDriver</code> 整合進 <code>openCrawlerWeb</code></li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-如何選擇適合的爬蟲工具">1. 如何選擇適合的爬蟲工具?<a class="h-anchor" href="#1-%e5%a6%82%e4%bd%95%e9%81%b8%e6%93%87%e9%81%a9%e5%90%88%e7%9a%84%e7%88%ac%e8%9f%b2%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h2>
+<p>在<a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/">Day5</a>有提到尋找工具的方法，現在我們依序來說明:</p>
+<ol>
+<li><strong>官方資源</strong>
+<ul>
+<li>由於近年 FB &amp; IG 的 api 改版頻繁，加上各式各樣權限的限制導致我們連公開資料都無法得到，所以在這裡我們放棄使用官方提供的 api</li>
+</ul>
+</li>
+<li><strong>網路資源</strong>
+<ul>
+<li>透過下關鍵字我們可以看到很多人分享爬蟲的經驗，我們把這些經驗中看起來<code>能用的套件記錄下來</code></li>
+</ul>
+</li>
+<li><strong>npm 套件</strong>
+<ul>
+<li>先在 <a href="https://www.npmjs.com/">npm 官網</a> 確認這些套件健康程度，<strong>太少人用或太久沒更新的就淘汰掉</strong>，接著進入<code>實際測試</code>確認是否符合專案需求，以下是我當時找到的資源並附上實測後的分析:
+<ol>
+<li><strong>request &amp; cheerio</strong>
+<ul>
+<li>下關鍵字候第一個找到的資源，使用範例程式測試後確認他可以透過網址抓到網頁元素並進行分析</li>
+<li>but&hellip;他在 FB、IG 面前毫無用武之地，因為 FB 會偵測你使用的瀏覽器，所以在第一關他就陣亡了</li>
+</ul>
+</li>
+<li><strong>selenium-webdriver</strong>
+<ul>
+<li>基本上他是一個無論是什麼網頁都能夠爬蟲的工具了，我認為非常適合新手使用</li>
+<li>工具運行時會開啟一個瀏覽器，這個瀏覽器會依據撰寫的腳本來模擬人類操作的每個步驟</li>
+<li><code>所見即所得，看得到的資訊都能夠抓下來，學習起來非常容易且直覺，所以這是本專案最後選擇的工具</code></li>
+</ul>
+</li>
+<li><strong>Puppeteer</strong>
+<ul>
+<li>操作邏輯與 selenium-webdriver 非常類似</li>
+<li>預設附帶 Chronium 瀏覽器，不會有瀏覽器匹配問題(但是只能用這個瀏覽器QQ)</li>
+<li>只能使用 Node.js 撰寫，不像 selenium-webdriver 有多種語言的 binding</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-使用-selenium-webdriver-套件開啟瀏覽器opencrawlerweb">2. 使用 selenium-webdriver 套件開啟瀏覽器：<code>openCrawlerWeb</code><a class="h-anchor" href="#2-%e4%bd%bf%e7%94%a8-selenium-webdriver-%e5%a5%97%e4%bb%b6%e9%96%8b%e5%95%9f%e7%80%8f%e8%a6%bd%e5%99%a8opencrawlerweb" aria-label="這個段落的連結"></a></h2>
+<p>我的文章會會依據需求使用到它的各種功能，如果有迫不及待的小夥伴也可以先去<a href="https://www.selenium.dev/documentation/en/">官網</a>來更深刻的了解他</p>
+<ol>
+<li>
+<p><strong><code>selenium-webdriver</code>前置環境安裝</strong></p>
+<ul>
+<li>
+<p>先在終端機(Terminal)下指令安裝他</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn add selenium-webdriver
+</span></span></code></pre></div></li>
+<li>
+<p>本專案使用的模擬器是 chrome，電腦還沒裝的請先<a href="https://www.google.com/intl/zh-TW/chrome/">下載</a></p>
+</li>
+<li>
+<p>因為跑 selenium 需要用到 driver，大家可以依照自己的作業系統做設定</p>
+<ul>
+<li>mac 作業系統
+<ul>
+<li>如果你用的電腦是 mac，恭喜你，不要需要額外下載 chrome driver 就能夠直接寫使用(不過 chrome 還是要下載)</li>
+</ul>
+</li>
+<li>windows 作業系統
+<ol>
+<li>
+<p><strong>先確認自己 chrome 版本</strong>：將<code>chrome://settings/help</code>貼到你的網址列</p>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-01.webp" width="1024" height="537" alt="2. 使用 selenium-webdriver 套件開啟瀏覽器：openCrawlerWeb（圖 1）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>下載<code>與你 chrome 版本相同</code>的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a></p>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-02.webp" width="1024" height="614" alt="2. 使用 selenium-webdriver 套件開啟瀏覽器：openCrawlerWeb（圖 2）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-03.webp" width="1024" height="335" alt="2. 使用 selenium-webdriver 套件開啟瀏覽器：openCrawlerWeb（圖 3）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>下載的檔案解壓縮後將 <code>chromedriver.exe 放到專案根目錄下</code></p>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>用<code>openCrawlerWeb</code>函式打開爬蟲用網頁</strong></p>
+<ul>
+<li>
+<p>因為 selenium-webdriver 是使用非同步函式建立瀏覽器(browser)，所以我們需要加上 await 明確告訴程式必須建立完瀏覽器才能打開網頁</p>
+<blockquote>
+<p>PS. 因為 javascript 支援非同步語法，所以我們必須很明確地告訴程式他要執行的順序(<strong>在 async 的函式中用 await，是標明必須等待這項工作完成才能進入下一步</strong>)，否則他跑起來的順序跟你想的不一樣 <strong>(並非完成前面工作才執行下一步的順序)</strong>，想更深入理解的朋友可以參考<a href="https://ithelp.ithome.com.tw/articles/10194569">這篇文章</a>喔</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="indexjs">index.js<a class="h-anchor" href="#indexjs" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config(); <span style="color:#8b949e;font-style:italic">//載入.env環境檔
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> webdriver <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver&#39;</span>) <span style="color:#8b949e;font-style:italic">// 加入虛擬網頁套件
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> openCrawlerWeb() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 建立這個browser的類型
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> driver <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> <span style="color:#ff7b72">new</span> webdriver.Builder().forBrowser(<span style="color:#a5d6ff">&#34;chrome&#34;</span>).build();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> web <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;https://www.google.com/&#39;</span>;<span style="color:#8b949e;font-style:italic">//填寫你想要前往的網站
+</span></span></span><span style="display:flex;"><span>    driver.get(web)<span style="color:#8b949e;font-style:italic">//透國這個driver打開網頁
+</span></span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>openCrawlerWeb()<span style="color:#8b949e;font-style:italic">//打開爬蟲網頁
+</span></span></span></code></pre></div></li>
+<li>
+<p><strong>執行程式</strong><br>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div><blockquote>
+<p>如果執行順利，你會看到 chrome 應用程式自動打開並且進入 google 的首頁</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-04.webp" width="1024" height="803" alt="index.js（圖 4）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="3-解決-windows-無法自動讀取-chromedriverexe-路徑">3. 解決 windows 無法自動讀取 chromedriver.exe 路徑<a class="h-anchor" href="#3-%e8%a7%a3%e6%b1%ba-windows-%e7%84%a1%e6%b3%95%e8%87%aa%e5%8b%95%e8%ae%80%e5%8f%96-chromedriverexe-%e8%b7%af%e5%be%91" aria-label="這個段落的連結"></a></h2>
+<p>因為有人回報部分 windows 就算把 chromedriver.exe 放在專案根目錄也讀不到，所以特別寫了一個 <code>checkDriver</code> 的函式，邏輯如下：</p>
+<ul>
+<li><strong>判斷電腦是否有預設的 chromedriver</strong>
+<ul>
+<li>Yes → 無須設定</li>
+<li>No → 確認路徑下是否有 <code>chromedriver.exe</code> 的檔案
+<ul>
+<li>Yes → 設定 driver 路徑</li>
+<li>No → 無法設定 driver 路徑回傳 false</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>備註
+<ul>
+<li><strong>try-catch</strong>：顧名思義就是先 try，如果發生問題就會 catch 並執行錯誤處理；之後會有文章深入討論 try-catch 對專案的重要性</li>
+<li><strong>__dirname</strong>：目前檔案所在的資料夾路徑</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> chrome <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver/chrome&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> path <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;path&#39;</span>);<span style="color:#8b949e;font-style:italic">//用於處理文件路徑的小工具
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fs <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;fs&#34;</span>);<span style="color:#8b949e;font-style:italic">//讀取檔案用
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> checkDriver() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        chrome.getDefaultService()<span style="color:#8b949e;font-style:italic">//確認是否有預設
+</span></span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> {
+</span></span><span style="display:flex;"><span>        console.warn(<span style="color:#a5d6ff">&#39;找不到預設driver!&#39;</span>);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//&#39;../chromedriver.exe&#39;記得調整成自己的路徑
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> file_path <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;../chromedriver.exe&#39;</span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//請確認印出來日誌中的位置是否與你路徑相同
+</span></span></span><span style="display:flex;"><span>        console.log(path.join(__dirname, file_path));
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//確認路徑下chromedriver.exe是否存在            
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> (fs.existsSync(path.join(__dirname, file_path))) {
+</span></span><span style="display:flex;"><span>            <span style="color:#8b949e;font-style:italic">//設定driver路徑
+</span></span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">const</span> service <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> chrome.ServiceBuilder(path.join(__dirname, file_path)).build();
+</span></span><span style="display:flex;"><span>            chrome.setDefaultService(service);
+</span></span><span style="display:flex;"><span>            console.log(<span style="color:#a5d6ff">&#39;設定driver路徑&#39;</span>);
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>            console.error(<span style="color:#a5d6ff">&#39;無法設定driver路徑&#39;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">false</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>
+<p><code>將 chromedriver.exe 放到根目錄後記得在 .gitignore 把它加進去忽略清單喔</code>，他屬於不需要版控的檔案</p>
+<h3 id="gitignore">.gitignore<a class="h-anchor" href="#gitignore" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code>node_modules
+.env
+chromedriver.exe
+</code></pre></li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="4-將checkdriver整合到opencrawlerweb">4. 將<code>checkDriver</code>整合到<code>openCrawlerWeb</code><a class="h-anchor" href="#4-%e5%b0%87checkdriver%e6%95%b4%e5%90%88%e5%88%b0opencrawlerweb" aria-label="這個段落的連結"></a></h2>
+<p>在建立瀏覽器之前，我們先用 <code>checkDriver</code> 函式來確認 Driver 是否是設定，如果無法設定會跳出錯誤提醒，統整後程式如下</p>
+<h3 id="indexjs-1">index.js<a class="h-anchor" href="#indexjs-1" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config(); <span style="color:#8b949e;font-style:italic">//載入.env環境檔
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> webdriver <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver&#39;</span>) <span style="color:#8b949e;font-style:italic">// 加入虛擬網頁套件
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> chrome <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver/chrome&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> path <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;path&#39;</span>);<span style="color:#8b949e;font-style:italic">//用於處理文件路徑的小工具
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fs <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;fs&#34;</span>);<span style="color:#8b949e;font-style:italic">//讀取檔案用
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> checkDriver() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        chrome.getDefaultService()<span style="color:#8b949e;font-style:italic">//確認是否有預設
+</span></span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> {
+</span></span><span style="display:flex;"><span>        console.warn(<span style="color:#a5d6ff">&#39;找不到預設driver!&#39;</span>);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//&#39;../chromedriver.exe&#39;記得調整成自己的路徑
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> file_path <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;../chromedriver.exe&#39;</span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//請確認印出來日誌中的位置是否與你路徑相同
+</span></span></span><span style="display:flex;"><span>        console.log(path.join(__dirname, file_path));
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//確認路徑下chromedriver.exe是否存在            
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> (fs.existsSync(path.join(__dirname, file_path))) {
+</span></span><span style="display:flex;"><span>            <span style="color:#8b949e;font-style:italic">//設定driver路徑
+</span></span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">const</span> service <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> chrome.ServiceBuilder(path.join(__dirname, file_path)).build();
+</span></span><span style="display:flex;"><span>            chrome.setDefaultService(service);
+</span></span><span style="display:flex;"><span>            console.log(<span style="color:#a5d6ff">&#39;設定driver路徑&#39;</span>);
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>            console.error(<span style="color:#a5d6ff">&#39;無法設定driver路徑&#39;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">false</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> openCrawlerWeb() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (<span style="color:#ff7b72;font-weight:bold">!</span>checkDriver()) {<span style="color:#8b949e;font-style:italic">// 檢查Driver是否是設定，如果無法設定就結束程式
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 建立這個broswer的類型
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> driver <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> <span style="color:#ff7b72">new</span> webdriver.Builder().forBrowser(<span style="color:#a5d6ff">&#34;chrome&#34;</span>).build();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> web <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;https://www.google.com/&#39;</span>;<span style="color:#8b949e;font-style:italic">//填寫你想要前往的網站
+</span></span></span><span style="display:flex;"><span>    driver.get(web)<span style="color:#8b949e;font-style:italic">//透國這個driver打開網頁
+</span></span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>openCrawlerWeb()<span style="color:#8b949e;font-style:italic">//打開爬蟲網頁
+</span></span></span></code></pre></div><hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day8">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day7_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來實作今天的功能喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://pjchender.blogspot.com/2017/12/js-error-handling.html">[JS] 談談 JavaScript 中的錯誤處理 Error Handling</a></li>
+<li><a href="https://michaelchen.tech/puppeteer/why-or-why-not-puppeteer/">為什麼用 (或不用) Puppeteer</a></li>
+<li><a href="https://ithelp.ithome.com.tw/articles/10194569">重新認識 JavaScript: Day 26 同步與非同步</a></li>
+<li><a href="https://wcc723.github.io/javascript/2017/12/30/javascript-async-await/">鐵人賽：JavaScript Await 與 Async</a></li>
+</ol>
+<blockquote>
+<p><em>免責聲明:文章技術僅抓取公開數據作爲研究，任何組織和個人不得以此技術盜取他人智慧財產、造成網站損害，否則一切后果由該組織或個人承擔。作者不承擔任何法律及連帶責任！</em></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-05.webp" width="1024" height="233" alt="參考資源（圖 5）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>【Day1】技術只能陪你一陣子，學會解決問題才能過一輩子</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-01/</link>
+      <pubDate>Wed, 16 Sep 2020 09:03:29 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-01/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>因朋友職業需求需要搜集與公司同類型品牌FB及IG粉專的資料，用每日追蹤人數的變化及貼文數量來做數據分析，像是：</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-01/images/fb-ig-crawler-day-01-og_hu_8d7d861916eacbfd.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>你不用很厲害才開始，你要開始了才會很厲害！</p>
+</blockquote>
+<h2 id="為什麼選擇這個題目">為什麼選擇這個題目？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e9%81%b8%e6%93%87%e9%80%99%e5%80%8b%e9%a1%8c%e7%9b%ae" aria-label="這個段落的連結"></a></h2>
+<p>因朋友職業需求<code>需要搜集與公司同類型品牌FB及IG粉專的資料，用每日追蹤人數的變化及貼文數量來做數據分析</code>，像是：</p>
+<ol>
+<li>觀察發文頻率是否與紛絲成長數量成正比</li>
+<li>某個粉專突然因為某篇貼文而紛絲爆量成長</li>
+</ol>
+<p>有這些數據後方便研擬各項策略，但需要追蹤的<code>FB跟IG品牌頁面加起來超過 200 個</code>(真的狂，這是現實案例)，如果靠手指一個一個點開，複製貼上到 excel，這個機械式的動作重複兩百多次我想想都很崩潰，於是他便向我詢問是否有辦法讓這些<code>步驟自動化</code></p>
+<h2 id="這三十天我能學到什麼">這三十天我能學到什麼？<a class="h-anchor" href="#%e9%80%99%e4%b8%89%e5%8d%81%e5%a4%a9%e6%88%91%e8%83%bd%e5%ad%b8%e5%88%b0%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<p>說點喪志的話，無論我分享什麼技術，他遲早會被這個世界淘汰<br><strong>所以我認為與其透過文章讓你掌握技術，不如透過技術培養解決問題的邏輯</strong><br><br>這系列文章是透過一個<code>真實外包案例</code>，從零開始逐步分析如何完成它</p>
+<h3 id="文章大綱">文章大綱<a class="h-anchor" href="#%e6%96%87%e7%ab%a0%e5%a4%a7%e7%b6%b1" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><strong>開發前環境設定</strong> 【<a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-02/">day2</a>】
+<ul>
+<li>教你安裝本專案所需要的開發工具，確保能完成日後的實作</li>
+</ul>
+</li>
+<li><strong>寫程式所需的基礎常識(Node.js)</strong> 【<a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/">day3</a>~<a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-07/">day7</a>】
+<ul>
+<li>如何撰寫不被同事嫌棄的程式</li>
+<li>喚醒開發過程中被忽略的小技巧提升工作效率</li>
+<li>結合經驗與專案實務，讓你了解沒常識有多可怕</li>
+</ul>
+</li>
+<li><strong>爬蟲抓取網頁資訊(selenium)</strong> 【<a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/">day8</a>~<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-16/">day16</a>】
+<ul>
+<li>理解為什麼挑選這個工具</li>
+<li>網頁結構的分析技巧</li>
+<li>完成需求後，程式重構與錯誤處理的重要性</li>
+</ul>
+</li>
+<li><strong>將取得的資訊儲存(Google Sheets)</strong> 【<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-17/">day17</a>~<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/">day23</a>】
+<ul>
+<li>思考符合客戶需求的資訊載體</li>
+<li>學會閱讀官方的文件</li>
+<li>處理匯入爬蟲資料遇到的問題</li>
+<li>在專案發生bug、有新功能需求時與客戶溝通的技巧</li>
+</ul>
+</li>
+<li><strong>設定排程自動執行</strong> 【<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-24/">day24</a>~<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/">day26</a>】
+<ul>
+<li>有時一個工具不足以完成需求，培養將多種工具串連解決問題的能力</li>
+</ul>
+</li>
+<li><strong>排程完成後透過LINE回報執行狀況</strong> 【<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/">day27</a>~<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/">day29</a>】
+<ul>
+<li>了解使用 api 前先用第三方程式測試的重要性</li>
+<li>重構程式將專案爬蟲的訊息整合，透過 LINE 回傳當日爬蟲狀況</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>文章的內容著重於<strong>思考</strong><br>我所提供的<strong>答案只是僅供參考</strong><br>一道題目解決的方法肯定不只一種，對於工程師而言最珍貴的是<strong>思考的過程</strong><br>直接看答案會限制你的思維<br>有了思考的過程你會給出一個更棒的解決方法</p>
+</blockquote>
+<h2 id="題目分析">題目分析<a class="h-anchor" href="#%e9%a1%8c%e7%9b%ae%e5%88%86%e6%9e%90" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>
+<p><strong>專案目標：</strong> 透過爬蟲拯救一個沈淪在FB、IG分析報表的小編</p>
+</li>
+<li>
+<p><strong>使用工具：</strong> 只要能把他從每天重複的動作中拯救出來就好，不管你用什麼工具</p>
+</li>
+<li>
+<p><strong>外包預算：</strong> 友情無價，外包有價</p>
+<blockquote>
+<p>如果有朋友間的外包，<strong>我強烈建議一定要收錢</strong>，你的收費可以遠低於市場報價，但絕對要收錢，如果你不收錢，有超高機率鬧得雙方不愉快<br>並且你在<strong>做功能前要先報價，確定對方可以接受後再開始實做</strong><br>技術是有價值的，你有收錢，你會給自己時間壓力；對方有付錢，會認真地使用你做出來的產品並給予回饋<br>這樣才是正向循環<br>我看過太多朋友間免費的專案，到最後不是胎死腹中就是爛尾，所以請報價吧，對雙方都好</p>
+</blockquote>
+</li>
+<li>
+<p><strong>專案期限</strong>:<br>越快越好</p>
+</li>
+</ul>
+<h2 id="需求規格">需求規格<a class="h-anchor" href="#%e9%9c%80%e6%b1%82%e8%a6%8f%e6%a0%bc" aria-label="這個段落的連結"></a></h2>
+<p>我想很多工程師都遇過親朋好友委託專案，而他們給需求時通常都是很不具體的，你也不可能要他們寫需求規格書<br>所以我建議你要<code>自己研擬一份簡易的需求規格書，並說明一些但書以免日後爭議</code></p>
+<ol>
+<li><strong>FB</strong>
+<ol>
+<li>取得粉專追蹤人數</li>
+<li>取得當日貼文數</li>
+<li>頻率: 1次/天</li>
+<li>報表出來時間: 22:00</li>
+</ol>
+</li>
+<li><strong>IG</strong>
+<ol>
+<li>取得粉專追蹤人數</li>
+<li>取得當日貼文數</li>
+<li>頻率: 1次/天</li>
+<li>報表出來時間: 22:00</li>
+</ol>
+</li>
+<li><strong>報表呈現</strong>
+<ol>
+<li>excel格式</li>
+<li>標題點進去可以直接連結粉專</li>
+<li>FB與IG粉專各自獨立分頁顯示</li>
+<li>爬蟲日期為欄，粉專標題為列</li>
+<li>首欄與首列需要凍結窗格，方便使用者操作(新增需求)</li>
+<li>插入日期為倒序插入，由近到遠(新增需求)</li>
+</ol>
+</li>
+<li><strong>爬蟲完成通知</strong>(新增需求)
+<ol>
+<li>使用line進行通知(新增需求)</li>
+<li>通知包含：總掃描粉專數量、共費時間、Google Sheets連結、無法正常爬蟲頁面列表(新增需求)</li>
+</ol>
+</li>
+<li><strong>專案執行位置</strong>
+<ol>
+<li>自己電腦</li>
+</ol>
+</li>
+<li><strong>預計交期</strong>
+<ol>
+<li>請研擬一個自己絕對能做出來的時間，只能多不能少</li>
+</ol>
+</li>
+<li><strong>功能報價</strong>
+<ol>
+<li>這個部分關係到你對工具的熟悉程度、程式執行的效率、程式的穩定性、功能項目多寡&hellip;，光這個估計都能完成鐵人30篇惹</li>
+</ol>
+</li>
+<li><strong>備註</strong>
+<ol>
+<li>如果FB或IG的網頁結構上的更動導致無法用原先程式運行時需與工程師討論維護報價</li>
+</ol>
+</li>
+</ol>
+<h2 id="實作的步驟">實作的步驟<a class="h-anchor" href="#%e5%af%a6%e4%bd%9c%e7%9a%84%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>使用什麼工具完成</li>
+<li>列出功能項目報價</li>
+<li>哪個功能項目需要最先研究</li>
+<li>如何讓對方能夠使用及測試功能</li>
+<li>結案與維護</li>
+</ol>
+<p>以上是我接案之前就會先思考的問題，但<strong>實際情況通常會比我列出這些步驟更為複雜</strong>，各位讀者也可以想想看自己在遇到這些需求時會怎麼設計呢～</p>
+<p><em>PS.技術沒有善惡，人的使用方式才會有善惡，希望這份技術可以幫大家節省時間以及避免重工；如果你把它拿來盜取智慧財產、個人檔案及機敏資訊請自行負擔後續法律責任</em></p>
+<blockquote>
+<p><em>免責聲明:文章技術僅抓取公開數據作爲研究，任何組織和個人不得以此技術盜取他人智慧財產、造成網站損害，否則一切后果由該組織或個人承擔。作者不承擔任何法律及連帶責任！</em></p>
+</blockquote>
+<p>感謝大家的閱讀，如果喜歡我的文章可以按Like支持一下喔，我們明天見</p>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-01/images/fb-ig-crawler-day-01-01.webp" width="1024" height="233" alt="實作的步驟（圖 1）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

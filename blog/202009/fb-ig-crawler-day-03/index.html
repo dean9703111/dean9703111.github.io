@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>【Day3】努力寫出更好的程式碼，有時你不是一個人在戰鬥</title>
+  <meta name="description" content="接下來幾天，我會把這個專案開發前所需具備的基礎知識分幾個主題向各位分享，希望這些文章能給初學者正確的觀念、也能讓老手思考自己開發上是否有忽略的細節">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/index.html.md" title="Markdown">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="【Day3】努力寫出更好的程式碼，有時你不是一個人在戰鬥">
+  <meta property="og:description" content="接下來幾天，我會把這個專案開發前所需具備的基礎知識分幾個主題向各位分享，希望這些文章能給初學者正確的觀念、也能讓老手思考自己開發上是否有忽略的細節">
+  <meta property="og:url" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-09-18T09:47:23&#43;08:00">
+  <meta property="article:modified_time" content="2020-09-18T09:47:23&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="團隊合作">
+  <meta property="article:tag" content="Clean Code">
+  <meta property="article:tag" content="大家都能理解的程式">
+  <meta property="og:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/images/fb-ig-crawler-day-03-og_hu_84cb09e9ec215d82.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="【Day3】努力寫出更好的程式碼，有時你不是一個人在戰鬥">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/images/fb-ig-crawler-day-03-og_hu_84cb09e9ec215d82.jpg">
+  <meta name="twitter:title" content="【Day3】努力寫出更好的程式碼，有時你不是一個人在戰鬥">
+  <meta name="twitter:description" content="接下來幾天，我會把這個專案開發前所需具備的基礎知識分幾個主題向各位分享，希望這些文章能給初學者正確的觀念、也能讓老手思考自己開發上是否有忽略的細節">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-03/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-09-18T09:47:23+08:00","datePublished":"2020-09-18T09:47:23+08:00","description":"接下來幾天，我會把這個專案開發前所需具備的基礎知識分幾個主題向各位分享，希望這些文章能給初學者正確的觀念、也能讓老手思考自己開發上是否有忽略的細節","headline":"【Day3】努力寫出更好的程式碼，有時你不是一個人在戰鬥","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-03/images/fb-ig-crawler-day-03-og_hu_84cb09e9ec215d82.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-03/images/fb-ig-crawler-day-03-og_hu_8d021fdd706e0f65.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-03/images/fb-ig-crawler-day-03-og_hu_adde328be7b84111.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, 團隊合作, Clean Code, 大家都能理解的程式","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-03/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-03/images/fb-ig-crawler-day-03-og_hu_84cb09e9ec215d82.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10239089"],"thumbnailUrl":"https://deanlin.net/blog/202009/fb-ig-crawler-day-03/images/fb-ig-crawler-day-03-og_hu_84cb09e9ec215d82.jpg","timeRequired":"PT6M","url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-03/","wordCount":2824},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202009/fb-ig-crawler-day-03/","name":"【Day3】努力寫出更好的程式碼，有時你不是一個人在戰鬥","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">【Day3】努力寫出更好的程式碼，有時你不是一個人在戰鬥</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-09-18">2020.09.18</time>
+              <span>閱讀約 6 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>3</b>/ 30</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0">為什麼寫這篇文章？</a></li><li><a href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">今日目標</a></li><li><a href="#1-%e6%ad%a3%e7%a2%ba%e7%9a%84%e5%ae%a3%e5%91%8a%e8%ae%8a%e6%95%b8">1. 正確的宣告變數</a></li><li><a href="#2-%e6%9c%89%e6%84%8f%e7%be%a9%e7%9a%84%e5%91%bd%e5%90%8d">2. 有意義的命名</a></li><li><a href="#3-%e9%81%bf%e5%85%8d%e9%87%8d%e8%a4%87%e7%9a%84%e7%a8%8b%e5%bc%8f%e7%a2%bc">3. 避免重複的程式碼</a></li><li><a href="#4-%e5%a4%a7%e7%9c%be%e9%83%bd%e8%83%bd%e7%90%86%e8%a7%a3%e7%9a%84%e7%a8%8b%e5%bc%8f">4. 大眾都能理解的程式</a></li><li><a href="#5-%e5%a5%bd%e7%9a%84%e8%a8%bb%e8%a7%a3">5. 好的註解</a></li><li><a href="#6-%e9%8c%af%e8%aa%a4%e8%99%95%e7%90%86--%e6%97%a5%e8%aa%8clog">6. 錯誤處理 &amp; 日誌(log)</a></li><li class="is-sub"><a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90">參考資源</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <blockquote>
+<p>不是每個人都能成為明星，但是所有人都可以努力做到能力範圍的最好，並持續提高 - Henk Vermeyden</p>
+</blockquote>
+<p><code>接下來幾天，我會把這個專案開發前所需具備的基礎知識分幾個主題向各位分享，希望這些文章能給初學者正確的觀念、也能讓老手思考自己開發上是否有忽略的細節</code></p>
+<h2 id="為什麼寫這篇文章">為什麼寫這篇文章？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0" aria-label="這個段落的連結"></a></h2>
+<p>我直到近一年才真正意識到好的程式碼在團隊合作中有多麼重要<br>在團隊裡面你不只是要完成自己負責的功能，你更要<code>讓其他同事能在短時間理解你的程式</code><br>就算你是一個人獨立完成專案，好的程式碼能讓你在日後維護上節省更多的時間及精力</p>
+<p>希望未來我們回頭看一年前寫的專案時，不求內心的小精靈呼喊:&ldquo;X，寫得太精采了!&quot;，只希望內心的小精靈不要滿嘴髒話就好</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<p>對我來說高效能演算法與複雜的語法並不是我所追求的東西（其實是因為筆者資質駑鈍看不懂）<br>所以今天的目標就是如何寫出讓笨笨的筆者都能看懂的程式XD，這在程式界有個專有名詞叫做 <code>Clean Code(無暇程式碼)</code><br>我將裡面幾個重要的點列在下方，並用我實際的經驗作解釋</p>
+<ol>
+<li>正確的宣告變數</li>
+<li>有意義的命名</li>
+<li>避免重複的程式碼</li>
+<li>大眾都能理解的程式</li>
+<li>好的註解</li>
+<li>錯誤處理 &amp; 日誌(log)</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-正確的宣告變數">1. 正確的宣告變數<a class="h-anchor" href="#1-%e6%ad%a3%e7%a2%ba%e7%9a%84%e5%ae%a3%e5%91%8a%e8%ae%8a%e6%95%b8" aria-label="這個段落的連結"></a></h2>
+<p>用對的方式宣告變數才會讓人了解到他的意義</p>
+<ul>
+<li>
+<p><strong>var</strong> : 作用範圍在函式(function裡面)，這樣的宣告方式讓他可以在函式內的任何位置使用，但因為容許重複宣告，所以<strong>會造成變數被覆寫的意外</strong>，請盡量減少使用</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">function</span> test() {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 宣告時給一個初始值
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">var</span> baby <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;寶寶本尊&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 再次宣告
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">var</span> baby <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;寶寶被污染了&#34;</span>
+</span></span><span style="display:flex;"><span>  console.log(baby) <span style="color:#8b949e;font-style:italic">// 會印出&#39;寶寶被污染了&#39;
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p><strong>let</strong> : 作用範圍在區塊(block裡面{})，可被重新指定值，<code>let 與 const 皆不可重複宣告會報錯</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">function</span> test() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 宣告時給一個初始值
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> baby <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;寶寶本尊&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 重新指定值
+</span></span></span><span style="display:flex;"><span>    baby <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;寶寶變身&#34;</span>
+</span></span><span style="display:flex;"><span>    console.log(baby) <span style="color:#8b949e;font-style:italic">// 會印出&#39;寶寶變身&#39;
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 再次宣告
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> baby <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;寶寶壞掉了&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 會跳出錯誤 SyntaxError: Identifier &#39;baby&#39; has already been declared
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p><strong>const</strong> : 作用範圍在區塊(block裡面{})，宣告後為不可被重新指定值的常數，使用他就是為了避免該常數被修改</p>
+<ul>
+<li>
+<p>定義不做改變的常數 : const PI = 3.14159</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">function</span> test() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 宣告時給一個初始值
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> baby <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;寶寶不可改變&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 重新指定值
+</span></span></span><span style="display:flex;"><span>    baby <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;寶寶變身失敗&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 會跳出錯誤 TypeError: Assignment to constant variable.
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p>特別注意如果 <strong>const 宣告陣列(array)或物件(object)時是可以被改變的</strong>，因為他們都是 reference type</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">function</span> test () {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 宣告為物件
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> baby <span style="color:#ff7b72;font-weight:bold">=</span> { name<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;寶寶本尊&#34;</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 重新指定值
+</span></span></span><span style="display:flex;"><span>    baby.name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;寶寶變身&#34;</span>
+</span></span><span style="display:flex;"><span>    console.log(baby) <span style="color:#8b949e;font-style:italic">// 會印出&#39;{ name: &#39;寶寶變身&#39; }&#39;
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="2-有意義的命名">2. 有意義的命名<a class="h-anchor" href="#2-%e6%9c%89%e6%84%8f%e7%be%a9%e7%9a%84%e5%91%bd%e5%90%8d" aria-label="這個段落的連結"></a></h2>
+<p>這裡要看你工作環境的默契去做調整，但還是有幾個基礎要求</p>
+<ul>
+<li>
+<p><strong>函式(function)的命名</strong></p>
+<ul>
+<li>
+<p>要一眼就能明白他要做的事情</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 不好的命名，你無法從名字理解他要做的事情
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> abc(a, b) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">+</span> b
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 好的命名，淺顯易懂
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> sum(a, b) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> a <span style="color:#ff7b72;font-weight:bold">+</span> b
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p>命名不要複雜化，做一件事情就好</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 不好的命名，一個函式做太多事情了
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> goBackpageWriteContent() {...}
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 好的命名，一個函式昨一件事，上面的function可以做拆分
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> goBackpage() {...}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> writeContent() {...}
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong>變數(variable)的命名能直接知道他代表甚麼</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 不好的命名，你看到會覺得疑惑
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> haha <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;猜猜看這個變數代表甚麼&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 好的命名，非常直觀無須猜想
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;好想兔&#39;</span>
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="3-避免重複的程式碼">3. 避免重複的程式碼<a class="h-anchor" href="#3-%e9%81%bf%e5%85%8d%e9%87%8d%e8%a4%87%e7%9a%84%e7%a8%8b%e5%bc%8f%e7%a2%bc" aria-label="這個段落的連結"></a></h2>
+<p>在快速開發時期複製貼上是最爽的事情，但你在<code>未來會付出沉重的代價</code>如下</p>
+<ul>
+<li><strong>專案需求變更</strong> : 你會發現維護是如此的困難，你可能已經忘記之前有多少程式是複製貼上，導致不斷產生新的Bug</li>
+<li><strong>程式體積龐大理解不易</strong> : 兩段長得很像的程式你會需要用大家來找碴的方式去思考</li>
+</ul>
+<p><strong>解決方案</strong></p>
+<ul>
+<li>如果有功能一模一樣且多次被不同檔案使用的函式建議你寫一個<strong>專案共用函式庫</strong>(ex: public.js)，這樣功能修改時只要改一個地方就好</li>
+<li>如果遇到功能很接近的需求請把他們<strong>結合到一個函式</strong>中吧，你可以<strong>搭配參數</strong>來處理當中的差異性</li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="4-大眾都能理解的程式">4. 大眾都能理解的程式<a class="h-anchor" href="#4-%e5%a4%a7%e7%9c%be%e9%83%bd%e8%83%bd%e7%90%86%e8%a7%a3%e7%9a%84%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>我周圍曾經遇過程式能力極強，但是<strong>幾乎無法與人合作的工程師</strong>，他們所寫的程式有幾個特點
+<ul>
+<li><strong>程式邏輯非常難理解</strong>：他們可能使用效能最好的處理方案，但是邏輯非常跳躍晦澀難懂</li>
+<li><strong>語法非常新潮</strong>：使用時代最尖端的語法，但同事在閱讀理解上會很痛苦</li>
+</ul>
+</li>
+<li>也遇過只求完成功能<strong>得過且過的工程師</strong>，他們也有幾個特點
+<ul>
+<li><strong>他們不知道自己寫了甚麼</strong>：都是從網路上複製貼上，能跑就好，甚至參數命名都不改，於是交接的時候就是地獄，因為連他都不知道這段程式做了什麼</li>
+<li><strong>功能都是複製貼上</strong>：就算是一模一樣的功能，由於過去都是從網路複製貼上完成，所以有時他們甚至忘記自己寫過他，再次從網路複製另一段程式不一樣但功能一樣的code貼上&hellip;，認真覺得這種解決事情的方法超級母湯</li>
+</ul>
+</li>
+</ul>
+<p>遇到前者是你的幸運也是你的不幸，雖然你可以與神同行，但是<strong>要不斷的提升自己</strong>才能夠勉強跟上他們的思路；遇到後者就當成鍛鍊，你要嘗試將這些不明所以的程式碼<strong>重構</strong>，讓他足以被大眾理解</p>
+<p>而我寫程式的目標是希望在交接的時候被人輕易理解，所以在撰寫的過程中會不斷反思這些程式碼寫在這裡的意義是甚麼，<code>如果自己都無法解釋的程式，就不用期待他人能夠理解了</code></p>
+<hr>
+<h2 class="h-nomark" id="5-好的註解">5. 好的註解<a class="h-anchor" href="#5-%e5%a5%bd%e7%9a%84%e8%a8%bb%e8%a7%a3" aria-label="這個段落的連結"></a></h2>
+<p>雖然有神人說過：最好的註解就是程式碼本身<br>但我想<code>絕大多數的人都難以到達這個境界，所以要乖乖地寫註解</code></p>
+<ul>
+<li><strong>註解的好處</strong>
+<ul>
+<li>交代前因後果：為什麼這樣寫?遇到了什麼困難?解決了什麼問題?</li>
+<li>作為文件說明：有些技術是需要被學習後才能夠看得懂的(ex:引入的模組、套件)，你的註解能讓他快速理解這些工具怎麼使用</li>
+</ul>
+</li>
+<li><strong>請不要有註解如下</strong>
+<ul>
+<li>毫無意義的牢騷(ex:我好崩潰啊，這段程式我寫了一個禮拜&hellip;)</li>
+<li>把註解當成版本控制(ex:2020/08/23完成此函式)</li>
+<li>說明這段程式是誰寫的(簽名檔)</li>
+<li>把舊的程式碼註解起來怕以後會用到(但通常再也不會用到，而且這個問題用版控就能解決)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="6-錯誤處理--日誌log">6. 錯誤處理 &amp; 日誌(log)<a class="h-anchor" href="#6-%e9%8c%af%e8%aa%a4%e8%99%95%e7%90%86--%e6%97%a5%e8%aa%8clog" aria-label="這個段落的連結"></a></h2>
+<p>寫的再好的程式都會有漏洞，而完善的錯誤處理 &amp; 明確的日誌紀錄可以協助你更快速的除錯(debug)</p>
+<ul>
+<li><strong>錯誤處理</strong>：通常使用 try-catch 的方式來處理，這個部分在後面的章節會更詳細介紹</li>
+<li><strong>日誌(log)</strong>：記錄程式執行時重要的節點
+<ul>
+<li>程式執行到哪個步驟</li>
+<li>資料是否取得</li>
+<li>如果發生錯誤時式在哪個環節</li>
+</ul>
+</li>
+</ul>
+<p>以上是我對 Clean Code 的個人感想，如果大家對於文章的內容有任何想法歡迎討論～</p>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://medium.com/%E6%89%8B%E5%AF%AB%E7%AD%86%E8%A8%98/clean-code-index-51e209cc47db">Clean Code 無瑕的程式碼</a></li>
+<li><a href="https://eyesofkids.gitbooks.io/javascript-start-from-es6/content/part3/var_const_naming.html">變數、常數與命名</a></li>
+<li><a href="https://medium.com/@totoroLiu/javascript-var-let-const-%E5%B7%AE%E7%95%B0-e3d930521230">var, let, const 差異</a></li>
+<li><a href="https://medium.com/@realdennis/%E9%96%92%E8%81%8A-var%E8%88%87let%E7%9A%84%E6%87%B6%E4%BA%BA%E5%8C%85-javascript-b5a3f40ee28d">var 與 let 的主要差別</a></li>
+<li><a href="https://pjchender.blogspot.com/2017/01/const.html">JavaScript ES6 中使用 const 宣告常數</a></li>
+</ol>
+<hr>
+<blockquote>
+<p><img src="/blog/202009/fb-ig-crawler-day-03/images/fb-ig-crawler-day-03-01.webp" srcset="/blog/202009/fb-ig-crawler-day-03/images/fb-ig-crawler-day-03-01_hu_aa4c23d5ca4c7363.webp 720w, /blog/202009/fb-ig-crawler-day-03/images/fb-ig-crawler-day-03-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="233" alt="參考資源（圖 1）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.09.18），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10239089" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/%E5%9C%98%E9%9A%8A%E5%90%88%E4%BD%9C/">團隊合作</a>
+            <a class="chip chip-hash" href="/tags/clean-code/">Clean Code</a>
+            <a class="chip chip-hash" href="/tags/%E5%A4%A7%E5%AE%B6%E9%83%BD%E8%83%BD%E7%90%86%E8%A7%A3%E7%9A%84%E7%A8%8B%E5%BC%8F/">大家都能理解的程式</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202009%2Ffb-ig-crawler-day-03%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202009%2Ffb-ig-crawler-day-03%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/" data-title="【Day3】努力寫出更好的程式碼，有時你不是一個人在戰鬥" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>3</b> 篇・共 30 篇</p>
+          </div>
+          <ol class="steps" data-collapsible>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-01/"><span class="n">01</span><span>技術只能陪你一陣子，學會解決問題才能過一輩子</span></a>
+            </li>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-02/"><span class="n">02</span><span>開發環境大補帖 - Node.js、NVM、git、yarn、VSCode</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">03</span><span>努力寫出更好的程式碼，有時你不是一個人在戰鬥<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-04/"><span class="n">04</span><span>建立Node.js專案 &amp; 全面解析專案管家package.json</span></a>
+            </li>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-05/"><span class="n">05</span><span>用yarn安裝及控管套件 &amp; 善用關鍵字讓全世界的大神幫你一把</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-06/"><span class="n">06</span><span>env - 善用環境變數幫你快速遷移專案</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-07/"><span class="n">07</span><span>gitignore - 杜絕上傳錯誤資料，從此不再發生慘痛經驗</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-08/"><span class="n">08</span><span>selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-09/"><span class="n">09</span><span>爬蟲第一步，FB先登入</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-10/"><span class="n">10</span><span>關閉干擾爬蟲的彈窗，將FB粉專追蹤數納入囊中</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-11/"><span class="n">11</span><span>舉一反三，帶你了解IG爬蟲不可忽略的細節</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-12/"><span class="n">12</span><span>合體吧！用一隻程式搞定FB、IG爬蟲</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-13/"><span class="n">13</span><span>重構程式碼，減少歷史業障</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-14/"><span class="n">14</span><span>爬蟲執行時又又又崩潰了嗎？來點 try-catch 吧</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-15/"><span class="n">15</span><span>json x 爬蟲 = 瑣事自動化，生命應該浪費在美好的事情上</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-16/"><span class="n">16</span><span>不藏私，加上5行程式就能優化爬蟲的小技巧 ＆ 學會爬蟲，之後呢？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-17/"><span class="n">17</span><span>Google Sheets - 免費儲存資料的好選擇，一起進入省錢起手式</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-18/"><span class="n">18</span><span>Google Sheets - 加入版控後被github警告了，官方範例做了什麼？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-19/"><span class="n">19</span><span>Google Sheets - 你在文件迷路了嗎？用兩個處理Sheet的範例帶你攻略官方文件</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-20/"><span class="n">20</span><span>Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-21/"><span class="n">21</span><span>Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-22/"><span class="n">22</span><span>Google Sheets - 客戶：我希望新資料插在最前面 &amp; 談需求變更</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-23/"><span class="n">23</span><span>Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-24/"><span class="n">24</span><span>排程 - Cron套件超詳解，讓爬蟲自己動起來</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-25/"><span class="n">25</span><span>排程 - 用forever套件來控管排程，背景執行才是王道！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-26/"><span class="n">26</span><span>排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-27/"><span class="n">27</span><span>為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-28/"><span class="n">28</span><span>為爬蟲加上通知 - 用 axios 發出 LINE 通知</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-29/"><span class="n">29</span><span>為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-30/"><span class="n">30</span><span>時間只是考驗，心中信念絲毫未減</span></a>
+            </li>
+          </ol>
+          <button class="steps-more" type="button" aria-expanded="false">顯示全部 30 篇 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
+          <a class="sb-next" href="/blog/202009/fb-ig-crawler-day-04/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">建立Node.js專案 &amp; 全面解析專案管家package.json</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="link-arrow" href="/about/#teaching">企業內訓・演講邀約 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202009/fb-ig-crawler-day-02/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">【Day2】開發環境大補帖 - Node.js、NVM、git、yarn、VSCode</span></a>
+          <a class="next" href="/blog/202009/fb-ig-crawler-day-04/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">【Day4】建立Node.js專案 &amp; 全面解析專案管家package.json</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0">為什麼寫這篇文章？</a></li><li><a href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">今日目標</a></li><li><a href="#1-%e6%ad%a3%e7%a2%ba%e7%9a%84%e5%ae%a3%e5%91%8a%e8%ae%8a%e6%95%b8">1. 正確的宣告變數</a></li><li><a href="#2-%e6%9c%89%e6%84%8f%e7%be%a9%e7%9a%84%e5%91%bd%e5%90%8d">2. 有意義的命名</a></li><li><a href="#3-%e9%81%bf%e5%85%8d%e9%87%8d%e8%a4%87%e7%9a%84%e7%a8%8b%e5%bc%8f%e7%a2%bc">3. 避免重複的程式碼</a></li><li><a href="#4-%e5%a4%a7%e7%9c%be%e9%83%bd%e8%83%bd%e7%90%86%e8%a7%a3%e7%9a%84%e7%a8%8b%e5%bc%8f">4. 大眾都能理解的程式</a></li><li><a href="#5-%e5%a5%bd%e7%9a%84%e8%a8%bb%e8%a7%a3">5. 好的註解</a></li><li><a href="#6-%e9%8c%af%e8%aa%a4%e8%99%95%e7%90%86--%e6%97%a5%e8%aa%8clog">6. 錯誤處理 &amp; 日誌(log)</a></li><li class="is-sub"><a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90">參考資源</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202009%2Ffb-ig-crawler-day-03%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202009%2Ffb-ig-crawler-day-03%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/" data-title="【Day3】努力寫出更好的程式碼，有時你不是一個人在戰鬥" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAADQBACdASoYABIAPw1yrE0mIyIhKAqoxiGJ7ACw7BPeE2oIaCaN3Lgg019HxL1AAAD&#43;6VqvbWQQV3wPCI3hTf0XS8IzmMLg&#43;MqkR4ZJFWTV/OL&#43;YLOYZT2HUVlk4MVYT0HOwjqHcWiAqX7zmkxQd8l1nKdu/cjhCBrhUPDHH7rQtx1aW9kmHLGdMOozoq/9V1a6acAA" alt="" width="24" height="18"><img src="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01_hu_9f6e10b40195d9c4.webp" srcset="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01_hu_c25dd74d5fdb075f.webp 240w, /blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01_hu_9f6e10b40195d9c4.webp 480w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="480" height="360" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-30/">【Day30】時間只是考驗，心中信念絲毫未減</a></h3>
+    <p class="card-desc">因為在過去的鐵人賽中很少看到從專案角度來分享技術的文章，所以我選擇從這個角度出發，因為我認為了解專案中每個技術選擇的動機，與學習一個新的技術一樣重要；技術可能被淘汰，但經驗會留下來，希望大家會喜歡我這個系列的文章。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-15">2020.10.15</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADQAwCdASoYAAcAPw1oqEemIqIYBABjEMT0gGUAEtyV5KhK/R9OjcAA/udFLXYAQK7ApOJIDWBV1gzCDeAW9BuWi8yUewFtsYEIXBQbVgAAAA==" alt="" width="24" height="7"><img src="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_e91da7b1b31343a9.webp" srcset="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_aa3fcdc79115e628.webp 240w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_ca94eec5a967a9cb.webp 480w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_7241a37a4f2a51f5.webp 800w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_e91da7b1b31343a9.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="301" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-29/">【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</a></h3>
+    <p class="card-desc">這份專案所用到的各種技術都不難，難的是將這些技術整合成一個能讓客戶買單的專案；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此低成本的方式完成，而且真的能幫客戶解決問題</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-14">2020.10.14</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRoIAAABXRUJQVlA4WAoAAAAQAAAAFwAAAQAAQUxQSBwAAAABHyAUQGMsrUQyKiLiBGIaYpNM/1I&#43;GSL6n9gAVlA4IEAAAACwAwCdASoYAAIAPw1srUkmIyIYBABjEMTyAFR6E54sX7q371tJAAD&#43;ud2s336cLo8VV4Pyj8hR85dquBfFmYAA" alt="" width="24" height="2"><img src="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp" srcset="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_76e2413246fac6d2.webp 240w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_d635d6ed8622900a.webp 480w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_5f9e74b22b8e0483.webp 800w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="70" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-28/">【Day28】為爬蟲加上通知 - 用 axios 發出 LINE 通知</a></h3>
+    <p class="card-desc">雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-13">2020.10.13</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202009/fb-ig-crawler-day-03/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 23 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

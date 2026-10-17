@@ -93,7 +93,7 @@ mysql&gt; set global slave_parallel_workers=10; #根據實際需求設定
       <content:encoded><![CDATA[<p>sysbench 是我目前使用上最順手的一個測試工具，安裝、使用都非常容易，除了資料庫的測試外他還能對 CPU、Memory…做測試，本篇會詳細說明如何使用它來做 MySQL 性能測試，其他的功能可以參考文末附的連結。</p>
 <p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-01.webp" width="1400" height="785" alt="用 sysbench 測試 MySQL 性能 — 在 mac &amp; ubuntu 上的安裝與使用（圖 1）" loading="lazy" decoding="async"></p>
 <h2 id="一在-mac-上操作-sysbench">一、在 Mac 上操作 sysbench<a class="h-anchor" href="#%e4%b8%80%e5%9c%a8-mac-%e4%b8%8a%e6%93%8d%e4%bd%9c-sysbench" aria-label="這個段落的連結"></a></h2>
-<h3 id="-安裝-sysbench">➤ 安裝 sysbench<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-sysbench" aria-label="這個段落的連結"></a></h3>
+<h3 id="-安裝-sysbench">安裝 sysbench<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-sysbench" aria-label="這個段落的連結"></a></h3>
 <blockquote>
 <p>如果還沒安裝過 brew 請<a href="https://brew.sh/index_zh-tw">參考官網</a></p>
 </blockquote>
@@ -102,7 +102,7 @@ mysql&gt; set global slave_parallel_workers=10; #根據實際需求設定
 <pre tabindex="0"><code>sysbench — version
 </code></pre><p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-02.webp" width="880" height="92" alt="安裝 sysbench（圖 2）" loading="lazy" decoding="async"></p>
 <p>我安裝的版本為 <code>1.0.20</code> 這個會跟下面的指令路徑有關，如果你安裝的是其他版本要自行修改這個版本路徑</p>
-<h3 id="-測試-mysql-性能">➤ 測試 MySQL 性能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6-mysql-%e6%80%a7%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<h3 id="-測試-mysql-性能">測試 MySQL 性能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6-mysql-%e6%80%a7%e8%83%bd" aria-label="這個段落的連結"></a></h3>
 <blockquote>
 <p>mac 的範例是本地端的測試，針對 read 這塊</p>
 </blockquote>
@@ -169,12 +169,12 @@ cleanup
 </code></pre><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/24b62f7153920bd3fb4773d64f461945" rel="noopener">sysbench_cleanup.cmd</a>（GitHub Gist）</p>
 <p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-05.webp" width="992" height="152" alt="測試 MySQL 性能（圖 5）" loading="lazy" decoding="async"></p>
 <h2 id="一在-ubuntu-上操作-sysbench">一、在 Ubuntu 上操作 sysbench<a class="h-anchor" href="#%e4%b8%80%e5%9c%a8-ubuntu-%e4%b8%8a%e6%93%8d%e4%bd%9c-sysbench" aria-label="這個段落的連結"></a></h2>
-<h3 id="-安裝-sysbench-1">➤ 安裝 sysbench<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-sysbench-1" aria-label="這個段落的連結"></a></h3>
+<h3 id="-安裝-sysbench-1">安裝 sysbench<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-sysbench-1" aria-label="這個段落的連結"></a></h3>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install sysbench -y
 </span></span></code></pre></div><p>安裝完成後輸入指令確認安裝完成</p>
 <pre tabindex="0"><code>sysbench — version
 </code></pre><p><img src="https://deanlin.net/blog/202103/mysql-benchmark-sysbench/images/mysql-benchmark-sysbench-06.webp" width="696" height="82" alt="安裝 sysbench（圖 6）" loading="lazy" decoding="async"></p>
-<h3 id="-測試-mysql-性能-1">➤ 測試 MySQL 性能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6-mysql-%e6%80%a7%e8%83%bd-1" aria-label="這個段落的連結"></a></h3>
+<h3 id="-測試-mysql-性能-1">測試 MySQL 性能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6-mysql-%e6%80%a7%e8%83%bd-1" aria-label="這個段落的連結"></a></h3>
 <blockquote>
 <p>ubuntu 的範例是遠端的測試，針對 write這塊</p>
 </blockquote>
@@ -257,7 +257,7 @@ cleanup
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令正確分流</description>
-      <media:content url="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-og_hu_80c37ccff2003335.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-og_hu_bbca886f617e582f.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<p>在『<a href="https://deanlin.net/blog/202103/mysql-master-slave-replication/">MySQL Master Slave Replication 主從式架構設定教學</a>』這篇文章的結尾有提到如果單純把 DB 分成 Master 及 Slave 並不能真正解決平衡負載問題，因為每台 server 是獨立的 ip，使用者在存取資料庫的時候並不知道要使用哪一台 server 😅 ，除非你的 Slave server 只是用來做資料分析 🤔；這篇文章會教你如何設定一台 Proxy server，準確地將 SQL 指令分流到正確的 server。</p>
 <figure class="figure"><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-01.webp" width="1400" height="761" alt="此為設計架構圖" loading="lazy" decoding="async">
   <figcaption>此為設計架構圖</figcaption>
@@ -273,19 +273,19 @@ cleanup
 <blockquote>
 <p>OS version、MySQL 是筆者安裝時的環境，ip 是給大家參考對應的</p>
 </blockquote>
-<h3 id="-準備一台要當-mysql-proxy-的-ubuntu-server">➤ 準備一台要當 MySQL Proxy 的 ubuntu server<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e8%a6%81%e7%95%b6-mysql-proxy-%e7%9a%84-ubuntu-server" aria-label="這個段落的連結"></a></h3>
+<h3 id="-準備一台要當-mysql-proxy-的-ubuntu-server">準備一台要當 MySQL Proxy 的 ubuntu server<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e8%a6%81%e7%95%b6-mysql-proxy-%e7%9a%84-ubuntu-server" aria-label="這個段落的連結"></a></h3>
 <ul>
 <li>OS version：ubuntu 16.04</li>
 <li>MySQL：5.7</li>
 <li>ip ：172.16.9.39</li>
 </ul>
-<h3 id="-準備一台-master-server-負責寫入">➤ 準備一台 Master server 負責寫入<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0-master-server-%e8%b2%a0%e8%b2%ac%e5%af%ab%e5%85%a5" aria-label="這個段落的連結"></a></h3>
+<h3 id="-準備一台-master-server-負責寫入">準備一台 Master server 負責寫入<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0-master-server-%e8%b2%a0%e8%b2%ac%e5%af%ab%e5%85%a5" aria-label="這個段落的連結"></a></h3>
 <ul>
 <li>OS version：ubuntu 16.04</li>
 <li>MySQL：5.7</li>
 <li>ip ：172.16.9.32</li>
 </ul>
-<h3 id="-準備一台以上的-slave-server-負責讀取">➤ 準備一台以上的 Slave server 負責讀取<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e4%bb%a5%e4%b8%8a%e7%9a%84-slave-server-%e8%b2%a0%e8%b2%ac%e8%ae%80%e5%8f%96" aria-label="這個段落的連結"></a></h3>
+<h3 id="-準備一台以上的-slave-server-負責讀取">準備一台以上的 Slave server 負責讀取<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e4%b8%80%e5%8f%b0%e4%bb%a5%e4%b8%8a%e7%9a%84-slave-server-%e8%b2%a0%e8%b2%ac%e8%ae%80%e5%8f%96" aria-label="這個段落的連結"></a></h3>
 <blockquote>
 <p>準備兩台以上測試 load balance 才會準確，這塊有興趣的讀者可以自己嘗試</p>
 </blockquote>
@@ -294,7 +294,7 @@ cleanup
 <li>MySQL：5.7</li>
 <li>ip ：172.16.9.32</li>
 </ul>
-<h3 id="-在-master-server-裡面增加給-proxy-server-使用的使用者並創建測試用-table">➤ 在 Master Server 裡面增加給 Proxy server 使用的使用者，並創建測試用 table<a class="h-anchor" href="#-%e5%9c%a8-master-server-%e8%a3%a1%e9%9d%a2%e5%a2%9e%e5%8a%a0%e7%b5%a6-proxy-server-%e4%bd%bf%e7%94%a8%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e5%89%b5%e5%bb%ba%e6%b8%ac%e8%a9%a6%e7%94%a8-table" aria-label="這個段落的連結"></a></h3>
+<h3 id="-在-master-server-裡面增加給-proxy-server-使用的使用者並創建測試用-table">在 Master Server 裡面增加給 Proxy server 使用的使用者，並創建測試用 table<a class="h-anchor" href="#-%e5%9c%a8-master-server-%e8%a3%a1%e9%9d%a2%e5%a2%9e%e5%8a%a0%e7%b5%a6-proxy-server-%e4%bd%bf%e7%94%a8%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85%e4%b8%a6%e5%89%b5%e5%bb%ba%e6%b8%ac%e8%a9%a6%e7%94%a8-table" aria-label="這個段落的連結"></a></h3>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*建立proxy server使用者*/</span><span style="color:#6e7681">
 </span></span></span><span style="display:flex;"><span>mysql<span style="color:#ff7b72;font-weight:bold">&gt;</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">CREATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">USER</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;proxy_account&#39;</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#a5d6ff">&#39;%&#39;</span><span style="color:#6e7681"> </span>IDENTIFIED<span style="color:#6e7681"> </span><span style="color:#ff7b72">BY</span><span style="color:#6e7681"> </span><span style="color:#a5d6ff">&#39;proxy_password&#39;</span>;<span style="color:#6e7681">
 </span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">/*給使用者權限*/</span><span style="color:#6e7681">
@@ -387,10 +387,10 @@ cleanup
 <p>Atlas 預設的管理 port 為 2345，ip 填寫 Proxy server ip，如果 admin 的帳號密碼沒換就是跟下面一樣</p>
 <pre tabindex="0"><code>mysql -h172.16.9.39 -P2345 -uuser -ppwd
 </code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-13.webp" width="1400" height="553" alt="五、連到 Atlas 管理 server（圖 13）" loading="lazy" decoding="async"></p>
-<h3 id="-查看-atlas-的管理命令">➤ 查看 Atlas 的管理命令<a class="h-anchor" href="#-%e6%9f%a5%e7%9c%8b-atlas-%e7%9a%84%e7%ae%a1%e7%90%86%e5%91%bd%e4%bb%a4" aria-label="這個段落的連結"></a></h3>
+<h3 id="-查看-atlas-的管理命令">查看 Atlas 的管理命令<a class="h-anchor" href="#-%e6%9f%a5%e7%9c%8b-atlas-%e7%9a%84%e7%ae%a1%e7%90%86%e5%91%bd%e4%bb%a4" aria-label="這個段落的連結"></a></h3>
 <pre tabindex="0"><code>mysql&gt; select * from help;
 </code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-14.webp" width="1400" height="529" alt="查看 Atlas 的管理命令（圖 14）" loading="lazy" decoding="async"></p>
-<h3 id="-查看-mysql-讀寫分離設定是否生效">➤ 查看 MySQL 讀寫分離設定是否生效<a class="h-anchor" href="#-%e6%9f%a5%e7%9c%8b-mysql-%e8%ae%80%e5%af%ab%e5%88%86%e9%9b%a2%e8%a8%ad%e5%ae%9a%e6%98%af%e5%90%a6%e7%94%9f%e6%95%88" aria-label="這個段落的連結"></a></h3>
+<h3 id="-查看-mysql-讀寫分離設定是否生效">查看 MySQL 讀寫分離設定是否生效<a class="h-anchor" href="#-%e6%9f%a5%e7%9c%8b-mysql-%e8%ae%80%e5%af%ab%e5%88%86%e9%9b%a2%e8%a8%ad%e5%ae%9a%e6%98%af%e5%90%a6%e7%94%9f%e6%95%88" aria-label="這個段落的連結"></a></h3>
 <p>rw 為讀寫權限，ro 代表只有讀的權限</p>
 <pre tabindex="0"><code>mysql&gt; select * from backends;
 </code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-15.webp" width="942" height="320" alt="查看 MySQL 讀寫分離設定是否生效（圖 15）" loading="lazy" decoding="async"></p>
@@ -399,7 +399,7 @@ cleanup
 <p>Atlas 預設的proxy port 為 1234，ip 填寫 Proxy server ip，登入的帳號密碼填寫你在 Master 申請給 Atlas Proxy 使用的那組</p>
 <pre tabindex="0"><code>mysql -h172.16.9.39 -P1234 -uproxy_account -pproxy_password
 </code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-16.webp" width="1400" height="536" alt="六、實際測試透過 Atlas Proxy 是否達成讀寫分離（圖 16）" loading="lazy" decoding="async"></p>
-<h3 id="-測試寫入功能">➤ 測試寫入功能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e5%af%ab%e5%85%a5%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<h3 id="-測試寫入功能">測試寫入功能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e5%af%ab%e5%85%a5%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
 <pre tabindex="0"><code># 先選擇之前創建的測試資料庫
 mysql&gt; use proxy_test;
 # 創建表並塞入一寫資料
@@ -407,13 +407,13 @@ mysql&gt; CREATE TABLE department (id INT,name varchar(50));
 mysql&gt; INSERT INTO department VALUES (1, &#39;Sales&#39;);
 mysql&gt; INSERT INTO department VALUES (2, &#39;Operator&#39;);
 </code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-17.webp" width="1062" height="308" alt="測試寫入功能（圖 17）" loading="lazy" decoding="async"></p>
-<h3 id="-測試讀取功能">➤ 測試讀取功能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e8%ae%80%e5%8f%96%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
+<h3 id="-測試讀取功能">測試讀取功能<a class="h-anchor" href="#-%e6%b8%ac%e8%a9%a6%e8%ae%80%e5%8f%96%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
 <pre tabindex="0"><code># 先選擇之前創建的測試資料庫
 mysql&gt; use proxy_test;
 # 讀取剛剛創建的 table
 mysql&gt; SELECT * FROM department;
 </code></pre><p><img src="https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/images/mysql-read-write-splitting-atlas-18.webp" width="536" height="308" alt="測試讀取功能（圖 18）" loading="lazy" decoding="async"></p>
-<h3 id="-觀察-sql-運行的-log">➤ 觀察 sql 運行的 log<a class="h-anchor" href="#-%e8%a7%80%e5%af%9f-sql-%e9%81%8b%e8%a1%8c%e7%9a%84-log" aria-label="這個段落的連結"></a></h3>
+<h3 id="-觀察-sql-運行的-log">觀察 sql 運行的 log<a class="h-anchor" href="#-%e8%a7%80%e5%af%9f-sql-%e9%81%8b%e8%a1%8c%e7%9a%84-log" aria-label="這個段落的連結"></a></h3>
 <blockquote>
 <p>記得把 Atla 設定檔的 ssql-log 參數調整為 REALTIME 才會有喔！</p>
 </blockquote>
@@ -472,7 +472,7 @@ mysql&gt; SELECT * FROM department;
 
 <h2 id="二實作-mysql-master-slave-replication">二、實作 MySQL Master Slave replication<a class="h-anchor" href="#%e4%ba%8c%e5%af%a6%e4%bd%9c-mysql-master-slave-replication" aria-label="這個段落的連結"></a></h2>
 <h2 id="前置作業">前置作業<a class="h-anchor" href="#%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad" aria-label="這個段落的連結"></a></h2>
-<h3 id="-準備兩台-ubuntu-server-自己實驗建議使用-vmware筆者環境配置如下">➤ 準備兩台 ubuntu server (自己實驗建議使用 VMWARE)，筆者環境配置如下<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e5%85%a9%e5%8f%b0-ubuntu-server-%e8%87%aa%e5%b7%b1%e5%af%a6%e9%a9%97%e5%bb%ba%e8%ad%b0%e4%bd%bf%e7%94%a8-vmware%e7%ad%86%e8%80%85%e7%92%b0%e5%a2%83%e9%85%8d%e7%bd%ae%e5%a6%82%e4%b8%8b" aria-label="這個段落的連結"></a></h3>
+<h3 id="-準備兩台-ubuntu-server-自己實驗建議使用-vmware筆者環境配置如下">準備兩台 ubuntu server (自己實驗建議使用 VMWARE)，筆者環境配置如下<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e5%85%a9%e5%8f%b0-ubuntu-server-%e8%87%aa%e5%b7%b1%e5%af%a6%e9%a9%97%e5%bb%ba%e8%ad%b0%e4%bd%bf%e7%94%a8-vmware%e7%ad%86%e8%80%85%e7%92%b0%e5%a2%83%e9%85%8d%e7%bd%ae%e5%a6%82%e4%b8%8b" aria-label="這個段落的連結"></a></h3>
 <blockquote>
 <p>硬體配置一定會影響到效能，筆者只是建置一個提供實驗的環境而已</p>
 </blockquote>
@@ -481,7 +481,7 @@ mysql&gt; SELECT * FROM department;
 <li>RAM：1G</li>
 <li>ROM：8G</li>
 </ul>
-<h3 id="-給兩台-sever-安裝-mysql">➤ 給兩台 sever 安裝 MySQL<a class="h-anchor" href="#-%e7%b5%a6%e5%85%a9%e5%8f%b0-sever-%e5%ae%89%e8%a3%9d-mysql" aria-label="這個段落的連結"></a></h3>
+<h3 id="-給兩台-sever-安裝-mysql">給兩台 sever 安裝 MySQL<a class="h-anchor" href="#-%e7%b5%a6%e5%85%a9%e5%8f%b0-sever-%e5%ae%89%e8%a3%9d-mysql" aria-label="這個段落的連結"></a></h3>
 <p>安裝指令如下</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt update
 </span></span><span style="display:flex;"><span>sudo apt install mysql-server
@@ -489,7 +489,7 @@ mysql&gt; SELECT * FROM department;
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mysql -u root -p
 </span></span></code></pre></div><p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-03.webp" width="1400" height="491" alt="給兩台 sever 安裝 MySQL（圖 3）" loading="lazy" decoding="async"></p>
 <h2 id="建立mysql-replication">建立MySQL Replication<a class="h-anchor" href="#%e5%bb%ba%e7%ab%8bmysql-replication" aria-label="這個段落的連結"></a></h2>
-<h3 id="-master-server-設定">➤ Master server 設定<a class="h-anchor" href="#-master-server-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<h3 id="-master-server-設定">Master server 設定<a class="h-anchor" href="#-master-server-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
 <p><strong>STEP 1</strong>：設定 Master server 的 my.cnf</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/mysql/my.cnf
 </span></span></code></pre></div><pre tabindex="0"><code>[mysqld]
@@ -528,7 +528,7 @@ log-bin=mysql-bin
 </code></pre><p><strong>STEP 4</strong>：檢查 Master 是否已經啟動</p>
 <pre tabindex="0"><code>mysql&gt; SHOW MASTER STATUS \G
 </code></pre><p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-04.webp" width="1142" height="330" alt="Master server 設定（圖 4）" loading="lazy" decoding="async"></p>
-<h3 id="-slave-server-設定">➤ Slave server 設定<a class="h-anchor" href="#-slave-server-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<h3 id="-slave-server-設定">Slave server 設定<a class="h-anchor" href="#-slave-server-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
 <p><strong>STEP 1</strong>：將剛剛備份的 <code>master.sql</code> 還原到 Slave server 的 DB</p>
 <p>先複製 master.sql 到 Slave server 的目錄下</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo scp master.sql &lt;username&gt;@&lt;IP or hostname&gt;:&lt;Destination&gt;

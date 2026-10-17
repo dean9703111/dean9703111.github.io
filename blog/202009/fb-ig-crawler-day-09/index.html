@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>【Day9】爬蟲第一步，FB先登入｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="一定要自己實作過一遍! 一定要自己實作過一遍! 一定要自己實作過一遍! 因為很重要所以要說三遍，前面幾篇文章比較偏向概念，但今後的文章概念實作並重；因為FB 與 IG 改版的速度極快，我現在提供的方法在他們改版後可能就會失效，所以文章的每個步驟要自己去實作才能理解為什麼這樣做，同…">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/index.html.md" title="Markdown">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="【Day9】爬蟲第一步，FB先登入">
+  <meta property="og:description" content="一定要自己實作過一遍! 一定要自己實作過一遍! 一定要自己實作過一遍! 因為很重要所以要說三遍，前面幾篇文章比較偏向概念，但今後的文章概念實作並重；因為FB 與 IG 改版的速度極快，我現在提供的方法在他們改版後可能就會失效，所以文章的每個步驟要自己去實作才能理解為什麼這樣做，同…">
+  <meta property="og:url" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-09-24T09:06:37&#43;08:00">
+  <meta property="article:modified_time" content="2020-09-24T09:06:37&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="Facebook Login">
+  <meta property="article:tag" content="Crawler">
+  <meta property="article:tag" content="Node.js">
+  <meta property="article:tag" content="Selenium Webdriver">
+  <meta property="og:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-og_hu_2651d2b048d12795.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="【Day9】爬蟲第一步，FB先登入">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-og_hu_2651d2b048d12795.jpg">
+  <meta name="twitter:title" content="【Day9】爬蟲第一步，FB先登入">
+  <meta name="twitter:description" content="一定要自己實作過一遍! 一定要自己實作過一遍! 一定要自己實作過一遍! 因為很重要所以要說三遍，前面幾篇文章比較偏向概念，但今後的文章概念實作並重；因為FB 與 IG 改版的速度極快，我現在提供的方法在他們改版後可能就會失效，所以文章的每個步驟要自己去實作才能理解為什麼這樣做，同…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-09/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-09-24T09:06:37+08:00","datePublished":"2020-09-24T09:06:37+08:00","description":"一定要自己實作過一遍! 一定要自己實作過一遍! 一定要自己實作過一遍! 因為很重要所以要說三遍，前面幾篇文章比較偏向概念，但今後的文章概念實作並重；因為FB 與 IG 改版的速度極快，我現在提供的方法在他們改版後可能就會失效，所以文章的每個步驟要自己去實作才能理解為什麼這樣做，同…","headline":"【Day9】爬蟲第一步，FB先登入","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-og_hu_2651d2b048d12795.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-og_hu_577c17197fe54bac.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-og_hu_94139467c0cba362.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Facebook Login, Crawler, Node.js, Selenium Webdriver","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-09/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-og_hu_2651d2b048d12795.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10242625"],"thumbnailUrl":"https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-og_hu_2651d2b048d12795.jpg","timeRequired":"PT5M","url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-09/","wordCount":2497},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202009/fb-ig-crawler-day-09/","name":"【Day9】爬蟲第一步，FB先登入","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">【Day9】爬蟲第一步，FB先登入</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-09-24">2020.09.24</time>
+              <span>閱讀約 5 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>9</b>/ 30</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#-%e5%9c%a8%e7%88%ac%e8%9f%b2%e5%89%8d%e8%ab%8b%e6%b3%a8%e6%84%8f%e9%80%99%e4%ba%9b%e4%ba%8b%e6%83%85%e9%81%bf%e5%85%8d%e9%81%95%e6%b3%95">⚠️ 在爬蟲前請注意這些事情避免違法</a></li><li><a href="#%e4%bb%8a%e5%a4%a9%e7%9a%84%e5%ad%b8%e7%bf%92%e8%a6%81%e7%89%b9%e5%88%a5%e6%b3%a8%e6%84%8f%e4%bb%80%e9%ba%bc">今天的學習要特別注意什麼？</a></li><li><a href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">今日目標</a></li><li class="is-sub"><a href="#1-%e5%ad%b8%e6%9c%83%e5%88%86%e6%9e%90%e7%b6%b2%e9%a0%81%e7%b5%90%e6%a7%8b---%e4%bb%a5facebook%e7%99%bb%e5%85%a5%e9%a0%81%e7%82%ba%e7%af%84%e4%be%8b">1. 學會分析網頁結構 - 以Facebook登入頁為範例</a></li><li class="is-sub"><a href="#2-%e6%89%93%e9%80%a0%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5facebook%e7%9a%84%e6%a9%9f%e5%99%a8%e4%ba%ba">2. 打造自動登入FaceBook的機器人</a></li><li><a href="#1-%e5%ad%b8%e6%9c%83%e5%88%86%e6%9e%90%e7%b6%b2%e9%a0%81%e7%b5%90%e6%a7%8b--%e4%bb%a5facebook%e7%99%bb%e5%85%a5%e9%a0%81%e7%82%ba%e7%af%84%e4%be%8b">1. 學會分析網頁結構 — 以Facebook登入頁為範例</a></li><li class="is-sub"><a href="#11-%e6%8b%86%e8%a7%a3%e5%b9%b3%e5%b8%b8%e7%99%bb%e5%85%a5fb%e7%9a%84%e6%ad%a5%e9%a9%9f">1.1 拆解平常登入FB的步驟</a></li><li class="is-sub"><a href="#12-%e5%b0%87%e5%b9%b3%e5%b8%b8%e6%93%8d%e4%bd%9c%e7%9a%84%e4%bd%8d%e7%bd%ae%e8%bd%89%e5%8c%96%e7%82%ba%e7%a8%8b%e5%bc%8f%e5%8f%af%e4%bb%a5%e8%ae%80%e6%87%82%e7%9a%84%e8%b7%af%e5%be%91xpath">1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)</a></li><li><a href="#2-%e6%89%93%e9%80%a0%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5facebook%e7%9a%84%e6%a9%9f%e5%99%a8%e4%ba%ba-1">2. 打造自動登入FaceBook的機器人</a></li><li class="is-sub"><a href="#21-%e4%ba%86%e8%a7%a3-selenium-webdriver-%e5%a6%82%e4%bd%95%e6%93%8d%e4%bd%9c%e7%b6%b2%e9%a0%81%e5%85%83%e4%bb%b6">2.1 了解 selenium-webdriver 如何操作網頁元件</a></li><li class="is-sub"><a href="#22-%e5%9c%a8-env%e6%aa%94%e5%a1%ab%e4%b8%8a-fb-%e7%99%bb%e5%85%a5%e8%b3%87%e8%a8%8a%e4%b8%a6%e5%be%9e%e7%a8%8b%e5%bc%8f%e4%b8%ad%e8%ae%80%e5%8f%96">2.2 在 .env檔填上 FB 登入資訊，並從程式中讀取</a></li><li class="is-sub"><a href="#23-%e8%ae%93%e7%88%ac%e8%9f%b2%e5%b9%ab%e4%bd%a0%e5%ae%8c%e6%88%90%e5%b9%b3%e6%97%a5%e7%99%bb%e5%85%a5%e7%9a%84%e6%ad%a5%e9%a9%9f">2.3 讓爬蟲幫你完成平日登入的步驟</a></li><li class="is-sub"><a href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f">執行程式</a></li><li class="is-sub"><a href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc">ℹ️ 專案原始碼</a></li><li class="is-sub"><a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90">參考資源</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <h2 class="h-nomark" id="-在爬蟲前請注意這些事情避免違法">⚠️ 在爬蟲前請注意這些事情避免違法<a class="h-anchor" href="#-%e5%9c%a8%e7%88%ac%e8%9f%b2%e5%89%8d%e8%ab%8b%e6%b3%a8%e6%84%8f%e9%80%99%e4%ba%9b%e4%ba%8b%e6%83%85%e9%81%bf%e5%85%8d%e9%81%95%e6%b3%95" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li><strong>請勿拿來蒐集個人隱私</strong>
+<ul>
+<li>相片、個人資料</li>
+</ul>
+</li>
+<li><strong>請勿高頻率訪問一個網站</strong>
+<ul>
+<li>高頻率訪問一個網站可能對導致對方伺服器癱瘓(DDOS)</li>
+</ul>
+</li>
+<li><strong>請勿盜取相關智慧財產權相關的資料</strong>
+<ul>
+<li>社群上發表的文章、有人統整過的資訊</li>
+</ul>
+</li>
+<li><strong>請勿蒐集網站後台資料</strong>
+<ul>
+<li>僅抓取前端網頁有顯示的公開信息，不要去抓後台的敏感資訊</li>
+</ul>
+</li>
+<li><strong>請勿作為破解工具</strong>
+<ul>
+<li>嘗試各種帳號密碼試圖登入自己沒有權限的頁面</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>這系列的教學文章是<code>想讓大家省去如同機器人般的操作，把時間精力放在分析資料上面</code></p>
+</blockquote>
+<hr>
+<h2 id="今天的學習要特別注意什麼">今天的學習要特別注意什麼？<a class="h-anchor" href="#%e4%bb%8a%e5%a4%a9%e7%9a%84%e5%ad%b8%e7%bf%92%e8%a6%81%e7%89%b9%e5%88%a5%e6%b3%a8%e6%84%8f%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<p>一定要自己實作過一遍!<br>一定要自己實作過一遍!<br>一定要自己實作過一遍!<br><br>因為很重要所以要說三遍，前面幾篇文章比較偏向概念，但今後的文章概念實作並重；因為<code>FB 與 IG 改版的速度極快</code>，我現在提供的方法在他們改版後可能就會失效，所以文章的<code>每個步驟要自己去實作</code>才能理解為什麼這樣做，同時培養自己分析網頁結構的能力</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-學會分析網頁結構---以facebook登入頁為範例">1. 學會分析網頁結構 - 以Facebook登入頁為範例<a class="h-anchor" href="#1-%e5%ad%b8%e6%9c%83%e5%88%86%e6%9e%90%e7%b6%b2%e9%a0%81%e7%b5%90%e6%a7%8b---%e4%bb%a5facebook%e7%99%bb%e5%85%a5%e9%a0%81%e7%82%ba%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h3>
+<p>1.1 拆解平常登入 FB 的步驟<br>1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)</p>
+<h3 class="h-nomark" id="2-打造自動登入facebook的機器人">2. 打造自動登入FaceBook的機器人<a class="h-anchor" href="#2-%e6%89%93%e9%80%a0%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5facebook%e7%9a%84%e6%a9%9f%e5%99%a8%e4%ba%ba" aria-label="這個段落的連結"></a></h3>
+<p>2.1 了解 selenium-webdriver 如何操作網頁元件<br>2.2 在 .env檔填上 FB 登入資訊，並從程式中讀取<br>2.3 讓爬蟲幫你完成平日登入的步驟</p>
+<hr>
+<h2 class="h-nomark" id="1-學會分析網頁結構--以facebook登入頁為範例">1. 學會分析網頁結構 — 以Facebook登入頁為範例<a class="h-anchor" href="#1-%e5%ad%b8%e6%9c%83%e5%88%86%e6%9e%90%e7%b6%b2%e9%a0%81%e7%b5%90%e6%a7%8b--%e4%bb%a5facebook%e7%99%bb%e5%85%a5%e9%a0%81%e7%82%ba%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h2>
+<p>你可以想像 <strong>selenium-webdriver</strong> 這個套件就是讓機器人代替你的手來做操作，<code>想要讓機器幫你操作，你需要告訴他明確的操作位置</code>，接下來向大家介紹如何抓出這些位置</p>
+<h3 class="h-nomark" id="11-拆解平常登入fb的步驟">1.1 拆解平常登入FB的步驟<a class="h-anchor" href="#11-%e6%8b%86%e8%a7%a3%e5%b9%b3%e5%b8%b8%e7%99%bb%e5%85%a5fb%e7%9a%84%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>先用 chrome 無痕模式打開<a href="https://www.facebook.com/login">Facebook登入頁面</a></p>
+<p><img src="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-01.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-01.webp 300w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="300" height="212" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>打開後的 FB 的登入畫面如下</p>
+<p><img src="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-02.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-02_hu_396e0e08e330e9bf.webp 720w, /blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-02.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="613" alt="1.1 拆解平常登入FB的步驟（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><code>剛發完文章發現 FB 登入畫面又變惹QQ，不過操作上都一樣請勿驚慌</code></p>
+<p><img src="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-03.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-03_hu_17ec7ab941faadc1.webp 720w, /blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-03.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="647" alt="1.1 拆解平常登入FB的步驟（圖 3）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>接下來把你<code>平常登入FB的動作分幾個步驟</code>，下一步要對這些操作到的元件進行結構分析：</p>
+<ol>
+<li>輸入電子郵件或電話</li>
+<li>輸入密碼</li>
+<li>按下登入按鈕</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="12-將平常操作的位置轉化為程式可以讀懂的路徑xpath">1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)<a class="h-anchor" href="#12-%e5%b0%87%e5%b9%b3%e5%b8%b8%e6%93%8d%e4%bd%9c%e7%9a%84%e4%bd%8d%e7%bd%ae%e8%bd%89%e5%8c%96%e7%82%ba%e7%a8%8b%e5%bc%8f%e5%8f%af%e4%bb%a5%e8%ae%80%e6%87%82%e7%9a%84%e8%b7%af%e5%be%91xpath" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>我們先用先紅框圈出登入會用到的元件位置</p>
+<p><img src="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-04.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-04_hu_dcdc9fd138e640d2.webp 720w, /blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-04.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="613" alt="1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)（圖 4）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>接著對<strong>元件按下滑鼠右鍵 → 檢查</strong>，就會進入開發者的介面</p>
+<p><img src="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-05.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-05_hu_2c4b818e48649185.webp 720w, /blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-05.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="396" alt="1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>然後你就會看到一堆不友善的程式碼，這個時候別緊張，我們原則上不需要理解他們在寫什麼，我們只要知他<strong>在什麼位置就好</strong></p>
+<p><img src="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-06.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-06_hu_682dc1e6775b03ca.webp 720w, /blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-06.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="613" alt="1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)（圖 6）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>想知道他位置的方法也很簡單，對開發者頁面的那個<strong>程式碼按右鍵 → Copy → Copy Xpath</strong></p>
+<p><img src="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-07.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-07_hu_3d8e1f14aeef7b89.webp 720w, /blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-07.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="382" alt="1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)（圖 7）" loading="lazy" decoding="async"></p>
+<p>你就會得到 <strong>電子郵件或電話</strong> 元件在這個頁面的位置</p>
+<pre tabindex="0"><code>//*[@id=&#34;email&#34;]
+</code></pre><p>重複上面的步驟你面可以取得 <strong>密碼</strong> 元件的位置</p>
+<pre tabindex="0"><code>//*[@id=&#34;pass&#34;]
+</code></pre><p>以及 <strong>登入按鈕</strong> 元件的位置</p>
+<pre tabindex="0"><code>//*[@id=&#34;loginbutton&#34;]
+</code></pre><p>取得這三個元件的 Xpath 後我們便可以明確告訴機器人該做什麼事嚕</p>
+</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-打造自動登入facebook的機器人-1">2. 打造自動登入FaceBook的機器人<a class="h-anchor" href="#2-%e6%89%93%e9%80%a0%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5facebook%e7%9a%84%e6%a9%9f%e5%99%a8%e4%ba%ba-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-了解-selenium-webdriver-如何操作網頁元件">2.1 了解 selenium-webdriver 如何操作網頁元件<a class="h-anchor" href="#21-%e4%ba%86%e8%a7%a3-selenium-webdriver-%e5%a6%82%e4%bd%95%e6%93%8d%e4%bd%9c%e7%b6%b2%e9%a0%81%e5%85%83%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p><strong>透過網頁的 Xpath 取出元件</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 取出想操作的元件 = 瀏覽器會等待直到路徑(//*[@id=&#34;email&#34;])的元件顯示才回傳該元件
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fb_email_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;email&#34;]`</span>)));
+</span></span></code></pre></div></li>
+<li>
+<p><strong>在輸入框中輸入指定文字</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 將你想要輸入的文字透過sendKeys塞入元件
+</span></span></span><span style="display:flex;"><span>fb_email_ele.sendKeys(fb_username)
+</span></span></code></pre></div></li>
+<li>
+<p><strong>點擊按鈕</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 將取出的元件使用click函式觸發點擊事件
+</span></span></span><span style="display:flex;"><span>login_elem.click()
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="22-在-env檔填上-fb-登入資訊並從程式中讀取">2.2 在 .env檔填上 FB 登入資訊，並從程式中讀取<a class="h-anchor" href="#22-%e5%9c%a8-env%e6%aa%94%e5%a1%ab%e4%b8%8a-fb-%e7%99%bb%e5%85%a5%e8%b3%87%e8%a8%8a%e4%b8%a6%e5%be%9e%e7%a8%8b%e5%bc%8f%e4%b8%ad%e8%ae%80%e5%8f%96" aria-label="這個段落的連結"></a></h3>
+<p>理解關鍵程式的功能後我們來把他們組合起來吧：</p>
+<ol>
+<li>
+<p>在 .env檔填寫 FB 登入的帳號密碼</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#填寫自己登入FB的真實資訊(建議開小帳號來實驗，因為帳號使用太頻繁會被官方鎖住)</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">FB_USERNAME</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;fb username&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">FB_PASSWORD</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;fb password&#39;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>取出在 .env檔案裡面的 FB 帳號密碼提供主程式使用</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config(); <span style="color:#8b949e;font-style:italic">//載入.env環境檔
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//取出.env檔案填寫的FB資訊
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fb_username <span style="color:#ff7b72;font-weight:bold">=</span> process.env.FB_USERNAME
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fb_userpass <span style="color:#ff7b72;font-weight:bold">=</span> process.env.FB_PASSWORD
+</span></span></code></pre></div></li>
+</ol>
+<hr>
+<h3 class="h-nomark" id="23-讓爬蟲幫你完成平日登入的步驟">2.3 讓爬蟲幫你完成平日登入的步驟<a class="h-anchor" href="#23-%e8%ae%93%e7%88%ac%e8%9f%b2%e5%b9%ab%e4%bd%a0%e5%ae%8c%e6%88%90%e5%b9%b3%e6%97%a5%e7%99%bb%e5%85%a5%e7%9a%84%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>將套件中會使用到的函式引入</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> webdriver <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver&#39;</span>), <span style="color:#8b949e;font-style:italic">// 加入虛擬網頁套件
+</span></span></span><span style="display:flex;"><span>    By <span style="color:#ff7b72;font-weight:bold">=</span> webdriver.By,<span style="color:#8b949e;font-style:italic">//你想要透過什麼方式來抓取元件，通常使用xpath、css
+</span></span></span><span style="display:flex;"><span>    until <span style="color:#ff7b72;font-weight:bold">=</span> webdriver.until;<span style="color:#8b949e;font-style:italic">//直到抓到元件才進入下一步(可設定等待時間)
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> chrome <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver/chrome&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> path <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;path&#39;</span>);<span style="color:#8b949e;font-style:italic">//用於處理文件路徑的小工具
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fs <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;fs&#34;</span>);<span style="color:#8b949e;font-style:italic">//讀取檔案用
+</span></span></span></code></pre></div></li>
+<li>
+<p>將我們對網頁操作的操作加入程式</p>
+<ul>
+<li>前往 facebook 登入頁面 → 輸入登入資訊 → 按下登入按鈕</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> loginFacebook () {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (<span style="color:#ff7b72;font-weight:bold">!</span>checkDriver()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> driver <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> <span style="color:#ff7b72">new</span> webdriver.Builder().forBrowser(<span style="color:#a5d6ff">&#34;chrome&#34;</span>).build();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> web <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;https://www.facebook.com/login&#39;</span>;<span style="color:#8b949e;font-style:italic">//我們要前往FB
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> driver.get(web)<span style="color:#8b949e;font-style:italic">//在這裡要用await確保打開完網頁後才能繼續動作
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//填入fb登入資訊
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//使用until是要求直到網頁顯示了這個元件才能執行下一步
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fb_email_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.
+</span></span><span style="display:flex;"><span>        wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;email&#34;]`</span>)));<span style="color:#8b949e;font-style:italic">//找出填寫email的元件
+</span></span></span><span style="display:flex;"><span>    fb_email_ele.sendKeys(fb_username)<span style="color:#8b949e;font-style:italic">//將使用者的資訊填入
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fb_pass_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.
+</span></span><span style="display:flex;"><span>        wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;pass&#34;]`</span>)));
+</span></span><span style="display:flex;"><span>    fb_pass_ele.sendKeys(fb_userpass)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//抓到登入按鈕然後點擊
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> login_elem <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.
+</span></span><span style="display:flex;"><span>        wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;loginbutton&#34;]`</span>)))
+</span></span><span style="display:flex;"><span>    login_elem.click()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>loginFacebook()<span style="color:#8b949e;font-style:italic">//登入FB
+</span></span></span></code></pre></div></li>
+</ol>
+<hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div><blockquote>
+<p>你會看到 chrome 的應用程式自動打開並且成功登入 Facebook</p>
+<p><img src="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-08.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-08_hu_d3c11eec4cd4f869.webp 720w, /blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-08.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="386" alt="執行程式（圖 8）" loading="lazy" decoding="async"></p>
+</blockquote>
+<p>如果模擬器讓你成功登入 FB 可以在下方留言讓我知道喔，登入成功的瞬間有沒有充滿成就感呢？</p>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day9">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day8_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來實作今天的功能喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>調整你.env檔填上FB登入資訊</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://blog.happycoding.today/python-crawler-analysis/">Python 爬蟲解析：以爬取臉書社團為案例，使用 Selenium 來進行網頁模擬爬蟲</a></li>
+</ol>
+<blockquote>
+<p><em>免責聲明:文章技術僅抓取公開數據作爲研究，任何組織和個人不得以此技術盜取他人智慧財產、造成網站損害，否則一切后果由該組織或個人承擔。作者不承擔任何法律及連帶責任！</em></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><img src="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-09.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-09_hu_aa4c23d5ca4c7363.webp 720w, /blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-09.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="233" alt="參考資源（圖 9）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.09.24），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10242625" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/facebook-login/">Facebook Login</a>
+            <a class="chip chip-hash" href="/tags/crawler/">Crawler</a>
+            <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
+            <a class="chip chip-hash" href="/tags/selenium-webdriver/">Selenium Webdriver</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202009%2Ffb-ig-crawler-day-09%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202009%2Ffb-ig-crawler-day-09%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/" data-title="【Day9】爬蟲第一步，FB先登入" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>9</b> 篇・共 30 篇</p>
+          </div>
+          <ol class="steps" data-collapsible>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-01/"><span class="n">01</span><span>技術只能陪你一陣子，學會解決問題才能過一輩子</span></a>
+            </li>
+            <li class="steps-gap" aria-hidden="true">⋮</li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-02/"><span class="n">02</span><span>開發環境大補帖 - Node.js、NVM、git、yarn、VSCode</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-03/"><span class="n">03</span><span>努力寫出更好的程式碼，有時你不是一個人在戰鬥</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-04/"><span class="n">04</span><span>建立Node.js專案 &amp; 全面解析專案管家package.json</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-05/"><span class="n">05</span><span>用yarn安裝及控管套件 &amp; 善用關鍵字讓全世界的大神幫你一把</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-06/"><span class="n">06</span><span>env - 善用環境變數幫你快速遷移專案</span></a>
+            </li>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-07/"><span class="n">07</span><span>gitignore - 杜絕上傳錯誤資料，從此不再發生慘痛經驗</span></a>
+            </li>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-08/"><span class="n">08</span><span>selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">09</span><span>爬蟲第一步，FB先登入<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-10/"><span class="n">10</span><span>關閉干擾爬蟲的彈窗，將FB粉專追蹤數納入囊中</span></a>
+            </li>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-11/"><span class="n">11</span><span>舉一反三，帶你了解IG爬蟲不可忽略的細節</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-12/"><span class="n">12</span><span>合體吧！用一隻程式搞定FB、IG爬蟲</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-13/"><span class="n">13</span><span>重構程式碼，減少歷史業障</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-14/"><span class="n">14</span><span>爬蟲執行時又又又崩潰了嗎？來點 try-catch 吧</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-15/"><span class="n">15</span><span>json x 爬蟲 = 瑣事自動化，生命應該浪費在美好的事情上</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-16/"><span class="n">16</span><span>不藏私，加上5行程式就能優化爬蟲的小技巧 ＆ 學會爬蟲，之後呢？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-17/"><span class="n">17</span><span>Google Sheets - 免費儲存資料的好選擇，一起進入省錢起手式</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-18/"><span class="n">18</span><span>Google Sheets - 加入版控後被github警告了，官方範例做了什麼？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-19/"><span class="n">19</span><span>Google Sheets - 你在文件迷路了嗎？用兩個處理Sheet的範例帶你攻略官方文件</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-20/"><span class="n">20</span><span>Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-21/"><span class="n">21</span><span>Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-22/"><span class="n">22</span><span>Google Sheets - 客戶：我希望新資料插在最前面 &amp; 談需求變更</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-23/"><span class="n">23</span><span>Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-24/"><span class="n">24</span><span>排程 - Cron套件超詳解，讓爬蟲自己動起來</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-25/"><span class="n">25</span><span>排程 - 用forever套件來控管排程，背景執行才是王道！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-26/"><span class="n">26</span><span>排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-27/"><span class="n">27</span><span>為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-28/"><span class="n">28</span><span>為爬蟲加上通知 - 用 axios 發出 LINE 通知</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-29/"><span class="n">29</span><span>為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-30/"><span class="n">30</span><span>時間只是考驗，心中信念絲毫未減</span></a>
+            </li>
+          </ol>
+          <button class="steps-more" type="button" aria-expanded="false">顯示全部 30 篇 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
+          <a class="sb-next" href="/blog/202009/fb-ig-crawler-day-10/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">關閉干擾爬蟲的彈窗，將FB粉專追蹤數納入囊中</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="link-arrow" href="/about/#teaching">企業內訓・演講邀約 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202009/fb-ig-crawler-day-08/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</span></a>
+          <a class="next" href="/blog/202009/fb-ig-crawler-day-10/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">【Day10】關閉干擾爬蟲的彈窗，將FB粉專追蹤數納入囊中</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#-%e5%9c%a8%e7%88%ac%e8%9f%b2%e5%89%8d%e8%ab%8b%e6%b3%a8%e6%84%8f%e9%80%99%e4%ba%9b%e4%ba%8b%e6%83%85%e9%81%bf%e5%85%8d%e9%81%95%e6%b3%95">⚠️ 在爬蟲前請注意這些事情避免違法</a></li><li><a href="#%e4%bb%8a%e5%a4%a9%e7%9a%84%e5%ad%b8%e7%bf%92%e8%a6%81%e7%89%b9%e5%88%a5%e6%b3%a8%e6%84%8f%e4%bb%80%e9%ba%bc">今天的學習要特別注意什麼？</a></li><li><a href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">今日目標</a></li><li class="is-sub"><a href="#1-%e5%ad%b8%e6%9c%83%e5%88%86%e6%9e%90%e7%b6%b2%e9%a0%81%e7%b5%90%e6%a7%8b---%e4%bb%a5facebook%e7%99%bb%e5%85%a5%e9%a0%81%e7%82%ba%e7%af%84%e4%be%8b">1. 學會分析網頁結構 - 以Facebook登入頁為範例</a></li><li class="is-sub"><a href="#2-%e6%89%93%e9%80%a0%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5facebook%e7%9a%84%e6%a9%9f%e5%99%a8%e4%ba%ba">2. 打造自動登入FaceBook的機器人</a></li><li><a href="#1-%e5%ad%b8%e6%9c%83%e5%88%86%e6%9e%90%e7%b6%b2%e9%a0%81%e7%b5%90%e6%a7%8b--%e4%bb%a5facebook%e7%99%bb%e5%85%a5%e9%a0%81%e7%82%ba%e7%af%84%e4%be%8b">1. 學會分析網頁結構 — 以Facebook登入頁為範例</a></li><li class="is-sub"><a href="#11-%e6%8b%86%e8%a7%a3%e5%b9%b3%e5%b8%b8%e7%99%bb%e5%85%a5fb%e7%9a%84%e6%ad%a5%e9%a9%9f">1.1 拆解平常登入FB的步驟</a></li><li class="is-sub"><a href="#12-%e5%b0%87%e5%b9%b3%e5%b8%b8%e6%93%8d%e4%bd%9c%e7%9a%84%e4%bd%8d%e7%bd%ae%e8%bd%89%e5%8c%96%e7%82%ba%e7%a8%8b%e5%bc%8f%e5%8f%af%e4%bb%a5%e8%ae%80%e6%87%82%e7%9a%84%e8%b7%af%e5%be%91xpath">1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)</a></li><li><a href="#2-%e6%89%93%e9%80%a0%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5facebook%e7%9a%84%e6%a9%9f%e5%99%a8%e4%ba%ba-1">2. 打造自動登入FaceBook的機器人</a></li><li class="is-sub"><a href="#21-%e4%ba%86%e8%a7%a3-selenium-webdriver-%e5%a6%82%e4%bd%95%e6%93%8d%e4%bd%9c%e7%b6%b2%e9%a0%81%e5%85%83%e4%bb%b6">2.1 了解 selenium-webdriver 如何操作網頁元件</a></li><li class="is-sub"><a href="#22-%e5%9c%a8-env%e6%aa%94%e5%a1%ab%e4%b8%8a-fb-%e7%99%bb%e5%85%a5%e8%b3%87%e8%a8%8a%e4%b8%a6%e5%be%9e%e7%a8%8b%e5%bc%8f%e4%b8%ad%e8%ae%80%e5%8f%96">2.2 在 .env檔填上 FB 登入資訊，並從程式中讀取</a></li><li class="is-sub"><a href="#23-%e8%ae%93%e7%88%ac%e8%9f%b2%e5%b9%ab%e4%bd%a0%e5%ae%8c%e6%88%90%e5%b9%b3%e6%97%a5%e7%99%bb%e5%85%a5%e7%9a%84%e6%ad%a5%e9%a9%9f">2.3 讓爬蟲幫你完成平日登入的步驟</a></li><li class="is-sub"><a href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f">執行程式</a></li><li class="is-sub"><a href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc">ℹ️ 專案原始碼</a></li><li class="is-sub"><a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90">參考資源</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202009%2Ffb-ig-crawler-day-09%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202009%2Ffb-ig-crawler-day-09%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/" data-title="【Day9】爬蟲第一步，FB先登入" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRsIAAABXRUJQVlA4WAoAAAAQAAAAFwAADwAAQUxQSD4AAAABX6CokRQ2eIWmiDeCiIiwhxk8vhdqItmpZmIibTxERTQggQoXCEAF/R9/V1JH9H8CSoU6HkyT5D9oHYY5FFZQOCBeAAAA8AMAnQEqGAAQAD8NZqZHpiKhmAQAYxDE9IAAMyVBjAfBb9U&#43;AYgmAAD&#43;ykdqiTCW953GIFzo3Fwau0JQxernl6v71ng&#43;G/w1/kF47dvbiGdaAdnJCvJVKw9DfQAAAA==" alt="" width="24" height="16"><img src="/blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01_hu_9c557a4a36e30db0.webp" srcset="/blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01_hu_32ec8b2abf821e00.webp 240w, /blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01_hu_af71c0697c87c1f.webp 480w, /blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01_hu_30546522dda22cc1.webp 800w, /blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01_hu_9c557a4a36e30db0.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="671" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-16/">【Day16】不藏私，加上5行程式就能優化爬蟲的小技巧 ＆ 學會爬蟲，之後呢？</a></h3>
+    <p class="card-desc">1.1 優化分成哪些面向?1.2 優化執行效率及穩定度1.3 背景執行並減少記憶體的消耗</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-01">2020.10.01</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRo4AAABXRUJQVlA4WAoAAAAQAAAAFwAACQAAQUxQSB4AAAABH6AgbQPGenXv2oiIuAIIs432m7/wDuAEIvqfTX5WUDggSgAAAPADAJ0BKhgACgA/DWqnR6YjIZgEAGMQxPSAADWmoI4fqv/gXBffL4AA/roBrN7AE6PN0IMqkana6trVdxUw&#43;tx/4Ze/uZQ6ZaAA" alt="" width="24" height="10"><img src="/blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01_hu_b94c8641f179364a.webp" srcset="/blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01_hu_c19e95683d6842cc.webp 240w, /blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01_hu_b6240cf12f788019.webp 480w, /blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01_hu_10f4674639db11a6.webp 800w, /blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01_hu_b94c8641f179364a.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="422" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-15/">【Day15】json x 爬蟲 = 瑣事自動化，生命應該浪費在美好的事情上</a></h3>
+    <p class="card-desc">專案在需求規格中有一條是在自己的電腦執行，在分析完各種檔案格式的優缺點後我決定使用json格式：</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-09-30">2020.09.30</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>5 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRo4AAABXRUJQVlA4WAoAAAAQAAAAFwAAAwAAQUxQSCQAAAABJ0AmbRukAmqh7vYuImL4oJCNJGgfgV2lzfmDHUFE/9NFdp9WUDggRAAAAJADAJ0BKhgABAA/DWyoSCYjIZgEAGMQxPSAADVz3rVGzU5NUgAA/svlYSJs72se45pkRfy6ncEKVqznNFeROnE7AAAA" alt="" width="24" height="4"><img src="/blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01_hu_52fd5863a03a1d18.webp" srcset="/blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01_hu_d305c570d30980c2.webp 240w, /blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01_hu_e771a01dda9be58c.webp 480w, /blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01_hu_b8697646e7724d21.webp 800w, /blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01_hu_52fd5863a03a1d18.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="159" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-13/">【Day13】重構程式碼，減少歷史業障</a></h3>
+    <p class="card-desc">昨天我們完成了一個跑得動的程式，但很明顯這不是一個好的程式 大家應該有感受到隨著程式越來越長，我們對他的掌握力逐步下降 根據 Clean Code 的原則而言就是說這程式寫得很爛XD 很多人為了盡快完成功能而埋頭狂寫，但這樣容易導致你日後維護以及交接的困難性，你所負責的專案越大這…</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-09-28">2020.09.28</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 23 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

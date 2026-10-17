@@ -42,7 +42,7 @@
 
 ## ① 安裝 Claude 與 OpenSpec，初始化專案設定
 
-### ➤ 安裝 Antigravity
+### 安裝 Antigravity
 
 今天這個教學，你可以使用自己熟悉的程式碼編輯器，不管是 VSCode、Cursor、Antigravity 都可以。
 
@@ -50,7 +50,7 @@
 
 但這次，我們沒有要使用到編輯器內建的 AI 功能，使用他，**只是為了方便檢視程式碼與規格文件的變更，並降低 Claude Code 的入門難度。**
 
-### ➤ 確認 Node.js 版本
+### 確認 Node.js 版本
 
 因為今天分享的 OpenSpec 與實作的全端專案會使用到 Node.js。
 
@@ -73,7 +73,7 @@ nvm 安裝完成後，要開啟新的終端機，然後輸入 `nvm -v`，確認�
 
 接下來輸入 `nvm install — lts` 來安裝最新版本的 Node.js，安裝完畢後，輸入 `node -v` 便可檢視剛剛安裝的版本。
 
-### ➤ 安裝 OpenSpec
+### 安裝 OpenSpec
 
 在 Node.js 安裝完成後，我們要來安裝 OpenSpec，只要在終端機輸入指令，便可以完成全局安裝：
 
@@ -88,7 +88,7 @@ npm install -g @fission-ai/openspec@latest
 
 **這可以盡量避免過去用 AI 寫程式時，相同功能重複被寫好幾次的痛點。**
 
-### ➤ 安裝 Claude Code
+### 安裝 Claude Code
 
 安裝好 OpenSpec 後，接下來要安裝 [Claude Code](https://code.claude.com/docs/zh-TW/overview)。
 
@@ -128,7 +128,7 @@ curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del in
 
 我認為「時間」才是最寶貴的資產；而「AI」可以幫助你奪回自己的時間。
 
-### ➤ 在專案初始 OpenSpec
+### 在專案初始 OpenSpec
 
 登入完成後，你可以在電腦建立一個專案用的空白資料夾，然後選擇 Explorer 用 Open Folder 的方式打開他。
 
@@ -184,7 +184,7 @@ openspec config profile
 
 ## ② 規格驅動開發，從零打造全端系統
 
-### ➤ 安裝 Docker
+### 安裝 Docker
 
 根據過去經驗，最容易在環境設定上卡關的是「資料庫」，因為每個人電腦環境不同，所以要先[安裝 Docker ](https://www.docker.com/)這款工具。
 
@@ -194,7 +194,7 @@ openspec config profile
 
 在完成 Docker 安裝後，接下來，我們就能體驗 OpenSpec 加 Claude Code 的威力了。
 
-### ➤ 過去的開發流程
+### 過去的開發流程
 
 今天的教學，我想以大部分上班族都會使用到的「出缺勤系統」作為範例。
 
@@ -208,7 +208,7 @@ openspec config profile
 
 大家不要急著留言說我妖言惑眾，看完示範後，就會知道這一切並不是誇飾。
 
-### ➤ Prompt 設計
+### Prompt 設計
 
 完整提示詞如下：
 
@@ -255,7 +255,7 @@ openspec config profile
 
 同時提醒一下大家，用 Plan Mode 的規劃會非常詳盡，如果大家想要加速體驗，可以在提示詞最後加上「以最小可行性方案來規劃」，否則執行下去跑半小時也是有可能的。
 
-### ➤ OpenSpec 撰寫專案文件
+### OpenSpec 撰寫專案文件
 
 前面釐清完需求後，你會看到 AI 觸發 OpenSpec 的 Skills 做更細部的規劃：
 
@@ -264,7 +264,7 @@ openspec config profile
 - **specs 資料夾**：緊接著在 specs 資料夾底下，會根據功能區分資料夾，並分別建立說明細節的規格文件。
 - **task.md**：在最後會設計一個執行任務的 task 文件，他是用來檢驗任務是否完成的列表，目前都是空的，等任務完成後才會打勾。
 
-### ➤ 規格驅動開發（SDD）
+### 規格驅動開發（SDD）
 
 確認以上規劃都符合預期後，說「開始實作」，AI 就會根據規劃開始撰寫程式了。
 
@@ -283,7 +283,7 @@ openspec config profile
 
 AI 有很高的機率在第一版遇到一些零星錯誤，我們可以先讓他自我修正一下
 
-### ➤ 初步驗證功能
+### 初步驗證功能
 
 啟動後就可以根據 AI 只是來確認功能是否符合預期。
 
@@ -297,7 +297,7 @@ AI 有很高的機率在第一版遇到一些零星錯誤，我們可以先讓�
 
 使用者的資訊會存放在 users 資料夾，這邊就能看到預設的 Admin 管理者帳號，以及剛剛新增的一般使用者：
 
-### ➤ 接受此次變更
+### 接受此次變更
 
 初步確認功能符合預期後，我們回到程式碼編輯器，可以跟他說
 
@@ -308,7 +308,7 @@ AI 有很高的機率在第一版遇到一些零星錯誤，我們可以先讓�
 
 稍等一段時間後，你會發現原本空空的 specs 資料夾底下，出現專案對應的規格文件，而 archives 底下出現了歸檔的文件，並註明了對應的日期。
 
-### ➤ 建立專案規則
+### 建立專案規則
 
 在完成專案初步建立後，我們可以在 Claude 對話窗輸入「/init」，這個指令會掃描目前的專案結構，並在根目錄建立「CLAUDE.md」。
 
@@ -338,7 +338,7 @@ with details about my project, tech stack, and conventions
 
 [https://www.youtube.com/watch?v=5DEV_K0JauQ&t=836s](https://www.youtube.com/watch?v=5DEV_K0JauQ&t=836s)
 
-### ➤ 設計 .gitignore
+### 設計 .gitignore
 
 版本控制並不代表你需要把專案底下所有檔案都上傳，比如像「.env」這類有隱私資訊的檔案就不適合加入。
 
@@ -350,7 +350,7 @@ with details about my project, tech stack, and conventions
 
 ```
 
-### ➤ 建立版本控制
+### 建立版本控制
 
 完成前面 Git 的相關設定後，可以點擊左側的 Source Control，點擊 Initialize Repository 可以初始化專案。
 
@@ -364,7 +364,7 @@ with details about my project, tech stack, and conventions
 
 如果能看到專案的內容，就代表你成功上傳專案了！
 
-### ➤ 迭代功能
+### 迭代功能
 
 **其實不管 Vibe Coding 還是開發系統，最難的並不是 0 到 1，而是 1 到 100 的那段路。**
 
@@ -383,7 +383,7 @@ with details about my project, tech stack, and conventions
 
 再確認需求與自己的期待相符後，接下來的流程都是一樣的，直接跟他說「開始實作」就好。
 
-### ➤ 驗證功能
+### 驗證功能
 
 等 AI 完成調整後，因為功能涉及後端與資料庫，所以我會建議大家跟 AI 說：
 
@@ -402,7 +402,7 @@ with details about my project, tech stack, and conventions
 
 確認結果生效：
 
-### ➤ 功能歸檔
+### 功能歸檔
 
 確認沒問題後，回到程式碼編輯器，直接在與 AI 的對話窗說
 
@@ -417,7 +417,7 @@ with details about my project, tech stack, and conventions
 
 這邊也提醒大家，每做完一件事，記得保持 commit 的好習慣；這樣每個版本完成的功能會比較明確，而不是一堆功能全部混一起。
 
-### ➤ 模擬測試資料
+### 模擬測試資料
 
 補充一個情境，不是所有變更，都會觸發 OpenSpec 的 Skill。
 
@@ -436,7 +436,7 @@ with details about my project, tech stack, and conventions
 
 這樣可以方便我們測試更加複雜的流程。
 
-### ➤ 設定 Email SMTP
+### 設定 Email SMTP
 
 另外如果有功能卡住，不知道如何處理時，也可以先詢問 AI 如何設定。
 
@@ -464,7 +464,7 @@ with details about my project, tech stack, and conventions
 
 你已經初步完成一個有資料庫的全端系統啦！
 
-### ➤ AI 正在改變企業決策
+### AI 正在改變企業決策
 
 如果在幾個月前拍這個主題，我肯定會從 AI 完成的系統挑出很多安全性的漏洞。
 

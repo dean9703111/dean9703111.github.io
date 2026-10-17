@@ -18,7 +18,7 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>這是一篇只要複製貼上，注意小細節就能讓你輕鬆在ubuntu server設定好MySQL的文章</description>
-      <media:content url="https://deanlin.net/blog/202006/install-mysql-on-server/images/install-mysql-on-server-og_hu_fe8a87410ba0f839.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202006/install-mysql-on-server/images/install-mysql-on-server-og_hu_33e5876e48e9a7e5.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<figure class="figure"><img src="https://deanlin.net/blog/202006/install-mysql-on-server/images/install-mysql-on-server-01.webp" width="1200" height="618" alt="海豚好可愛" loading="lazy" decoding="async">
   <figcaption>海豚好可愛</figcaption>
 </figure>
@@ -35,32 +35,32 @@
 <li>修改MySQL root密碼</li>
 <li>修改整體密碼規則強度</li>
 </ol>
-<h2 id="1-安裝mysql">1. 安裝MySQL<a class="h-anchor" href="#1-%e5%ae%89%e8%a3%9dmysql" aria-label="這個段落的連結"></a></h2>
+<h2 class="h-nomark" id="1-安裝mysql">1. 安裝MySQL<a class="h-anchor" href="#1-%e5%ae%89%e8%a3%9dmysql" aria-label="這個段落的連結"></a></h2>
 <p>在安裝MySQL的時候會問你很多問題，如果你沒有特殊需求就都用y通過，密碼強度部分需要記住自己是怎麼設定的(因為不同密碼強度的規則差異很大，詳情可以看<a href="http://n.sfs.tw/content/index/13359">這篇</a>)</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt update
 </span></span><span style="display:flex;"><span>sudo apt install mysql-server
 </span></span><span style="display:flex;"><span>sudo mysql_secure_installation
 </span></span></code></pre></div><p>安裝完成後你可以先進入MySQL看看</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mysql -u root -p
-</span></span></code></pre></div><h2 id="2-設定mysql可以讓外網連線">2. 設定MySQL可以讓外網連線<a class="h-anchor" href="#2-%e8%a8%ad%e5%ae%9amysql%e5%8f%af%e4%bb%a5%e8%ae%93%e5%a4%96%e7%b6%b2%e9%80%a3%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
+</span></span></code></pre></div><h2 class="h-nomark" id="2-設定mysql可以讓外網連線">2. 設定MySQL可以讓外網連線<a class="h-anchor" href="#2-%e8%a8%ad%e5%ae%9amysql%e5%8f%af%e4%bb%a5%e8%ae%93%e5%a4%96%e7%b6%b2%e9%80%a3%e7%b7%9a" aria-label="這個段落的連結"></a></h2>
 <p>如果你所架設的MySQL是允許外網或者某個特定ip做連線的，你就做以下調整</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
 </span></span><span style="display:flex;"><span>bind-address <span style="color:#ff7b72;font-weight:bold">=</span> 0.0.0.0 //這個是指誰都可以連線的意思
 </span></span><span style="display:flex;"><span>sudo su
 </span></span><span style="display:flex;"><span>service mysql restart //設定完成後要重啟才會生效
-</span></span></code></pre></div><h2 id="3-mysql防火牆設定">3. MySQL防火牆設定<a class="h-anchor" href="#3-mysql%e9%98%b2%e7%81%ab%e7%89%86%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
+</span></span></code></pre></div><h2 class="h-nomark" id="3-mysql防火牆設定">3. MySQL防火牆設定<a class="h-anchor" href="#3-mysql%e9%98%b2%e7%81%ab%e7%89%86%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h2>
 <p>以下為最基礎的防火牆設定，資料庫慣用的port為3306，22是給ssh登入使用的</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install ufw
 </span></span><span style="display:flex;"><span>sudo ufw enable
 </span></span><span style="display:flex;"><span>sudo ufw allow <span style="color:#a5d6ff">3306</span>
 </span></span><span style="display:flex;"><span>sudo ufw allow 22/tcp
 </span></span><span style="display:flex;"><span>sudo ufw status
-</span></span></code></pre></div><h2 id="4-建立新db">4. 建立新DB<a class="h-anchor" href="#4-%e5%bb%ba%e7%ab%8b%e6%96%b0db" aria-label="這個段落的連結"></a></h2>
+</span></span></code></pre></div><h2 class="h-nomark" id="4-建立新db">4. 建立新DB<a class="h-anchor" href="#4-%e5%bb%ba%e7%ab%8b%e6%96%b0db" aria-label="這個段落的連結"></a></h2>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mysql -u root -p
 </span></span></code></pre></div><p>進入MySQL後你可以用指令的方式建立DB如下，如果你需要修改他默認編碼也能夠透過ALTER去做修正</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">CREATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">DATABASE</span><span style="color:#6e7681"> </span>db_name;<span style="color:#6e7681">
 </span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">ALTER</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">DATABASE</span><span style="color:#6e7681"> </span>xxx_db<span style="color:#6e7681"> </span>CHARACTER<span style="color:#6e7681"> </span><span style="color:#ff7b72">SET</span><span style="color:#6e7681"> </span>utf8<span style="color:#6e7681"> </span><span style="color:#ff7b72">COLLATE</span><span style="color:#6e7681"> </span>utf8_bin;<span style="color:#6e7681">
-</span></span></span></code></pre></div><h2 id="5-新增刪除使用者及權限">5. 新增/刪除使用者及權限<a class="h-anchor" href="#5-%e6%96%b0%e5%a2%9e%e5%88%aa%e9%99%a4%e4%bd%bf%e7%94%a8%e8%80%85%e5%8f%8a%e6%ac%8a%e9%99%90" aria-label="這個段落的連結"></a></h2>
+</span></span></span></code></pre></div><h2 class="h-nomark" id="5-新增刪除使用者及權限">5. 新增/刪除使用者及權限<a class="h-anchor" href="#5-%e6%96%b0%e5%a2%9e%e5%88%aa%e9%99%a4%e4%bd%bf%e7%94%a8%e8%80%85%e5%8f%8a%e6%ac%8a%e9%99%90" aria-label="這個段落的連結"></a></h2>
 <blockquote>
 <p>新增mysql使用者及賦予權限</p>
 </blockquote>
@@ -75,18 +75,18 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">DROP</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">USER</span><span style="color:#6e7681"> </span><span style="color:#f85149">‘某某人’</span><span style="color:#ff7b72;font-weight:bold">@</span><span style="color:#f85149">‘哪個</span>ip可以(<span style="color:#ff7b72;font-weight:bold">%</span><span style="color:#f85149">為全部</span>)<span style="color:#f85149">’</span>;<span style="color:#6e7681">
 </span></span></span><span style="display:flex;"><span>flush<span style="color:#6e7681"> </span><span style="color:#ff7b72">privileges</span>;<span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">//</span><span style="color:#f85149">刷新權限</span><span style="color:#6e7681">
 </span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">select</span><span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">*</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">from</span><span style="color:#6e7681"> </span>information_schema.user_privileges;<span style="color:#ff7b72;font-weight:bold">//</span><span style="color:#f85149">確認該</span>User權限已被刪除<span style="color:#6e7681">
-</span></span></span></code></pre></div><h2 id="6-列出資料庫有權限的使用者列表">6. 列出資料庫有權限的使用者列表<a class="h-anchor" href="#6-%e5%88%97%e5%87%ba%e8%b3%87%e6%96%99%e5%ba%ab%e6%9c%89%e6%ac%8a%e9%99%90%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85%e5%88%97%e8%a1%a8" aria-label="這個段落的連結"></a></h2>
+</span></span></span></code></pre></div><h2 class="h-nomark" id="6-列出資料庫有權限的使用者列表">6. 列出資料庫有權限的使用者列表<a class="h-anchor" href="#6-%e5%88%97%e5%87%ba%e8%b3%87%e6%96%99%e5%ba%ab%e6%9c%89%e6%ac%8a%e9%99%90%e7%9a%84%e4%bd%bf%e7%94%a8%e8%80%85%e5%88%97%e8%a1%a8" aria-label="這個段落的連結"></a></h2>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">select</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">user</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">from</span><span style="color:#6e7681"> </span>mysql.db<span style="color:#6e7681"> </span><span style="color:#ff7b72">where</span><span style="color:#6e7681"> </span>db<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#f85149">’資料庫名稱’</span>;<span style="color:#6e7681">
-</span></span></span></code></pre></div><h2 id="7-列出所有user權限表">7. 列出所有User權限表<a class="h-anchor" href="#7-%e5%88%97%e5%87%ba%e6%89%80%e6%9c%89user%e6%ac%8a%e9%99%90%e8%a1%a8" aria-label="這個段落的連結"></a></h2>
+</span></span></span></code></pre></div><h2 class="h-nomark" id="7-列出所有user權限表">7. 列出所有User權限表<a class="h-anchor" href="#7-%e5%88%97%e5%87%ba%e6%89%80%e6%9c%89user%e6%ac%8a%e9%99%90%e8%a1%a8" aria-label="這個段落的連結"></a></h2>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">select</span><span style="color:#6e7681"> </span><span style="color:#ff7b72;font-weight:bold">*</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">from</span><span style="color:#6e7681"> </span>information_schema.user_privileges;<span style="color:#6e7681">
-</span></span></span></code></pre></div><h2 id="8-修改mysql-root密碼">8. 修改mysql root密碼<a class="h-anchor" href="#8-%e4%bf%ae%e6%94%b9mysql-root%e5%af%86%e7%a2%bc" aria-label="這個段落的連結"></a></h2>
+</span></span></span></code></pre></div><h2 class="h-nomark" id="8-修改mysql-root密碼">8. 修改mysql root密碼<a class="h-anchor" href="#8-%e4%bf%ae%e6%94%b9mysql-root%e5%af%86%e7%a2%bc" aria-label="這個段落的連結"></a></h2>
 <p>請切記要修改root的密碼，避免駭客侵入你的伺服器後可以無所忌憚的讀取你的資料</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>use<span style="color:#6e7681"> </span>mysql;<span style="color:#6e7681">
 </span></span></span><span style="display:flex;"><span><span style="color:#ff7b72;font-weight:bold">//</span><span style="color:#6e7681"> </span><span style="color:#f85149">先指定</span><span style="color:#6e7681"> </span>plugin<span style="color:#6e7681"> </span><span style="color:#f85149">為</span><span style="color:#6e7681"> </span>mysql_native_password<span style="color:#6e7681">
 </span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">UPDATE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">user</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">SET</span><span style="color:#6e7681"> </span>plugin<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#f85149">’</span>mysql_native_password<span style="color:#f85149">’</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">WHERE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">User</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#f85149">’</span>root<span style="color:#f85149">’</span>;<span style="color:#6e7681">
 </span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">UPDATE</span><span style="color:#6e7681"> </span>mysql.<span style="color:#ff7b72">user</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">SET</span><span style="color:#6e7681"> </span>authentication_string<span style="color:#ff7b72;font-weight:bold">=</span>PASSWORD(<span style="color:#f85149">‘</span>password<span style="color:#f85149">’</span>)<span style="color:#6e7681"> </span><span style="color:#ff7b72">WHERE</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">USER</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#f85149">’</span>root<span style="color:#f85149">’</span>;<span style="color:#6e7681">
 </span></span></span><span style="display:flex;"><span>FLUSH<span style="color:#6e7681"> </span><span style="color:#ff7b72">PRIVILEGES</span>;<span style="color:#6e7681">
-</span></span></span></code></pre></div><h2 id="9-修改整體密碼規則強度">9. 修改整體密碼規則強度<a class="h-anchor" href="#9-%e4%bf%ae%e6%94%b9%e6%95%b4%e9%ab%94%e5%af%86%e7%a2%bc%e8%a6%8f%e5%89%87%e5%bc%b7%e5%ba%a6" aria-label="這個段落的連結"></a></h2>
+</span></span></span></code></pre></div><h2 class="h-nomark" id="9-修改整體密碼規則強度">9. 修改整體密碼規則強度<a class="h-anchor" href="#9-%e4%bf%ae%e6%94%b9%e6%95%b4%e9%ab%94%e5%af%86%e7%a2%bc%e8%a6%8f%e5%89%87%e5%bc%b7%e5%ba%a6" aria-label="這個段落的連結"></a></h2>
 <p>如果你在安裝時對於密碼強度的問題是隨便選的，你可以在登入MySQL後用這個指令做修正</p>
 <pre tabindex="0"><code>set global validate_password_policy=0;
 </code></pre><blockquote>

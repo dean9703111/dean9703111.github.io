@@ -21,7 +21,7 @@
       <media:content url="https://deanlin.net/blog/202310/php-array-pitfalls/images/php-array-pitfalls-og_hu_cf8472b68b605288.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<p>我發現許多從其他程式語言轉來 PHP 的開發者，經常會在操作陣列時碰到意料之外的狀況（我就是受害者）。今天我要來談談 PHP 中的 <code>array_unique</code> 和 <code>array_filter</code> 函數，以及它們的行為與你想像中可能存在的差異。</p>
 <p><img src="https://deanlin.net/blog/202310/php-array-pitfalls/images/php-array-pitfalls-01.webp" width="1056" height="590" alt="PHP 陣列操作：那些讓你意外的小陷阱(array_unique、array_filter)（圖 1）" loading="lazy" decoding="async"></p>
-<h2 id="-array_filter-的索引行為">🎭 Array_filter 的索引行為<a class="h-anchor" href="#-array_filter-%e7%9a%84%e7%b4%a2%e5%bc%95%e8%a1%8c%e7%82%ba" aria-label="這個段落的連結"></a></h2>
+<h2 class="h-nomark" id="-array_filter-的索引行為">🎭 Array_filter 的索引行為<a class="h-anchor" href="#-array_filter-%e7%9a%84%e7%b4%a2%e5%bc%95%e8%a1%8c%e7%82%ba" aria-label="這個段落的連結"></a></h2>
 <p>在 JavaScript 的世界中，我們用 <code>filter</code> 來過濾陣列，結果非常直觀。</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> arr <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">2</span>, <span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">4</span>];
 </span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> filteredArr <span style="color:#ff7b72;font-weight:bold">=</span> arr.filter(value =&gt; value <span style="color:#ff7b72;font-weight:bold">&gt;</span> <span style="color:#a5d6ff">2</span>);
@@ -34,7 +34,7 @@
 </span></span><span style="display:flex;"><span>print_r(<span style="color:#79c0ff">$filteredArr</span>); <span style="color:#8b949e;font-style:italic">// 喔喔！結果是 Array ( [2] =&gt; 3 [3] =&gt; 4 )
 </span></span></span></code></pre></div><p><strong>這意味著如果你嘗試在過濾後的陣列上取得 <code>$filteredArr[0]</code>，會得到一個未定義的索引錯誤。</strong></p>
 <hr>
-<h2 id="-array_unique-的特殊之處">🎩 Array_unique 的特殊之處<a class="h-anchor" href="#-array_unique-%e7%9a%84%e7%89%b9%e6%ae%8a%e4%b9%8b%e8%99%95" aria-label="這個段落的連結"></a></h2>
+<h2 class="h-nomark" id="-array_unique-的特殊之處">🎩 Array_unique 的特殊之處<a class="h-anchor" href="#-array_unique-%e7%9a%84%e7%89%b9%e6%ae%8a%e4%b9%8b%e8%99%95" aria-label="這個段落的連結"></a></h2>
 <p><code>array_unique</code> 函數在 PHP 中用於移除陣列中的重複值。</p>
 <p>但小心！它也不會重新排列索引：</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#79c0ff">$arr</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">array</span>(<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">2</span>, <span style="color:#a5d6ff">2</span>, <span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">4</span>);
@@ -42,7 +42,7 @@
 </span></span><span style="display:flex;"><span>print_r(<span style="color:#79c0ff">$uniqueArr</span>); <span style="color:#8b949e;font-style:italic">// 哇！這是什麼魔法？Array ( [0] =&gt; 1 [1] =&gt; 2 [3] =&gt; 3 [5] =&gt; 4 )
 </span></span></span></code></pre></div><p>同樣的，如果你直接取得 <code>$uniqueArr[2]</code>會讓你再次掉入那恐怖的陷阱中！</p>
 <hr>
-<h2 id="-如何應對">🌈 如何應對？<a class="h-anchor" href="#-%e5%a6%82%e4%bd%95%e6%87%89%e5%b0%8d" aria-label="這個段落的連結"></a></h2>
+<h2 class="h-nomark" id="-如何應對">🌈 如何應對？<a class="h-anchor" href="#-%e5%a6%82%e4%bd%95%e6%87%89%e5%b0%8d" aria-label="這個段落的連結"></a></h2>
 <p>為了避免這些問題，建議在使用這些函數後，用 <code>array_values</code> 函數重設索引：</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#79c0ff">$arr</span> <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">array</span>(<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">2</span>, <span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">4</span>);
 </span></span><span style="display:flex;"><span><span style="color:#79c0ff">$filteredArr</span> <span style="color:#ff7b72;font-weight:bold">=</span> array_filter(<span style="color:#79c0ff">$arr</span>, <span style="color:#ff7b72">function</span>(<span style="color:#79c0ff">$value</span>) {
@@ -52,7 +52,7 @@
 </span></span><span style="display:flex;"><span>print_r(<span style="color:#79c0ff">$reIndexedArr</span>); <span style="color:#8b949e;font-style:italic">// Array ( [0] =&gt; 3 [1] =&gt; 4 )
 </span></span></span></code></pre></div><p>這樣，你就可以放心地存取 <code>$reIndexedArr[0]</code> 而不必擔心會遭遇未定義的索引。</p>
 <hr>
-<h2 id="-總結">🎉 總結<a class="h-anchor" href="#-%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<h2 class="h-nomark" id="-總結">🎉 總結<a class="h-anchor" href="#-%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
 <p>雖然 PHP 的陣列操作函數在某些方面與其他語言有所不同，但只要你了解這些差異並採取適當的預防措施，就可以順利避免可能的錯誤。</p>
 <p>希望這篇文章能夠幫助你更深入地了解 PHP 的陣列操作 🚀</p>
 ]]></content:encoded>

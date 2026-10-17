@@ -72,7 +72,7 @@
 
 上面 Webhook URL 的 Verify 得到 200 只是證明這條路有打通，如果把畫面切到 ngrok，會發現許多 500 的錯誤訊息。
 
-### ➤ 上一篇 ChatGPT 給的程式有哪些錯誤？
+### 上一篇 ChatGPT 給的程式有哪些錯誤？
 
 回到程式，你會發現有「TypeError: Cannot read properties of undefined (reading ‘events’)」的錯誤。
 
@@ -85,7 +85,7 @@
 
 你沒看錯，要實作的兩個套件，ChatGPT 的使用方式都是有問題的。
 
-### ➤ 讓 ChatGPT 擔任程式專家，改用英文詢問
+### 讓 ChatGPT 擔任程式專家，改用英文詢問
 
 為了避免冤枉好人，我這次改成用英文詢問，並讓 ChatGPT 擔任程式專家來撰寫，這是他給出的新回覆：
 
@@ -146,7 +146,7 @@ console.log('Linebot is running on 3000 port');
 
 但這個錯誤並沒有辦法靠詢問 ChatGPT 解決（他會再次鬼打牆）。
 
-### ➤ 好吧…最後還是得靠自己處理
+### 好吧…最後還是得靠自己處理
 
 因為我看錯誤的源頭出在 openai 套件，所以我就去官網研究了一下：[https://www.npmjs.com/package/openai](https://www.npmjs.com/package/openai)
 

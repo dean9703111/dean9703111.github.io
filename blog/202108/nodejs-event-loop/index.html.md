@@ -92,7 +92,7 @@ setImmediate
 
   Node.js 的 Event Loop
 
-### ➤ 了解 MacroTask 的 6 個階段
+### 了解 MacroTask 的 6 個階段
 
 **Timer**：等計時器（setTimeout、setInterval）的時間一到，會把他們的 callback 放在這裡等待執行。
 
@@ -112,11 +112,11 @@ setImmediate
 
 Macrotask Queue 在 Evevnt Loop 優先層級較低，接下來介紹優先層級更高的兩個 Queue。
 
-### ➤ NextTick Queue 優先層級最高
+### NextTick Queue 優先層級最高
 
 「process.nextTick()」的 callback 可以隨意插隊；只要這個 Queue 有東西就會優先執行。
 
-### ➤ MicroTask Queue 優先層級次高
+### MicroTask Queue 優先層級次高
 
 「Promise 」的狀態從 pending 轉變為 resolve 或 reject 時，此時執行的 callback 會進入這個 Queue。
 
@@ -124,7 +124,7 @@ Macrotask Queue 在 Evevnt Loop 優先層級較低，接下來介紹優先層級
 
 ## 四、解析一開始 Node.js 範例程式執行順序
 
-### ➤ 順序執行，先把同步函式解決
+### 順序執行，先把同步函式解決
 
 - 因為 Promise 在創建時是同步的，所以會先執行
 - 在 function 前面加上 async 宣告為異步函式，執行時會被轉換為 Promise
@@ -157,7 +157,7 @@ end
 
 ```
 
-### ➤ 進入 Event Loop
+### 進入 Event Loop
 
 - 如果執行過程中遇到 NextTick Queue 就優先執行
 

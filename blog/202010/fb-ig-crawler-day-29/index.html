@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</title>
+  <meta name="description" content="這份專案所用到的各種技術都不難，難的是將這些技術整合成一個能讓客戶買單的專案；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此低成本的方式完成，而且真的能幫客戶解決問題">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/index.html.md" title="Markdown">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！">
+  <meta property="og:description" content="這份專案所用到的各種技術都不難，難的是將這些技術整合成一個能讓客戶買單的專案；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此低成本的方式完成，而且真的能幫客戶解決問題">
+  <meta property="og:url" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-10-14T09:00:25&#43;08:00">
+  <meta property="article:modified_time" content="2020-10-14T09:00:25&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="LINE Notify">
+  <meta property="article:tag" content="爬蟲">
+  <meta property="article:tag" content="Axois">
+  <meta property="article:tag" content="程式碼重構">
+  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-og_hu_16b02b2e5f958e0c.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-og_hu_16b02b2e5f958e0c.jpg">
+  <meta name="twitter:title" content="【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！">
+  <meta name="twitter:description" content="這份專案所用到的各種技術都不難，難的是將這些技術整合成一個能讓客戶買單的專案；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此低成本的方式完成，而且真的能幫客戶解決問題">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-29/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-14T09:00:25+08:00","datePublished":"2020-10-14T09:00:25+08:00","description":"這份專案所用到的各種技術都不難，難的是將這些技術整合成一個能讓客戶買單的專案；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此低成本的方式完成，而且真的能幫客戶解決問題","headline":"【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-og_hu_16b02b2e5f958e0c.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-og_hu_28777b2018c018a6.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-og_hu_9183e247c61a6227.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, LINE Notify, 爬蟲, Axois, 程式碼重構","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-29/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-og_hu_16b02b2e5f958e0c.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10251647"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-og_hu_16b02b2e5f958e0c.jpg","timeRequired":"PT6M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-29/","wordCount":2550},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-29/","name":"【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-10-14">2020.10.14</time>
+              <span>閱讀約 6 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>29</b>/ 30</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e7%ad%86%e8%80%85%e6%9c%89%e8%a9%b1%e5%85%88%e8%aa%aa">筆者有話先說</a></li><li><a href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">今日目標</a></li><li><a href="#1-%e5%88%86%e6%9e%90%e7%88%ac%e8%9f%b2%e6%91%98%e8%a6%81%e8%a8%8a%e6%81%af%e4%be%86%e6%ba%90">1. 分析爬蟲摘要訊息來源</a></li><li><a href="#2-%e8%aa%bf%e6%95%b4%e7%88%ac%e8%9f%b2%e5%87%bd%e5%bc%8f%e5%9b%9e%e5%82%b3%e7%9a%84%e8%b3%87%e6%96%99%e7%b5%90%e6%a7%8b">2. 調整爬蟲函式回傳的資料結構</a></li><li><a href="#3-%e8%aa%bf%e6%95%b4%e4%b8%bb%e7%a8%8b%e5%bc%8f%e5%82%b3%e9%81%9e-linenotify-%e6%89%80%e9%9c%80%e7%9a%84%e5%8f%83%e6%95%b8">3. 調整主程式傳遞 lineNotify 所需的參數</a></li><li class="is-sub"><a href="#indexjs">index.js</a></li><li><a href="#4-%e5%9c%a8-linenotify-%e4%b8%ad%e6%95%b4%e5%90%88%e6%91%98%e8%a6%81%e8%a8%8a%e6%81%af">4. 在 lineNotify 中整合摘要訊息</a></li><li class="is-sub"><a href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f">執行程式</a></li><li class="is-sub"><a href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc">ℹ️ 專案原始碼</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <blockquote>
+<p>除了要有專業外，你更要有技術整合的能力</p>
+</blockquote>
+<h2 id="筆者有話先說">筆者有話先說<a class="h-anchor" href="#%e7%ad%86%e8%80%85%e6%9c%89%e8%a9%b1%e5%85%88%e8%aa%aa" aria-label="這個段落的連結"></a></h2>
+<p>這份專案所用到的各種技術都不難，難的是<code>將這些技術整合成一個能讓客戶買單的專案</code>；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此<code>低成本</code>的方式完成，而且真的能<code>幫客戶解決問題</code></p>
+<p>今天這篇文章是實作的最後一篇，我們要將爬蟲執行時的資訊做成一份摘要，透過 LINE 發送給使用者</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>分析爬蟲摘要訊息來源</li>
+<li>調整爬蟲函式回傳的資料結構</li>
+<li>調整主程式傳遞 lineNotify 所需的參數</li>
+<li>在 <code>lineNotify</code> 函式中整合摘要訊息</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-分析爬蟲摘要訊息來源">1. 分析爬蟲摘要訊息來源<a class="h-anchor" href="#1-%e5%88%86%e6%9e%90%e7%88%ac%e8%9f%b2%e6%91%98%e8%a6%81%e8%a8%8a%e6%81%af%e4%be%86%e6%ba%90" aria-label="這個段落的連結"></a></h2>
+<p>根據需求規格書，在摘要中需包含以下訊息：</p>
+<ol>
+<li><strong>爬蟲總費時</strong>：在主程式計算從爬蟲開始到更新完 Google sheet 的時間</li>
+<li><strong>總計掃描FB粉專、IG帳號數量</strong>：因為爬蟲函式 <code>crawlerIG、crawlerFB</code> 回傳的結果 <code>result_array</code> 是陣列的形式，所以數量的部分使用陣列的長度即可</li>
+<li><strong>Google Sheets 連結</strong>：依照 .env 環境檔中的 <code>SPREADSHEET_ID</code> 組成連結</li>
+<li><strong>無法爬蟲的FB粉專、IG帳號名稱</strong>：在爬蟲函式 <code>crawlerIG、crawlerFB</code> 中紀錄無法爬蟲的標題</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-調整爬蟲函式回傳的資料結構">2. 調整爬蟲函式回傳的資料結構<a class="h-anchor" href="#2-%e8%aa%bf%e6%95%b4%e7%88%ac%e8%9f%b2%e5%87%bd%e5%bc%8f%e5%9b%9e%e5%82%b3%e7%9a%84%e8%b3%87%e6%96%99%e7%b5%90%e6%a7%8b" aria-label="這個段落的連結"></a></h2>
+<p>下面用 <strong>crawlerFB</strong> 來舉例，crawlerIG 可以自己嘗試修改看看喔～</p>
+<ul>
+<li>使用 <code>error_title_array</code> 來紀錄無法爬蟲的標題</li>
+<li>完成爬蟲後回傳 <strong>爬蟲結果（result_array)、無法爬蟲的粉專標題（error_title_array)</strong> 這兩個參數，讓後續 Google Sheet 更新、LINE Notify 傳送通知時使用</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> crawlerFB (driver) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> isLogin <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> loginFacebook(driver)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (isLogin) {
+</span></span><span style="display:flex;"><span>        console.log(<span style="color:#a5d6ff">`FB開始爬蟲`</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> result_array <span style="color:#ff7b72;font-weight:bold">=</span> [], error_title_array <span style="color:#ff7b72;font-weight:bold">=</span> []<span style="color:#8b949e;font-style:italic">// 紀錄無法爬蟲的標題
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">for</span> (fanpage <span style="color:#ff7b72">of</span> fanpage_array) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">let</span> trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">null</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff7b72">const</span> isGoFansPage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> goFansPage(driver, fanpage.url)
+</span></span><span style="display:flex;"><span>                <span style="color:#ff7b72">if</span> (isGoFansPage) {
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff7b72">await</span> driver.sleep((Math.floor(Math.random() <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">4</span>) <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">3</span>) <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>)
+</span></span><span style="display:flex;"><span>                    trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> getTrace(driver, By, until)
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#ff7b72">if</span> (trace <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">null</span>) {<span style="color:#8b949e;font-style:italic">// 將無法爬蟲的標題放入陣列
+</span></span></span><span style="display:flex;"><span>                    error_title_array.push(fanpage.title)
+</span></span><span style="display:flex;"><span>                    console.log(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>fanpage.title<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">無法抓取追蹤人數`</span>)
+</span></span><span style="display:flex;"><span>                } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>                    console.log(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>fanpage.title<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">追蹤人數：</span><span style="color:#a5d6ff">${</span>trace<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>                console.error(e);
+</span></span><span style="display:flex;"><span>                <span style="color:#ff7b72">continue</span>;
+</span></span><span style="display:flex;"><span>            } <span style="color:#ff7b72">finally</span> {
+</span></span><span style="display:flex;"><span>                result_array.push({
+</span></span><span style="display:flex;"><span>                    url<span style="color:#ff7b72;font-weight:bold">:</span> fanpage.url,
+</span></span><span style="display:flex;"><span>                    title<span style="color:#ff7b72;font-weight:bold">:</span> fanpage.title,
+</span></span><span style="display:flex;"><span>                    trace<span style="color:#ff7b72;font-weight:bold">:</span> trace
+</span></span><span style="display:flex;"><span>                })
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// 回傳爬蟲結果、無法爬蟲的粉專標題
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> { <span style="color:#a5d6ff">&#34;result_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> result_array, <span style="color:#a5d6ff">&#34;error_title_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> error_title_array }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 class="h-nomark" id="3-調整主程式傳遞-linenotify-所需的參數">3. 調整主程式傳遞 lineNotify 所需的參數<a class="h-anchor" href="#3-%e8%aa%bf%e6%95%b4%e4%b8%bb%e7%a8%8b%e5%bc%8f%e5%82%b3%e9%81%9e-linenotify-%e6%89%80%e9%9c%80%e7%9a%84%e5%8f%83%e6%95%b8" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>
+<p><strong>爬蟲總費時</strong>：使用 <code>spend_time</code> 函式把時間差<code>轉換成 時 分 秒</code>的格式</p>
+<blockquote>
+<p>因為朋友數百個品牌爬蟲總費時快兩小時，如果用秒數呈現實在太不人性化了</p>
+</blockquote>
+</li>
+<li>
+<p>整合 <code>lineNotify</code> 所需的參數： 爬蟲總費時（<strong>spend_time</strong>）、總計掃描FB粉專、IG帳號數量（<strong>result_array.length</strong>）、無法爬蟲的FB粉專、IG帳號名稱（<strong>error_title_array</strong>）</p>
+</li>
+</ul>
+<h3 id="indexjs">index.js<a class="h-anchor" href="#indexjs" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { initDrive } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/initDrive.js&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { crawlerFB } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/crawlerFB.js&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { crawlerIG } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/crawlerIG.js&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { updateGoogleSheets } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/google_sheets&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { lineNotify } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/lineNotify.js&#34;</span>);
+</span></span><span style="display:flex;"><span>exports.crawler <span style="color:#ff7b72;font-weight:bold">=</span> crawler;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> crawler () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> start_time <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Date(); <span style="color:#8b949e;font-style:italic">// 取得開始時間
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> driver <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> initDrive();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (<span style="color:#ff7b72;font-weight:bold">!</span>driver) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 分別取出爬蟲結果、無法爬蟲的粉專標題
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> { <span style="color:#a5d6ff">&#34;result_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> ig_result_array, <span style="color:#a5d6ff">&#34;error_title_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> ig_error_title_array } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> crawlerIG(driver)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> { <span style="color:#a5d6ff">&#34;result_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> fb_result_array, <span style="color:#a5d6ff">&#34;error_title_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> fb_error_title_array } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> crawlerFB(driver)
+</span></span><span style="display:flex;"><span>    driver.quit();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> updateGoogleSheets(ig_result_array, fb_result_array)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> end_time <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Date(); <span style="color:#8b949e;font-style:italic">// 取得結束時間
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 計算爬蟲作業總費時
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> spend_time <span style="color:#ff7b72;font-weight:bold">=</span> spendTime(start_time, end_time)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 執行完畢後用 lineNotify 回報爬蟲狀況
+</span></span></span><span style="display:flex;"><span>    lineNotify(spend_time, ig_result_array.length, fb_result_array.length, ig_error_title_array, fb_error_title_array)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> spendTime (start_time, end_time) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> milisecond <span style="color:#ff7b72;font-weight:bold">=</span> end_time.getTime() <span style="color:#ff7b72;font-weight:bold">-</span> start_time.getTime()  <span style="color:#8b949e;font-style:italic">//時間差的毫秒數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//計算出相差天數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> days <span style="color:#ff7b72;font-weight:bold">=</span> Math.floor(milisecond <span style="color:#ff7b72;font-weight:bold">/</span> (<span style="color:#a5d6ff">24</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">3600</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//計算出小時數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> leave1 <span style="color:#ff7b72;font-weight:bold">=</span> milisecond <span style="color:#ff7b72;font-weight:bold">%</span> (<span style="color:#a5d6ff">24</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">3600</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>)<span style="color:#8b949e;font-style:italic">// 計算天數後剩余的毫秒數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> hours <span style="color:#ff7b72;font-weight:bold">=</span> Math.floor(leave1 <span style="color:#ff7b72;font-weight:bold">/</span> (<span style="color:#a5d6ff">3600</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//計算相差分鐘數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> leave2 <span style="color:#ff7b72;font-weight:bold">=</span> leave1 <span style="color:#ff7b72;font-weight:bold">%</span> (<span style="color:#a5d6ff">3600</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>)<span style="color:#8b949e;font-style:italic">// 計算小時數後剩余的毫秒數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> minutes <span style="color:#ff7b72;font-weight:bold">=</span> Math.floor(leave2 <span style="color:#ff7b72;font-weight:bold">/</span> (<span style="color:#a5d6ff">60</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//計算相差秒數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> leave3 <span style="color:#ff7b72;font-weight:bold">=</span> leave2 <span style="color:#ff7b72;font-weight:bold">%</span> (<span style="color:#a5d6ff">60</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>)<span style="color:#8b949e;font-style:italic">// 計算分鐘數後剩余的毫秒數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> seconds <span style="color:#ff7b72;font-weight:bold">=</span> Math.round(leave3 <span style="color:#ff7b72;font-weight:bold">/</span> <span style="color:#a5d6ff">1000</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> time_msg <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (days <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>        time_msg <span style="color:#ff7b72;font-weight:bold">=</span> time_msg <span style="color:#ff7b72;font-weight:bold">+</span> days <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;天&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (hours <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>        time_msg <span style="color:#ff7b72;font-weight:bold">=</span> time_msg <span style="color:#ff7b72;font-weight:bold">+</span> hours <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;小時&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (minutes <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>        time_msg <span style="color:#ff7b72;font-weight:bold">=</span> time_msg <span style="color:#ff7b72;font-weight:bold">+</span> minutes <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;分&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (seconds <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>        time_msg <span style="color:#ff7b72;font-weight:bold">=</span> time_msg <span style="color:#ff7b72;font-weight:bold">+</span> seconds <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;秒&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> time_msg
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 class="h-nomark" id="4-在-linenotify-中整合摘要訊息">4. 在 <code>lineNotify</code> 中整合摘要訊息<a class="h-anchor" href="#4-%e5%9c%a8-linenotify-%e4%b8%ad%e6%95%b4%e5%90%88%e6%91%98%e8%a6%81%e8%a8%8a%e6%81%af" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>使用 <code>combineErrMsg</code> 將無法爬蟲的FB粉專、IG帳號標題整合</li>
+<li>將最終要傳送的訊息組合在 <code>message</code> 變數中</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> axios <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;axios&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> FormData <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;form-data&#39;</span>);
+</span></span><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span>module.exports.lineNotify <span style="color:#ff7b72;font-weight:bold">=</span> lineNotify;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> combineErrMsg (error_title_array, type) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> error_msg <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">const</span> error_title <span style="color:#ff7b72">of</span> error_title_array) {
+</span></span><span style="display:flex;"><span>        error_msg <span style="color:#ff7b72;font-weight:bold">=</span> error_msg <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;\n&#39;</span> <span style="color:#ff7b72;font-weight:bold">+</span> error_title
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (error_msg <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#34;&#34;</span>) {
+</span></span><span style="display:flex;"><span>        error_msg <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`\n\n下列</span><span style="color:#a5d6ff">${</span>type<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">標題無法正常爬蟲:`</span> <span style="color:#ff7b72;font-weight:bold">+</span> error_msg
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> error_msg
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> lineNotify (time, ig_total_page, fb_total_page, ig_error_title_array, fb_error_title_array) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> token <span style="color:#ff7b72;font-weight:bold">=</span> process.env.LINE_TOKEN;
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 無法爬蟲的FB粉專、IG帳號名稱整合
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fb_error_msg <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> combineErrMsg(fb_error_title_array, <span style="color:#a5d6ff">&#34;FB&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> ig_error_msg <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> combineErrMsg(ig_error_title_array, <span style="color:#a5d6ff">&#34;IG&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> error_msg <span style="color:#ff7b72;font-weight:bold">=</span> fb_error_msg <span style="color:#ff7b72;font-weight:bold">+</span> ig_error_msg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 組合傳送訊息
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">`\n\n已完成今日爬蟲排程作業`</span> <span style="color:#ff7b72;font-weight:bold">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">`\n共費時:</span><span style="color:#a5d6ff">${</span>time<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span> <span style="color:#ff7b72;font-weight:bold">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">`\n總計掃描FB粉專: </span><span style="color:#a5d6ff">${</span>fb_total_page<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 、IG帳號: </span><span style="color:#a5d6ff">${</span>ig_total_page<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span> <span style="color:#ff7b72;font-weight:bold">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">`\nGoogle Sheet: https://docs.google.com/spreadsheets/d/</span><span style="color:#a5d6ff">${</span>process.env.SPREADSHEET_ID<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span> <span style="color:#ff7b72;font-weight:bold">+</span>
+</span></span><span style="display:flex;"><span>        error_msg;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> form_data <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> FormData();
+</span></span><span style="display:flex;"><span>    form_data.append(<span style="color:#a5d6ff">&#34;message&#34;</span>, message);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> headers <span style="color:#ff7b72;font-weight:bold">=</span> Object.assign({
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#39;Authorization&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`Bearer </span><span style="color:#a5d6ff">${</span>token<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>
+</span></span><span style="display:flex;"><span>    }, form_data.getHeaders());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    axios({
+</span></span><span style="display:flex;"><span>        method<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;post&#39;</span>,
+</span></span><span style="display:flex;"><span>        url<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;https://notify-api.line.me/api/notify&#39;</span>,
+</span></span><span style="display:flex;"><span>        data<span style="color:#ff7b72;font-weight:bold">:</span> form_data,
+</span></span><span style="display:flex;"><span>        headers<span style="color:#ff7b72;font-weight:bold">:</span> headers
+</span></span><span style="display:flex;"><span>    }).then(<span style="color:#ff7b72">function</span> (response) {
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// HTTP狀態碼 200 代表成功
+</span></span></span><span style="display:flex;"><span>        console.log(<span style="color:#a5d6ff">&#34;HTTP狀態碼:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> response.status);
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// 觀察回傳的資料是否與 POSTMAN 測試一致
+</span></span></span><span style="display:flex;"><span>        console.log(response.data);
+</span></span><span style="display:flex;"><span>    }).<span style="color:#ff7b72">catch</span>(<span style="color:#ff7b72">function</span> (error) {
+</span></span><span style="display:flex;"><span>        console.error(<span style="color:#a5d6ff">&#34;LINE通知發送失敗&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> (error.response) { <span style="color:#8b949e;font-style:italic">// 顯示錯誤原因            
+</span></span></span><span style="display:flex;"><span>            console.error(<span style="color:#a5d6ff">&#34;HTTP狀態碼:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> error.response.status);
+</span></span><span style="display:flex;"><span>            console.error(error.response.data);
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>            console.error(error);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>為了確認我們爬蟲摘要能紀錄無法爬蟲的頁面，<code>我在 ig.json、fb.json 裡面各新增了兩個無效的粉專網址</code></p>
+</li>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div></li>
+<li>
+<p>程式執行完畢後確認 Google Sheets 的資料有正確寫入</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01.webp" srcset="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_1e586600e5743536.webp 720w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="301" alt="執行程式（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>收到 LINE 通知爬蟲摘要訊息就代表大功告成啦！！！</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-02.webp" srcset="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-02.webp 708w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="708" height="609" alt="執行程式（圖 2）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day29">這裡</a>找到喔</li>
+<li>我昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day28_sample_code.zip">壓縮檔</a>，你可以在乾淨的環境完成專案的最後一步：發出LINE通知讓使用者知道這次爬蟲的情況
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>要在tools/google_sheets資料夾放上自己的憑證，申請流程請參考<a href="/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+<li>調整fanspages資料夾內目標爬蟲的粉專網址</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+<li>填上SPREADSHEET_ID</li>
+<li>填上爬蟲執行時間(CRONJOB_TIME)</li>
+<li>填上LINE Notify申請的權杖(LINE_TOKEN)，申請流程請參考<a href="/blog/202010/fb-ig-crawler-day-27/">Day27</a></li>
+</ul>
+</li>
+<li>在終端機下指令 <strong>npm install forever -g</strong> ，讓你在終端機的任何位置都能管控排程</li>
+<li>在sh資料夾中設定執行排程的shell script</li>
+</ul>
+</li>
+</ul>
+<hr>
+<blockquote>
+<p><img src="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-03.webp" srcset="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-03_hu_aa4c23d5ca4c7363.webp 720w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-03.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="233" alt="ℹ️ 專案原始碼（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.10.14），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10251647" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/line-notify/">LINE Notify</a>
+            <a class="chip chip-hash" href="/tags/%E7%88%AC%E8%9F%B2/">爬蟲</a>
+            <a class="chip chip-hash" href="/tags/axois/">Axois</a>
+            <a class="chip chip-hash" href="/tags/%E7%A8%8B%E5%BC%8F%E7%A2%BC%E9%87%8D%E6%A7%8B/">程式碼重構</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-29%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-29%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/" data-title="【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>29</b> 篇・共 30 篇</p>
+          </div>
+          <ol class="steps" data-collapsible>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-01/"><span class="n">01</span><span>技術只能陪你一陣子，學會解決問題才能過一輩子</span></a>
+            </li>
+            <li class="steps-gap" aria-hidden="true">⋮</li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-02/"><span class="n">02</span><span>開發環境大補帖 - Node.js、NVM、git、yarn、VSCode</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-03/"><span class="n">03</span><span>努力寫出更好的程式碼，有時你不是一個人在戰鬥</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-04/"><span class="n">04</span><span>建立Node.js專案 &amp; 全面解析專案管家package.json</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-05/"><span class="n">05</span><span>用yarn安裝及控管套件 &amp; 善用關鍵字讓全世界的大神幫你一把</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-06/"><span class="n">06</span><span>env - 善用環境變數幫你快速遷移專案</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-07/"><span class="n">07</span><span>gitignore - 杜絕上傳錯誤資料，從此不再發生慘痛經驗</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-08/"><span class="n">08</span><span>selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-09/"><span class="n">09</span><span>爬蟲第一步，FB先登入</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-10/"><span class="n">10</span><span>關閉干擾爬蟲的彈窗，將FB粉專追蹤數納入囊中</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-11/"><span class="n">11</span><span>舉一反三，帶你了解IG爬蟲不可忽略的細節</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-12/"><span class="n">12</span><span>合體吧！用一隻程式搞定FB、IG爬蟲</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-13/"><span class="n">13</span><span>重構程式碼，減少歷史業障</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-14/"><span class="n">14</span><span>爬蟲執行時又又又崩潰了嗎？來點 try-catch 吧</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-15/"><span class="n">15</span><span>json x 爬蟲 = 瑣事自動化，生命應該浪費在美好的事情上</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-16/"><span class="n">16</span><span>不藏私，加上5行程式就能優化爬蟲的小技巧 ＆ 學會爬蟲，之後呢？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-17/"><span class="n">17</span><span>Google Sheets - 免費儲存資料的好選擇，一起進入省錢起手式</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-18/"><span class="n">18</span><span>Google Sheets - 加入版控後被github警告了，官方範例做了什麼？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-19/"><span class="n">19</span><span>Google Sheets - 你在文件迷路了嗎？用兩個處理Sheet的範例帶你攻略官方文件</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-20/"><span class="n">20</span><span>Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-21/"><span class="n">21</span><span>Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-22/"><span class="n">22</span><span>Google Sheets - 客戶：我希望新資料插在最前面 &amp; 談需求變更</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-23/"><span class="n">23</span><span>Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-24/"><span class="n">24</span><span>排程 - Cron套件超詳解，讓爬蟲自己動起來</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-25/"><span class="n">25</span><span>排程 - 用forever套件來控管排程，背景執行才是王道！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-26/"><span class="n">26</span><span>排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動</span></a>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-27/"><span class="n">27</span><span>為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</span></a>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-28/"><span class="n">28</span><span>為爬蟲加上通知 - 用 axios 發出 LINE 通知</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">29</span><span>為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-30/"><span class="n">30</span><span>時間只是考驗，心中信念絲毫未減</span></a>
+            </li>
+          </ol>
+          <button class="steps-more" type="button" aria-expanded="false">顯示全部 30 篇 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
+          <a class="sb-next" href="/blog/202010/fb-ig-crawler-day-30/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">時間只是考驗，心中信念絲毫未減</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="link-arrow" href="/about/#teaching">企業內訓・演講邀約 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202010/power-automate-simple-example/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">手把手帶你實作 Microsoft Power Automate 超簡單範例</span></a>
+          <a class="next" href="/blog/202010/fb-ig-crawler-day-30/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">【Day30】時間只是考驗，心中信念絲毫未減</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e7%ad%86%e8%80%85%e6%9c%89%e8%a9%b1%e5%85%88%e8%aa%aa">筆者有話先說</a></li><li><a href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">今日目標</a></li><li><a href="#1-%e5%88%86%e6%9e%90%e7%88%ac%e8%9f%b2%e6%91%98%e8%a6%81%e8%a8%8a%e6%81%af%e4%be%86%e6%ba%90">1. 分析爬蟲摘要訊息來源</a></li><li><a href="#2-%e8%aa%bf%e6%95%b4%e7%88%ac%e8%9f%b2%e5%87%bd%e5%bc%8f%e5%9b%9e%e5%82%b3%e7%9a%84%e8%b3%87%e6%96%99%e7%b5%90%e6%a7%8b">2. 調整爬蟲函式回傳的資料結構</a></li><li><a href="#3-%e8%aa%bf%e6%95%b4%e4%b8%bb%e7%a8%8b%e5%bc%8f%e5%82%b3%e9%81%9e-linenotify-%e6%89%80%e9%9c%80%e7%9a%84%e5%8f%83%e6%95%b8">3. 調整主程式傳遞 lineNotify 所需的參數</a></li><li class="is-sub"><a href="#indexjs">index.js</a></li><li><a href="#4-%e5%9c%a8-linenotify-%e4%b8%ad%e6%95%b4%e5%90%88%e6%91%98%e8%a6%81%e8%a8%8a%e6%81%af">4. 在 lineNotify 中整合摘要訊息</a></li><li class="is-sub"><a href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f">執行程式</a></li><li class="is-sub"><a href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc">ℹ️ 專案原始碼</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-29%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-29%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/" data-title="【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRoIAAABXRUJQVlA4WAoAAAAQAAAAFwAAAQAAQUxQSBwAAAABHyAUQGMsrUQyKiLiBGIaYpNM/1I&#43;GSL6n9gAVlA4IEAAAACwAwCdASoYAAIAPw1srUkmIyIYBABjEMTyAFR6E54sX7q371tJAAD&#43;ud2s336cLo8VV4Pyj8hR85dquBfFmYAA" alt="" width="24" height="2"><img src="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp" srcset="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_76e2413246fac6d2.webp 240w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_d635d6ed8622900a.webp 480w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_5f9e74b22b8e0483.webp 800w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="70" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-28/">【Day28】為爬蟲加上通知 - 用 axios 發出 LINE 通知</a></h3>
+    <p class="card-desc">雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-13">2020.10.13</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABwBACdASoYAAoAPw1qrUemIyIYBABjEMTyAE6NdXb/4EYnJNgqbwxuSYj6QAD&#43;Ji4Rd&#43;GfJgyrSup1c5u7YcVBag8&#43;P7tvimhfxLd/dKuCSFq/zbRPP91/TDb96x9ZyJ9VSdPsPo4ooUxqe9zzvA6gAAA=" alt="" width="24" height="10"><img src="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_c01631d3ae7ceb97.webp" srcset="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_a9f6b9a0c5d4c2ec.webp 240w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_4c3f2590609d3e9a.webp 480w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_1b78b483b2977cb2.webp 800w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_c01631d3ae7ceb97.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="425" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-27/">【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</a></h3>
+    <p class="card-desc">在通知這個部分我選擇使用 LINE Notify 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager... 等通訊軟體來通知喔</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-12">2020.10.12</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAwCdASoYAAgAPw1qqEgmIyIYBABjEMT0gAAzJ2saN4rJoO7aklgAAP7nRTeRvDXMGLYdurH0ED2A&#43;ytOVyWchKk&#43;qEAA" alt="" width="24" height="8"><img src="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_beb305e19e69cce0.webp" srcset="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_8adc63c2f8014883.webp 240w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_38e303ebf5808d1d.webp 480w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_9356f4c793d26fc.webp 800w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_beb305e19e69cce0.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="351" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-20/">【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</a></h3>
+    <p class="card-desc">1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-05">2020.10.05</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>8 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 23 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

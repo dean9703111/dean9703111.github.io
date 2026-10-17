@@ -98,7 +98,7 @@ export default defineConfig({
 
 我們就以入口頁「HelloWorld.vue」為範例跟大家說明。
 
-### ➤ 調整「src/components/HelloWorld.vue」的程式
+### 調整「src/components/HelloWorld.vue」的程式
 
 這裡我們新增 defineProps 以接收傳進來的「msg」，並在頁面上顯示。
 
@@ -124,7 +124,7 @@ defineProps<{
 
 ```
 
-### ➤ 新增「src/components/__test__/HelloWorld.spec.ts」作為測試程式
+### 新增「src/components/__test__/HelloWorld.spec.ts」作為測試程式
 
 在 components 資料夾下建立「__test__」的資料夾放置測試程式，我們透過它來確認 HelloWorld 頁面是否有收到 props 的 msg，並如預期被渲染。
 
@@ -181,11 +181,11 @@ describe("HelloWorld", () => {
 
 ## 六、一些建議
 
-### ➤ VSCode 改使用 Volar 這個外掛
+### VSCode 改使用 Volar 這個外掛
 
 今天這個是以 Vue3 設計的專案，如果你過去 VSCode 使用的版本是 Vue2，那可能有些程式下方會有警告，那可能是 VSCode 過去在 Vue2 時選用 [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur) 這個外掛，現在 Vue3 要改成使用 [Volar](https://marketplace.visualstudio.com/items?itemName=vue.volar)。
 
-### ➤ 如果遇到了「Type ‘Plugin’ is not assignable to type ‘PluginOption’」這類的錯誤
+### 如果遇到了「Type ‘Plugin’ is not assignable to type ‘PluginOption’」這類的錯誤
 
 通常是因為安裝了多個 Vite 的版本所導致的，建議先將根目錄下的「node_modules」以及「.lock」全部移除，然後再重新安裝套件。
 

@@ -64,7 +64,7 @@ INSERT INTO user_logs VALUES (9, 5 ,"Richard 工作記錄 1","2022-01-05 00:00:0
 
 ## 三：撰寫可以找出 right table「所有欄位」的 SQL
 
-### ➤ 用 table alias name 來內部比對取得最大值
+### 用 table alias name 來內部比對取得最大值
 
 ```
 SELECT t1.name,
@@ -87,7 +87,7 @@ ORDER BY t1.id
 
   使用[SQL fiddle](http://sqlfiddle.com/) 線上編譯的結果
 
-### ➤ 用 max 函式來找出最大值
+### 用 max 函式來找出最大值
 
 ```
 SELECT users.name,
@@ -113,7 +113,7 @@ ORDER BY users.id
 
 有時我們只是要找出使用者最後更新的日期（updated_at），就不必大費周章抓出所有欄位，下面也提供兩個方案。
 
-### ➤ 用 GROUP BY 的概念搭配 MAX 函式篩選出最大值
+### 用 GROUP BY 的概念搭配 MAX 函式篩選出最大值
 
 ```
 SELECT name,
@@ -131,7 +131,7 @@ LEFT JOIN
 
   使用[SQL fiddle](http://sqlfiddle.com/) 線上編譯的結果
 
-### ➤ 用 Laravel 現成函式 [subquery-joins](https://laravel.com/docs/8.x/queries#subquery-joins) 找出最大值
+### 用 Laravel 現成函式 [subquery-joins](https://laravel.com/docs/8.x/queries#subquery-joins) 找出最大值
 
 ```
 $latestLogs = DB::table('user_logs')

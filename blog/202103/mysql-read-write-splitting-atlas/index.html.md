@@ -26,19 +26,19 @@
 
 OS version、MySQL 是筆者安裝時的環境，ip 是給大家參考對應的
 
-### ➤ 準備一台要當 MySQL Proxy 的 ubuntu server
+### 準備一台要當 MySQL Proxy 的 ubuntu server
 
 - OS version：ubuntu 16.04
 - MySQL：5.7
 - ip ：172.16.9.39
 
-### ➤ 準備一台 Master server 負責寫入
+### 準備一台 Master server 負責寫入
 
 - OS version：ubuntu 16.04
 - MySQL：5.7
 - ip ：172.16.9.32
 
-### ➤ 準備一台以上的 Slave server 負責讀取
+### 準備一台以上的 Slave server 負責讀取
 
 準備兩台以上測試 load balance 才會準確，這塊有興趣的讀者可以自己嘗試
 
@@ -46,7 +46,7 @@ OS version、MySQL 是筆者安裝時的環境，ip 是給大家參考對應的
 - MySQL：5.7
 - ip ：172.16.9.32
 
-### ➤ 在 Master Server 裡面增加給 Proxy server 使用的使用者，並創建測試用 table
+### 在 Master Server 裡面增加給 Proxy server 使用的使用者，並創建測試用 table
 
 ```
 /*建立proxy server使用者*/
@@ -183,14 +183,14 @@ mysql -h172.16.9.39 -P2345 -uuser -ppwd
 
 ```
 
-### ➤ 查看 Atlas 的管理命令
+### 查看 Atlas 的管理命令
 
 ```
 mysql> select * from help;
 
 ```
 
-### ➤ 查看 MySQL 讀寫分離設定是否生效
+### 查看 MySQL 讀寫分離設定是否生效
 
 rw 為讀寫權限，ro 代表只有讀的權限
 
@@ -210,7 +210,7 @@ mysql -h172.16.9.39 -P1234 -uproxy_account -pproxy_password
 
 ```
 
-### ➤ 測試寫入功能
+### 測試寫入功能
 
 ```
 # 先選擇之前創建的測試資料庫
@@ -222,7 +222,7 @@ mysql> INSERT INTO department VALUES (2, 'Operator');
 
 ```
 
-### ➤ 測試讀取功能
+### 測試讀取功能
 
 ```
 # 先選擇之前創建的測試資料庫
@@ -232,7 +232,7 @@ mysql> SELECT * FROM department;
 
 ```
 
-### ➤ 觀察 sql 運行的 log
+### 觀察 sql 運行的 log
 
 記得把 Atla 設定檔的 ssql-log 參數調整為 REALTIME 才會有喔！
 

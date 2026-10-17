@@ -40,13 +40,13 @@
 
 ## 一、安裝 Docker、kubectl、minikube 等工具
 
-### ➤ 安裝 Docker
+### 安裝 Docker
 
 前往[官網下載 Docker 安裝檔](https://docs.docker.com/desktop/mac/install/)，安裝過程就是狂按下一步，這裡就不再多做介紹，下載後要把 App 打開依照步驟執行才算是完成安裝喔！
 
   這邊建議順便註冊一組 Docker 帳號，方便你日後的操作。
 
-### ➤ 安裝 kubectl
+### 安裝 kubectl
 
 安裝他才能操作 K8s 喔！
 
@@ -60,7 +60,7 @@ kubectl get all
 
 ```
 
-### ➤ 安裝 minikube
+### 安裝 minikube
 
 這個工具可以讓你在本機(Local)架設 K8s 叢集(Cluster)喔！
 
@@ -80,7 +80,7 @@ minikube ip
 
 你也可以直接去[筆者的 github](https://github.com/dean9703111/nodejs-docker-k8s-auto-scaling-example)，直接將專案 Clone 到本機來做測試。
 
-### ➤ 建立「package.json」
+### 建立「package.json」
 
 ```
 {
@@ -101,7 +101,7 @@ minikube ip
 
 原始碼：[node_web_app.json](https://gist.github.com/dean9703111/dba0f27584d5c0d7f778aa7cacb1d4b3)（GitHub Gist）
 
-### ➤ 建立「server.js」
+### 建立「server.js」
 
 ```
 "use strict";
@@ -125,7 +125,7 @@ console.log(`Running on http://${HOST}:${PORT}`);
 
 原始碼：[node_web_app.js](https://gist.github.com/dean9703111/0e82ccc37a3ae3cb68e78e047464c1ec)（GitHub Gist）
 
-### ➤ 運行 Node.js Web App
+### 運行 Node.js Web App
 
 在終端機先輸入`yarn`將套件安裝，再輸入`yarn start`確認專案可以運行。
 
@@ -135,7 +135,7 @@ console.log(`Running on http://${HOST}:${PORT}`);
 
 ## 三、將 Node.js Web App 給 Docker 化
 
-### ➤ 建立「Dockerfile」
+### 建立「Dockerfile」
 
 填寫製作 Docker Image 時需要參考的環境＆指令。
 
@@ -164,7 +164,7 @@ CMD [ "node", "server.js" ]
 
 原始碼：[Dockerfile](https://gist.github.com/dean9703111/b4ed238746412ea272addb3e7667c1ee)（GitHub Gist）
 
-### ➤ 建立「.dockerignore」
+### 建立「.dockerignore」
 
 填寫製作 Docker Image 時不想要複製的檔案。
 
@@ -176,7 +176,7 @@ npm-debug.log
 
 原始碼：[.dockerignore](https://gist.github.com/dean9703111/346e2e3876af9dbd6e8ee568b1b72bc5)（GitHub Gist）
 
-### ➤ 製作 Docker Image
+### 製作 Docker Image
 
 ```
 # 登入 Docker
@@ -189,14 +189,14 @@ docker build . -t babydragon9703111/node-web-app
 
 ```
 
-### ➤ 印出建立的 Images
+### 印出建立的 Images
 
 ```
 docker images
 
 ```
 
-### ➤ 將建立好的 Docker Image 跑起來
+### 將建立好的 Docker Image 跑起來
 
 ```
 # 裡面填寫的 port 是本地端要跑的（對外 port）
@@ -206,7 +206,7 @@ docker run -p 8080:8080 -d babydragon9703111/node-web-app
 
 ```
 
-### ➤ 確認 Docker Image 運行狀態，並進入網址確認畫面如預期
+### 確認 Docker Image 運行狀態，並進入網址確認畫面如預期
 
 ```
 # Get container ID
@@ -221,7 +221,7 @@ docker logs <container id>
 
 ## 四、撰寫 K8s 使用的 yaml 檔＆部署 K8s
 
-### ➤ K8s 的 yaml 檔基礎說明
+### K8s 的 yaml 檔基礎說明
 
 - **apiVersion**：API 版本，需要依照 kind 的物件來決定 version。
 - **kind**：建立的物件。
@@ -270,7 +270,7 @@ spec:
 
 原始碼：[nodetest-k8s.yaml](https://gist.github.com/dean9703111/fbdb562caf70b78ee7801d377c546e12)（GitHub Gist）
 
-### ➤ K8s 部署
+### K8s 部署
 
 ```
 # 啟動 k8s cluster
@@ -281,7 +281,7 @@ kubectl apply -f nodetest-k8s.yaml
 
 ```
 
-### ➤ 查看部署後 pods 狀態
+### 查看部署後 pods 狀態
 
 ```
 # 此指令會查 default namespace 的資源
@@ -291,7 +291,7 @@ kubectl get pods
 
 因為我們在 spec 的 replicas 的值設為 3，所以會產生 3 個 pods。
 
-### ➤ 取得 deployment 的外部 ip，確認是否會顯示網頁
+### 取得 deployment 的外部 ip，確認是否會顯示網頁
 
 ```
 minikube service node-app-service --url
@@ -300,7 +300,7 @@ minikube service node-app-service --url
 
   如果網頁有正確顯示就大功告成啦～
 
-### ➤ 刪除執行中的 K8s
+### 刪除執行中的 K8s
 
 ```
 # 指定刪除剛剛建立的 K8s
@@ -310,7 +310,7 @@ kubectl delete -f nodetest-k8s.yaml
 
 剛下達指令刪除時，在 STATUS 的部分會顯示 Terminating，過一段時間就會消失嚕～
 
-### ➤ 關閉 minikube
+### 關閉 minikube
 
 ```
 # 如果沒關閉的話，你會發現電腦燙燙的，CPU 居高不下

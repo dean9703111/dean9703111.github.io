@@ -46,7 +46,7 @@ Master Slave Replication 是一個 Web 工程師需要具備的基礎概念，�
 
 ## 前置作業
 
-### ➤ 準備兩台 ubuntu server (自己實驗建議使用 VMWARE)，筆者環境配置如下
+### 準備兩台 ubuntu server (自己實驗建議使用 VMWARE)，筆者環境配置如下
 
 硬體配置一定會影響到效能，筆者只是建置一個提供實驗的環境而已
 
@@ -54,7 +54,7 @@ Master Slave Replication 是一個 Web 工程師需要具備的基礎概念，�
 - RAM：1G
 - ROM：8G
 
-### ➤ 給兩台 sever 安裝 MySQL
+### 給兩台 sever 安裝 MySQL
 
 安裝指令如下
 
@@ -73,7 +73,7 @@ sudo mysql -u root -p
 
 ## 建立MySQL Replication
 
-### ➤ Master server 設定
+### Master server 設定
 
 **STEP 1**：設定 Master server 的 my.cnf
 
@@ -159,7 +159,7 @@ mysql> SHOW MASTER STATUS \G
 
 ```
 
-### ➤ Slave server 設定
+### Slave server 設定
 
 **STEP 1**：將剛剛備份的 `master.sql` 還原到 Slave server 的 DB
 

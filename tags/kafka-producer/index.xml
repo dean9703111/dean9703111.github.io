@@ -18,7 +18,7 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>本篇文章將會帶大家一步步建立 Node.js 專案 ＆ Kafka 環境，透過具體實踐來了解 Kafka 的運行邏輯。</description>
-      <media:content url="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-og_hu_b97e4db85ed43294.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-og_hu_c30b47177bb01ebe.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<p>在<a href="https://deanlin.net/blog/202211/what-is-kafka/">上篇文章</a>中，筆者帶大家了解 Kafka 這門技術的使用情境、優點，以及它具體是如何解決問題的。</p>
 <p>而本篇文章將會帶大家一步步建立 Node.js 專案 ＆ Kafka 環境，透過具體實踐來了解 Kafka 的運行邏輯。</p>
 <p><img src="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-01.webp" width="1400" height="739" alt="手把手帶你建立 Node.js 專案 ＆ Kafka 環境，透過實作了解 Kafka 的運行邏輯（圖 1）" loading="lazy" decoding="async"></p>
@@ -204,7 +204,7 @@
 <blockquote>
 <p>建議使用有分頁功能的終端機（如 iTerm2），這樣比較好觀察與操作。</p>
 </blockquote>
-<h3 id="-1-個-producer-vs-1-個-consumer">➤ 1 個 Producer VS 1 個 Consumer<a class="h-anchor" href="#-1-%e5%80%8b-producer-vs-1-%e5%80%8b-consumer" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="-1-個-producer-vs-1-個-consumer">1 個 Producer VS 1 個 Consumer<a class="h-anchor" href="#-1-%e5%80%8b-producer-vs-1-%e5%80%8b-consumer" aria-label="這個段落的連結"></a></h3>
 <p>在專案根目錄下輸入 <code>node producer.js</code> 模擬「生產者傳送消息」，並在另一個分頁輸入 <code>node consumer.js</code> 模擬「消費者消費消息」。</p>
 <p>透過下面的 Gif 大家可以看到消息傳送＆消費的過程。</p>
 <figure class="figure figure-video">
@@ -216,11 +216,11 @@
 <blockquote>
 <p>確認消息可以順利生產與消費後，記得透過「Crontrol + C」將程式關閉。</p>
 </blockquote>
-<h3 id="-kafka-持久化驗證">➤ Kafka 持久化驗證<a class="h-anchor" href="#-kafka-%e6%8c%81%e4%b9%85%e5%8c%96%e9%a9%97%e8%ad%89" aria-label="這個段落的連結"></a></h3>
+<h3 id="-kafka-持久化驗證">Kafka 持久化驗證<a class="h-anchor" href="#-kafka-%e6%8c%81%e4%b9%85%e5%8c%96%e9%a9%97%e8%ad%89" aria-label="這個段落的連結"></a></h3>
 <p>這邊我們再做一個<strong>持久化</strong>的實驗，我們把「consumer.js」裏面 groupId 的值改為「test-group2」，來確認是否可以重新消費過去的消息。</p>
 <p>通過下圖我們可以得知 Kafka 的資料是持久化的，不會因為有消費者消費而消失；因此擴張的時候，只需要增加消費者來處理資料即可。</p>
 <p><img src="https://deanlin.net/blog/202211/nodejs-kafka-hands-on/images/nodejs-kafka-hands-on-03.webp" width="1400" height="659" alt="Kafka 持久化驗證（圖 3）" loading="lazy" decoding="async"></p>
-<h3 id="-1-個-partition-的數據只允許-consumer-group-中的某個-consumer-消費">➤ 1 個 Partition 的數據只允許 Consumer Group 中的某個 Consumer 消費<a class="h-anchor" href="#-1-%e5%80%8b-partition-%e7%9a%84%e6%95%b8%e6%93%9a%e5%8f%aa%e5%85%81%e8%a8%b1-consumer-group-%e4%b8%ad%e7%9a%84%e6%9f%90%e5%80%8b-consumer-%e6%b6%88%e8%b2%bb" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="-1-個-partition-的數據只允許-consumer-group-中的某個-consumer-消費">1 個 Partition 的數據只允許 Consumer Group 中的某個 Consumer 消費<a class="h-anchor" href="#-1-%e5%80%8b-partition-%e7%9a%84%e6%95%b8%e6%93%9a%e5%8f%aa%e5%85%81%e8%a8%b1-consumer-group-%e4%b8%ad%e7%9a%84%e6%9f%90%e5%80%8b-consumer-%e6%b6%88%e8%b2%bb" aria-label="這個段落的連結"></a></h3>
 <p>接著我們來驗證，在 Producer 的 Partition 只有 1 個的情境下，是不是相同的 group_id 下只會有一個 consumer 進行消費；這次要開啟 3 個分頁，1 個模擬生產者，2 個模擬消費者。</p>
 <p>透過下面的 Gif，大家可以看到在同一個 Consumer Group 中，的確只會有一個 Consumer 進行消費。</p>
 <figure class="figure figure-video">
@@ -229,7 +229,7 @@
   </video>
 </figure>
 
-<h3 id="-2-個-partition-vs-2-個-consumer">➤ 2 個 Partition VS 2 個 Consumer<a class="h-anchor" href="#-2-%e5%80%8b-partition-vs-2-%e5%80%8b-consumer" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="-2-個-partition-vs-2-個-consumer">2 個 Partition VS 2 個 Consumer<a class="h-anchor" href="#-2-%e5%80%8b-partition-vs-2-%e5%80%8b-consumer" aria-label="這個段落的連結"></a></h3>
 <p>先前有說到 Partition 數量最好與 Consumer 的數量相等，這樣效率才會最高（一個人一個碗）；這裡一樣是開啟 3 個分頁，1 個模擬生產者，2 個模擬消費者；同時對「producer.js」裡面的程式做微調如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 將原本的註解
 </span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// messages: Array(createMessage(getRandomNumber())),

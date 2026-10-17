@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Try-Catch｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/try-catch/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Try-Catch｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/try-catch/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Tue, 29 Sep 2020 10:23:54 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/try-catch/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day14】爬蟲執行時又又又崩潰了嗎？來點 try-catch 吧</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-14/</link>
+      <pubDate>Tue, 29 Sep 2020 10:23:54 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-14/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>在 Day8 selenium-webdriver：爬蟲起手式 有使用到 try-catch 來解決抓不到 chrome driver 的例外事件，今天我們會更清楚的說明如何讓 try-catch 幫助你更高效的 debug 以及增加程式穩定性</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-14/images/fb-ig-crawler-day-14-og_hu_35d9897d385aeca3.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>你的絕望我懂！</p>
+</blockquote>
+<h2 id="回憶一下專案之前的應用場景">回憶一下專案之前的應用場景<a class="h-anchor" href="#%e5%9b%9e%e6%86%b6%e4%b8%80%e4%b8%8b%e5%b0%88%e6%a1%88%e4%b9%8b%e5%89%8d%e7%9a%84%e6%87%89%e7%94%a8%e5%a0%b4%e6%99%af" aria-label="這個段落的連結"></a></h2>
+<p>在 <a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/">Day8 selenium-webdriver：爬蟲起手式</a> 有使用到 try-catch 來<strong>解決抓不到 chrome driver 的例外事件</strong>，今天我們會更清楚的說明如何<strong>讓 try-catch 幫助你更高效的 debug 以及增加程式穩定性</strong></p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-了解什麼情境下需要用到-try-catch">1. 了解什麼情境下需要用到 try-catch<a class="h-anchor" href="#1-%e4%ba%86%e8%a7%a3%e4%bb%80%e9%ba%bc%e6%83%85%e5%a2%83%e4%b8%8b%e9%9c%80%e8%a6%81%e7%94%a8%e5%88%b0-try-catch" aria-label="這個段落的連結"></a></h3>
+<p>1.1 try-catch-finally 基礎語法說明<br>1.2 專案如果少了 try-catch 會發生哪些悲劇</p>
+<h3 class="h-nomark" id="2-在專案中應用-try-catch-實作">2. 在專案中應用 try-catch 實作<a class="h-anchor" href="#2-%e5%9c%a8%e5%b0%88%e6%a1%88%e4%b8%ad%e6%87%89%e7%94%a8-try-catch-%e5%af%a6%e4%bd%9c" aria-label="這個段落的連結"></a></h3>
+<p>2.1 <code>loginInstagram</code>：確認登入的步驟是否順利<br>2.2 <code>crawlerIG</code>：利用 <strong>loginInstagram函式</strong> 回傳值判斷是否繼續執行<br>2.3 <code>goFansPage</code>：確認傳入的參數符合網址規則<br>2.4 <code>getTrace</code>：確認網頁能抓到追蹤人數的元件</p>
+<hr>
+<h2 class="h-nomark" id="1-什麼情境下需要用到-try-catch">1. 什麼情境下需要用到 try-catch?<a class="h-anchor" href="#1-%e4%bb%80%e9%ba%bc%e6%83%85%e5%a2%83%e4%b8%8b%e9%9c%80%e8%a6%81%e7%94%a8%e5%88%b0-try-catch" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-try-catch-finally-基礎語法說明">1.1 try-catch-finally 基礎語法說明<a class="h-anchor" href="#11-try-catch-finally-%e5%9f%ba%e7%a4%8e%e8%aa%9e%e6%b3%95%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
+<p>在 javascript <code>執行過程發成錯誤時會拋出例外</code>，接著尋找有沒有能處理這個例外的程式，如果找不到就會從拋出例外的函式跳出，尋找上一層的函式能否處理這個例外，這個過程直到觸及最外層的函式後終止</p>
+<p>如果我們<code>沒有做錯誤處理，程式執行過程中發生意外就會直接在那裡crash</code>，不過我們可以用<code>try-catch-finally</code>的語句來避免程式crash</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 我們要執行的程式內容
+</span></span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 如果這裡執行發生錯誤就會立即進入 catch
+</span></span></span><span style="display:flex;"><span>} <span style="color:#ff7b72">catch</span> (exception) {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 在這裡處理例外狀況
+</span></span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 通常都會用console.log印出錯誤訊息
+</span></span></span><span style="display:flex;"><span>} <span style="color:#ff7b72">finally</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 無論try-catch怎麼跑，最後這塊都一定會執行到
+</span></span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h3 class="h-nomark" id="12-專案如果少了try-catch會發生哪些悲劇">1.2 專案如果少了try-catch會發生哪些悲劇<a class="h-anchor" href="#12-%e5%b0%88%e6%a1%88%e5%a6%82%e6%9e%9c%e5%b0%91%e4%ba%86try-catch%e6%9c%83%e7%99%bc%e7%94%9f%e5%93%aa%e4%ba%9b%e6%82%b2%e5%8a%87" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>程式在<code>缺乏 try-catch 的機制下是非常脆落的，只要發生例外事件就容易崩潰</code>，下面舉例幾個讓程式崩潰或是卡住的方式：
+<ol>
+<li><strong>把 Facebook 跟 Instagram 登入網址改成不存在的網址</strong> → 會因為網頁不存在而卡在那個畫面</li>
+<li><strong>把粉專的網址改成不存在的網址</strong> → 會因為無法抓到要讀取的元件而崩潰</li>
+<li><strong>把粉專的網址改成不存在的粉專</strong>(或是移除的粉專) → 會因為無法抓到要讀取的元件而崩潰</li>
+</ol>
+</li>
+<li>為了避免這些悲劇的發生，<strong>try-catch</strong> 就是我們的好朋友，以下是應用上要注意的地方：
+<ol>
+<li><strong>一個try-catch區塊<code>只判斷一件事有沒有做好</code></strong>
+<ul>
+<li>與<a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-13/">上一篇重構</a>提到的概念類似，一個函式專注做好一件事，try-catch 也是專注在確認這一件事執行時有沒有發生意外</li>
+</ul>
+</li>
+<li><strong>除了系統自行吐出的 exception 以外，建議你也要<code>加上console.error</code>(&lsquo;我在哪個步驟錯了&rsquo;)</strong>
+<ul>
+<li>在程式結構龐大且長時間執行的狀態下，系統吐出的 exception 有時多到你眼花，這時你撰寫的 console.error 可以幫助你對發生錯誤的位置快速定位</li>
+</ul>
+</li>
+<li><strong>程式需要設計<code>中斷邏輯</code>避免進入無窮的等待</strong>
+<ul>
+<li>我們在抓網頁元件時用了 wait&hellip;until 的結構，如果我們沒有設定最多等待幾秒，你等到天荒地老，因為他永遠停在 try 的區塊出不去，所以 try-catch 也幫不了你</li>
+</ul>
+</li>
+<li><strong>透過例外處理減少多餘的步驟</strong>
+<ul>
+<li>像是 Instagram 我們一定要登入後才能爬蟲，所以我們就可以設定當登入失敗時(讓函式return false)不會執行後續步驟</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="2-在專案中應用-try-catch-實作-1">2. 在專案中應用 try-catch 實作<a class="h-anchor" href="#2-%e5%9c%a8%e5%b0%88%e6%a1%88%e4%b8%ad%e6%87%89%e7%94%a8-try-catch-%e5%af%a6%e4%bd%9c-1" aria-label="這個段落的連結"></a></h2>
+<p>實踐出真知，下面以 <code>crawlerIG.js</code> 裡面的函式為範例</p>
+<h3 class="h-nomark" id="21-logininstagram">2.1 <code>loginInstagram</code><a class="h-anchor" href="#21-logininstagram" aria-label="這個段落的連結"></a></h3>
+<h4 id="調整參數讓程式gg">調整參數讓程式GG<a class="h-anchor" href="#%e8%aa%bf%e6%95%b4%e5%8f%83%e6%95%b8%e8%ae%93%e7%a8%8b%e5%bc%8fgg" aria-label="這個段落的連結"></a></h4>
+<ol>
+<li>把 IG 的登入網址改成非網址格式的字串(如：&rsquo;error&rsquo;)
+<ul>
+<li>程式會crash</li>
+</ul>
+</li>
+<li>把 IG 的登入網址改成其他網址
+<ul>
+<li>找不到網頁上帳號密碼的文字輸入框、點擊登入的按鈕元件，程式會無限期等待</li>
+</ul>
+</li>
+<li>輸入錯誤的登入帳密
+<ul>
+<li>因為登入失敗網頁右上角永遠不會出現頭像元件，程式會無限期等待</li>
+</ul>
+</li>
+</ol>
+<h4 id="解決方式">解決方式<a class="h-anchor" href="#%e8%a7%a3%e6%b1%ba%e6%96%b9%e5%bc%8f" aria-label="這個段落的連結"></a></h4>
+<ol>
+<li>
+<p>把這段登入的邏輯用 try-catch 包起來</p>
+</li>
+<li>
+<p>執行成功時回傳 true，如果執行上發生錯誤則回傳 false，終止後續爬蟲動作</p>
+</li>
+<li>
+<p>為 driver.wait 加上合理的等待時間(3~5秒鐘)</p>
+<blockquote>
+<p>PS.在程式的世界中通常時間都是以毫秒為單位，填上 3000 就是 3 秒鐘的意思</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> loginInstagram (driver) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> web <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;https://www.instagram.com/accounts/login&#39;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">await</span> driver.get(web)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//為 driver.wait 加上合理的等待時間(3~5秒鐘)
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> ig_username_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;input[name=&#39;username&#39;]&#34;</span>)), <span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>        ig_username_ele.sendKeys(ig_username)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> ig_password_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;input[name=&#39;password&#39;]&#34;</span>)), <span style="color:#a5d6ff">3000</span>);
+</span></span><span style="display:flex;"><span>        ig_password_ele.sendKeys(ig_userpass)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> login_elem <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;button[type=&#39;submit&#39;]&#34;</span>)), <span style="color:#a5d6ff">3000</span>)
+</span></span><span style="display:flex;"><span>        login_elem.click()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//為 driver.wait 加上合理的等待時間(3~5秒鐘)
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;react-root&#34;]//*[contains(@class,&#34;_47KiJ&#34;)]`</span>)), <span style="color:#a5d6ff">5000</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>        console.error(<span style="color:#a5d6ff">&#39;IG登入失敗&#39;</span>)
+</span></span><span style="display:flex;"><span>        console.error(e)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">false</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+</ol>
+<h4 id="gotcha捕獲野生錯誤">GOTCHA！捕獲野生錯誤<a class="h-anchor" href="#gotcha%e6%8d%95%e7%8d%b2%e9%87%8e%e7%94%9f%e9%8c%af%e8%aa%a4" aria-label="這個段落的連結"></a></h4>
+<ol>
+<li>
+<p>將 IG 登入網址改為錯誤字串</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//const web = &#39;https://www.instagram.com/accounts/login&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> web <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;error&#39;</span>;
+</span></span></code></pre></div><blockquote>
+<p>會因不符合網址格式跳錯誤訊息</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-14/images/fb-ig-crawler-day-14-01.webp" width="1024" height="103" alt="GOTCHA！捕獲野生錯誤（圖 1）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>將 IG 登入網址改為其他無關網址</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//const web = &#39;https://www.instagram.com/accounts/login&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> web <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;https://www.google.com&#39;</span>;
+</span></span></code></pre></div><blockquote>
+<p>會因找不到使用者輸入框元件超時而跳錯誤訊息</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-14/images/fb-ig-crawler-day-14-02.webp" width="1024" height="130" alt="GOTCHA！捕獲野生錯誤（圖 2）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>把 .env環境檔裡面的登入帳號密碼改成錯誤的</p>
+<pre tabindex="0"><code>IG_USERNAME=&#39;error&#39;
+IG_PASSWORD=&#39;error&#39;
+</code></pre><blockquote>
+<p>會因找不到頭像元件超時而跳錯誤訊息</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-14/images/fb-ig-crawler-day-14-03.webp" width="1024" height="105" alt="GOTCHA！捕獲野生錯誤（圖 3）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+</ol>
+<hr>
+<h3 class="h-nomark" id="22-crawlerig">2.2 <code>crawlerIG</code><a class="h-anchor" href="#22-crawlerig" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>如果 <code>loginInstagram函式回傳 false 代表 IG 登入失敗</code>，後續爬蟲的動作就無需執行</li>
+<li>如果 <code>goFansPage函式回傳 false 代表該 IG帳號網址無效</code>，就不需要去取得追蹤人數了</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> crawlerIG (driver) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> isLogin <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> loginInstagram(driver, By, until)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (isLogin) {<span style="color:#8b949e;font-style:italic">//如果登入成功才執行下面的動作
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> fanpage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.instagram.com/baobaonevertell/&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> isGoFansPage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> goFansPage(driver, fanpage)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> (isGoFansPage) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">await</span> driver.sleep(<span style="color:#a5d6ff">3000</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">const</span> trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> getTrace(driver)
+</span></span><span style="display:flex;"><span>            console.log(<span style="color:#a5d6ff">`IG追蹤人數：</span><span style="color:#a5d6ff">${</span>trace<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h3 class="h-nomark" id="23-gofanspage">2.3 <code>goFansPage</code><a class="h-anchor" href="#23-gofanspage" aria-label="這個段落的連結"></a></h3>
+<h4 id="調整參數讓程式gg-1">調整參數讓程式GG<a class="h-anchor" href="#%e8%aa%bf%e6%95%b4%e5%8f%83%e6%95%b8%e8%ae%93%e7%a8%8b%e5%bc%8fgg-1" aria-label="這個段落的連結"></a></h4>
+<ul>
+<li>將傳入的 <strong>web_url</strong> 改成非網址格式的字串(如：&rsquo;error_page')
+<ul>
+<li>程式會crash</li>
+</ul>
+</li>
+</ul>
+<h4 id="解決方式-1">解決方式<a class="h-anchor" href="#%e8%a7%a3%e6%b1%ba%e6%96%b9%e5%bc%8f-1" aria-label="這個段落的連結"></a></h4>
+<ul>
+<li>
+<p>把這段登入的邏輯用 try-catch 包起來</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> goFansPage (driver, web_url) {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//登入成功後要前往粉專頁面
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">await</span> driver.get(web_url)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>        console.error(<span style="color:#a5d6ff">&#39;無效的網址&#39;</span>)
+</span></span><span style="display:flex;"><span>        console.error(e)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">false</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+</ul>
+<h4 id="gotcha捕獲野生錯誤-1">GOTCHA！捕獲野生錯誤<a class="h-anchor" href="#gotcha%e6%8d%95%e7%8d%b2%e9%87%8e%e7%94%9f%e9%8c%af%e8%aa%a4-1" aria-label="這個段落的連結"></a></h4>
+<ul>
+<li>
+<p>將 IG 帳號網址改為錯誤字串</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//const fanpage = &#34;https://www.instagram.com/baobaonevertell/&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fanpage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;error_page&#34;</span>
+</span></span></code></pre></div><blockquote>
+<p>會因不符合網址格式跳錯誤訊息</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-14/images/fb-ig-crawler-day-14-04.webp" width="1024" height="100" alt="GOTCHA！捕獲野生錯誤（圖 4）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="24-gettrace">2.4 <code>getTrace</code><a class="h-anchor" href="#24-gettrace" aria-label="這個段落的連結"></a></h3>
+<h4 id="調整參數讓程式gg-2">調整參數讓程式GG<a class="h-anchor" href="#%e8%aa%bf%e6%95%b4%e5%8f%83%e6%95%b8%e8%ae%93%e7%a8%8b%e5%bc%8fgg-2" aria-label="這個段落的連結"></a></h4>
+<ul>
+<li>
+<p>上一步 goFansPage 如果導向的並非 IG帳號網址，或者該IG帳號不存在時</p>
+<blockquote>
+<p>會因為找不到網頁上追蹤人數的元件，使程式陷入無限期等待</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-14/images/fb-ig-crawler-day-14-05.webp" width="1024" height="213" alt="調整參數讓程式GG（圖 5）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+</ul>
+<h4 id="解決方式-2">解決方式<a class="h-anchor" href="#%e8%a7%a3%e6%b1%ba%e6%96%b9%e5%bc%8f-2" aria-label="這個段落的連結"></a></h4>
+<ol>
+<li>
+<p>把這段登入的邏輯用 try-catch 包起來</p>
+</li>
+<li>
+<p>為 driver.wait 加上合理的等待時間(5秒鐘)</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> getTrace (driver) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> ig_trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>;<span style="color:#8b949e;font-style:italic">//這是紀錄IG追蹤人數
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> ig_trace_xpath <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`//*[@id=&#34;react-root&#34;]/section/main/div/header/section/ul/li[2]/a/span`</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//我們採取5秒內如果抓不到該元件就跳出的條件
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> ig_trace_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(ig_trace_xpath)), <span style="color:#a5d6ff">5000</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// ig因為當人數破萬時文字不會顯示，所以改抓title
+</span></span></span><span style="display:flex;"><span>        ig_trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> ig_trace_ele.getAttribute(<span style="color:#a5d6ff">&#39;title&#39;</span>)
+</span></span><span style="display:flex;"><span>        ig_trace <span style="color:#ff7b72;font-weight:bold">=</span> ig_trace.replace(<span style="color:#79c0ff">/\D/g</span>, <span style="color:#a5d6ff">&#39;&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> ig_trace
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>        console.error(<span style="color:#a5d6ff">&#39;無法抓取IG追蹤人數&#39;</span>)
+</span></span><span style="display:flex;"><span>        console.error(e)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">null</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+</ol>
+<h4 id="gotcha捕獲野生錯誤-2">GOTCHA！捕獲野生錯誤<a class="h-anchor" href="#gotcha%e6%8d%95%e7%8d%b2%e9%87%8e%e7%94%9f%e9%8c%af%e8%aa%a4-2" aria-label="這個段落的連結"></a></h4>
+<ul>
+<li>
+<p>將 IG 帳號網址改為不存在帳號的網址(或是無關網址)</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//const fanpage = &#34;https://www.instagram.com/baobaonevertell/&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fanpage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.instagram.com/error_page_ex/&#34;</span>
+</span></span></code></pre></div><blockquote>
+<p>會因找不到追蹤人數的元件而跳錯誤訊息</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-14/images/fb-ig-crawler-day-14-06.webp" width="1024" height="94" alt="GOTCHA！捕獲野生錯誤（圖 6）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h4 id="筆者碎碎念">筆者碎碎念<a class="h-anchor" href="#%e7%ad%86%e8%80%85%e7%a2%8e%e7%a2%8e%e5%bf%b5" aria-label="這個段落的連結"></a></h4>
+<p>程式越龐大 try-catch 的機制越重要，因為隨著開發的時間軸拉長，你對過去撰寫的程式掌握度會越來越低，甚至會忘記自己曾經寫了這一段程式碼；萬一在遙遠的某一天運轉好好的程式突然崩潰了，沒有撰寫 try-catch 的人在 debug 會浪費非常多的時間，因為他無法掌握是哪裡出錯了，所以建議大家培養撰寫 try-catch 的好習慣</p>
+<p>如果有時麼解釋不夠清楚的歡迎在下方留言討論喔</p>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day14">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day13_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來實作今天try-catch的部分喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><em>免責聲明:文章技術僅抓取公開數據作爲研究，任何組織和個人不得以此技術盜取他人智慧財產、造成網站損害，否則一切后果由該組織或個人承擔。作者不承擔任何法律及連帶責任！</em></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-14/images/fb-ig-crawler-day-14-07.webp" width="1024" height="233" alt="ℹ️ 專案原始碼（圖 7）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

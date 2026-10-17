@@ -38,7 +38,7 @@
 
 下面我直接示範給大家看：
 
-### ➤ 優化提示詞
+### 優化提示詞
 
 像我本身是一個作家，如果想製作一個宣傳自己書籍的 Landing Page（著陸頁）。
 
@@ -67,7 +67,7 @@
 
 把它複製下來後，我建議大家開啟一個新的對話貼上去，這麼做是為了避免上下文的干擾。
 
-### ➤ 用 Canvas 生成網頁
+### 用 Canvas 生成網頁
 
 點開工具，選擇 Canvas，這樣才能生成網頁。
 
@@ -77,7 +77,7 @@
 
 但這邊要提醒一下大家，有結果不代表內容正確。
 
-### ➤ 優化網頁細節
+### 優化網頁細節
 
 比如你點擊購買書籍，會發現這個按鈕根本是假的，按下去毫無回應，另外網站沒有作者頭像，也沒有書籍封面。
 
@@ -97,7 +97,7 @@
 
 調整完畢後，就可以看到作者頭像跟書籍封面了，購買連結也可以順利跳轉到我們指定的網頁了。
 
-### ➤ 新增 Gemini 功能
+### 新增 Gemini 功能
 
 這邊再介紹一個 Gemini 有趣的功能
 
@@ -105,13 +105,13 @@
 
 AI 新增了 Dean AI 職涯導航的功能：
 
-### ➤ 分享網頁
+### 分享網頁
 
 確認網頁都調整的差不多後，你可以點擊分享向大家展示成果
 
 但是上下面都有 Gemini 的浮水印標誌，我覺得有點礙眼
 
-### ➤ 用 Google Site 建立網站
+### 用 Google Site 建立網站
 
 這邊要跟大家分享一個移除標誌的小技巧，那就是使用 [Google Sites ](https://sites.google.com/)來免費建立網站。
 
@@ -121,7 +121,7 @@ AI 新增了 Dean AI 職涯導航的功能：
 
 但如果你去使用 AI 功能，就會發現無法順利使用，這是因為假如你要使用 AI 功能，會需要搭配 Gemini 的 API Key。
 
-### ➤ API Key 警告
+### API Key 警告
 
 把視角轉換到 Gemini，在程式碼的地方搜尋 apikey，如果沒有填寫的話，你是無法使用 Gemini AI 功能的。
 
@@ -133,7 +133,7 @@ AI 新增了 Dean AI 職涯導航的功能：
 
 希望大家不要跟自己的錢包過不去！
 
-### ➤ 純 HTML 網站可以直接複製
+### 純 HTML 網站可以直接複製
 
 這邊再給大家建立一個基礎觀念，Gemini 建立的 App 基本上都是純前端網頁（可搭配 Firebase 存取資料庫資源）。
 
@@ -147,7 +147,7 @@ AI 新增了 Dean AI 職涯導航的功能：
 
 用 Gemini Vibe Coding 會得到一個 HTML 檔案，結構相對簡單，而接下來分享的 Google AI Studio 則是以「前端專案」的角度呈現。
 
-### ➤ 生成第一個 AI App
+### 生成第一個 AI App
 
 這邊我們先選擇 Vibe code GenAI Apps 來建立第一個 AI App。
 
@@ -165,7 +165,7 @@ AI 新增了 Dean AI 職涯導航的功能：
 
 這邊我先上傳自己的照片，選擇一個風格後，點擊開始轉換就能得到結果嚕～
 
-### ➤ 分享 App
+### 分享 App
 
 在確認結果符合需求後，我們就可以分享成果。
 
@@ -179,7 +179,7 @@ AI 新增了 Dean AI 職涯導航的功能：
 
 甚至可以根據這個 App 為基礎去做二次創作，所以大家分享前要先注意到這些細節。
 
-### ➤ Deploy app 注意事項
+### Deploy app 注意事項
 
 另外我並不建議大家使用 Deploy app on Google Cloud 這個功能。
 
@@ -187,7 +187,7 @@ AI 新增了 Dean AI 職涯導航的功能：
 
 **除非你很清楚自己在做什麼，否則我不建議透過這個方式分享 App。**
 
-### ➤ API Key
+### API Key
 
 Google AI Studio 首頁，左下角有一個 Get API Key
 
@@ -198,7 +198,7 @@ Google AI Studio 首頁，左下角有一個 Get API Key
 - 以免費版來說，你只能使用一些比較舊款的模型，像最新推出的 gemini-3-pro 這類模型都是不可用的。
 - 但如果你的專案有綁定信用卡，各種最新的模型都可以使用，但使用前你要搞清楚自己在做什麼，因為用多少算多少！
 
-### ➤ 建立前端專案
+### 建立前端專案
 
 其實 Google AI Studio 除了能建立有 AI 功能的 App 外，也可以建立一般的前端專案，這邊我就以「抽籤、分組」的 App 為例。
 
@@ -218,7 +218,7 @@ Google AI Studio 首頁，左下角有一個 Get API Key
 
 等 AI 完成後，我們來驗證一下功能是否符合需求，先貼上姓名，然後去抽籤，接著分組：
 
-### ➤ 優化專案
+### 優化專案
 
 儘管功能都符合需求，但操作過程中發現幾個可以改進的地方：
 
@@ -236,7 +236,7 @@ Google AI Studio 首頁，左下角有一個 Get API Key
 
 等 AI 調整完畢後，記得測試一下他增加的功能是否符合需求！
 
-### ➤ 保存到 GitHub
+### 保存到 GitHub
 
 在測試確認功能都符合需求後，我們可以將它保存到 [GitHub](https://github.com/) 上面。
 
@@ -258,7 +258,7 @@ Google AI Studio 首頁，左下角有一個 Get API Key
 
 這邊我們把視角切換到 GitHub，看一下自己帳號的 GitHub Repository，就會發現剛剛我們透過 Google AI Studio 建立的 App 就出現了！
 
-### ➤ Gemini 與 Google AI Studio 差異
+### Gemini 與 Google AI Studio 差異
 
 大家還記得一開始分享 Gemini 生成網頁時，是只有一個 html 檔案的嗎？
 
@@ -278,7 +278,7 @@ Google AI Studio 首頁，左下角有一個 Get API Key
 
 但如果付費升級到 Pro，你的使用體驗會好很多。
 
-### ➤ 設定 Rules，讓 AI 更懂你
+### 設定 Rules，讓 AI 更懂你
 
 建議大家可以選擇「Customizations」來設定一下自己的使用偏好。
 
@@ -319,7 +319,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 在 Agent 的分頁中，如果把 Secure Mode 打開，那 AI 執行的過程會安全許多；但缺點就是大部分的任務執行都會詢問使用者。
 
-### ➤下載 GitHub 專案
+### 下載 GitHub 專案
 
 了解基礎設定後，接下來我們要透過 Clone Repository 來下載剛剛 Google AI Studio 完成的專案。
 
@@ -329,7 +329,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 在對話上，有分成 Planning 跟 Fast 兩種；如果要處理的是複雜任務，就建議選擇 Planning，而簡單的問答用 Fast 就足夠了。
 
-### ➤ 完善專案
+### 完善專案
 
 因為我們要請他補齊專案缺少的資訊，所以我這邊選擇的是 Planning。
 
@@ -358,7 +358,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 但在檔案上傳前，我建議大家先到 .gitignore 的這個檔案，確認一下設計是否完善。
 
-### ➤ 部署專案
+### 部署專案
 
 點擊左側的 Source Control，點擊 Generate，AI 就會辨識我們更新的內容，來產生 commit 訊息。
 

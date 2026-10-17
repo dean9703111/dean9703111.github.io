@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>MySQL vs Postgresql｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/mysql-vs-postgresql/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>MySQL vs Postgresql｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/mysql-vs-postgresql/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Sat, 02 Oct 2021 08:46:41 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/mysql-vs-postgresql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[面試][資料庫]設計資料庫時會考量哪些點？</title>
+      <link>https://deanlin.net/blog/202110/fullstack-career-notes-day-17/</link>
+      <pubDate>Sat, 02 Oct 2021 08:46:41 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202110/fullstack-career-notes-day-17/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>職涯成長</category>
+      <description>如果公司有專門的 DBA，後端工程師就可以把心力放在資料邏輯的處理上；但筆者詢問周圍的朋友，似乎有不少公司都是讓後端工程師兼任 DBA...</description>
+      <media:content url="https://deanlin.net/blog/202110/fullstack-career-notes-day-17/images/fullstack-career-notes-day-17-og_hu_ebc36d8690ca2b07.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>好的設計讓你上天堂，爛的設計讓你下地獄。</p>
+</blockquote>
+<p>如果公司有專門的 DBA，後端工程師就可以把心力放在資料邏輯的處理上；但筆者詢問周圍的朋友，似乎有不少公司都是讓後端工程師兼任 DBA&hellip;</p>
+<p>筆者在這塊也並非專家，主要是分享自己實作中會注意的基礎細節，<code>避免犯下一些原則性錯誤</code>。</p>
+<h2 id="大綱">大綱<a class="h-anchor" href="#%e5%a4%a7%e7%b6%b1" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li><strong>設計資料庫時會考量哪些點？</strong>
+<ul>
+<li>1.1 面試官為什麼會問？</li>
+<li>1.2 面試官想從答案確認什麼？</li>
+<li>1.3 筆者提供的簡答</li>
+</ul>
+</li>
+<li><strong>回答問題所需具備的知識</strong>
+<ul>
+<li>2.1 在 Table 建立有效的 Index</li>
+<li>2.2 資料庫設計與優化</li>
+<li>2.3 MySQL 與 PostgreSQL 的區別及應用場景</li>
+</ul>
+</li>
+<li><strong>衍伸問題</strong>
+<ul>
+<li>3.1 為什麼 Index 不能建立太多？</li>
+<li>3.2 寫 DB SQL 時會注意什麼？</li>
+<li>3.3 有用過 NoSQL 嗎？什麼應用情境下會使用呢？</li>
+<li>3.4 你會用哪些點來評估要使用關聯式資料庫 or 非關聯式資料庫？</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-設計資料庫時會考量哪些點">1. 設計資料庫時會考量哪些點？<a class="h-anchor" href="#1-%e8%a8%ad%e8%a8%88%e8%b3%87%e6%96%99%e5%ba%ab%e6%99%82%e6%9c%83%e8%80%83%e9%87%8f%e5%93%aa%e4%ba%9b%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-面試官為什麼會問">1.1 面試官為什麼會問？<a class="h-anchor" href="#11-%e9%9d%a2%e8%a9%a6%e5%ae%98%e7%82%ba%e4%bb%80%e9%ba%bc%e6%9c%83%e5%95%8f" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>因為<code>履歷資訊</code>中表明擅長多種資料庫（Database）
+<ul>
+<li>MySQL、MSSQL、PostgreSQL</li>
+</ul>
+</li>
+<li>且<code>履歷資訊</code>中還表明有優化資料庫的經驗。
+<ul>
+<li><strong>XXX 資料庫系統</strong><br>將 Visual Basic 的單機版程式改寫成網頁系統，整合過去冗贅資料表，優化使用者體驗。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="12-面試官想從答案確認什麼">1.2 面試官想從答案確認什麼？<a class="h-anchor" href="#12-%e9%9d%a2%e8%a9%a6%e5%ae%98%e6%83%b3%e5%be%9e%e7%ad%94%e6%a1%88%e7%a2%ba%e8%aa%8d%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>選用資料庫前，會思考哪些問題</li>
+<li>設計資料庫時會注意哪些細節</li>
+<li>同樣都是關聯式資料庫，你知道他們間的差異嗎？</li>
+<li>有用過哪些方式優化資料庫效能</li>
+<li>你對 NoSQL 的認知有多少</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="13-筆者提供的簡答">1.3 筆者提供的簡答<a class="h-anchor" href="#13-%e7%ad%86%e8%80%85%e6%8f%90%e4%be%9b%e7%9a%84%e7%b0%a1%e7%ad%94" aria-label="這個段落的連結"></a></h3>
+<p>在決定要使用什麼資料庫前，我會先分析專案的<code>應用場景</code>：</p>
+<ul>
+<li>像是<code>商城</code>會有金流，所以資料穩定性與 Transaction 機制是很重要的。</li>
+<li>如果要設計<code>地圖平台</code>，就會選擇對 GIS 支援度高的資料庫。</li>
+</ul>
+<p>在設計資料庫時會畫 <code>ER Model</code> 來分析資料間的關聯與屬性；在優化方面，為了要提高搜尋效率會在 Table <code>建立 Index</code>，同時也會依據實際業務設計<code>欄位適合的長度及 Type</code>。</p>
+<hr>
+<h2 class="h-nomark" id="2-回答問題所需具備的知識">2. 回答問題所需具備的知識<a class="h-anchor" href="#2-%e5%9b%9e%e7%ad%94%e5%95%8f%e9%a1%8c%e6%89%80%e9%9c%80%e5%85%b7%e5%82%99%e7%9a%84%e7%9f%a5%e8%ad%98" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-在-table-建立有效的-index">2.1 在 Table 建立有效的 Index<a class="h-anchor" href="#21-%e5%9c%a8-table-%e5%bb%ba%e7%ab%8b%e6%9c%89%e6%95%88%e7%9a%84-index" aria-label="這個段落的連結"></a></h3>
+<p>我們知道在 Table 建立 Index 可以增加搜尋效率，但你知道自己建立的 Index 有沒有派上用場嗎？筆者將在這個小節透過實作，帶大家了解 <code>Coverage Index (覆蓋索引)</code>的意義。</p>
+<ul>
+<li>
+<p><strong>SETP 1</strong>：建立測試用的 <strong>tmp_user</strong> Table</p>
+<ul>
+<li><strong>id</strong> 為 primary key</li>
+<li><strong>name</strong> 為 index</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">create</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">table</span><span style="color:#6e7681"> </span>tmp_user<span style="color:#6e7681"> </span>(<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>id<span style="color:#6e7681"> </span>bigint(<span style="color:#a5d6ff">20</span>)<span style="color:#6e7681"> </span><span style="color:#ff7b72">not</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">null</span><span style="color:#6e7681"> </span>auto_increment<span style="color:#6e7681"> </span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>name<span style="color:#6e7681"> </span>varchar(<span style="color:#a5d6ff">255</span>)<span style="color:#6e7681"> </span><span style="color:#ff7b72">not</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">null</span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>password<span style="color:#6e7681"> </span>varchar(<span style="color:#a5d6ff">255</span>)<span style="color:#6e7681"> </span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#ff7b72">index</span><span style="color:#6e7681"> </span>index_name<span style="color:#6e7681"> </span>(name),<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#ff7b72">primary</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">key</span><span style="color:#6e7681"> </span>(id))<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span>engine<span style="color:#ff7b72;font-weight:bold">=</span>innodb<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">    </span><span style="color:#ff7b72">default</span><span style="color:#6e7681"> </span>character<span style="color:#6e7681"> </span><span style="color:#ff7b72">set</span><span style="color:#ff7b72;font-weight:bold">=</span>utf8<span style="color:#6e7681"> </span><span style="color:#ff7b72">collate</span><span style="color:#ff7b72;font-weight:bold">=</span>utf8_general_ci;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">insert</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">into</span><span style="color:#6e7681"> </span>tmp_user<span style="color:#6e7681"> </span>(name,<span style="color:#6e7681"> </span>password)<span style="color:#6e7681"> </span><span style="color:#ff7b72">values</span><span style="color:#6e7681"> </span>(<span style="color:#a5d6ff">&#34;寶寶不說&#34;</span>,<span style="color:#a5d6ff">&#34;123&#34;</span>);<span style="color:#6e7681">
+</span></span></span></code></pre></div></li>
+<li>
+<p><strong>SETP 2</strong>：下 SQL 指令了解是否使用 Index</p>
+<blockquote>
+<p>觀察最後「Extra」欄位的資訊有否有 <code>Using index</code></p>
+</blockquote>
+<ul>
+<li>
+<p><strong>SQL A</strong>：<code>explain select id from user_table where name= '寶寶不說';</code></p>
+<p><img src="https://deanlin.net/blog/202110/fullstack-career-notes-day-17/images/fullstack-career-notes-day-17-01.webp" width="1024" height="118" alt="2.1 在 Table 建立有效的 Index（圖 1）" loading="lazy" decoding="async"></p>
+<p>因為 <code>name</code> 有建立 index，所以在查詢到 <code>name</code> 後可以直接與 <code>id</code> 對應返回結果；因為 name 已經覆蓋了查詢資料的需求，所以稱為 「Coverage Index」。</p>
+</li>
+<li>
+<p><strong>SQL B</strong>：<code>explain select password from user_table where name= '寶寶不說';</code></p>
+<p><img src="https://deanlin.net/blog/202110/fullstack-career-notes-day-17/images/fullstack-career-notes-day-17-02.webp" width="1024" height="118" alt="2.1 在 Table 建立有效的 Index（圖 2）" loading="lazy" decoding="async"></p>
+<p>透過 <code>name</code> 找到「寶寶不說」對應的 <code>id</code>，但接著要透過 id 這個 <code>primary key</code>，在 Table 重新輪詢才能取得這一列的完整資料。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>SETP 3</strong>：建立 Coverage Index 優化 SQL B</p>
+<ul>
+<li>
+<p><strong>先將資料庫 drop 掉</strong>：<code>drop table tmp_user;</code></p>
+</li>
+<li>
+<p><strong>重新建立測試資料以及「Coverage Index」</strong><br>為了避免用 primary key 再次從 Table 查詢的耗能，我們可以<code>把 select 與 where 用到的欄位(name、password)做聯合索引</code>，這樣就能夠直接使用索引查詢，而不需用 primary key 重新比對，這就是「Coverage Index」的應用。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#ff7b72">create</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">table</span><span style="color:#6e7681"> </span>tmp_user<span style="color:#6e7681"> </span>(<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>id<span style="color:#6e7681"> </span>bigint(<span style="color:#a5d6ff">20</span>)<span style="color:#6e7681"> </span><span style="color:#ff7b72">not</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">null</span><span style="color:#6e7681"> </span>auto_increment<span style="color:#6e7681"> </span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>name<span style="color:#6e7681"> </span>varchar(<span style="color:#a5d6ff">255</span>)<span style="color:#6e7681"> </span><span style="color:#ff7b72">not</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">null</span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>password<span style="color:#6e7681"> </span>varchar(<span style="color:#a5d6ff">255</span>)<span style="color:#6e7681"> </span>,<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#ff7b72">primary</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">key</span><span style="color:#6e7681"> </span>(id))<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span>engine<span style="color:#ff7b72;font-weight:bold">=</span>innodb<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">  </span><span style="color:#ff7b72">default</span><span style="color:#6e7681"> </span>character<span style="color:#6e7681"> </span><span style="color:#ff7b72">set</span><span style="color:#ff7b72;font-weight:bold">=</span>utf8<span style="color:#6e7681"> </span><span style="color:#ff7b72">collate</span><span style="color:#ff7b72;font-weight:bold">=</span>utf8_general_ci;<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">insert</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">into</span><span style="color:#6e7681"> </span>tmp_user<span style="color:#6e7681"> </span>(name,<span style="color:#6e7681"> </span>password)<span style="color:#6e7681"> </span><span style="color:#ff7b72">values</span><span style="color:#6e7681"> </span>(<span style="color:#a5d6ff">&#34;寶寶不說&#34;</span>,<span style="color:#a5d6ff">&#34;123&#34;</span>);<span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#6e7681">
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">alter</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">table</span><span style="color:#6e7681"> </span>tmp_user<span style="color:#6e7681"> </span><span style="color:#ff7b72">add</span><span style="color:#6e7681"> </span><span style="color:#ff7b72">index</span><span style="color:#6e7681"> </span>name_password(name,password);<span style="color:#6e7681">
+</span></span></span></code></pre></div></li>
+<li>
+<p><strong>再次執行 SQL B</strong>：<code>explain select password from tmp_user where name = '寶寶不說';</code><br>本次的查詢就可以在「Extra」欄位看到 <code>Using index</code> 嚕～</p>
+<p><img src="https://deanlin.net/blog/202110/fullstack-career-notes-day-17/images/fullstack-career-notes-day-17-03.webp" width="1024" height="116" alt="2.1 在 Table 建立有效的 Index（圖 3）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="22-資料庫設計與優化">2.2 資料庫設計與優化<a class="h-anchor" href="#22-%e8%b3%87%e6%96%99%e5%ba%ab%e8%a8%ad%e8%a8%88%e8%88%87%e5%84%aa%e5%8c%96" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>使用 ER Model 做規畫</strong><br>在需求規格出來後，我們可以先透過 ER Model 整理資料間的關聯性，然後以此為基礎設計資料庫；向新人說明 Table 間的關聯時，它也是一個非常棒的輔助工具。</li>
+<li><strong>設計合適的文字欄位</strong>
+<ul>
+<li>如果不確定該欄位會填入的文字長度，會選擇 VARCHAR 這種依據文字長度來使用儲存空間的 Type。</li>
+<li>以時常變更文字的欄位來說，會選擇 CHAR 而非 VARCHAR；因為 VARCHAR 的欄位在儲存時會需要額外的計算。</li>
+<li>盡量<code>避免使用 TEXT/BLOB</code> 這類的 Type，它們在查詢時會消耗更多的效能。</li>
+<li>根據實際業務需求設計欄位長度，</li>
+</ul>
+</li>
+<li><strong>減少 SQL 寫入次數</strong><br>以 Insert 來做舉例，假設有 1000 筆資料要寫入 Table；一次插入 1000 筆的執行時間會遠遠小於分 1000 次插入的時間。</li>
+<li><strong>適當的增加冗餘欄位</strong><br>在設計資料庫時要盡量符合三大正規化；但 <code>Table 間的關聯越複雜也會導致查詢效率的下降</code>，因此有時會適當的增加冗餘欄位，用犧牲磁碟空間的方式換取更高的查詢效率。</li>
+<li><strong>定期審視資料庫的規劃</strong><br>如果沒有專門的 DBA，那資料庫通常會有以下問題需要修正：
+<ul>
+<li>許多欄位因為不確定實際業務需求，直接把<code>欄位長度開到最大</code>。</li>
+<li>因為新需求不斷產生，在思慮不夠周密的狀況下容易<code>新增許多無用欄位</code>。</li>
+<li>在系統版本的更迭中，<code>沒有整理</code>不符合實際業務需求的<code>檢視表（View）</code>。</li>
+<li>後端存取 Table 的欄位改變，但 Table 的 Index 並沒有一起調整，導致<code>許多 Index 並沒有發揮作用</code>。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="23-mysql-與-postgresql-的區別及應用場景">2.3 MySQL 與 PostgreSQL 的區別及應用場景<a class="h-anchor" href="#23-mysql-%e8%88%87-postgresql-%e7%9a%84%e5%8d%80%e5%88%a5%e5%8f%8a%e6%87%89%e7%94%a8%e5%a0%b4%e6%99%af" aria-label="這個段落的連結"></a></h3>
+<p><code>MySQL</code> 是世界上最流行的資料庫之一，世界上有非常多的 Web Application 都採用它作為解決方案；但在被收購後分出了非常多的版本，<code>有免費也有收費的</code>；而 <code>PostgreSQL</code> 基於 BSD/MIT 的 linecense，為<code>完全開源的資料庫</code>。</p>
+<ul>
+<li><strong>PostgreSQL 的優勢</strong>
+<ul>
+<li><strong>不僅是關聯式資料庫，還支援 jsonb 的格式</strong><br>相比於 json，jsonb 以二進位格式儲存且可以使用索引（Index），你可以利用它<code>整合關聯式資料與非關聯式資料</code>。</li>
+<li><strong>有 PostGIS 讓他成為很棒的空間資料庫</strong><br>相比於 MySQL spatial extension，PostGIS 可以<code>支持「二維、三維、曲線」的空間類型</code>，並有豐富的空間操作函數。</li>
+<li><strong>可以輕鬆與外部資料庫關聯</strong><br>透過 FDW（Foreign Data Wrapper），你可以把外部資料庫（ex：MySQL、Oracle、CSV）當成自己資料庫中的 Table 查詢，讓 PostgreSQL 成為<code>聯合資料庫</code>。</li>
+</ul>
+</li>
+<li><strong>MySQL 的優勢</strong>
+<ul>
+<li><strong>會 MySQL 的工程師更多</strong><br><code>在招募工程師時更容易</code>，遇到問題時也有豐富的社群資源提供解答。</li>
+<li><strong>MySQL 使用 Thread 而 PostgreSQL 使用 Process</strong>
+<ul>
+<li>
+<p>Process 比 Thread 要花更多時間建立連線。</p>
+</li>
+<li>
+<p>Process 因為缺失 Thread 實作的「共享」特性，使得每次連線建立時，都需要耗費較高的記憶體空間配置。</p>
+<blockquote>
+<p>PostgreSQL 可以搭配 Connection Pool 的外掛解決這個問題，但架構上就會變更複雜。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>應用場景</strong>
+<ul>
+<li><strong>MySQL</strong><br>適合業務邏輯相對簡單、較少處理資料一致化問題的網際網路場景。</li>
+<li><strong>PostgreSQL</strong><br>專案資料寫入頻繁，且資料庫龐大而複雜，內容需要高度一致性，有 GIS 需求。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>其實在 DB 的選擇上，除了考慮專案適用的場景外，還要考量到<code>團隊內的工程師對哪個比較擅長；思考萬一發生意外時有誰可以救場</code>，不然災難復原是一場惡夢。</p>
+</blockquote>
+<hr>
+<h2 class="h-nomark" id="3-衍伸問題">3. <strong>衍伸問題</strong><a class="h-anchor" href="#3-%e8%a1%8d%e4%bc%b8%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="31-為什麼-index-不能建立太多">3.1 為什麼 Index 不能建立太多？<a class="h-anchor" href="#31-%e7%82%ba%e4%bb%80%e9%ba%bc-index-%e4%b8%8d%e8%83%bd%e5%bb%ba%e7%ab%8b%e5%a4%aa%e5%a4%9a" aria-label="這個段落的連結"></a></h3>
+<p><code>考點：了解 Index 對資料庫效能的影響</code></p>
+<p>Index 的數量太多，會影嚮 DML（Insert、Update、Delete）的效能，<code>因為 Table 資料更新時也要連帶更新 Index</code>。</p>
+<hr>
+<h3 class="h-nomark" id="32-寫-db-sql-時會注意什麼">3.2 寫 DB SQL 時會注意什麼？<a class="h-anchor" href="#32-%e5%af%ab-db-sql-%e6%99%82%e6%9c%83%e6%b3%a8%e6%84%8f%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h3>
+<p><code>考點：確認求職者的 SQL 基本功</code></p>
+<ul>
+<li>不要回傳大量資料，要有條件的<code>回傳固定筆數</code>（ex：limit）。</li>
+<li>Select 時盡量不要使用「*」，<code>只抓取需要的欄位</code>。</li>
+<li>Select 充分使用 <code>Index</code> 來做搜尋。</li>
+<li><code>避免使用不兼容的型態</code>做比較，像是 FLOAT 跟 INT、CHAR 跟 VARCHAR。</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="33-有用過-nosql-嗎什麼應用情境下會使用呢">3.3 有用過 NoSQL 嗎？什麼應用情境下會使用呢？<a class="h-anchor" href="#33-%e6%9c%89%e7%94%a8%e9%81%8e-nosql-%e5%97%8e%e4%bb%80%e9%ba%bc%e6%87%89%e7%94%a8%e6%83%85%e5%a2%83%e4%b8%8b%e6%9c%83%e4%bd%bf%e7%94%a8%e5%91%a2" aria-label="這個段落的連結"></a></h3>
+<p><code>考點：確認求職者對 NoSQL 的認知</code></p>
+<blockquote>
+<p>即便你的履歷中沒有寫自己會 NoSQL，還是會遇到這類考題，所以建議至少有基礎的認知。</p>
+</blockquote>
+<ul>
+<li><strong>資料表欄位常常變化</strong><br>像是商城這種擁有龐大資料量的系統，在關連式資料庫中如果要 Update 欄位有很多顧慮；因為每個操作都需要重頭到尾輪詢一次 Table，非常消耗時間。<br>如果使用 <code>MongoDB</code> 這類的 NoSQL，就可以很靈活的對欄位進行調整。</li>
+<li><strong>需要高速的讀寫</strong><br>像是 <code>Redis</code> 這類記憶體資料庫，單一節點就能應付每秒 10 萬次的讀寫請求。</li>
+<li><strong>資料量龐大，有擴充需求</strong><br>NoSQL 具備<code>水平擴充</code>能力，只要增加新的伺服器節點就能擴充資料庫容量；且對於伺服器的性能要求較低，可使用<code>較便宜</code>的電腦進行擴充。</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="34-你會用哪些點來評估要使用關聯式資料庫-or-非關聯式資料庫">3.4 你會用哪些點來評估要使用關聯式資料庫 or 非關聯式資料庫？<a class="h-anchor" href="#34-%e4%bd%a0%e6%9c%83%e7%94%a8%e5%93%aa%e4%ba%9b%e9%bb%9e%e4%be%86%e8%a9%95%e4%bc%b0%e8%a6%81%e4%bd%bf%e7%94%a8%e9%97%9c%e8%81%af%e5%bc%8f%e8%b3%87%e6%96%99%e5%ba%ab-or-%e9%9d%9e%e9%97%9c%e8%81%af%e5%bc%8f%e8%b3%87%e6%96%99%e5%ba%ab" aria-label="這個段落的連結"></a></h3>
+<p><code>考點：確認求職者是否有評估的能力與經驗</code></p>
+<p>我會考慮的點有<code>資料量多寡、併發量、實時性、資料一致性、未來擴充性、資料穩定性、維護成本</code>。</p>
+<p>以企業內部管理系統來說，因為資料量少、併發數少、未來擴充需求較低，所以會選擇關連式資料庫；如果是遊戲的排行榜頁面，因為資料量大、併發數高、且要求高的更新頻率，所以我會考慮使用記憶體資料庫（ex：Redis）。</p>
+<hr>
+<p>感謝大家的閱讀，如果喜歡我的文章可以<code>訂閱</code>接收通知；如果有幫助到你，按<code>Like</code>可以讓我更有寫文的動力，我們明天見～</p>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://www.gushiciku.cn/pl/poXE/zh-tw">MySQL 資料庫面試題</a></li>
+<li><a href="https://medium.com/dean-lin/f852af308c27">你在 Table 建立的 Index 真的有效嗎？用範例帶你理解 Coverage Index 的意義(筆者部落格)</a></li>
+<li><a href="https://zi.media/@yidianzixun/post/FaABsS">MySQL 與 PostgreSQL 相比哪個更好？</a></li>
+</ol>
+<hr>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202110/fullstack-career-notes-day-17/images/fullstack-career-notes-day-17-04.webp" width="1024" height="233" alt="參考資源（圖 4）" loading="lazy" decoding="async"></p>
+<p>在許多人的幫助下，本系列文章已成功出版，除了添加新的篇章，更完善了每個案例的應對進退；如果對現在的職涯感到迷茫，也許這本書能帶給你不一樣的觀點～</p>
+<p><strong>天瓏書局：</strong> <a href="https://www.tenlong.com.tw/products/9786263334571">https://www.tenlong.com.tw/products/9786263334571</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

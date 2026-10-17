@@ -8,8 +8,265 @@
     <generator>Hugo</generator>
     <language>zh-tw</language>
     <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
-    <lastBuildDate>Thu, 25 Feb 2021 13:45:49 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 30 Sep 2021 08:46:20 +0800</lastBuildDate>
     <atom:link href="https://deanlin.net/tags/postman/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[面試][後端]在正式 API 完成前，如何讓要串接的工程師不要空等？</title>
+      <link>https://deanlin.net/blog/202109/fullstack-career-notes-day-15/</link>
+      <pubDate>Thu, 30 Sep 2021 08:46:20 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202109/fullstack-career-notes-day-15/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>職涯成長</category>
+      <description>建立 Mock Server 後，前端工程師就失去耍廢時間不需要等後端做好才能串接。</description>
+      <media:content url="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-og_hu_33bd9c5445fd9b2b.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<p>建立 Mock Server 後，前端工程師就<del>失去耍廢時間</del>不需要等後端做好才能串接。</p>
+<blockquote>
+<p>前端工程師心裡 OS：「其實我是想要空等的。」</p>
+</blockquote>
+<h2 id="大綱">大綱<a class="h-anchor" href="#%e5%a4%a7%e7%b6%b1" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li><strong>在正式 API 完成前，如何讓未來要串接的工程師不要空等？</strong>
+<ul>
+<li>1.1 面試官為什麼會問？</li>
+<li>1.2 面試官想從答案確認什麼？</li>
+<li>1.3 筆者提供的簡答</li>
+</ul>
+</li>
+<li><strong>回答問題所需具備的知識</strong>
+<ul>
+<li>2.1 Mock Server 是什麼？學它有什麼好處？</li>
+<li>2.1 用 Postman 建立 Mock Server</li>
+<li>2.3 設計 Mock Server Response</li>
+<li>2.4 設定 Environment 讓你快速切換執行環境</li>
+<li>2.5 匯出 API documentation 給同事使用指引</li>
+<li>2.6 讓 Mock Server 變成私有的</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-在正式-api-完成前如何讓要串接的工程師不要空等">1. 在正式 API 完成前，如何讓要串接的工程師不要空等？<a class="h-anchor" href="#1-%e5%9c%a8%e6%ad%a3%e5%bc%8f-api-%e5%ae%8c%e6%88%90%e5%89%8d%e5%a6%82%e4%bd%95%e8%ae%93%e8%a6%81%e4%b8%b2%e6%8e%a5%e7%9a%84%e5%b7%a5%e7%a8%8b%e5%b8%ab%e4%b8%8d%e8%a6%81%e7%a9%ba%e7%ad%89" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-面試官為什麼會問">1.1 面試官為什麼會問？<a class="h-anchor" href="#11-%e9%9d%a2%e8%a9%a6%e5%ae%98%e7%82%ba%e4%bb%80%e9%ba%bc%e6%9c%83%e5%95%8f" aria-label="這個段落的連結"></a></h3>
+<p>這問題是想<code>了解你現在的工作是如何運行的</code>，因為許多專案都採取前後端分離的架構，前端常常要等後端完成後才能串接，如果後端提供的服務不穩定，又或是沒按造需求規格開發就容易導致前端空等。</p>
+<hr>
+<h3 class="h-nomark" id="12-面試官想從答案確認什麼">1.2 面試官想從答案確認什麼？<a class="h-anchor" href="#12-%e9%9d%a2%e8%a9%a6%e5%ae%98%e6%83%b3%e5%be%9e%e7%ad%94%e6%a1%88%e7%a2%ba%e8%aa%8d%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>你現在工作時，前端與後端是如何協作的</li>
+<li>你有用什麼工具，讓前端不用等你寫完 API 就能提前串接</li>
+<li>你有提供什麼文檔供前端串接時參考</li>
+<li>如果回答的是某個工具（ex：Postman），會再詳細詢問有使用到工具的哪些功能</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="13-筆者提供的簡答">1.3 筆者提供的簡答<a class="h-anchor" href="#13-%e7%ad%86%e8%80%85%e6%8f%90%e4%be%9b%e7%9a%84%e7%b0%a1%e7%ad%94" aria-label="這個段落的連結"></a></h3>
+<p>我會先依照需求規格整理出一份讓雙方<code>共同遵守的開發文檔</code>，同時使用第三方驗證工具「<code>Postman</code>」建立 <code>Mock Server</code>，並根據 Request 的參數給予對應的 Result 結果，讓前端不需要等後端 API 完成後才能開始串接的作業。</p>
+<hr>
+<h2 class="h-nomark" id="2-回答問題所需具備的知識">2. 回答問題所需具備的知識<a class="h-anchor" href="#2-%e5%9b%9e%e7%ad%94%e5%95%8f%e9%a1%8c%e6%89%80%e9%9c%80%e5%85%b7%e5%82%99%e7%9a%84%e7%9f%a5%e8%ad%98" aria-label="這個段落的連結"></a></h2>
+<p>市面上提供 Mock Server 以及產生 API doc 的工具很多，不過「Postman」是筆者用起來最順手的；Postman 除了 API 的基礎測試外，還有許多加速工作效率的功能，就讓我們透過這篇文章讓自己的 Postman 更專業吧！</p>
+<h3 class="h-nomark" id="21-mock-server-是什麼學它有什麼好處">2.1 Mock Server 是什麼？學它有什麼好處？<a class="h-anchor" href="#21-mock-server-%e6%98%af%e4%bb%80%e9%ba%bc%e5%ad%b8%e5%ae%83%e6%9c%89%e4%bb%80%e9%ba%bc%e5%a5%bd%e8%99%95" aria-label="這個段落的連結"></a></h3>
+<p>在前後端分離的架構下，前端在完成網頁版面佈局後，需等待後端完成 API 才能做後續的開發；為了不讓前端在這段時間<del>偷懶</del>苦等，Mock Server 應運而生！<code>它能回傳自訂的資料結構供前端使用</code>，等後端完成 API 後，前端只需要切換網址就能使用真實資料。</p>
+<p>除了上面的原因外，如果你開發環境的後端 Sever 不太穩定常常罷工，Mock Server 也能保證你的工作效率不受影響，畢竟不可能每次都等到 Server 修好後再工作吧？</p>
+<hr>
+<h3 class="h-nomark" id="22-用-postman-建立-mock-server">2.2 用 Postman 建立 Mock Server<a class="h-anchor" href="#22-%e7%94%a8-postman-%e5%bb%ba%e7%ab%8b-mock-server" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>Postman 改版非常快速，你看到的畫面可能跟我有些許不同</p>
+</blockquote>
+<ul>
+<li><strong>STEP 1</strong>： 建立 Mock Server
+<ol>
+<li>
+<p>New &gt; Mock Server</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-01.webp" width="1024" height="560" alt="2.2 用 Postman 建立 Mock Server（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>Create a new Collection &gt; input url &gt; Next<br>如果不是選擇已經存在的 API Collection，就需要<code>至少填寫一個 Request URL</code> 讓 Collections 有初始化的 API Request</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-02.webp" width="1024" height="682" alt="2.2 用 Postman 建立 Mock Server（圖 2）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>給 Mock Server 取個名字，並建議你勾選<code>儲存 mock server URL 到環境變數</code>的選項。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-03.webp" width="1024" height="669" alt="2.2 用 Postman 建立 Mock Server（圖 3）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+<li><strong>STEP 2</strong>： 檢查 Mock Server 是否建立成功
+<ol>
+<li>
+<p>建立成功後便可以在「Mock Servers」的分頁中看到剛剛建立的 Server，點進去後能看到這個 Sever 的網址。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-04.webp" width="1024" height="454" alt="2.2 用 Postman 建立 Mock Server（圖 4）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>接著我們到「Environments」的分頁確認，mock server URL 是否有儲存到環境變數，</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-05.webp" width="1024" height="367" alt="2.2 用 Postman 建立 Mock Server（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="23-設計-mock-server-response">2.3 設計 Mock Server Response<a class="h-anchor" href="#23-%e8%a8%ad%e8%a8%88-mock-server-response" aria-label="這個段落的連結"></a></h3>
+<p>在 Mock Server 建立後，我們要設計不同 API Request 回傳的資料結構。</p>
+<ul>
+<li><strong>STEP 1</strong>：先用 Request 的 Default example 來了解使用方式
+<ol>
+<li>
+<p>到「Collections」的分頁找到剛剛初始化的 Request， <code>{{url}}</code>會帶入環境變數所以右上角請選擇剛剛建立的「Mock_User」，按下「Send」後你會發現下面的 Response 一片空白，這是因為我們還沒設定 Mock Server Response。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-06.webp" width="1024" height="479" alt="2.3 設計 Mock Server Response（圖 6）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在左側 Request 下面有一個「Default」，<code>它就是用來自訂 Response 資料結構的 example</code>，這邊我們用 JSON 格式寫個簡單的 Response example 後按「Save」。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-07.webp" width="1024" height="569" alt="2.3 設計 Mock Server Response（圖 7）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>回到剛剛的 Request，按下「Send」後會發現 Response 的資料結構跟剛剛填寫的範例相同。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-08.webp" width="1024" height="569" alt="2.3 設計 Mock Server Response（圖 8）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+<li><strong>STEP 2</strong>：新增其他的 Response example
+<ol>
+<li>
+<p>除了最初的 Default 外，我們還可以<code>自己新增其他的 Response example</code>。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-09.webp" width="1024" height="569" alt="2.3 設計 Mock Server Response（圖 9）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>可以透過<code>加入 Params 讓這個 Request 有不同的 Response</code>，這裡我們新增「error」、「correct」這兩個 example 並加入「control_res」這個 Params 來做示範。</p>
+<blockquote>
+<p>在「DESCRIPTION」填寫的資訊會顯示在 API 文件上，寫清楚一點不但方便自己記憶，也更容易讓合作者了解。</p>
+</blockquote>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-10.webp" width="1024" height="569" alt="2.3 設計 Mock Server Response（圖 10）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-11.webp" width="1024" height="569" alt="2.3 設計 Mock Server Response（圖 11）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>回到剛剛的 Request ，我們在「control_res」填入不同的 VALUE，按下「Send」就會看到對應的 Response 嚕～</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-12.webp" width="1024" height="569" alt="2.3 設計 Mock Server Response（圖 12）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-13.webp" width="1024" height="569" alt="2.3 設計 Mock Server Response（圖 13）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="24-設定-environment-讓你快速切換執行環境">2.4 設定 Environment 讓你快速切換執行環境<a class="h-anchor" href="#24-%e8%a8%ad%e5%ae%9a-environment-%e8%ae%93%e4%bd%a0%e5%bf%ab%e9%80%9f%e5%88%87%e6%8f%9b%e5%9f%b7%e8%a1%8c%e7%92%b0%e5%a2%83" aria-label="這個段落的連結"></a></h3>
+<p>這是 Postman 重要的功能之一，它可以加快開發速度，讓你<code>不用為每個環境都建立一個 Request</code>。</p>
+<ul>
+<li>
+<p><strong>如果沒設定會發生什麼蠢事？</strong></p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-14.webp" width="547" height="421" alt="2.4 設定 Environment 讓你快速切換執行環境（圖 14）" loading="lazy" decoding="async"></p>
+<p>有沒有覺得上面這張圖片看起來很蠢，在了解 Environment 怎麼設定前，我的 Collections 就是這麼的複雜；<code>因為開發時通常環境會分成：「Local、Dev、QA、Prod」</code>，如果每新增一個環境你就複製一份，到最後你會無法進行妥善管理。</p>
+</li>
+<li>
+<p><strong>STEP 1</strong>：新增 Environment<br>之前在建立 Mock Server 時其實就已經用到了 Environment，這裡我再詳細的跟大家說這個東西的好處。<br>請先到「Environments」的分頁按下「＋」的按鈕，接著輸入名稱來新增環境（我用 local_server 做示範）。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-15.webp" width="1024" height="399" alt="2.4 設定 Environment 讓你快速切換執行環境（圖 15）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p><strong>STEP 2</strong>：設定常用的 Environment variables</p>
+<ul>
+<li>
+<p><strong>url</strong><br>這個是最實用的環境變數，讓你只需要調整 Request 的 Environment 就快速切換網址做測試。</p>
+</li>
+<li>
+<p><strong>login_user、login_password</strong><br>每個環境的使用者登入資訊通常略有不同，且大部分的 API 都需要透過登入取得 token 才能使用，把他們加入環境變數可以加速你的測試。</p>
+<blockquote>
+<p><strong>警告</strong>：<code>不建議把正式機的 password 加入環境變數，且測試機的 password 不要用平常自己會用的密碼</code>，不然資安很危險的，都已經可以偷懶用 Environment，密碼自己去產生一組吧。</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-16.webp" width="1024" height="371" alt="2.4 設定 Environment 讓你快速切換執行環境（圖 16）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p><strong>STEP 3</strong>：在 Request 使用 Environment variables<br>想在 Request 中使用 Environment variables 只需要用 <code>{{your_env_var}}</code> 包起來就好，另外右上角記得要切換到正確的 Environment 才會帶入相應的資料喔！</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-17.webp" width="1024" height="435" alt="2.4 設定 Environment 讓你快速切換執行環境（圖 17）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="25-匯出-api-documentation-給同事使用指引">2.5 匯出 API documentation 給同事使用指引<a class="h-anchor" href="#25-%e5%8c%af%e5%87%ba-api-documentation-%e7%b5%a6%e5%90%8c%e4%ba%8b%e4%bd%bf%e7%94%a8%e6%8c%87%e5%bc%95" aria-label="這個段落的連結"></a></h3>
+<p>相信後端工程師有一個共同經驗，無論你的 API 文件寫得再清楚、功能執行的再穩定；到了同事手中卻常常被說不能 Work，緊張的你檢查很多遍也找不出問題，百思不得其解的抵達同事座位後，才發現他原來<code>漏了某個參數</code>。</p>
+<p>如果你有這樣的經驗，Postman 內建的 API documentation 能拯救你，讓你在 Publish 文件後可以跟同事幸福快樂的生活。</p>
+<ul>
+<li>
+<p><strong>STEP 1</strong>：View documentation<br>選擇想要產生文檔的 Collection，按下「View documentation」後文檔就會顯示在右側，你可以透過切換右上角的環境變數來檢視文檔。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-18.webp" width="1024" height="688" alt="2.5 匯出 API documentation 給同事使用指引（圖 18）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p><strong>STEP 2</strong>：Publish documentation</p>
+<ol>
+<li>
+<p>當你確定文檔內容都沒問題後按「Publish」。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-19.webp" width="1024" height="234" alt="2.5 匯出 API documentation 給同事使用指引（圖 19）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>接著會要你調整一些參數，調整完後建議先用左側的「Preview Documentation」自己確認看看是否符合。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-20.webp" width="1024" height="770" alt="2.5 匯出 API documentation 給同事使用指引（圖 20）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>確認一切都沒問題後按下「Publish Collection」就發布出去嚕～</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-21.webp" width="1024" height="450" alt="2.5 匯出 API documentation 給同事使用指引（圖 21）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>STEP 4</strong>：Share API Doc URL<br>你可以將 URL 複製起來分享給你的合作夥伴，如果你想把這份文檔下架，按「Unpublish」即可。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-22.webp" width="1024" height="521" alt="2.5 匯出 API documentation 給同事使用指引（圖 22）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="26-讓-mock-server-變成私有的">2.6 讓 Mock Server 變成私有的<a class="h-anchor" href="#26-%e8%ae%93-mock-server-%e8%ae%8a%e6%88%90%e7%a7%81%e6%9c%89%e7%9a%84" aria-label="這個段落的連結"></a></h3>
+<p>前面在建立 Mock Server 時，不知道有沒有人注意到「<code>Make mock server private</code>」的選項，在做這個設定前 Mock Server 的 URL 都是公開的，如果你想為自己的 Mock Server 多一層防護可以跟著下面步驟操作：</p>
+<ul>
+<li>
+<p><strong>STEP 1</strong> : 編輯 Mock server</p>
+<ol>
+<li>
+<p>在「Mock Servers」分頁打開之前創建的 Server，按下「Edit」。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-23.webp" width="1024" height="386" alt="2.6 讓 Mock Server 變成私有的（圖 23）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>將「Make mock server private」打勾並按下「Save changes」。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-24.webp" width="1024" height="679" alt="2.6 讓 Mock Server 變成私有的（圖 24）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>回到之前的 Request，你會發現按下「Send」後會回傳錯誤訊息，這是因為現在 <code>Mock Server 都需要添加 API key 到 Request 的 Header 才能使用</code>。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-25.webp" width="1024" height="522" alt="2.6 讓 Mock Server 變成私有的（圖 25）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>STEP 2</strong> : 產生 Postman API key</p>
+<ol>
+<li>
+<p>進去這個 <a href="https://go.postman.co/settings/me/api-keys">網址</a> ，點擊「Generate API key」。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-26.webp" width="1024" height="425" alt="2.6 讓 Mock Server 變成私有的（圖 26）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>填上用來識別這個 API key 的名稱後按下「Generate API key」。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-27.webp" width="1024" height="457" alt="2.6 讓 Mock Server 變成私有的（圖 27）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>接著<code>請複製這個 API key</code>，上面已經警告你這是唯一見到它的機會了。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-28.webp" width="1024" height="482" alt="2.6 讓 Mock Server 變成私有的（圖 28）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>STEP 3</strong>：將 API key 加入 Environment<br>因為日後 Mock Server 的所有 Request 都需要這個 API key，所以我們把他加入 Environment，變數名稱為「x-api-key」。</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-29.webp" width="1024" height="394" alt="2.6 讓 Mock Server 變成私有的（圖 29）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p><strong>STEP 4</strong>：在 Request 的 Header 加上 x-api-key<br>最後回到 Request，在 Headers 的分頁下加入「x-api-key」這個參數並將環境變數 <code>{{x-api-key}}</code> 作為值，最後按下「Send」就能看到正確的 Response 回傳嚕！</p>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-30.webp" width="1024" height="456" alt="2.6 讓 Mock Server 變成私有的（圖 30）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+<hr>
+<p>感謝大家的閱讀，如果喜歡我的文章可以<code>訂閱</code>接收通知；如果有幫助到你，按<code>Like</code>可以讓我更有寫文的動力，我們明天見～</p>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://medium.com/dean-lin/afc5c04742e0">讓你的 Postman 更專業(筆者部落格)</a></li>
+</ol>
+<hr>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-31.webp" width="1024" height="233" alt="參考資源（圖 31）" loading="lazy" decoding="async"></p>
+<p>在許多人的幫助下，本系列文章已成功出版，除了添加新的篇章，更完善了每個案例的應對進退；如果對現在的職涯感到迷茫，也許這本書能帶給你不一樣的觀點～</p>
+<p><strong>天瓏書局：</strong> <a href="https://www.tenlong.com.tw/products/9786263334571">https://www.tenlong.com.tw/products/9786263334571</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
     <item>
       <title>讓你的 Postman 更專業 — Mock Server &amp; Environments &amp; Publish API doc</title>
       <link>https://deanlin.net/blog/202102/postman-mock-server-environments/</link>
@@ -37,7 +294,7 @@
 四、補充說明
   🤫 讓 Mock server 變成私有的
 </code></pre><h2 id="一建立-mock-server">一、建立 Mock Server<a class="h-anchor" href="#%e4%b8%80%e5%bb%ba%e7%ab%8b-mock-server" aria-label="這個段落的連結"></a></h2>
-<h3 id="-為什麼需要學習這個技術">🤔 為什麼需要學習這個技術？<a class="h-anchor" href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81%e5%ad%b8%e7%bf%92%e9%80%99%e5%80%8b%e6%8a%80%e8%a1%93" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="-為什麼需要學習這個技術">🤔 為什麼需要學習這個技術？<a class="h-anchor" href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81%e5%ad%b8%e7%bf%92%e9%80%99%e5%80%8b%e6%8a%80%e8%a1%93" aria-label="這個段落的連結"></a></h3>
 <p>過去在前後端分離的架構下，在 api 規格開出來後前端需等待後端完成 api 後才能做後續的開發；<strong>為了不讓前端在這段時間偷懶</strong>😏<strong>，Mock server 應運而生！</strong>他能回傳假資料供前端使用，等後端完成 api 後他只需要切換 end point 就能使用真實資料。</p>
 <p>除了上面的原因外，如果你開發環境的 api sever 不太穩定常常因不明原因工作異常，<strong>Mock server 也能保證你的工作效率不受影響</strong>，畢竟不可能每次都等到 Server 修好後在工作吧？</p>
 <h3 id="step-1建立-mock-server">STEP 1：建立 Mock Server<a class="h-anchor" href="#step-1%e5%bb%ba%e7%ab%8b-mock-server" aria-label="這個段落的連結"></a></h3>
@@ -96,7 +353,7 @@
 </div>
 
 <h2 id="二設定-environments">二、設定 Environments<a class="h-anchor" href="#%e4%ba%8c%e8%a8%ad%e5%ae%9a-environments" aria-label="這個段落的連結"></a></h2>
-<h3 id="-如果不了解怎麼設定會發生什麼蠢事">🤔 如果不了解怎麼設定會發生什麼蠢事？<a class="h-anchor" href="#-%e5%a6%82%e6%9e%9c%e4%b8%8d%e4%ba%86%e8%a7%a3%e6%80%8e%e9%ba%bc%e8%a8%ad%e5%ae%9a%e6%9c%83%e7%99%bc%e7%94%9f%e4%bb%80%e9%ba%bc%e8%a0%a2%e4%ba%8b" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="-如果不了解怎麼設定會發生什麼蠢事">🤔 如果不了解怎麼設定會發生什麼蠢事？<a class="h-anchor" href="#-%e5%a6%82%e6%9e%9c%e4%b8%8d%e4%ba%86%e8%a7%a3%e6%80%8e%e9%ba%bc%e8%a8%ad%e5%ae%9a%e6%9c%83%e7%99%bc%e7%94%9f%e4%bb%80%e9%ba%bc%e8%a0%a2%e4%ba%8b" aria-label="這個段落的連結"></a></h3>
 <p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-15.webp" width="547" height="421" alt="🤔 如果不了解怎麼設定會發生什麼蠢事？（圖 15）" loading="lazy" decoding="async"></p>
 <p>有沒有覺得上面這張圖片看起來很蠢😅，在了解 Environments 怎麼設定前，我的 Collections 就是這麼的複雜😇，因為寫程式時通常環境會有：『本機、開發機、測試機、正式機』，如果每新增一個環境你就複製一份，到最後你會無法進行妥善管理；更何況大多數的 api 其實只有網址的差異而已。</p>
 <h3 id="step-1新增-environments">STEP 1：新增 Environments<a class="h-anchor" href="#step-1%e6%96%b0%e5%a2%9e-environments" aria-label="這個段落的連結"></a></h3>
@@ -112,7 +369,7 @@
 <p>想在 request 中使用 Environments variable 只需要用 <code>{{your_env_var}}</code> 包起來就好，另外右上角記得要切換到正確的 Environments 才會帶入相應的資料喔！</p>
 <p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-18.webp" width="1356" height="502" alt="STEP 3：在 request 使用 Environments variable（圖 18）" loading="lazy" decoding="async"></p>
 <h2 id="三匯出-api-documentation">三、匯出 API documentation<a class="h-anchor" href="#%e4%b8%89%e5%8c%af%e5%87%ba-api-documentation" aria-label="這個段落的連結"></a></h2>
-<h3 id="-為什麼同事常常說我正確的api有問題">🤔 為什麼同事常常說我正確的api有問題？<a class="h-anchor" href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e5%90%8c%e4%ba%8b%e5%b8%b8%e5%b8%b8%e8%aa%aa%e6%88%91%e6%ad%a3%e7%a2%ba%e7%9a%84api%e6%9c%89%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="-為什麼同事常常說我正確的api有問題">🤔 為什麼同事常常說我正確的api有問題？<a class="h-anchor" href="#-%e7%82%ba%e4%bb%80%e9%ba%bc%e5%90%8c%e4%ba%8b%e5%b8%b8%e5%b8%b8%e8%aa%aa%e6%88%91%e6%ad%a3%e7%a2%ba%e7%9a%84api%e6%9c%89%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
 <p>相信後端工程師有一個共同經驗，無論你的 API 文件寫得再清楚功能執行的再穩定；到了同事手中卻常常被說不能 work，緊張的你檢查很多遍也找不出問題，百思不得其解的抵達同事座位才發現他原來漏了某個參數。</p>
 <p>如果你有這樣的經驗，Postman 內建的 API documentation 能拯救你，讓你在 publish 文件後可以跟同事幸福快樂的生活。</p>
 <h3 id="step-1view-documentation">STEP 1：view documentation<a class="h-anchor" href="#step-1view-documentation" aria-label="這個段落的連結"></a></h3>
@@ -128,7 +385,7 @@
 <p>你可以將 URL 複製起來分享給你的合作夥伴，如果你想把這份文檔下架，按『Unpublish』即可</p>
 <p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-23.webp" width="1400" height="712" alt="STEP 2：publish documentation（圖 23）" loading="lazy" decoding="async"></p>
 <h2 id="四補充說明">四、補充說明<a class="h-anchor" href="#%e5%9b%9b%e8%a3%9c%e5%85%85%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h2>
-<h3 id="-讓-mock-server-變成私有的">🤫 讓 Mock server 變成私有的<a class="h-anchor" href="#-%e8%ae%93-mock-server-%e8%ae%8a%e6%88%90%e7%a7%81%e6%9c%89%e7%9a%84" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="-讓-mock-server-變成私有的">🤫 讓 Mock server 變成私有的<a class="h-anchor" href="#-%e8%ae%93-mock-server-%e8%ae%8a%e6%88%90%e7%a7%81%e6%9c%89%e7%9a%84" aria-label="這個段落的連結"></a></h3>
 <p>在前面 Mock Server 時不知道有沒有人注意到有『Make mock server private』的選項，這做這個設定前這個 mock server 的 url 都是公開的，如果你想為自己的 mock server 多一層防護可以這樣做</p>
 <h3 id="step-1--編輯-mock-server">STEP 1 : 編輯 Mock server<a class="h-anchor" href="#step-1--%e7%b7%a8%e8%bc%af-mock-server" aria-label="這個段落的連結"></a></h3>
 <p>從『Mock Servers』分頁打開之前創建的 Server，按下『Edit』做設定</p>
@@ -150,6 +407,217 @@
 <h3 id="step-4request-的-header-加上-x-api-key">STEP 4：request 的 header 加上 x-api-key<a class="h-anchor" href="#step-4request-%e7%9a%84-header-%e5%8a%a0%e4%b8%8a-x-api-key" aria-label="這個段落的連結"></a></h3>
 <p>最後回到 request，在 Headers 的分頁下加入『x-api-key』這個參數並將環境變數 <code>{{x-api-key}}</code> 作為值後按下『Send』就看到正確的 response 回傳嚕！</p>
 <p><img src="https://deanlin.net/blog/202102/postman-mock-server-environments/images/postman-mock-server-environments-31.webp" width="1354" height="603" alt="STEP 4：request 的 header 加上 x-api-key（圖 31）" loading="lazy" decoding="async"></p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</title>
+      <link>https://deanlin.net/blog/202010/fb-ig-crawler-day-27/</link>
+      <pubDate>Mon, 12 Oct 2020 08:33:53 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/fb-ig-crawler-day-27/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>在通知這個部分我選擇使用 LINE Notify 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager... 等通訊軟體來通知喔</description>
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-og_hu_f8605744d95f3eff.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>爬蟲完成後沒發出通知，就像是黯然銷魂飯少了洋蔥</p>
+</blockquote>
+<h2 id="為什麼通知很重要">為什麼通知很重要？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e9%80%9a%e7%9f%a5%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>在爬蟲的運作完全自動化的狀態下你需要<code>透過接收通知，知道爬蟲執行完畢</code></li>
+<li>通知的內容要簡述這次爬蟲的狀況，因為實際上使用者只有在要報告或是寫文章的時候才會去 Google Sheets 看爬蟲的詳細數據，平常他只需要<code>知道爬蟲有沒有穩定執行</code>就好</li>
+</ol>
+<p>在通知這個部分我<code>選擇使用 LINE Notify</code> 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager&hellip; 等通訊軟體來通知喔</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-取得-line-notify-權杖">1. 取得 LINE Notify 權杖<a class="h-anchor" href="#1-%e5%8f%96%e5%be%97-line-notify-%e6%ac%8a%e6%9d%96" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="2-使用-postman-測試-line-notify">2. 使用 POSTMAN 測試 LINE Notify<a class="h-anchor" href="#2-%e4%bd%bf%e7%94%a8-postman-%e6%b8%ac%e8%a9%a6-line-notify" aria-label="這個段落的連結"></a></h3>
+<p>2.1 為什麼要先用 POSTMAN 測試 LINE Notify 呢？<br>2.2 用 POSTMAN 發出 LINE 的訊息<br>2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思</p>
+<hr>
+<h2 class="h-nomark" id="1-取得-line-notify-權杖-1">1. 取得 LINE Notify 權杖<a class="h-anchor" href="#1-%e5%8f%96%e5%be%97-line-notify-%e6%ac%8a%e6%9d%96-1" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>
+<p>請以 LINE 帳號<a href="https://notify-bot.line.me/zh_TW/">登入 LINE Notify</a>，登入後選擇 <code>個人頁面</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01.webp" width="1024" height="425" alt="1. 取得 LINE Notify 權杖（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>為了要獲得控制 LINE Notify 發訊息的權限，我們要 <code>發行權杖</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-02.webp" width="1024" height="729" alt="1. 取得 LINE Notify 權杖（圖 2）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在發行權杖的彈窗中，<strong>權杖名稱</strong>請<code>填寫與功能相關的名稱</code>，<strong>接收通知的聊天室</strong>可選擇 <code>1對1、任意聊天室</code> 這兩種，確認無誤後按 <code>發行</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-03.webp" width="1024" height="728" alt="1. 取得 LINE Notify 權杖（圖 3）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>接著我們要將這組權杖(Token) <code>複製</code> 下來</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-04.webp" width="1024" height="566" alt="1. 取得 LINE Notify 權杖（圖 4）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>關閉彈窗後能看到 <strong>已連動的服務中</strong> 有我們剛剛新增的服務</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-05.webp" width="1024" height="566" alt="1. 取得 LINE Notify 權杖（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>同時你收到 LINE Notify 帳號啟用權杖的訊息</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-06.webp" width="1024" height="603" alt="1. 取得 LINE Notify 權杖（圖 6）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>將發行的權杖(Token)加入 <strong>.env</strong> 環境檔，在明天的教學會使用到</p>
+<h3 id="envexmaple">.env.exmaple<a class="h-anchor" href="#envexmaple" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code>#放LINE Notify申請的權杖
+LINE_TOKEN=&#39;XXXXXX&#39;
+</code></pre></li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-使用-postman-測試-line-notify-1">2. 使用 POSTMAN 測試 LINE Notify<a class="h-anchor" href="#2-%e4%bd%bf%e7%94%a8-postman-%e6%b8%ac%e8%a9%a6-line-notify-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-為什麼要先用-postman-測試-line-notify-呢">2.1 為什麼要先用 POSTMAN 測試 LINE Notify 呢？<a class="h-anchor" href="#21-%e7%82%ba%e4%bb%80%e9%ba%bc%e8%a6%81%e5%85%88%e7%94%a8-postman-%e6%b8%ac%e8%a9%a6-line-notify-%e5%91%a2" aria-label="這個段落的連結"></a></h3>
+<p>說明這個問題之前，我們先來探討為什麼 POSTMAN 會這麼被工程師推崇，在這我歸納成以下幾點：</p>
+<ol>
+<li>對 <strong>後端工程師</strong> 而言，可以向合作夥伴證明自己寫的 api 沒有在唬爛，真的可以 work</li>
+<li>對 <strong>前端工程師、App工程師、有使用 api 需求的人</strong> 來說，能在串接 api 前先用 POSTMAN 確認這些 api 真的可以 work</li>
+<li>有了這個工具作輔助，我們就能<code>將前後端責任歸屬的很清楚</code>。ex：如果 POSTMAN 上面可以正常 work，那前端就要去思考自己 api 哪裡沒串好</li>
+<li><code>工具操作難度極低</code>，只需要對網路的世界有基礎的認知就能快速上手</li>
+</ol>
+<p>所以我們先用 POSTMAN 測試 LINE Notify 的理由是：</p>
+<ol>
+<li>確保 LINE Notify api <code>執行所需的 Request 參數、Respone 的結果與說明書一致</code>（這點非常重要，因為我看過很多 api 回傳的結構跟說明書完全不一樣）</li>
+<li><code>在一行程式都不用寫</code>的狀態下測試所有的可能性</li>
+<li>在 POSTMAN 驗證後就能專心寫程式，因為<code>如果程式無法發出 LINE 的通知一定是自己的問題</code></li>
+</ol>
+<blockquote>
+<h4 id="補充">補充：<a class="h-anchor" href="#%e8%a3%9c%e5%85%85" aria-label="這個段落的連結"></a></h4>
+<ul>
+<li><strong>POSTMAN</strong> 在工程師的世界中素有 <code>API測試神器</code>之稱，如果你對 POSTMAN 一無所知的話你可以先透過<a href="https://tw.alphacamp.co/blog/postman-api-tutorial-for-beginners">這篇文章</a>了解一下他是做什麼的</li>
+<li>他可以直接用 Gmail帳號登入在<a href="https://www.postman.com/">網頁使用</a>，也能<a href="https://www.postman.com/downloads/">下載桌面版 App</a>，相同帳號的操作記錄在兩邊都會同步</li>
+</ul>
+</blockquote>
+<hr>
+<h3 class="h-nomark" id="22-用-postman-發出-line-的訊息">2.2 用 POSTMAN 發出 LINE 的訊息<a class="h-anchor" href="#22-%e7%94%a8-postman-%e7%99%bc%e5%87%ba-line-%e7%9a%84%e8%a8%8a%e6%81%af" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>設定 Request 的參數
+<ul>
+<li>
+<p><strong>URL</strong>：https://notify-api.line.me/api/notify</p>
+</li>
+<li>
+<p><strong>Method</strong>：POST</p>
+</li>
+<li>
+<p><strong>Authorization</strong>：</p>
+<ul>
+<li><strong>TYPE</strong>：Bearer Token</li>
+<li><strong>Token</strong>：填入你剛剛在 LINE Notify 申請的權杖</li>
+</ul>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-07.webp" width="912" height="419" alt="2.2 用 POSTMAN 發出 LINE 的訊息（圖 7）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p><strong>Body</strong>：</p>
+<ul>
+<li><strong>form-data</strong>：
+<table>
+  <thead>
+      <tr>
+          <th>key</th>
+          <th>value</th>
+          <th>DESCRIPTION</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>message</td>
+          <td>來自寶寶的爬蟲通知</td>
+          <td>純文字(必填)</td>
+      </tr>
+      <tr>
+          <td>stickerPackageId</td>
+          <td>2</td>
+          <td>貼圖的PackageId</td>
+      </tr>
+      <tr>
+          <td>stickerId</td>
+          <td>144</td>
+          <td>貼圖的Id</td>
+      </tr>
+      <tr>
+          <td>imageFile</td>
+          <td>icon.png</td>
+          <td>電腦上的圖片檔</td>
+      </tr>
+  </tbody>
+</table>
+</li>
+</ul>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-08.webp" width="896" height="420" alt="2.2 用 POSTMAN 發出 LINE 的訊息（圖 8）" loading="lazy" decoding="async"></p>
+<p>DESCRIPTION 是我對參數描述，實作上可以不避填<br>如果你想深入的了解可以參考<a href="https://notify-bot.line.me/doc/en/">官方文件</a></p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>完成 Request 參數填寫後按下 <code>Send</code> 發出 LINE 訊息
+<ul>
+<li>
+<p>看到 Response 的結果，status 為 200 代表傳送成功</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-09.webp" width="836" height="189" alt="2.2 用 POSTMAN 發出 LINE 的訊息（圖 9）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在發行權杖的聊天室中，看到 POSTMAN 傳送的 <strong>訊息、貼圖、圖片</strong></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-10.webp" width="760" height="880" alt="2.2 用 POSTMAN 發出 LINE 的訊息（圖 10）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 class="h-nomark" id="23-透過-postman-傳送錯誤參數來了解-http狀態碼的意思">2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思<a class="h-anchor" href="#23-%e9%80%8f%e9%81%8e-postman-%e5%82%b3%e9%80%81%e9%8c%af%e8%aa%a4%e5%8f%83%e6%95%b8%e4%be%86%e4%ba%86%e8%a7%a3-http%e7%8b%80%e6%85%8b%e7%a2%bc%e7%9a%84%e6%84%8f%e6%80%9d" aria-label="這個段落的連結"></a></h3>
+<p>我們剛剛在 POSTMAN 的 Response 看到 HTTP狀態碼為 200，接下來我們故意做一些錯誤測試來看看會有什麼樣的 Response</p>
+<blockquote>
+<p><code>請注意並不是每隻 api Response data 中的 status 都等於 HTTP狀態碼</code>，只是 LINE Notify 剛好是依照這個邏輯顯示，我們可以用它來幫助我們對 HTTP狀態碼的了解</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-11.webp" width="829" height="189" alt="2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思（圖 11）" loading="lazy" decoding="async"></p>
+</blockquote>
+<ol>
+<li><strong>不填寫 LINE Notify 的權杖</strong>
+<ul>
+<li>
+<p>HTTP狀態碼為 401，代表需要授權才能使用</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-12.webp" width="919" height="506" alt="2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思（圖 12）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+<li><strong>在 Body 中不填寫 message 的參數</strong>
+<ul>
+<li>
+<p>HTTP狀態碼為 400，意味伺服器收到無效的語法</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-13.webp" width="896" height="643" alt="2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思（圖 13）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+</ol>
+<p>透過上面的範例回傳的資訊，我們可以了解到不同 HTTP狀態碼的意思：<code>200 代表成功、400可能是參數錯誤、401是沒有授權</code>，當然 HTTP狀態碼不只這些，如果你想更深入的了解可以參考<a href="https://blog.poychang.net/http-status-code/">這篇文章</a></p>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://dotblogs.com.tw/TingI/2019/02/12/182723">[API連線測試]使用Postman測試LINE Notify的訊息推送</a></li>
+<li><a href="https://notify-bot.line.me/doc/en/">LINE Notify API Document</a></li>
+<li><a href="https://tw.alphacamp.co/blog/postman-api-tutorial-for-beginners">Postman 新手教學</a></li>
+<li><a href="https://blog.poychang.net/http-status-code/">HTTP 狀態碼一覽表</a></li>
+</ol>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-14.webp" width="1024" height="233" alt="參考資源（圖 14）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
 ]]></content:encoded>
     </item>
   </channel>

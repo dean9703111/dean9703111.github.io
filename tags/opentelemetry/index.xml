@@ -18,7 +18,7 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。</description>
-      <media:content url="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-og_hu_f613ef436e76e66f.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-og_hu_e4284c2e62441bb9.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<p>我們可以把 Kafka 當成傳遞消息的「轉運站」，但有時就算 Consumer 順利拿到 Producer 的消息，我們也無法保證接下來的運作都符合預期。</p>
 <p>而且會用到 Kafka 的系統，大多以微服務（Microservices）為主；若沒有搭配合適的追蹤系統，我們很難排查 Consumer 收到消息後發生的錯誤。</p>
 <p><img src="https://deanlin.net/blog/202211/trace-kafka-with-jaeger/images/trace-kafka-with-jaeger-01.webp" width="1400" height="726" alt="透過 Jaeger with OpenTelemetry 追蹤 Kafka 資料傳遞路徑與運行狀況（圖 1）" loading="lazy" decoding="async"></p>
@@ -44,7 +44,7 @@
 <p>比如使用「instrumentation-http」這款套件時，它會把所有 http 相關的操作都記錄下來，但我們實際上只關心其中的幾個路徑。</p>
 </blockquote>
 <p>因此在某些情況下，自定義追蹤的 Parent &amp; Child 關聯是有必要的；下面筆者擷取關鍵的程式碼來做說明：</p>
-<h3 id="-透過-w3ctracecontextpropagator-把-span-資訊-inject-到-carrier">➤ 透過 W3CTraceContextPropagator 把 span 資訊 inject 到 carrier<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-%e6%8a%8a-span-%e8%b3%87%e8%a8%8a-inject-%e5%88%b0-carrier" aria-label="這個段落的連結"></a></h3>
+<h3 id="-透過-w3ctracecontextpropagator-把-span-資訊-inject-到-carrier">透過 W3CTraceContextPropagator 把 span 資訊 inject 到 carrier<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-%e6%8a%8a-span-%e8%b3%87%e8%a8%8a-inject-%e5%88%b0-carrier" aria-label="這個段落的連結"></a></h3>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> span <span style="color:#ff7b72;font-weight:bold">=</span> tracer.startSpan(<span style="color:#a5d6ff">&#39;example&#39;</span>);
 </span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> carrier <span style="color:#ff7b72;font-weight:bold">=</span> {};
 </span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> propagator <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> W3CTraceContextPropagator();
@@ -54,7 +54,7 @@
 </span></span><span style="display:flex;"><span>    api.defaultTextMapSetter,
 </span></span><span style="display:flex;"><span>);
 </span></span><span style="display:flex;"><span>span.end()
-</span></span></code></pre></div><h3 id="-透過-w3ctracecontextpropagator-extract-carrier-資訊使其成為能使用的-context">➤ 透過 W3CTraceContextPropagator extract carrier 資訊，使其成為能使用的 Context<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-extract-carrier-%e8%b3%87%e8%a8%8a%e4%bd%bf%e5%85%b6%e6%88%90%e7%82%ba%e8%83%bd%e4%bd%bf%e7%94%a8%e7%9a%84-context" aria-label="這個段落的連結"></a></h3>
+</span></span></code></pre></div><h3 id="-透過-w3ctracecontextpropagator-extract-carrier-資訊使其成為能使用的-context">透過 W3CTraceContextPropagator extract carrier 資訊，使其成為能使用的 Context<a class="h-anchor" href="#-%e9%80%8f%e9%81%8e-w3ctracecontextpropagator-extract-carrier-%e8%b3%87%e8%a8%8a%e4%bd%bf%e5%85%b6%e6%88%90%e7%82%ba%e8%83%bd%e4%bd%bf%e7%94%a8%e7%9a%84-context" aria-label="這個段落的連結"></a></h3>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> propagator <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> W3CTraceContextPropagator();
 </span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 解析 carrier
 </span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> parentCtx <span style="color:#ff7b72;font-weight:bold">=</span> propagator.extract(api.context.active(), carrier, api.defaultTextMapGetter);
@@ -84,7 +84,7 @@
 <p>對 Status 的任何變動，都會透過 Producer 將資訊傳遞到 <strong>reports/{id} </strong>這個 Topic，讓前端監聽的的 Consumer 可以作出對應的變動。</p>
 </blockquote>
 <p>上面是比較完整的業務邏輯，建議讀者可以自行實做看看，下面筆者就單純示範透過 Kafka 傳遞 carrier 資訊的部分：</p>
-<h3 id="-在-producer-的-value-放上-carrier-的資訊記得要轉為字串">➤ 在 Producer 的 value 放上 carrier 的資訊（記得要轉為字串）<a class="h-anchor" href="#-%e5%9c%a8-producer-%e7%9a%84-value-%e6%94%be%e4%b8%8a-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a%e8%a8%98%e5%be%97%e8%a6%81%e8%bd%89%e7%82%ba%e5%ad%97%e4%b8%b2" aria-label="這個段落的連結"></a></h3>
+<h3 id="-在-producer-的-value-放上-carrier-的資訊記得要轉為字串">在 Producer 的 value 放上 carrier 的資訊（記得要轉為字串）<a class="h-anchor" href="#-%e5%9c%a8-producer-%e7%9a%84-value-%e6%94%be%e4%b8%8a-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a%e8%a8%98%e5%be%97%e8%a6%81%e8%bd%89%e7%82%ba%e5%ad%97%e4%b8%b2" aria-label="這個段落的連結"></a></h3>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">await</span> producer.connect()
 </span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> producer
 </span></span><span style="display:flex;"><span>  .send({
@@ -94,7 +94,7 @@
 </span></span><span style="display:flex;"><span>      value<span style="color:#ff7b72;font-weight:bold">:</span> JSON.stringify(carrier)
 </span></span><span style="display:flex;"><span>    })
 </span></span><span style="display:flex;"><span>  });
-</span></span></code></pre></div><h3 id="-從-consumer-收到的-message-中取出-carrier-的資訊">➤ 從 Consumer 收到的 message 中取出 carrier 的資訊<a class="h-anchor" href="#-%e5%be%9e-consumer-%e6%94%b6%e5%88%b0%e7%9a%84-message-%e4%b8%ad%e5%8f%96%e5%87%ba-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+</span></span></code></pre></div><h3 id="-從-consumer-收到的-message-中取出-carrier-的資訊">從 Consumer 收到的 message 中取出 carrier 的資訊<a class="h-anchor" href="#-%e5%be%9e-consumer-%e6%94%b6%e5%88%b0%e7%9a%84-message-%e4%b8%ad%e5%8f%96%e5%87%ba-carrier-%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">await</span> consumer.connect()
 </span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> consumer.subscribe({ topic, fromBeginning<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span> })
 </span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> consumer.run({
@@ -363,7 +363,7 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>大型專案免不了要多個團隊合作，而每個團隊熟悉的程式語言可能不同，所部署的服務也可能分佈在多台 Server 上面。在這樣複雜的架構下，如果系統的某個服務出問題，又或是遇到效能瓶頸；即便有 log 紀錄，但在上下依賴不清楚的狀態下，工程師需要花不少時間來釐清問題原因。</description>
-      <media:content url="https://deanlin.net/blog/202211/distributed-tracing-jaeger-opentelemetry/images/distributed-tracing-jaeger-opentelemetry-og_hu_138bb958bceb40d3.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202211/distributed-tracing-jaeger-opentelemetry/images/distributed-tracing-jaeger-opentelemetry-og_hu_10728b3352759c18.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<p>大型專案免不了要多個團隊合作，而每個團隊熟悉的程式語言可能不同，所部署的服務也可能分佈在多台 Server 上面。</p>
 <p>在這樣複雜的架構下，如果系統的某個服務出問題，又或是遇到效能瓶頸；即便有 log 紀錄，但在上下依賴不清楚的狀態下，工程師需要花不少時間來釐清問題原因。</p>
 <p><img src="https://deanlin.net/blog/202211/distributed-tracing-jaeger-opentelemetry/images/distributed-tracing-jaeger-opentelemetry-01.webp" width="1400" height="730" alt="善用分布式追蹤系統，幫你找出程式的效能瓶頸與問題影響範圍（Jaeger with OpenTelemetry Node.js）（圖 1）" loading="lazy" decoding="async"></p>

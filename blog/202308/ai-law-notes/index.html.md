@@ -45,24 +45,24 @@
 
 除了不同國家的法律不同外，不同 AI 工具的規範也不同，下面跟大家列舉幾個案例：
 
-### ➤ Stable Diffision
+### Stable Diffision
 
 - **線上版本**：屬於創用 cc，簡單來說就是公眾所有，[連結](https://stablediffusionweb.com/#faq)
 - **本機版本**：你可以自行定義，但須符合國家的法規。
 
-### ➤ Midjourney
+### Midjourney
 
 - **付費使用者**：在法律許可內擁有產出作品的權利，但不包括你對別人圖像的創作；年營收 100 萬美金的公司必須選擇 Pro 方案才擁有產出作品的權利。
 
 不過 Midjourney 並不會為使用者做擔保，且他會拿你生成好的資料再做應用，[連結](https://docs.midjourney.com/docs/terms-of-service)。
 
-### ➤ DALLE
+### DALLE
 
 你可以拿創作出來的作品去商用、販售、移除浮水印；但不可以去誤導你的對象，需要告知這些是 AI 生成的，[連結](https://help.openai.com/en/articles/6468065-dall-e-content-policy-faq)。
 
   [https://help.openai.com/en/articles/6640875-how-should-i-credit-dall-e-in-my-work](https://help.openai.com/en/articles/6640875-how-should-i-credit-dall-e-in-my-work)
 
-### ➤ Adobe Firefly、Shutterstock
+### Adobe Firefly、Shutterstock
 
 這兩個公司很霸氣，說如果你使用它生成的圖被告，他會幫你處理：
 

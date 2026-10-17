@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>【Day30】時間只是考驗，心中信念絲毫未減</title>
+  <meta name="description" content="因為在過去的鐵人賽中很少看到從專案角度來分享技術的文章，所以我選擇從這個角度出發，因為我認為了解專案中每個技術選擇的動機，與學習一個新的技術一樣重要；技術可能被淘汰，但經驗會留下來，希望大家會喜歡我這個系列的文章。">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-30/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-30/index.html.md" title="Markdown">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="【Day30】時間只是考驗，心中信念絲毫未減">
+  <meta property="og:description" content="因為在過去的鐵人賽中很少看到從專案角度來分享技術的文章，所以我選擇從這個角度出發，因為我認為了解專案中每個技術選擇的動機，與學習一個新的技術一樣重要；技術可能被淘汰，但經驗會留下來，希望大家會喜歡我這個系列的文章。">
+  <meta property="og:url" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-30/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-10-15T08:43:22&#43;08:00">
+  <meta property="article:modified_time" content="2020-10-15T08:43:22&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="爬蟲專案">
+  <meta property="article:tag" content="完賽經驗分享">
+  <meta property="article:tag" content="致謝">
+  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-og_hu_8a20ca8e052d65bb.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="【Day30】時間只是考驗，心中信念絲毫未減">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-og_hu_8a20ca8e052d65bb.jpg">
+  <meta name="twitter:title" content="【Day30】時間只是考驗，心中信念絲毫未減">
+  <meta name="twitter:description" content="因為在過去的鐵人賽中很少看到從專案角度來分享技術的文章，所以我選擇從這個角度出發，因為我認為了解專案中每個技術選擇的動機，與學習一個新的技術一樣重要；技術可能被淘汰，但經驗會留下來，希望大家會喜歡我這個系列的文章。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-30/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-15T08:43:22+08:00","datePublished":"2020-10-15T08:43:22+08:00","description":"因為在過去的鐵人賽中很少看到從專案角度來分享技術的文章，所以我選擇從這個角度出發，因為我認為了解專案中每個技術選擇的動機，與學習一個新的技術一樣重要；技術可能被淘汰，但經驗會留下來，希望大家會喜歡我這個系列的文章。","headline":"【Day30】時間只是考驗，心中信念絲毫未減","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-og_hu_8a20ca8e052d65bb.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-og_hu_e8ac3147b9b46ed0.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-og_hu_d9526df4381a95b4.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, 爬蟲專案, 完賽經驗分享, 致謝","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-30/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-og_hu_8a20ca8e052d65bb.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10252816"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-og_hu_8a20ca8e052d65bb.jpg","timeRequired":"PT6M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-30/","wordCount":2718},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-30/","name":"【Day30】時間只是考驗，心中信念絲毫未減","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">【Day30】時間只是考驗，心中信念絲毫未減</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-10-15">2020.10.15</time>
+              <span>閱讀約 6 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>30</b>/ 30</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e5%b0%88%e6%a1%88%e7%b8%bd%e7%b5%90">專案總結</a></li><li class="is-sub"><a href="#1-%e9%90%b5%e4%ba%ba%e8%b3%bd%e7%9a%84%e6%94%b6%e7%a9%ab">1. 鐵人賽的收穫</a></li><li class="is-sub"><a href="#2-%e5%9c%a8%e9%90%b5%e4%ba%ba%e8%b3%bd%e9%81%8e%e7%a8%8b%e4%b8%ad%e9%81%87%e5%88%b0%e7%9a%84%e6%8c%91%e6%88%b0">2. 在鐵人賽過程中遇到的挑戰</a></li><li class="is-sub"><a href="#3-%e5%ae%8c%e6%95%b4%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f%e7%a2%bc--%e5%9f%ba%e7%a4%8e%e8%a8%ad%e5%ae%9a%e8%aa%aa%e6%98%8e">3. 完整專案程式碼 &amp; 基礎設定說明</a></li><li><a href="#1-%e9%90%b5%e4%ba%ba%e8%b3%bd%e7%9a%84%e6%94%b6%e7%a9%ab-1">1. 鐵人賽的收穫</a></li><li class="is-sub"><a href="#11-%e4%ba%86%e8%a7%a3%e6%8a%80%e8%a1%93%e6%96%87%e7%ab%a0%e8%88%87%e6%8a%80%e8%a1%93%e6%96%87%e4%bb%b6%e7%9a%84%e5%b7%ae%e7%95%b0">1.1 了解技術文章與技術文件的差異</a></li><li class="is-sub"><a href="#12-%e6%b7%b1%e5%88%bb%e9%ab%94%e6%9c%83%e4%bb%a5%e5%89%8d%e5%af%ab%e7%9a%84%e7%a8%8b%e5%bc%8f%e6%9c%89%e5%a4%9a%e7%88%9b">1.2 深刻體會以前寫的程式有多爛</a></li><li class="is-sub"><a href="#13-%e7%aa%81%e7%a0%b4%e9%81%8e%e5%8e%bb%e7%a8%8b%e5%bc%8f%e7%9a%84%e7%9b%b2%e9%bb%9e">1.3 突破過去程式的盲點</a></li><li><a href="#2-%e5%9c%a8%e9%90%b5%e4%ba%ba%e8%b3%bd%e9%81%8e%e7%a8%8b%e4%b8%ad%e9%81%87%e5%88%b0%e7%9a%84%e6%8c%91%e6%88%b0-1">2. 在鐵人賽過程中遇到的挑戰</a></li><li class="is-sub"><a href="#21-%e5%9c%a8%e9%80%b1%e6%9c%ab%e8%b7%9f%e9%80%a3%e5%81%87%e6%9c%9f%e7%99%bc%e6%96%87">2.1 在週末跟連假期發文</a></li><li class="is-sub"><a href="#22-%e7%99%bc%e7%8f%be%e6%9c%89%e5%b0%88%e6%a1%88%e6%9c%89-bug%e8%80%8c%e4%b8%94%e9%80%99%e5%80%8b-bug-%e5%9c%a8%e5%a5%bd%e5%b9%be%e5%a4%a9%e5%89%8d%e7%9a%84%e6%96%87%e7%ab%a0%e5%b0%b1%e6%9c%89%e4%ba%86">2.2 發現有專案有 bug，而且這個 bug 在好幾天前的文章就有了</a></li><li class="is-sub"><a href="#23-%e7%80%8f%e8%a6%bd%e4%ba%ba%e6%95%b8%e5%a4%aa%e4%bd%8e%e6%b2%92%e4%ba%ba%e5%9c%a8%e4%bd%a0%e7%9a%84%e6%96%87%e7%ab%a0%e7%95%99%e8%a8%80%e8%b7%9f%e6%8c%89-like">2.3 瀏覽人數太低，沒人在你的文章留言跟按 LIKE</a></li><li><a href="#3-%e5%ae%8c%e6%95%b4%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f%e7%a2%bc--%e5%9f%ba%e7%a4%8e%e8%a8%ad%e5%ae%9a%e8%aa%aa%e6%98%8e-1">3. 完整專案程式碼 &amp; 基礎設定說明</a></li><li><a href="#%e8%87%b4%e8%ac%9d">致謝</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <blockquote>
+<p>當你停止拿著別人的地圖走在自己的人生道路上，那你的人生才算真正的開始。-Peter Su</p>
+</blockquote>
+<p>因為在過去的鐵人賽中很少看到從專案角度來分享技術的文章，所以我選擇從這個角度出發，因為我認為<code>了解專案中每個技術選擇的動機，與學習一個新的技術一樣重要</code>；技術可能被淘汰，但經驗會留下來，希望大家會喜歡我這個系列的文章。</p>
+<hr>
+<h2 id="專案總結">專案總結<a class="h-anchor" href="#%e5%b0%88%e6%a1%88%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-鐵人賽的收穫">1. 鐵人賽的收穫<a class="h-anchor" href="#1-%e9%90%b5%e4%ba%ba%e8%b3%bd%e7%9a%84%e6%94%b6%e7%a9%ab" aria-label="這個段落的連結"></a></h3>
+<p>1.1 了解技術文章與技術文件的差異<br>1.2 深刻體會以前寫的程式有多爛<br>1.3 突破過去程式的盲點</p>
+<h3 class="h-nomark" id="2-在鐵人賽過程中遇到的挑戰">2. 在鐵人賽過程中遇到的挑戰<a class="h-anchor" href="#2-%e5%9c%a8%e9%90%b5%e4%ba%ba%e8%b3%bd%e9%81%8e%e7%a8%8b%e4%b8%ad%e9%81%87%e5%88%b0%e7%9a%84%e6%8c%91%e6%88%b0" aria-label="這個段落的連結"></a></h3>
+<p>2.1 在週末跟連假期發文<br>2.2 發現有專案有 bug，而且這個 bug 在好幾天前的文章就有了<br>2.3 瀏覽人數太低，沒人在你的文章留言跟按 LIKE</p>
+<h3 class="h-nomark" id="3-完整專案程式碼--基礎設定說明">3. 完整專案程式碼 &amp; 基礎設定說明<a class="h-anchor" href="#3-%e5%ae%8c%e6%95%b4%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f%e7%a2%bc--%e5%9f%ba%e7%a4%8e%e8%a8%ad%e5%ae%9a%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
+<hr>
+<h2 class="h-nomark" id="1-鐵人賽的收穫-1">1. 鐵人賽的收穫<a class="h-anchor" href="#1-%e9%90%b5%e4%ba%ba%e8%b3%bd%e7%9a%84%e6%94%b6%e7%a9%ab-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-了解技術文章與技術文件的差異">1.1 了解技術文章與技術文件的差異<a class="h-anchor" href="#11-%e4%ba%86%e8%a7%a3%e6%8a%80%e8%a1%93%e6%96%87%e7%ab%a0%e8%88%87%e6%8a%80%e8%a1%93%e6%96%87%e4%bb%b6%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h3>
+<p>在開賽前兩週我將完成的 26 天備稿放在 github 上請朋友幫忙給意見，除了技術上的漏洞外，<strong>下面這些回饋讓我一度思考到底要不要參加這個比賽</strong>：</p>
+<ol>
+<li>你分享的技術很有趣，但我有點消化不良</li>
+<li>我現在還在上班嗎？你這根本是技術文件吧？</li>
+<li>排版好亂，閱讀起來有障礙</li>
+<li>你這個是草稿沒錯吧？</li>
+</ol>
+<p>感謝身旁願意說真話的朋友們，是你們讓我意識到：<code>過去自己寫的是技術文件，能讓合作夥伴看懂就好了；但是分享到一個平台上你除了要讓人看懂外，你還要讓人看得下去</code>，與朋友深聊之後對文章做了以下改進：</p>
+<ol>
+<li>加入個人經驗分享讓文章多一點人味</li>
+<li>在實作的段落加上一些與讀者的對話</li>
+<li>多看別人的文章吸收經驗，調整排版讓閱讀變得舒適</li>
+</ol>
+<blockquote>
+<p>關於這方面的技巧大家可以參考 <a href="https://tw.alphacamp.co/blog/2018-06-14-18352">技術寫作六步驟 讓工程師撰寫流暢的技術部落格</a></p>
+</blockquote>
+<hr>
+<h3 class="h-nomark" id="12-深刻體會以前寫的程式有多爛">1.2 深刻體會以前寫的程式有多爛<a class="h-anchor" href="#12-%e6%b7%b1%e5%88%bb%e9%ab%94%e6%9c%83%e4%bb%a5%e5%89%8d%e5%af%ab%e7%9a%84%e7%a8%8b%e5%bc%8f%e6%9c%89%e5%a4%9a%e7%88%9b" aria-label="這個段落的連結"></a></h3>
+<p>原本以為這次鐵人賽會非常輕鬆，因為我是把以前寫的專案拿出來分享；但開始寫文章後就發現自己錯的很離譜，因為<code>寫文章需要反覆思考每一行程式的意義</code>，這時會發現下面的問題隨處可見：</p>
+<ol>
+<li>變數都在亂宣告</li>
+<li>程式中有許多不必要的判斷式</li>
+<li>超冗長與意義不明的函式</li>
+<li>註解亂七八糟，導致現在的自己看不懂以前為什麼這樣寫</li>
+</ol>
+<blockquote>
+<p>針對這些問題，我有統整成一篇 <a href="/blog/202009/fb-ig-crawler-day-03/">Day3 努力寫出更好的程式碼，有時你不是一個人在戰鬥</a> 給大家參考</p>
+</blockquote>
+<p>因為是以專案的架構來寫這系列鐵人文章，所以我需要在每天都進行各種測試，並且深入的了解官方文件，在這個過程中我深深感受到以前專案的缺點：</p>
+<ol>
+<li>程式穩定性不夠，遇到錯誤時容易崩潰</li>
+<li>對官方文件理解不足，導致執行程式時多了很多不必要的步驟</li>
+</ol>
+<blockquote>
+<p>錯誤處理的部分可以參考 <a href="/blog/202009/fb-ig-crawler-day-14/">Day14 爬蟲執行時又又又崩潰了嗎？來點 try-catch 吧</a> 這篇喔</p>
+</blockquote>
+<hr>
+<h3 class="h-nomark" id="13-突破過去程式的盲點">1.3 突破過去程式的盲點<a class="h-anchor" href="#13-%e7%aa%81%e7%a0%b4%e9%81%8e%e5%8e%bb%e7%a8%8b%e5%bc%8f%e7%9a%84%e7%9b%b2%e9%bb%9e" aria-label="這個段落的連結"></a></h3>
+<p>過去的我認為學習新技術、多寫一些專案可以讓自己的程式進步，但經過這 30 天的鐵人賽磨練後我發現<code>精煉自己的程式可以學到更多東西</code>：</p>
+<ol>
+<li>當你<strong>每天都在看一樣的程式時你才會去思考要如何讓它變得更好</strong>，而你這些思考與嘗試的過程會讓你日後撰寫程式時多一點 sense</li>
+<li>因為不停的思考與嘗試，你可能<strong>會發現有些工具打從一開始就選錯了</strong>；像是 Node.js 發出 request 這個功能我原本是用 <a href="https://www.npmjs.com/package/xmlhttprequest">xmlhttprequest</a> 來完成，但撰寫文章時才驚覺當時選了一個古老的套件，<strong>只為了快速完成功能容易造成決策上的錯誤</strong></li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-在鐵人賽過程中遇到的挑戰-1">2. 在鐵人賽過程中遇到的挑戰<a class="h-anchor" href="#2-%e5%9c%a8%e9%90%b5%e4%ba%ba%e8%b3%bd%e9%81%8e%e7%a8%8b%e4%b8%ad%e9%81%87%e5%88%b0%e7%9a%84%e6%8c%91%e6%88%b0-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-在週末跟連假期發文">2.1 在週末跟連假期發文<a class="h-anchor" href="#21-%e5%9c%a8%e9%80%b1%e6%9c%ab%e8%b7%9f%e9%80%a3%e5%81%87%e6%9c%9f%e7%99%bc%e6%96%87" aria-label="這個段落的連結"></a></h3>
+<p>當身旁所有人都在吃喝玩樂的時候把專注力放在撰寫文章上真的很違反人性，在這種內心鬥爭的階段我會選擇聽一些勵志的歌曲來提神：</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01.webp" srcset="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01.webp 480w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="480" height="360" alt="Yes" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>每次聽到 <code>“我不怕千萬人阻擋，只怕自己投降”</code> 這段，我寫文的速度跟意志力就爆發惹！</p>
+</blockquote>
+<hr>
+<h3 class="h-nomark" id="22-發現有專案有-bug而且這個-bug-在好幾天前的文章就有了">2.2 發現有專案有 bug，而且這個 bug 在好幾天前的文章就有了<a class="h-anchor" href="#22-%e7%99%bc%e7%8f%be%e6%9c%89%e5%b0%88%e6%a1%88%e6%9c%89-bug%e8%80%8c%e4%b8%94%e9%80%99%e5%80%8b-bug-%e5%9c%a8%e5%a5%bd%e5%b9%be%e5%a4%a9%e5%89%8d%e7%9a%84%e6%96%87%e7%ab%a0%e5%b0%b1%e6%9c%89%e4%ba%86" aria-label="這個段落的連結"></a></h3>
+<p>說出來不知道該是驕傲還是怕被人笑，我每篇文章撰寫時間大約落在 4 ~ 20 小時，之所以會花這麼長的時間是為了處理之前的歷史業障，我是一個有點偏執狂的人，所以發現 bug 後會把每天的文章跟 sample code 全部看一遍重新校訂，並且全部測試一遍確保都能正常運行</p>
+<p><code>專案的架構使得每篇文章關聯性太大，遇到這種 bug 時真的萬分想讓人棄賽...</code></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-02.webp" srcset="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-02_hu_c731d95f86b14f33.webp 720w, /blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-02.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="92" alt="2.2 發現有專案有 bug，而且這個 bug 在好幾天前的文章就有了（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>截至今天完賽，我的 github 已經有 400 多次的 commit，這系列的文章真的是我心血之作</p>
+</blockquote>
+<hr>
+<h3 class="h-nomark" id="23-瀏覽人數太低沒人在你的文章留言跟按-like">2.3 瀏覽人數太低，沒人在你的文章留言跟按 LIKE<a class="h-anchor" href="#23-%e7%80%8f%e8%a6%bd%e4%ba%ba%e6%95%b8%e5%a4%aa%e4%bd%8e%e6%b2%92%e4%ba%ba%e5%9c%a8%e4%bd%a0%e7%9a%84%e6%96%87%e7%ab%a0%e7%95%99%e8%a8%80%e8%b7%9f%e6%8c%89-like" aria-label="這個段落的連結"></a></h3>
+<p>我認為這是心理層面的挑戰，<code>當你用盡全力寫文章而無人關注時你會開始自我懷疑</code>：懷疑是不是自己寫的不好、思考難道自己選錯題目了嗎？</p>
+<p>我想這種負面想法應該在不少參賽者心中出現過，玻璃心的我也曾經自我懷疑了好一段時間，但最後我選擇<code>把自我懷疑的情緒轉化成改善文章的動力</code>，如果文章夠好一定會有人來看並樂於分享，如果沒人關注那一定是有什麼不足的地方</p>
+<blockquote>
+<p>花若盛開蝴蝶自來，人若精彩天自安排</p>
+</blockquote>
+<hr>
+<h2 class="h-nomark" id="3-完整專案程式碼--基礎設定說明-1">3. 完整專案程式碼 &amp; 基礎設定說明<a class="h-anchor" href="#3-%e5%ae%8c%e6%95%b4%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f%e7%a2%bc--%e5%9f%ba%e7%a4%8e%e8%a8%ad%e5%ae%9a%e8%aa%aa%e6%98%8e-1" aria-label="這個段落的連結"></a></h2>
+<p>在文章的最後放上這次專案的完整程式碼，你只要下載這個<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day29_sample_code.zip">壓縮檔</a>並依照下方的提示完成設定就能體驗爬蟲的樂趣嚕</p>
+<ul>
+<li>在終端機下指令 <strong>yarn</strong> 安裝套件</li>
+<li>windows 需下載與你 chrome 版本相同的 <a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a> 放在專案根目錄</li>
+<li>要在 tools/google_sheets 資料夾放上 Google sheets 的憑證，申請流程請參考 <a href="/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+<li>調整 fanspages 資料夾內目標爬蟲的粉專網址</li>
+<li>調整 .env檔
+<ul>
+<li>填上 FB 登入資訊</li>
+<li>填上 FB 版本(classic/new)</li>
+<li>填上 IG 登入資訊</li>
+<li>填上 SPREADSHEET_ID</li>
+<li>填上爬蟲執行時間(CRONJOB_TIME)</li>
+<li>填上 LINE Notify 申請的權杖(LINE_TOKEN)，申請流程請參考 <a href="/blog/202010/fb-ig-crawler-day-27/">Day27</a></li>
+</ul>
+</li>
+<li>在終端機下指令 <strong>yarn start</strong> 執行專案(windows為 <strong>yarn win_start</strong>)</li>
+</ul>
+<blockquote>
+<ol>
+<li>
+<p>如果完全無法執行可能是開發環境沒設定好，請參考 <a href="/blog/202009/fb-ig-crawler-day-02/">Day2</a> 中筆者安裝的版本</p>
+</li>
+<li>
+<p>如果執行過程中失敗請將 <code>tools/initDrive.js</code> 下面這行程式註解，直接看瀏覽器執行爬蟲的過程比較容易確認是哪個步驟出問題了</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>options.addArguments(<span style="color:#a5d6ff">&#39;--headless&#39;</span>)
+</span></span></code></pre></div></li>
+<li>
+<p>如果想幫專案加上排程請閱讀 <a href="/blog/202010/fb-ig-crawler-day-24/">Day24</a>～<a href="/blog/202010/fb-ig-crawler-day-26/">Day26</a> 的文章喔</p>
+</li>
+</ol>
+</blockquote>
+<hr>
+<h2 id="致謝">致謝<a class="h-anchor" href="#%e8%87%b4%e8%ac%9d" aria-label="這個段落的連結"></a></h2>
+<p>首先要感謝的是願意讓我分享這份專案的老朋友：<strong>Ray</strong>，沒有他就不會有這 30 天的系列文章，更無法讓我重新審視自己程式的缺點</p>
+<p>接著感謝願意看我那不堪入目的備稿並給予意見的工程師們：<strong>永遠給予支持的凱霖學長、讀書會的超強筆記男、愛用好想兔貼圖的前同事&hellip;</strong>，你們的建議讓我撰寫技術文章的能力上升了一個台階，至少現在讀起來不會反胃了吧XD</p>
+<p>特別感謝在撰寫文章過程給我排版建議的朋友：<strong>部落格男</strong>，他是我心中真正的鐵人，已經堅持每天寫一篇部落格超過 400 天</p>
+<p>其實我原本是打算一個人參賽的，但在報名後看到團體組列表中有<a href="https://ithelp.ithome.com.tw/2020-12th-ironman/signup/team/96">北科大計算機</a>，就向<a href="https://ithelp.ithome.com.tw/users/20110850">團長Peter學程式</a>詢問我能不能+1，感謝團長的收留，自從大學畢業後就沒有這種組隊參賽的熱血了</p>
+<p>最後感謝比賽期間陪伴在我身旁的<strong>可愛女友</strong>，擁有行銷專業的她給我許多下標題的建議</p>
+<p>雖然鐵人賽在這裡告了一段落，但對我來說：<code>技術分享的旅途才剛開始呢</code></p>
+<hr>
+<blockquote>
+<p><img src="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-03.webp" srcset="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-03_hu_aa4c23d5ca4c7363.webp 720w, /blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-03.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="233" alt="致謝（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.10.15），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10252816" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/%E7%88%AC%E8%9F%B2%E5%B0%88%E6%A1%88/">爬蟲專案</a>
+            <a class="chip chip-hash" href="/tags/%E5%AE%8C%E8%B3%BD%E7%B6%93%E9%A9%97%E5%88%86%E4%BA%AB/">完賽經驗分享</a>
+            <a class="chip chip-hash" href="/tags/%E8%87%B4%E8%AC%9D/">致謝</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-30%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-30%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202010/fb-ig-crawler-day-30/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-30/" data-title="【Day30】時間只是考驗，心中信念絲毫未減" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>30</b> 篇・共 30 篇</p>
+          </div>
+          <ol class="steps" data-collapsible>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-01/"><span class="n">01</span><span>技術只能陪你一陣子，學會解決問題才能過一輩子</span></a>
+            </li>
+            <li class="steps-gap" aria-hidden="true">⋮</li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-02/"><span class="n">02</span><span>開發環境大補帖 - Node.js、NVM、git、yarn、VSCode</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-03/"><span class="n">03</span><span>努力寫出更好的程式碼，有時你不是一個人在戰鬥</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-04/"><span class="n">04</span><span>建立Node.js專案 &amp; 全面解析專案管家package.json</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-05/"><span class="n">05</span><span>用yarn安裝及控管套件 &amp; 善用關鍵字讓全世界的大神幫你一把</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-06/"><span class="n">06</span><span>env - 善用環境變數幫你快速遷移專案</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-07/"><span class="n">07</span><span>gitignore - 杜絕上傳錯誤資料，從此不再發生慘痛經驗</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-08/"><span class="n">08</span><span>selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-09/"><span class="n">09</span><span>爬蟲第一步，FB先登入</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-10/"><span class="n">10</span><span>關閉干擾爬蟲的彈窗，將FB粉專追蹤數納入囊中</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-11/"><span class="n">11</span><span>舉一反三，帶你了解IG爬蟲不可忽略的細節</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-12/"><span class="n">12</span><span>合體吧！用一隻程式搞定FB、IG爬蟲</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-13/"><span class="n">13</span><span>重構程式碼，減少歷史業障</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-14/"><span class="n">14</span><span>爬蟲執行時又又又崩潰了嗎？來點 try-catch 吧</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-15/"><span class="n">15</span><span>json x 爬蟲 = 瑣事自動化，生命應該浪費在美好的事情上</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-16/"><span class="n">16</span><span>不藏私，加上5行程式就能優化爬蟲的小技巧 ＆ 學會爬蟲，之後呢？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-17/"><span class="n">17</span><span>Google Sheets - 免費儲存資料的好選擇，一起進入省錢起手式</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-18/"><span class="n">18</span><span>Google Sheets - 加入版控後被github警告了，官方範例做了什麼？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-19/"><span class="n">19</span><span>Google Sheets - 你在文件迷路了嗎？用兩個處理Sheet的範例帶你攻略官方文件</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-20/"><span class="n">20</span><span>Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-21/"><span class="n">21</span><span>Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-22/"><span class="n">22</span><span>Google Sheets - 客戶：我希望新資料插在最前面 &amp; 談需求變更</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-23/"><span class="n">23</span><span>Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-24/"><span class="n">24</span><span>排程 - Cron套件超詳解，讓爬蟲自己動起來</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-25/"><span class="n">25</span><span>排程 - 用forever套件來控管排程，背景執行才是王道！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-26/"><span class="n">26</span><span>排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-27/"><span class="n">27</span><span>為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</span></a>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-28/"><span class="n">28</span><span>為爬蟲加上通知 - 用 axios 發出 LINE 通知</span></a>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-29/"><span class="n">29</span><span>為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">30</span><span>時間只是考驗，心中信念絲毫未減<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+          </ol>
+          <button class="steps-more" type="button" aria-expanded="false">顯示全部 30 篇 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="link-arrow" href="/about/#teaching">企業內訓・演講邀約 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202010/fb-ig-crawler-day-29/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</span></a>
+          <a class="next" href="/blog/202011/salary-negotiation/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">薪水談判-Salary Negotiation</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e5%b0%88%e6%a1%88%e7%b8%bd%e7%b5%90">專案總結</a></li><li class="is-sub"><a href="#1-%e9%90%b5%e4%ba%ba%e8%b3%bd%e7%9a%84%e6%94%b6%e7%a9%ab">1. 鐵人賽的收穫</a></li><li class="is-sub"><a href="#2-%e5%9c%a8%e9%90%b5%e4%ba%ba%e8%b3%bd%e9%81%8e%e7%a8%8b%e4%b8%ad%e9%81%87%e5%88%b0%e7%9a%84%e6%8c%91%e6%88%b0">2. 在鐵人賽過程中遇到的挑戰</a></li><li class="is-sub"><a href="#3-%e5%ae%8c%e6%95%b4%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f%e7%a2%bc--%e5%9f%ba%e7%a4%8e%e8%a8%ad%e5%ae%9a%e8%aa%aa%e6%98%8e">3. 完整專案程式碼 &amp; 基礎設定說明</a></li><li><a href="#1-%e9%90%b5%e4%ba%ba%e8%b3%bd%e7%9a%84%e6%94%b6%e7%a9%ab-1">1. 鐵人賽的收穫</a></li><li class="is-sub"><a href="#11-%e4%ba%86%e8%a7%a3%e6%8a%80%e8%a1%93%e6%96%87%e7%ab%a0%e8%88%87%e6%8a%80%e8%a1%93%e6%96%87%e4%bb%b6%e7%9a%84%e5%b7%ae%e7%95%b0">1.1 了解技術文章與技術文件的差異</a></li><li class="is-sub"><a href="#12-%e6%b7%b1%e5%88%bb%e9%ab%94%e6%9c%83%e4%bb%a5%e5%89%8d%e5%af%ab%e7%9a%84%e7%a8%8b%e5%bc%8f%e6%9c%89%e5%a4%9a%e7%88%9b">1.2 深刻體會以前寫的程式有多爛</a></li><li class="is-sub"><a href="#13-%e7%aa%81%e7%a0%b4%e9%81%8e%e5%8e%bb%e7%a8%8b%e5%bc%8f%e7%9a%84%e7%9b%b2%e9%bb%9e">1.3 突破過去程式的盲點</a></li><li><a href="#2-%e5%9c%a8%e9%90%b5%e4%ba%ba%e8%b3%bd%e9%81%8e%e7%a8%8b%e4%b8%ad%e9%81%87%e5%88%b0%e7%9a%84%e6%8c%91%e6%88%b0-1">2. 在鐵人賽過程中遇到的挑戰</a></li><li class="is-sub"><a href="#21-%e5%9c%a8%e9%80%b1%e6%9c%ab%e8%b7%9f%e9%80%a3%e5%81%87%e6%9c%9f%e7%99%bc%e6%96%87">2.1 在週末跟連假期發文</a></li><li class="is-sub"><a href="#22-%e7%99%bc%e7%8f%be%e6%9c%89%e5%b0%88%e6%a1%88%e6%9c%89-bug%e8%80%8c%e4%b8%94%e9%80%99%e5%80%8b-bug-%e5%9c%a8%e5%a5%bd%e5%b9%be%e5%a4%a9%e5%89%8d%e7%9a%84%e6%96%87%e7%ab%a0%e5%b0%b1%e6%9c%89%e4%ba%86">2.2 發現有專案有 bug，而且這個 bug 在好幾天前的文章就有了</a></li><li class="is-sub"><a href="#23-%e7%80%8f%e8%a6%bd%e4%ba%ba%e6%95%b8%e5%a4%aa%e4%bd%8e%e6%b2%92%e4%ba%ba%e5%9c%a8%e4%bd%a0%e7%9a%84%e6%96%87%e7%ab%a0%e7%95%99%e8%a8%80%e8%b7%9f%e6%8c%89-like">2.3 瀏覽人數太低，沒人在你的文章留言跟按 LIKE</a></li><li><a href="#3-%e5%ae%8c%e6%95%b4%e5%b0%88%e6%a1%88%e7%a8%8b%e5%bc%8f%e7%a2%bc--%e5%9f%ba%e7%a4%8e%e8%a8%ad%e5%ae%9a%e8%aa%aa%e6%98%8e-1">3. 完整專案程式碼 &amp; 基礎設定說明</a></li><li><a href="#%e8%87%b4%e8%ac%9d">致謝</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-30%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-30%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202010/fb-ig-crawler-day-30/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-30/" data-title="【Day30】時間只是考驗，心中信念絲毫未減" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADQAwCdASoYAAcAPw1oqEemIqIYBABjEMT0gGUAEtyV5KhK/R9OjcAA/udFLXYAQK7ApOJIDWBV1gzCDeAW9BuWi8yUewFtsYEIXBQbVgAAAA==" alt="" width="24" height="7"><img src="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_e91da7b1b31343a9.webp" srcset="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_aa3fcdc79115e628.webp 240w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_ca94eec5a967a9cb.webp 480w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_7241a37a4f2a51f5.webp 800w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_e91da7b1b31343a9.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="301" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-29/">【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</a></h3>
+    <p class="card-desc">這份專案所用到的各種技術都不難，難的是將這些技術整合成一個能讓客戶買單的專案；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此低成本的方式完成，而且真的能幫客戶解決問題</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-14">2020.10.14</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRoIAAABXRUJQVlA4WAoAAAAQAAAAFwAAAQAAQUxQSBwAAAABHyAUQGMsrUQyKiLiBGIaYpNM/1I&#43;GSL6n9gAVlA4IEAAAACwAwCdASoYAAIAPw1srUkmIyIYBABjEMTyAFR6E54sX7q371tJAAD&#43;ud2s336cLo8VV4Pyj8hR85dquBfFmYAA" alt="" width="24" height="2"><img src="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp" srcset="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_76e2413246fac6d2.webp 240w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_d635d6ed8622900a.webp 480w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_5f9e74b22b8e0483.webp 800w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="70" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-28/">【Day28】為爬蟲加上通知 - 用 axios 發出 LINE 通知</a></h3>
+    <p class="card-desc">雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-13">2020.10.13</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABwBACdASoYAAoAPw1qrUemIyIYBABjEMTyAE6NdXb/4EYnJNgqbwxuSYj6QAD&#43;Ji4Rd&#43;GfJgyrSup1c5u7YcVBag8&#43;P7tvimhfxLd/dKuCSFq/zbRPP91/TDb96x9ZyJ9VSdPsPo4ooUxqe9zzvA6gAAA=" alt="" width="24" height="10"><img src="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_c01631d3ae7ceb97.webp" srcset="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_a9f6b9a0c5d4c2ec.webp 240w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_4c3f2590609d3e9a.webp 480w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_1b78b483b2977cb2.webp 800w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_c01631d3ae7ceb97.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="425" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-27/">【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</a></h3>
+    <p class="card-desc">在通知這個部分我選擇使用 LINE Notify 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager... 等通訊軟體來通知喔</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-12">2020.10.12</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-30/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 23 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

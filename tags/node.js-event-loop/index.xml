@@ -90,7 +90,7 @@
   <figcaption>Node.js 的 Event Loop</figcaption>
 </figure>
 
-<h3 id="-了解-macrotask-的-6-個階段">➤ 了解 MacroTask 的 6 個階段<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3-macrotask-%e7%9a%84-6-%e5%80%8b%e9%9a%8e%e6%ae%b5" aria-label="這個段落的連結"></a></h3>
+<h3 id="-了解-macrotask-的-6-個階段">了解 MacroTask 的 6 個階段<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3-macrotask-%e7%9a%84-6-%e5%80%8b%e9%9a%8e%e6%ae%b5" aria-label="這個段落的連結"></a></h3>
 <p><strong>Timer</strong>：等計時器（setTimeout、setInterval）的時間一到，會把他們的 callback 放在這裡等待執行。</p>
 <p><strong>Pending callbacks</strong>：作業系統層級使用（TCP errors、sockets 連線被拒絕）。</p>
 <p><strong>Idle, Prepare</strong>：內部使用。</p>
@@ -105,16 +105,16 @@
 <blockquote>
 <p>Macrotask Queue 在 Evevnt Loop 優先層級較低，接下來介紹優先層級更高的兩個 Queue。</p>
 </blockquote>
-<h3 id="-nexttick-queue-優先層級最高">➤ NextTick Queue 優先層級最高<a class="h-anchor" href="#-nexttick-queue-%e5%84%aa%e5%85%88%e5%b1%a4%e7%b4%9a%e6%9c%80%e9%ab%98" aria-label="這個段落的連結"></a></h3>
+<h3 id="-nexttick-queue-優先層級最高">NextTick Queue 優先層級最高<a class="h-anchor" href="#-nexttick-queue-%e5%84%aa%e5%85%88%e5%b1%a4%e7%b4%9a%e6%9c%80%e9%ab%98" aria-label="這個段落的連結"></a></h3>
 <p>「process.nextTick()」的 callback 可以隨意插隊；只要這個 Queue 有東西就會優先執行。</p>
-<h3 id="-microtask-queue-優先層級次高">➤ MicroTask Queue 優先層級次高<a class="h-anchor" href="#-microtask-queue-%e5%84%aa%e5%85%88%e5%b1%a4%e7%b4%9a%e6%ac%a1%e9%ab%98" aria-label="這個段落的連結"></a></h3>
+<h3 id="-microtask-queue-優先層級次高">MicroTask Queue 優先層級次高<a class="h-anchor" href="#-microtask-queue-%e5%84%aa%e5%85%88%e5%b1%a4%e7%b4%9a%e6%ac%a1%e9%ab%98" aria-label="這個段落的連結"></a></h3>
 <p>「Promise 」的狀態從 pending 轉變為 resolve 或 reject 時，此時執行的 callback 會進入這個 Queue。</p>
 <blockquote>
 <p>注意：Promise 在創建時是同步的，不會進入 Event Loop。</p>
 </blockquote>
 <hr>
 <h2 id="四解析一開始-nodejs-範例程式執行順序">四、解析一開始 Node.js 範例程式執行順序<a class="h-anchor" href="#%e5%9b%9b%e8%a7%a3%e6%9e%90%e4%b8%80%e9%96%8b%e5%a7%8b-nodejs-%e7%af%84%e4%be%8b%e7%a8%8b%e5%bc%8f%e5%9f%b7%e8%a1%8c%e9%a0%86%e5%ba%8f" aria-label="這個段落的連結"></a></h2>
-<h3 id="-順序執行先把同步函式解決">➤ 順序執行，先把同步函式解決<a class="h-anchor" href="#-%e9%a0%86%e5%ba%8f%e5%9f%b7%e8%a1%8c%e5%85%88%e6%8a%8a%e5%90%8c%e6%ad%a5%e5%87%bd%e5%bc%8f%e8%a7%a3%e6%b1%ba" aria-label="這個段落的連結"></a></h3>
+<h3 id="-順序執行先把同步函式解決">順序執行，先把同步函式解決<a class="h-anchor" href="#-%e9%a0%86%e5%ba%8f%e5%9f%b7%e8%a1%8c%e5%85%88%e6%8a%8a%e5%90%8c%e6%ad%a5%e5%87%bd%e5%bc%8f%e8%a7%a3%e6%b1%ba" aria-label="這個段落的連結"></a></h3>
 <ol>
 <li>因為 Promise 在創建時是同步的，所以會先執行</li>
 <li>在 function 前面加上 async 宣告為異步函式，執行時會被轉換為 Promise</li>
@@ -138,7 +138,7 @@
 </span></span><span style="display:flex;"><span>promise
 </span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span>
 </span></span><span style="display:flex;"><span>end
-</span></span></code></pre></div><h3 id="-進入-event-loop">➤ 進入 Event Loop<a class="h-anchor" href="#-%e9%80%b2%e5%85%a5-event-loop" aria-label="這個段落的連結"></a></h3>
+</span></span></code></pre></div><h3 id="-進入-event-loop">進入 Event Loop<a class="h-anchor" href="#-%e9%80%b2%e5%85%a5-event-loop" aria-label="這個段落的連結"></a></h3>
 <ol>
 <li>如果執行過程中遇到 NextTick Queue 就優先執行</li>
 </ol>

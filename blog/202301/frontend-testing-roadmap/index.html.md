@@ -54,27 +54,27 @@
 
 把知識集中在一篇文章會讀得太辛苦，這邊筆者將其規劃成以下主題供大家閱讀。
 
-### ➤ 認識 Jest 測試框架，開始動手寫測試程式：[link](https://deanlin.net/blog/202301/jest-unit-testing-typescript/)
+### 認識 Jest 測試框架，開始動手寫測試程式：[link](https://deanlin.net/blog/202301/jest-unit-testing-typescript/)
 
 - 初始化專案、設定測試環境
 - 了解單元測試的結構，撰寫程式
 - 了解 Jest 常用的匹配器（Matchers）
 
-### ➤ Jest 框架進階應用（describe、Setup and Teardown、Mock function）：[link](https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/)
+### Jest 框架進階應用（describe、Setup and Teardown、Mock function）：[link](https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/)
 
 - 測試分組（describe）
 - 在測試前、後要執行的任務（Setup and Teardown）
 - 用 Mock Function 減少測試時的相依性
 - VSCode 的 Jest 外掛
 
-### ➤ 在 Vuetify（Vite & TypeScript）中導入單元測試 Unit Testing：[link](https://deanlin.net/blog/202301/vuetify-vite-unit-testing/)
+### 在 Vuetify（Vite & TypeScript）中導入單元測試 Unit Testing：[link](https://deanlin.net/blog/202301/vuetify-vite-unit-testing/)
 
 - 初始化專案、安裝必要套件
 - 調整專案各項設定檔，讓單元測試可以運行
 - 撰寫第一隻測試程式
 - 運行測試程式確認結果符合預期
 
-### ➤ 透過實際案例了解在 Vuetify（Vite & TypeScript）中如何運用 @vue/test-utils：[link](https://deanlin.net/blog/202301/vue-test-utils-examples/)
+### 透過實際案例了解在 Vuetify（Vite & TypeScript）中如何運用 @vue/test-utils：[link](https://deanlin.net/blog/202301/vue-test-utils-examples/)
 
 - 從測試的角度來設計頁面規格（以登入頁為範例）
 - 撰寫登入頁程式

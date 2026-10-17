@@ -42,11 +42,11 @@ Prompt：「Advertisement for luxury perfume with falling petals in the backgrou
 
 下面我上傳 Midjourney 生成的圖片，然後透過「Animate Your Image」的功能向大家展示生成的效果。
 
-### ► 光線灑在香水瓶上，水滴濺起，周圍的花隨風搖曳
+### 光線灑在香水瓶上，水滴濺起，周圍的花隨風搖曳
 
 Light falls on the perfume bottle, water droplets splash, and the surrounding flowers sway in the wind
 
-### ► 酒瓶下的紫色液體緩緩流動
+### 酒瓶下的紫色液體緩緩流動
 
 The purple liquid under the bottle flows slowly
 

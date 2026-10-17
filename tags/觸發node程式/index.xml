@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>觸發node程式｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/%E8%A7%B8%E7%99%BCnode%E7%A8%8B%E5%BC%8F/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>觸發node程式｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/%E8%A7%B8%E7%99%BCnode%E7%A8%8B%E5%BC%8F/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Sun, 11 Oct 2020 10:00:01 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/%E8%A7%B8%E7%99%BCnode%E7%A8%8B%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day26】排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動</title>
+      <link>https://deanlin.net/blog/202010/fb-ig-crawler-day-26/</link>
+      <pubDate>Sun, 11 Oct 2020 10:00:01 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/fb-ig-crawler-day-26/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>昨天的教學讓你的排程穩定的在背景執行，但是你重開機在終端機(Terminal)輸入 forever list 的指令你會發現 forever 根本沒有 forever</description>
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-og_hu_afce4f8c43d95129.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>解決問題的方法 ≠ 最好的方法；我只是提出我的解法，了解問題發生的原因後你可以想想自己如果遇到了會怎麼解決</p>
+</blockquote>
+<h2 id="為什麼寫這篇文章">為什麼寫這篇文章<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0" aria-label="這個段落的連結"></a></h2>
+<p>昨天的教學讓你的排程穩定的在背景執行，但是你重開機在終端機(Terminal)輸入 <strong>forever list</strong> 的指令你會發現 <code>forever 根本沒有 forever</code></p>
+<p>為了決這個問題，今天會教你如何在<code>電腦啟動時執行 script 讓 forever 跑起來</code>的方法，這塊我會分成 windows 跟 mac 來說明，請大家安心服用</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-設定-mac-排程">1. 設定 mac 排程<a class="h-anchor" href="#1-%e8%a8%ad%e5%ae%9a-mac-%e6%8e%92%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p>1.1 撰寫執行排程的 shell script ：<code>crawler_cron.sh</code><br>1.2 將 crawler_cron.sh 設定為可以被執行<br>1.3 設定 crawler_cron.sh 在使用者登入後自動執行<br>1.4 重新登入確認 forever 是否運行</p>
+<h3 class="h-nomark" id="2-設定-windows-排程">2. 設定 windows 排程<a class="h-anchor" href="#2-%e8%a8%ad%e5%ae%9a-windows-%e6%8e%92%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p>2.1 進入排程設定頁面<br>2.2 設定觸發條件<br>2.3 打開 windows 歷程紀錄<br>2.4 重開機確認 forever 是否運行</p>
+<hr>
+<h2 class="h-nomark" id="1-設定-mac-排程-1">1. 設定 mac 排程<a class="h-anchor" href="#1-%e8%a8%ad%e5%ae%9a-mac-%e6%8e%92%e7%a8%8b-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-撰寫執行排程的-shell-script-crawler_cronsh">1.1 撰寫執行排程的 shell script ：<code>crawler_cron.sh</code><a class="h-anchor" href="#11-%e6%92%b0%e5%af%ab%e5%9f%b7%e8%a1%8c%e6%8e%92%e7%a8%8b%e7%9a%84-shell-script-crawler_cronsh" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在專案目錄下建立存放 shell script 的 <code>sh 資料夾</code>，並<code>新增 crawler_cron.sh</code></p>
+<ul>
+<li>
+<p>shell script 寫法很簡單，平常你怎麼在終端機下指令就怎麼寫</p>
+</li>
+<li>
+<p><strong>專案資料夾路徑</strong>可用 <code>pwd</code> 指令取得</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-01.webp" width="1024" height="59" alt="1.1 撰寫執行排程的 shell script ：crawler_cron.sh（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+<h4 id="crawler_cronsh">crawler_cron.sh<a class="h-anchor" href="#crawler_cronsh" aria-label="這個段落的連結"></a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 進入專案資料夾</span>
+</span></span><span style="display:flex;"><span>cd /專案資料夾路徑
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 啟動排程服務</span>
+</span></span><span style="display:flex;"><span>yarn forever
+</span></span></code></pre></div></li>
+<li>
+<p>執行 crawler_cron.sh 確認運作邏輯跟你想的一樣</p>
+<pre tabindex="0"><code>sh crawler_cron.sh
+</code></pre><blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-02.webp" width="1024" height="141" alt="crawler_cron.sh（圖 2）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+</ol>
+<h3 class="h-nomark" id="12-將-crawler_cronsh-設定為可以被執行">1.2 將 crawler_cron.sh 設定為可以被執行<a class="h-anchor" href="#12-%e5%b0%87-crawler_cronsh-%e8%a8%ad%e5%ae%9a%e7%82%ba%e5%8f%af%e4%bb%a5%e8%a2%ab%e5%9f%b7%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>建立的檔案<code>一開始只有讀寫功能</code>，我們要將 crawler_cron.sh <code>設定為可以被執行</code>，才不會在自動化時因權限不足執行失敗</p>
+<ol>
+<li>
+<p>我們先觀察 <strong>crawler_cron.sh</strong> 的權限</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 進入資料夾</span>
+</span></span><span style="display:flex;"><span>cd sh
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 列出資料夾地下檔案權限</span>
+</span></span><span style="display:flex;"><span>ll
+</span></span></code></pre></div><blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-03.webp" width="1024" height="163" alt="1.2 將 crawler_cron.sh 設定為可以被執行（圖 3）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>目前 crawler_cron.sh 的權限是 <code>-rw-r--r-- </code></p>
+<ul>
+<li>
+<p>權限要把他切分成 3 段來看：owner/group/others，所以代表檔案的 owner 有讀(r)寫(w)的權限，而 group/others 只有讀(r)的權限</p>
+</li>
+<li>
+<p>而我們要讓這個檔案可以被執行(x)需要下指令更改權限</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>chmod <span style="color:#a5d6ff">755</span> crawler_cron.sh
+</span></span></code></pre></div><blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-04.webp" width="1024" height="155" alt="1.2 將 crawler_cron.sh 設定為可以被執行（圖 4）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<p>想要深入了解 chmod 檔案權限概念的請參考<a href="https://shian420.pixnet.net/blog/post/344938711-%5Blinux%5D-chmod-%E6%AA%94%E6%A1%88%E6%AC%8A%E9%99%90%E5%A4%A7%E7%B5%B1%E6%95%B4!">這篇文章</a></p>
+</blockquote>
+</li>
+</ol>
+<h3 class="h-nomark" id="13-設定-crawler_cronsh-在使用者登入後自動執行">1.3 設定 crawler_cron.sh 在使用者登入後自動執行<a class="h-anchor" href="#13-%e8%a8%ad%e5%ae%9a-crawler_cronsh-%e5%9c%a8%e4%bd%bf%e7%94%a8%e8%80%85%e7%99%bb%e5%85%a5%e5%be%8c%e8%87%aa%e5%8b%95%e5%9f%b7%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>我們要先確認 crawler_cron.sh 的檔案資訊</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-05.webp" width="1024" height="587" alt="1.3 設定 crawler_cron.sh 在使用者登入後自動執行（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>將打開檔案的應用程式設定成 <strong>iTerm</strong> (如果設定成 mac 原生的 <strong>終端機</strong> 也可以)</p>
+<ul>
+<li>
+<p><code>shell script 必須在終端機相關應用程式下執行</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-06.webp" width="364" height="640" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+<li>
+<p>設定 crawler_cron.sh 在使用者登入後自動執行</p>
+<blockquote>
+<ol>
+<li>
+<p>進入 <strong>系統偏好設定</strong> 後，選擇 <strong>使用者與群組</strong></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-07.webp" width="1024" height="1020" alt="1.3 設定 crawler_cron.sh 在使用者登入後自動執行（圖 7）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>選擇要觸法這個 shell script 的使用者，在 <strong>登入項目</strong> 下按 <strong>+</strong> 來新增觸發的項目</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-08.webp" width="1024" height="785" alt="1.3 設定 crawler_cron.sh 在使用者登入後自動執行（圖 8）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>請選擇剛剛設定為可以 <strong>被執行的 crawler_cron.sh</strong></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-09.webp" width="1024" height="725" alt="1.3 設定 crawler_cron.sh 在使用者登入後自動執行（圖 9）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>加入項目後把 <strong>隱藏</strong> 打勾</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-10.webp" width="1024" height="785" alt="1.3 設定 crawler_cron.sh 在使用者登入後自動執行（圖 10）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</blockquote>
+</li>
+</ol>
+<h3 class="h-nomark" id="14-重新登入確認-forever-是否運行">1.4 重新登入確認 forever 是否運行<a class="h-anchor" href="#14-%e9%87%8d%e6%96%b0%e7%99%bb%e5%85%a5%e7%a2%ba%e8%aa%8d-forever-%e6%98%af%e5%90%a6%e9%81%8b%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>請你重新登入後在終端機(Trerminal)輸入 <strong>forever list</strong> 的指令確認是否正常運行</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-11.webp" width="1024" height="77" alt="1.4 重新登入確認 forever 是否運行（圖 11）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 class="h-nomark" id="2-設定-windows-排程-1">2. 設定 windows 排程<a class="h-anchor" href="#2-%e8%a8%ad%e5%ae%9a-windows-%e6%8e%92%e7%a8%8b-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-進入排程設定頁面">2.1 進入排程設定頁面<a class="h-anchor" href="#21-%e9%80%b2%e5%85%a5%e6%8e%92%e7%a8%8b%e8%a8%ad%e5%ae%9a%e9%a0%81%e9%9d%a2" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>在鍵盤同時按下 : WIN + R</p>
+</li>
+<li>
+<p>輸入 : taskschd.msc</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-12.webp" width="507" height="255" alt="2.1 進入排程設定頁面（圖 12）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+<h3 class="h-nomark" id="22-設定觸發條件">2.2 設定觸發條件<a class="h-anchor" href="#22-%e8%a8%ad%e5%ae%9a%e8%a7%b8%e7%99%bc%e6%a2%9d%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>建立工作</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-13.webp" width="984" height="705" alt="2.2 設定觸發條件（圖 13）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>選擇以<code>最高權限執行</code>，這裡我選擇 <strong>不論使用者登入與否均執行</strong> 是因為我要在開機時就觸發，而剛開機的時候使用者是還沒登入的；這塊可以依照自己的實際需求去做調整</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-14.webp" width="788" height="639" alt="2.2 設定觸發條件（圖 14）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在這裡設定為<code>啟動時</code>會開始工作</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-15.webp" width="737" height="647" alt="2.2 設定觸發條件（圖 15）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>編輯動作的部分有幾個需要注意</p>
+<ul>
+<li>
+<p>程式或指令碼 : 你要找到當初安裝 yarn 的路徑，及 yarn.cmd 的檔案</p>
+</li>
+<li>
+<p>新增引數 : 填上 <strong>forever</strong> ，因為我們是用 yarn forever 啟動程式的</p>
+</li>
+<li>
+<p>開始位置 : 把專案的路徑複製上去即可</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-16.webp" width="568" height="630" alt="2.2 設定觸發條件（圖 16）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 class="h-nomark" id="23-打開-windows-歷程紀錄">2.3 打開 windows 歷程紀錄<a class="h-anchor" href="#23-%e6%89%93%e9%96%8b-windows-%e6%ad%b7%e7%a8%8b%e7%b4%80%e9%8c%84" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>windows 需打開歷程紀錄否則不會執行該排程</p>
+<blockquote>
+<ol>
+<li>
+<p>我們看到建立的工作在歷程紀錄旁邊顯示 <strong>(已停用)</strong>，我們需要把他開啟</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-17.webp" width="1024" height="332" alt="2.3 打開 windows 歷程紀錄（圖 17）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在左上角 <strong>工作排程器(本機)</strong> 按右鍵，選擇 <strong>啟用所有工作歷程紀錄</strong></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-18.webp" width="1024" height="334" alt="2.3 打開 windows 歷程紀錄（圖 18）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>確認你要執行工作的歷程紀錄旁邊 <strong>沒有(已停用)</strong>，就代表設定完成嚕</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-19.webp" width="1024" height="276" alt="2.3 打開 windows 歷程紀錄（圖 19）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<h3 class="h-nomark" id="24-重開機確認-forever-是否運行">2.4 重開機確認 forever 是否運行<a class="h-anchor" href="#24-%e9%87%8d%e9%96%8b%e6%a9%9f%e7%a2%ba%e8%aa%8d-forever-%e6%98%af%e5%90%a6%e9%81%8b%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>請注意因為使用的是最高權限執行 <strong>yarn forever</strong>，所以你在 cmd 裡面用 <strong>forever list</strong> 是看不到的</p>
+<ol>
+<li>
+<p>必須要用<code>系統管理員身分執行 cmd</code></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-20.webp" width="981" height="800" alt="2.4 重開機確認 forever 是否運行（圖 20）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在這個權限下輸入指令 <strong>forever list</strong> 才能確認是否正常運行</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-21.webp" width="1024" height="164" alt="2.4 重開機確認 forever 是否運行（圖 21）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day26">這裡</a>找到喔</li>
+<li>我昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day25_sample_code.zip">壓縮檔</a>，你可以在乾淨的環境試試看排程是不是重開機後依舊存在呢~
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>要在tools/google_sheets資料夾放上自己的憑證，申請流程請參考<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+<li>調整fanspages資料夾內目標爬蟲的粉專網址</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+<li>填上SPREADSHEET_ID</li>
+<li>填上爬蟲執行時間(CRONJOB_TIME)</li>
+</ul>
+</li>
+<li>在終端機下指令 <strong>npm install forever -g</strong> ，讓你在終端機的任何位置都能管控排程</li>
+<li>在sh資料夾中設定執行排程的shell script</li>
+</ul>
+</li>
+</ul>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://shian420.pixnet.net/blog/post/344938711-%5Blinux%5D-chmod-%E6%AA%94%E6%A1%88%E6%AC%8A%E9%99%90%E5%A4%A7%E7%B5%B1%E6%95%B4!">[LINUX] chmod 檔案權限大統整</a></li>
+<li><a href="https://cjy998.pixnet.net/blog/post/63190869-%E5%B7%A5%E4%BD%9C%E6%8E%92%E7%A8%8B%E5%99%A8-%E5%95%9F%E7%94%A8%E6%AD%B7%E7%A8%8B%E8%A8%98%E9%8C%84-%E5%8E%9F%E9%A1%AF%E7%A4%BA%28%E5%B7%B2%E5%81%9C%E7%94%A8%29--win">工作排程器 啟用歷程記錄 原顯示(已停用) windows 2012</a></li>
+</ol>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-22.webp" width="1024" height="233" alt="參考資源（圖 22）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

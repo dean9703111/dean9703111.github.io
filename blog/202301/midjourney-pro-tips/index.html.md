@@ -50,11 +50,11 @@
 - **Composition（視角）**：closeup view（特寫鏡頭）、Wide-angle view（廣角鏡頭）、A bird’s-eye view（鳥瞰）
 - **Lighting（燈光）**：Soft light（柔光）、Cold light（冷光）
 
-### ➤ 針對小物件，我們可以採用特寫鏡頭，並搭配柔光讓他看起來更舒服
+### 針對小物件，我們可以採用特寫鏡頭，並搭配柔光讓他看起來更舒服
 
   Strawberry Cake, closeup view, Soft light（草莓蛋糕、特寫鏡頭、柔光）
 
-### ➤ 如果想呈現一個場景，廣角鏡頭就很好用
+### 如果想呈現一個場景，廣角鏡頭就很好用
 
   ruins, Wide-angle view, Cold light（廢墟，廣角鏡頭，冷光）
 
@@ -65,23 +65,23 @@
 - photography（攝影）、cinematic（電影）
 - in focus（對焦）、depth of field（景深）
 
-### ➤ 「攝影 + 對焦」讓圖片有商業攝影的感覺
+### 「攝影 + 對焦」讓圖片有商業攝影的感覺
 
   Strawberry Cake, photography, closeup view, in focus, Soft light（草莓蛋糕、攝影、特寫鏡頭、對焦、柔光）
 
-### ➤ 同樣是廢墟，「電影 + 景深」讓我們有多層次的感受
+### 同樣是廢墟，「電影 + 景深」讓我們有多層次的感受
 
   ruins, cinematic, Wide-angle view, depth of field, Cold light（廢墟，電影，廣角鏡頭，景深，冷光）
 
 ## TIP 4：「關鍵字」跟「描述句」的差異
 
-### ➤用「關鍵字」就像是放任創作，會得到充滿創意的結果
+### 用「關鍵字」就像是放任創作，會得到充滿創意的結果
 
 使用「wizard, book, campus, Miyazaki Hayao, winter」為 prompt 時，你會發現有幾張圖「book」的元素直接不見了。
 
   wizard, book, campus, Miyazaki Hayao, winter（巫師，書本，校園，宮崎駿，冬天）
 
-### ➤用「描述句」則是限制創作範圍，直接得到你想要的成果
+### 用「描述句」則是限制創作範圍，直接得到你想要的成果
 
 我們改成描述句的 prompt：「A wizard walks on the winter campus holding a book, with the artistic style of Miyazaki Hayao.」直接指定巫師要拿者書本
 

@@ -39,7 +39,7 @@
 
 由於 Node.js 更新速度是非常快的，而許多套件有 Node.js 版本的相依性，透過NVM你可以輕鬆切換 Node.js 版本來符合不同專案的使用環境
 
-### ➤ windows 安裝步驟
+### windows 安裝步驟
 
 - 先進入[windows下載頁面](https://github.com/coreybutler/nvm-windows/releases)
 - 選擇最新版本的下載 **nvm-setup.zip**(筆者版本為1.1.7，你看到這篇文章時可能有提供更新的版本)
@@ -50,7 +50,7 @@
 
 5. 在 CMD 輸入指令確認 nvm 是否安裝成功
 
-### ➤ mac 安裝步驟
+### mac 安裝步驟
 
 - 打開終端機(Terminal)，以下步驟皆在終端機操作
 - mac 建議先下載 Homebrew
@@ -69,7 +69,7 @@ brew install nvm
 
 4. 在終端機輸入指令確認 nvm 是否安裝成功
 
-### ➤ 用 NVM 安裝 node.js
+### 用 NVM 安裝 node.js
 
 - `指令：nvm install [version]`
 - 請切記要安裝一個 Node.js 版本(請選用[LTS版本](https://nodejs.org/en/))，不然你寫的程式會沒有可以運行的環境

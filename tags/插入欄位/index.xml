@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>插入欄位｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/%E6%8F%92%E5%85%A5%E6%AC%84%E4%BD%8D/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>插入欄位｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/%E6%8F%92%E5%85%A5%E6%AC%84%E4%BD%8D/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 07 Oct 2020 09:03:30 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/%E6%8F%92%E5%85%A5%E6%AC%84%E4%BD%8D/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day22】Google Sheets - 客戶：我希望新資料插在最前面 &amp; 談需求變更</title>
+      <link>https://deanlin.net/blog/202010/fb-ig-crawler-day-22/</link>
+      <pubDate>Wed, 07 Oct 2020 09:03:30 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/fb-ig-crawler-day-22/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>3.1 插入一個空白欄位：insertEmptyCol3.2 把空白欄位更新成最新的追蹤人數資訊</description>
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-og_hu_ed1edfe059f5ef6e.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>在驗收階段你就知道一個好的需求規格書有多麼重要</p>
+</blockquote>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-了解驗收過程中需求規格書的重要性">1. 了解驗收過程中需求規格書的重要性<a class="h-anchor" href="#1-%e4%ba%86%e8%a7%a3%e9%a9%97%e6%94%b6%e9%81%8e%e7%a8%8b%e4%b8%ad%e9%9c%80%e6%b1%82%e8%a6%8f%e6%a0%bc%e6%9b%b8%e7%9a%84%e9%87%8d%e8%a6%81%e6%80%a7" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="2-談需求變更">2. 談需求變更<a class="h-anchor" href="#2-%e8%ab%87%e9%9c%80%e6%b1%82%e8%ae%8a%e6%9b%b4" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="3-將新的爬蟲資料寫到最前面日期為由近而遠的排序">3. 將新的爬蟲資料寫到最前面，日期為由近而遠的排序<a class="h-anchor" href="#3-%e5%b0%87%e6%96%b0%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e5%af%ab%e5%88%b0%e6%9c%80%e5%89%8d%e9%9d%a2%e6%97%a5%e6%9c%9f%e7%82%ba%e7%94%b1%e8%bf%91%e8%80%8c%e9%81%a0%e7%9a%84%e6%8e%92%e5%ba%8f" aria-label="這個段落的連結"></a></h3>
+<p>3.1 插入一個空白欄位：<code>insertEmptyCol</code><br>3.2 把空白欄位更新成最新的追蹤人數資訊</p>
+<hr>
+<h2 class="h-nomark" id="1-了解驗收過程中需求規格書的重要性-1">1. 了解驗收過程中需求規格書的重要性<a class="h-anchor" href="#1-%e4%ba%86%e8%a7%a3%e9%a9%97%e6%94%b6%e9%81%8e%e7%a8%8b%e4%b8%ad%e9%9c%80%e6%b1%82%e8%a6%8f%e6%a0%bc%e6%9b%b8%e7%9a%84%e9%87%8d%e8%a6%81%e6%80%a7-1" aria-label="這個段落的連結"></a></h2>
+<p>驗收的過程就是按造需求規格上的驗收項目一一測試，所以<code>如果沒有需求規格書或是需求規格書寫得太不完善，你在驗收的過程會一直被凹新功能</code>，而這些功能基本上只能忍氣吞聲吃下去，畢竟這是因為你在一開始沒談好規格的歷史業障，這就是我在<a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-01/">Day 1</a>提到需求規格書的重要性</p>
+<hr>
+<h2 class="h-nomark" id="2-談需求變更-1">2. 談需求變更<a class="h-anchor" href="#2-%e8%ab%87%e9%9c%80%e6%b1%82%e8%ae%8a%e6%9b%b4-1" aria-label="這個段落的連結"></a></h2>
+<p>反過來如果你需求規格寫得夠好，在驗收的階段你會有很多賺外快的機會，<code>因為大部分的客戶在驗收階段才想到他們實際上還需要哪些功能</code></p>
+<p>對於這些多出來的功能我一律列入<strong>需求變更</strong>，因為這些需求並不在原合約內所以你可以<code>將客戶的新需求記錄下來依功能報價讓客戶自己決定需要新增哪些功能</code></p>
+<p>根據個人經驗，在結案後你會發現這些多出來的<code>需求變更可能占總外包費的 20%~40% 不等</code>，所以各位在接案時千萬不要因為覺得麻煩沒有好好寫需求規格書啊！你這樣的做法完全在跟自己的錢包過不去，讓自己成為免費勞工。</p>
+<h3 id="下面用今天要完成的需求變更舉例">下面用今天要完成的需求變更舉例：<a class="h-anchor" href="#%e4%b8%8b%e9%9d%a2%e7%94%a8%e4%bb%8a%e5%a4%a9%e8%a6%81%e5%ae%8c%e6%88%90%e7%9a%84%e9%9c%80%e6%b1%82%e8%ae%8a%e6%9b%b4%e8%88%89%e4%be%8b" aria-label="這個段落的連結"></a></h3>
+<p><strong>客戶</strong>：我測試了幾天覺得爬蟲蠻穩定的，但最新的爬蟲資料都寫在最後面，這讓我要滑到最後面才知道最新資料，他能不能新資料都寫在最前面啊 <code>(客戶提出需求變更)</code><br><strong>我</strong>：您的意思是要<strong>將新的爬蟲資料寫到最前面，Google Sheet 上呈現的是日期由近而遠的排序</strong>嗎？ <code>(確認需求變更的邏輯)</code><br><strong>客戶</strong>：對，麻煩了<br><strong>我</strong>：不過這項需求並不在原本的需求規格書上面，原本的需求規格書只提到<strong>爬蟲日期為欄，粉專標題為列</strong>，並沒提到排序方面的需求；經過評估這個功能需要額外的費用XXX，您可以接受嗎？ <code>(提出需求規格書上面的規格做佐證，並說明這個新功能需要加收多少費用)</code><br><strong>客戶</strong>：恩&hellip;可以<br><strong>我</strong>：我把這項規則加到需求規格書的後面，您確認完後我就會開始實作 <code>(讓客戶確認規格及價格後在開始實作)</code></p>
+<hr>
+<h2 class="h-nomark" id="3-將新的爬蟲資料寫到最前面日期為由近而遠的排序-1">3. 將新的爬蟲資料寫到最前面，日期為由近而遠的排序<a class="h-anchor" href="#3-%e5%b0%87%e6%96%b0%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e5%af%ab%e5%88%b0%e6%9c%80%e5%89%8d%e9%9d%a2%e6%97%a5%e6%9c%9f%e7%82%ba%e7%94%b1%e8%bf%91%e8%80%8c%e9%81%a0%e7%9a%84%e6%8e%92%e5%ba%8f-1" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>因為沒找到可以一步完成的解法，所以我將這個需求拆成兩個步驟：</p>
+<ol>
+<li>先在第二欄插入一個空白欄位</li>
+<li>把空白欄位更新成最新的追蹤人數資訊</li>
+</ol>
+</blockquote>
+<h3 class="h-nomark" id="31-插入一個空白欄位insertemptycol">3.1 插入一個空白欄位：<code>insertEmptyCol</code><a class="h-anchor" href="#31-%e6%8f%92%e5%85%a5%e4%b8%80%e5%80%8b%e7%a9%ba%e7%99%bd%e6%ac%84%e4%bd%8dinsertemptycol" aria-label="這個段落的連結"></a></h3>
+<p>在Google Sheets中插入空白欄位的部分請參考<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/request#insertdimensionrequest">官方的文件</a>，這裡有個需要注意的點：</p>
+<ul>
+<li>我們觀察到 Google 插入欄位的 api 在 range 的參數上需要 <code>sheet_id</code> 來能執行，而這隻函式會被 <code>writeSheet</code> 函式呼叫，所以下一步我們要對他做一些調整</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> insertEmptyCol (title, sheet_id, auth) {<span style="color:#8b949e;font-style:italic">//插入空白欄位
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> sheets <span style="color:#ff7b72;font-weight:bold">=</span> google.sheets({ version<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;v4&#39;</span>, auth });
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> request <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// The ID of the spreadsheet
+</span></span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;spreadsheetId&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> process.env.SPREADSHEET_ID,
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;resource&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a5d6ff">&#34;requests&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> [{
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;insertDimension&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#8b949e;font-style:italic">//插入新欄位
+</span></span></span><span style="display:flex;"><span>          <span style="color:#a5d6ff">&#34;range&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;sheetId&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> sheet_id,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;dimension&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;COLUMNS&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;startIndex&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,<span style="color:#8b949e;font-style:italic">//代表插入範圍從第一欄開始到第二欄結束
+</span></span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;endIndex&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">2</span>
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>          <span style="color:#a5d6ff">&#34;inheritFromBefore&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>      }]
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> sheets.spreadsheets.batchUpdate(request)
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#39;update sheet:&#39;</span> <span style="color:#ff7b72;font-weight:bold">+</span> title <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39; new column&#39;</span>)
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#39;The API returned an error: &#39;</span> <span style="color:#ff7b72;font-weight:bold">+</span> err);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h3 class="h-nomark" id="32-把空白欄位更新成最新的追蹤人數資訊">3.2 把空白欄位更新成最新的追蹤人數資訊<a class="h-anchor" href="#32-%e6%8a%8a%e7%a9%ba%e7%99%bd%e6%ac%84%e4%bd%8d%e6%9b%b4%e6%96%b0%e6%88%90%e6%9c%80%e6%96%b0%e7%9a%84%e8%bf%bd%e8%b9%a4%e4%ba%ba%e6%95%b8%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
+<p>因為<code>insertEmptyCol</code>這個函式需要用到用到 <strong>sheetId</strong> 的參數，我們需要對以下程式做調整：</p>
+<ol>
+<li>
+<p><code>updateGoogleSheets</code>：還記得 <strong>getFBIGSheet</strong> 會回傳 sheets 的資訊嗎？現在我們就需要裡面的<strong>title、id</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> sheets <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> getFBIGSheet(auth)<span style="color:#8b949e;font-style:italic">//取得線上FB、IG的sheet資訊
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 寫入各自的Sheet
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">for</span> (sheet <span style="color:#ff7b72">of</span> sheets) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">if</span> (sheet.title <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#39;FB粉專&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> writeSheet(sheet.title, sheet.id, fb_result_array, auth)
+</span></span><span style="display:flex;"><span>  } <span style="color:#ff7b72">else</span> <span style="color:#ff7b72">if</span> (sheet.title <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#39;IG帳號&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> writeSheet(sheet.title, sheet.id, ig_result_array, auth)
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p><code>writeSheet</code> :</p>
+<ol>
+<li>
+<p>傳入 <code>sheet_id</code> 參數讓 <strong>insertEmptyCol</strong> 使用</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> writeSheet (title, sheet_id, result_array, auth)
+</span></span></code></pre></div></li>
+<li>
+<p>先插入空白欄位後再寫入追蹤人數</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 插入空欄位
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> insertEmptyCol(title, sheet_id, auth)
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 寫入追蹤人數
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> writeTrace(title, trace_array, auth)
+</span></span></code></pre></div></li>
+</ol>
+<blockquote>
+<p>因為取得最後一欄的函式用不到了，請將<code>getLastCol</code>、<code>toColumnName</code>刪除</p>
+</blockquote>
+</li>
+</ol>
+<hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div></li>
+<li>
+<p>在終端機我們可以看到事先插入新欄位再更新資料</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01.webp" width="1024" height="562" alt="執行程式（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>確認新的爬蟲資料有正確插入到 Google Sheets 第二欄</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-02.webp" width="1024" height="348" alt="執行程式（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p>如果你在同一天測試，你可以把之前爬蟲日期改成<code>old</code>方便辨識</p>
+</blockquote>
+</li>
+</ol>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day22">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day21_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來完成業主要求的需求變更吧
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>要在tools/google_sheets資料夾放上自己的憑證，申請流程請參考<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+<li>調整fanspages資料夾內目標爬蟲的粉專網址</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+<li>填上SPREADSHEET_ID</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-03.webp" width="1024" height="233" alt="ℹ️ 專案原始碼（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Facebook Login｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/facebook-login/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Facebook Login｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/facebook-login/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Thu, 24 Sep 2020 09:06:37 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/facebook-login/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day9】爬蟲第一步，FB先登入</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-09/</link>
+      <pubDate>Thu, 24 Sep 2020 09:06:37 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-09/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>一定要自己實作過一遍! 一定要自己實作過一遍! 一定要自己實作過一遍! 因為很重要所以要說三遍，前面幾篇文章比較偏向概念，但今後的文章概念實作並重；因為FB 與 IG 改版的速度極快，我現在提供的方法在他們改版後可能就會失效，所以文章的每個步驟要自己去實作才能理解為什麼這樣做，同…</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-og_hu_2651d2b048d12795.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<h2 class="h-nomark" id="-在爬蟲前請注意這些事情避免違法">⚠️ 在爬蟲前請注意這些事情避免違法<a class="h-anchor" href="#-%e5%9c%a8%e7%88%ac%e8%9f%b2%e5%89%8d%e8%ab%8b%e6%b3%a8%e6%84%8f%e9%80%99%e4%ba%9b%e4%ba%8b%e6%83%85%e9%81%bf%e5%85%8d%e9%81%95%e6%b3%95" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li><strong>請勿拿來蒐集個人隱私</strong>
+<ul>
+<li>相片、個人資料</li>
+</ul>
+</li>
+<li><strong>請勿高頻率訪問一個網站</strong>
+<ul>
+<li>高頻率訪問一個網站可能對導致對方伺服器癱瘓(DDOS)</li>
+</ul>
+</li>
+<li><strong>請勿盜取相關智慧財產權相關的資料</strong>
+<ul>
+<li>社群上發表的文章、有人統整過的資訊</li>
+</ul>
+</li>
+<li><strong>請勿蒐集網站後台資料</strong>
+<ul>
+<li>僅抓取前端網頁有顯示的公開信息，不要去抓後台的敏感資訊</li>
+</ul>
+</li>
+<li><strong>請勿作為破解工具</strong>
+<ul>
+<li>嘗試各種帳號密碼試圖登入自己沒有權限的頁面</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>這系列的教學文章是<code>想讓大家省去如同機器人般的操作，把時間精力放在分析資料上面</code></p>
+</blockquote>
+<hr>
+<h2 id="今天的學習要特別注意什麼">今天的學習要特別注意什麼？<a class="h-anchor" href="#%e4%bb%8a%e5%a4%a9%e7%9a%84%e5%ad%b8%e7%bf%92%e8%a6%81%e7%89%b9%e5%88%a5%e6%b3%a8%e6%84%8f%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<p>一定要自己實作過一遍!<br>一定要自己實作過一遍!<br>一定要自己實作過一遍!<br><br>因為很重要所以要說三遍，前面幾篇文章比較偏向概念，但今後的文章概念實作並重；因為<code>FB 與 IG 改版的速度極快</code>，我現在提供的方法在他們改版後可能就會失效，所以文章的<code>每個步驟要自己去實作</code>才能理解為什麼這樣做，同時培養自己分析網頁結構的能力</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-學會分析網頁結構---以facebook登入頁為範例">1. 學會分析網頁結構 - 以Facebook登入頁為範例<a class="h-anchor" href="#1-%e5%ad%b8%e6%9c%83%e5%88%86%e6%9e%90%e7%b6%b2%e9%a0%81%e7%b5%90%e6%a7%8b---%e4%bb%a5facebook%e7%99%bb%e5%85%a5%e9%a0%81%e7%82%ba%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h3>
+<p>1.1 拆解平常登入 FB 的步驟<br>1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)</p>
+<h3 class="h-nomark" id="2-打造自動登入facebook的機器人">2. 打造自動登入FaceBook的機器人<a class="h-anchor" href="#2-%e6%89%93%e9%80%a0%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5facebook%e7%9a%84%e6%a9%9f%e5%99%a8%e4%ba%ba" aria-label="這個段落的連結"></a></h3>
+<p>2.1 了解 selenium-webdriver 如何操作網頁元件<br>2.2 在 .env檔填上 FB 登入資訊，並從程式中讀取<br>2.3 讓爬蟲幫你完成平日登入的步驟</p>
+<hr>
+<h2 class="h-nomark" id="1-學會分析網頁結構--以facebook登入頁為範例">1. 學會分析網頁結構 — 以Facebook登入頁為範例<a class="h-anchor" href="#1-%e5%ad%b8%e6%9c%83%e5%88%86%e6%9e%90%e7%b6%b2%e9%a0%81%e7%b5%90%e6%a7%8b--%e4%bb%a5facebook%e7%99%bb%e5%85%a5%e9%a0%81%e7%82%ba%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h2>
+<p>你可以想像 <strong>selenium-webdriver</strong> 這個套件就是讓機器人代替你的手來做操作，<code>想要讓機器幫你操作，你需要告訴他明確的操作位置</code>，接下來向大家介紹如何抓出這些位置</p>
+<h3 class="h-nomark" id="11-拆解平常登入fb的步驟">1.1 拆解平常登入FB的步驟<a class="h-anchor" href="#11-%e6%8b%86%e8%a7%a3%e5%b9%b3%e5%b8%b8%e7%99%bb%e5%85%a5fb%e7%9a%84%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>先用 chrome 無痕模式打開<a href="https://www.facebook.com/login">Facebook登入頁面</a></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-01.webp" width="300" height="212" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>打開後的 FB 的登入畫面如下</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-02.webp" width="1024" height="613" alt="1.1 拆解平常登入FB的步驟（圖 2）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><code>剛發完文章發現 FB 登入畫面又變惹QQ，不過操作上都一樣請勿驚慌</code></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-03.webp" width="1024" height="647" alt="1.1 拆解平常登入FB的步驟（圖 3）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>接下來把你<code>平常登入FB的動作分幾個步驟</code>，下一步要對這些操作到的元件進行結構分析：</p>
+<ol>
+<li>輸入電子郵件或電話</li>
+<li>輸入密碼</li>
+<li>按下登入按鈕</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="12-將平常操作的位置轉化為程式可以讀懂的路徑xpath">1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)<a class="h-anchor" href="#12-%e5%b0%87%e5%b9%b3%e5%b8%b8%e6%93%8d%e4%bd%9c%e7%9a%84%e4%bd%8d%e7%bd%ae%e8%bd%89%e5%8c%96%e7%82%ba%e7%a8%8b%e5%bc%8f%e5%8f%af%e4%bb%a5%e8%ae%80%e6%87%82%e7%9a%84%e8%b7%af%e5%be%91xpath" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>我們先用先紅框圈出登入會用到的元件位置</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-04.webp" width="1024" height="613" alt="1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)（圖 4）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>接著對<strong>元件按下滑鼠右鍵 → 檢查</strong>，就會進入開發者的介面</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-05.webp" width="1024" height="396" alt="1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>然後你就會看到一堆不友善的程式碼，這個時候別緊張，我們原則上不需要理解他們在寫什麼，我們只要知他<strong>在什麼位置就好</strong></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-06.webp" width="1024" height="613" alt="1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)（圖 6）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>想知道他位置的方法也很簡單，對開發者頁面的那個<strong>程式碼按右鍵 → Copy → Copy Xpath</strong></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-07.webp" width="1024" height="382" alt="1.2 將平常操作的位置轉化為程式可以讀懂的路徑(Xpath)（圖 7）" loading="lazy" decoding="async"></p>
+<p>你就會得到 <strong>電子郵件或電話</strong> 元件在這個頁面的位置</p>
+<pre tabindex="0"><code>//*[@id=&#34;email&#34;]
+</code></pre><p>重複上面的步驟你面可以取得 <strong>密碼</strong> 元件的位置</p>
+<pre tabindex="0"><code>//*[@id=&#34;pass&#34;]
+</code></pre><p>以及 <strong>登入按鈕</strong> 元件的位置</p>
+<pre tabindex="0"><code>//*[@id=&#34;loginbutton&#34;]
+</code></pre><p>取得這三個元件的 Xpath 後我們便可以明確告訴機器人該做什麼事嚕</p>
+</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-打造自動登入facebook的機器人-1">2. 打造自動登入FaceBook的機器人<a class="h-anchor" href="#2-%e6%89%93%e9%80%a0%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5facebook%e7%9a%84%e6%a9%9f%e5%99%a8%e4%ba%ba-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-了解-selenium-webdriver-如何操作網頁元件">2.1 了解 selenium-webdriver 如何操作網頁元件<a class="h-anchor" href="#21-%e4%ba%86%e8%a7%a3-selenium-webdriver-%e5%a6%82%e4%bd%95%e6%93%8d%e4%bd%9c%e7%b6%b2%e9%a0%81%e5%85%83%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p><strong>透過網頁的 Xpath 取出元件</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 取出想操作的元件 = 瀏覽器會等待直到路徑(//*[@id=&#34;email&#34;])的元件顯示才回傳該元件
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fb_email_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;email&#34;]`</span>)));
+</span></span></code></pre></div></li>
+<li>
+<p><strong>在輸入框中輸入指定文字</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 將你想要輸入的文字透過sendKeys塞入元件
+</span></span></span><span style="display:flex;"><span>fb_email_ele.sendKeys(fb_username)
+</span></span></code></pre></div></li>
+<li>
+<p><strong>點擊按鈕</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 將取出的元件使用click函式觸發點擊事件
+</span></span></span><span style="display:flex;"><span>login_elem.click()
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="22-在-env檔填上-fb-登入資訊並從程式中讀取">2.2 在 .env檔填上 FB 登入資訊，並從程式中讀取<a class="h-anchor" href="#22-%e5%9c%a8-env%e6%aa%94%e5%a1%ab%e4%b8%8a-fb-%e7%99%bb%e5%85%a5%e8%b3%87%e8%a8%8a%e4%b8%a6%e5%be%9e%e7%a8%8b%e5%bc%8f%e4%b8%ad%e8%ae%80%e5%8f%96" aria-label="這個段落的連結"></a></h3>
+<p>理解關鍵程式的功能後我們來把他們組合起來吧：</p>
+<ol>
+<li>
+<p>在 .env檔填寫 FB 登入的帳號密碼</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#填寫自己登入FB的真實資訊(建議開小帳號來實驗，因為帳號使用太頻繁會被官方鎖住)</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">FB_USERNAME</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;fb username&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">FB_PASSWORD</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;fb password&#39;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>取出在 .env檔案裡面的 FB 帳號密碼提供主程式使用</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config(); <span style="color:#8b949e;font-style:italic">//載入.env環境檔
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//取出.env檔案填寫的FB資訊
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fb_username <span style="color:#ff7b72;font-weight:bold">=</span> process.env.FB_USERNAME
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fb_userpass <span style="color:#ff7b72;font-weight:bold">=</span> process.env.FB_PASSWORD
+</span></span></code></pre></div></li>
+</ol>
+<hr>
+<h3 class="h-nomark" id="23-讓爬蟲幫你完成平日登入的步驟">2.3 讓爬蟲幫你完成平日登入的步驟<a class="h-anchor" href="#23-%e8%ae%93%e7%88%ac%e8%9f%b2%e5%b9%ab%e4%bd%a0%e5%ae%8c%e6%88%90%e5%b9%b3%e6%97%a5%e7%99%bb%e5%85%a5%e7%9a%84%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>將套件中會使用到的函式引入</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> webdriver <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver&#39;</span>), <span style="color:#8b949e;font-style:italic">// 加入虛擬網頁套件
+</span></span></span><span style="display:flex;"><span>    By <span style="color:#ff7b72;font-weight:bold">=</span> webdriver.By,<span style="color:#8b949e;font-style:italic">//你想要透過什麼方式來抓取元件，通常使用xpath、css
+</span></span></span><span style="display:flex;"><span>    until <span style="color:#ff7b72;font-weight:bold">=</span> webdriver.until;<span style="color:#8b949e;font-style:italic">//直到抓到元件才進入下一步(可設定等待時間)
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> chrome <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver/chrome&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> path <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;path&#39;</span>);<span style="color:#8b949e;font-style:italic">//用於處理文件路徑的小工具
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fs <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;fs&#34;</span>);<span style="color:#8b949e;font-style:italic">//讀取檔案用
+</span></span></span></code></pre></div></li>
+<li>
+<p>將我們對網頁操作的操作加入程式</p>
+<ul>
+<li>前往 facebook 登入頁面 → 輸入登入資訊 → 按下登入按鈕</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> loginFacebook () {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (<span style="color:#ff7b72;font-weight:bold">!</span>checkDriver()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> driver <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> <span style="color:#ff7b72">new</span> webdriver.Builder().forBrowser(<span style="color:#a5d6ff">&#34;chrome&#34;</span>).build();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> web <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;https://www.facebook.com/login&#39;</span>;<span style="color:#8b949e;font-style:italic">//我們要前往FB
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> driver.get(web)<span style="color:#8b949e;font-style:italic">//在這裡要用await確保打開完網頁後才能繼續動作
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//填入fb登入資訊
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//使用until是要求直到網頁顯示了這個元件才能執行下一步
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fb_email_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.
+</span></span><span style="display:flex;"><span>        wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;email&#34;]`</span>)));<span style="color:#8b949e;font-style:italic">//找出填寫email的元件
+</span></span></span><span style="display:flex;"><span>    fb_email_ele.sendKeys(fb_username)<span style="color:#8b949e;font-style:italic">//將使用者的資訊填入
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fb_pass_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.
+</span></span><span style="display:flex;"><span>        wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;pass&#34;]`</span>)));
+</span></span><span style="display:flex;"><span>    fb_pass_ele.sendKeys(fb_userpass)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//抓到登入按鈕然後點擊
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> login_elem <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.
+</span></span><span style="display:flex;"><span>        wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;loginbutton&#34;]`</span>)))
+</span></span><span style="display:flex;"><span>    login_elem.click()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>loginFacebook()<span style="color:#8b949e;font-style:italic">//登入FB
+</span></span></span></code></pre></div></li>
+</ol>
+<hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div><blockquote>
+<p>你會看到 chrome 的應用程式自動打開並且成功登入 Facebook</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-08.webp" width="1024" height="386" alt="執行程式（圖 8）" loading="lazy" decoding="async"></p>
+</blockquote>
+<p>如果模擬器讓你成功登入 FB 可以在下方留言讓我知道喔，登入成功的瞬間有沒有充滿成就感呢？</p>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day9">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day8_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來實作今天的功能喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>調整你.env檔填上FB登入資訊</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://blog.happycoding.today/python-crawler-analysis/">Python 爬蟲解析：以爬取臉書社團為案例，使用 Selenium 來進行網頁模擬爬蟲</a></li>
+</ol>
+<blockquote>
+<p><em>免責聲明:文章技術僅抓取公開數據作爲研究，任何組織和個人不得以此技術盜取他人智慧財產、造成網站損害，否則一切后果由該組織或個人承擔。作者不承擔任何法律及連帶責任！</em></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-09.webp" width="1024" height="233" alt="參考資源（圖 9）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

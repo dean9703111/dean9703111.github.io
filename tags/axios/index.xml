@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Axios｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/axios/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Axios｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/axios/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Tue, 13 Oct 2020 08:53:06 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/axios/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day28】為爬蟲加上通知 - 用 axios 發出 LINE 通知</title>
+      <link>https://deanlin.net/blog/202010/fb-ig-crawler-day-28/</link>
+      <pubDate>Tue, 13 Oct 2020 08:53:06 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/fb-ig-crawler-day-28/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：</description>
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-og_hu_522c2f25244229a2.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>成功要選人少的路走，套件要選人多的來用</p>
+</blockquote>
+<h2 id="如何選擇-nodejs-中發出-request-的套件">如何選擇 Node.js 中發出 Request 的套件？<a class="h-anchor" href="#%e5%a6%82%e4%bd%95%e9%81%b8%e6%93%87-nodejs-%e4%b8%ad%e7%99%bc%e5%87%ba-request-%e7%9a%84%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：</p>
+<ol>
+<li><strong>古老且沒再更新的套件</strong>：<a href="https://www.npmjs.com/package/https">https</a>、<a href="https://www.npmjs.com/package/xmlhttprequest">xmlhttprequest</a>、<a href="https://github.com/request/request">request</a>(這個套件在今年二月宣告廢棄)</li>
+<li><strong>使用人數眾多且持續更新的套件</strong>：<a href="https://www.npmjs.com/package/superagent">superagent</a>、<a href="https://www.npmjs.com/package/node-fetch">node-fetch</a>、<a href="https://www.npmjs.com/package/got">got</a>、<a href="https://www.npmjs.com/package/axios">axios</a></li>
+</ol>
+<p>原則上選擇<code>使用人數眾多且持續更新的套件最安全</code>，因為古老的套件通常文件不齊全且無人維護，如果某一天宣告廢棄你的專案就要大量改寫了</p>
+<blockquote>
+<p>本專案採用 <code>axios</code> 來實現這個需求，如果你有興趣你也能嘗試不同的套件來完成今天的功能</p>
+</blockquote>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-axios-基礎介紹">1. axios 基礎介紹<a class="h-anchor" href="#1-axios-%e5%9f%ba%e7%a4%8e%e4%bb%8b%e7%b4%b9" aria-label="這個段落的連結"></a></h3>
+<p>1.1 安裝 / GET / POST 基礎用法<br>1.2 請求配置說明</p>
+<h3 class="h-nomark" id="2-用-axios-發出-line-通知">2. 用 axios 發出 LINE 通知<a class="h-anchor" href="#2-%e7%94%a8-axios-%e7%99%bc%e5%87%ba-line-%e9%80%9a%e7%9f%a5" aria-label="這個段落的連結"></a></h3>
+<hr>
+<h2 class="h-nomark" id="1-axios-基礎介紹-1">1. axios 基礎介紹<a class="h-anchor" href="#1-axios-%e5%9f%ba%e7%a4%8e%e4%bb%8b%e7%b4%b9-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-安裝--get--post-基礎用法">1.1 安裝 / GET / POST 基礎用法<a class="h-anchor" href="#11-%e5%ae%89%e8%a3%9d--get--post-%e5%9f%ba%e7%a4%8e%e7%94%a8%e6%b3%95" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p><strong>安裝</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm install axios
+</span></span><span style="display:flex;"><span>yarn add axios
+</span></span></code></pre></div></li>
+<li>
+<p><strong>GET 基礎用法</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> axios <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;axios&#39;</span>); <span style="color:#8b949e;font-style:italic">// 引入套件
+</span></span></span><span style="display:flex;"><span>axios.get(<span style="color:#a5d6ff">&#39;url/users&#39;</span>, { <span style="color:#8b949e;font-style:italic">// 填入 api 網址
+</span></span></span><span style="display:flex;"><span>    params<span style="color:#ff7b72;font-weight:bold">:</span> { <span style="color:#8b949e;font-style:italic">// 傳入 params 物件
+</span></span></span><span style="display:flex;"><span>        ID<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">12345</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>.then(<span style="color:#ff7b72">function</span> (response) { 
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 處理成功後要做的事
+</span></span></span><span style="display:flex;"><span>    console.log(response);
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>.<span style="color:#ff7b72">catch</span>(<span style="color:#ff7b72">function</span> (error) {
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 發生意外地處理
+</span></span></span><span style="display:flex;"><span>    console.log(error);
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div></li>
+<li>
+<p><strong>POST 基礎用法</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>axios.post(<span style="color:#a5d6ff">&#39;url/users&#39;</span>, { <span style="color:#8b949e;font-style:italic">// 要傳送的資料由後方物件帶入
+</span></span></span><span style="display:flex;"><span>    firstName<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;Fred&#39;</span>,
+</span></span><span style="display:flex;"><span>    lastName<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;Flintstone&#39;</span>
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>.then(<span style="color:#ff7b72">function</span> (response) {
+</span></span><span style="display:flex;"><span>    console.log(response);
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>.<span style="color:#ff7b72">catch</span>(<span style="color:#ff7b72">function</span> (error) {
+</span></span><span style="display:flex;"><span>    console.log(error);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="12-請求配置說明">1.2 請求配置說明<a class="h-anchor" href="#12-%e8%ab%8b%e6%b1%82%e9%85%8d%e7%bd%ae%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p><strong>axios 的組成結構</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>axios.(config 物件)
+</span></span><span style="display:flex;"><span>.then(<span style="color:#ff7b72">function</span> (response) {})
+</span></span><span style="display:flex;"><span>.<span style="color:#ff7b72">catch</span>(<span style="color:#ff7b72">function</span> (error) {});
+</span></span></code></pre></div></li>
+<li>
+<p><code>config 物件</code>：發出 Request 的配置選項，其中只有 url 為必填</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// url 為必填
+</span></span></span><span style="display:flex;"><span>    url<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;/users&#39;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// method 是發出 Request 時使用的方法
+</span></span></span><span style="display:flex;"><span>    method<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;get&#39;</span>, <span style="color:#8b949e;font-style:italic">// 默認為 get
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// baseURL 如果填寫就會被添加到 url 前面，除非 url 為絕對路徑
+</span></span></span><span style="display:flex;"><span>    baseURL<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;https://some-domain.com/api/&#39;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 你可以在這個地方定義自己的 headers
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 通常會拿來設定 Authorization、Content-Type
+</span></span></span><span style="display:flex;"><span>    headers<span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#a5d6ff">&#39;Content-Type&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;application/json&#39;</span>},
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// params 通常跟著 GET method 一起使用
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 這裡填寫的參數會帶入 url 後面，ex : .../user?ID=123
+</span></span></span><span style="display:flex;"><span>    params<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>        ID<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">123</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// data 只適用於 POST、PUT、PATCH 這幾個 method
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 主要作為 Request 傳送的資料
+</span></span></span><span style="display:flex;"><span>    data<span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>        firstName<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;Fred&#39;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// Request 時間超過 1000毫秒(1秒)後會被中止
+</span></span></span><span style="display:flex;"><span>    timeout<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1000</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 選項: &#39;arraybuffer&#39;, &#39;document&#39;, &#39;json&#39;, &#39;text&#39;, &#39;stream&#39;
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 瀏覽器才有 &#39;blob&#39;
+</span></span></span><span style="display:flex;"><span>    responseType<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;json&#39;</span>, <span style="color:#8b949e;font-style:italic">// 默認為 json
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>     <span style="color:#8b949e;font-style:italic">// 限制 http 回應時的內容大小
+</span></span></span><span style="display:flex;"><span>    maxContentLength<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">2000</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><blockquote>
+<p>這裡只列出常用的配置選項，如果你有興趣深入研究請參考<a href="https://www.npmjs.com/package/axios#request-config">官方文件</a></p>
+</blockquote>
+</li>
+<li>
+<p><strong>下面列出使用 then 時常用的回應參數</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>axios.get(<span style="color:#a5d6ff">&#39;/users/123&#39;</span>)
+</span></span><span style="display:flex;"><span>.then(<span style="color:#ff7b72">function</span>(response) {
+</span></span><span style="display:flex;"><span>    console.log(response.data); <span style="color:#8b949e;font-style:italic">// api 回傳的資料會在這裡
+</span></span></span><span style="display:flex;"><span>    console.log(response.status); <span style="color:#8b949e;font-style:italic">// 這個是 HTTP狀態碼
+</span></span></span><span style="display:flex;"><span>    console.log(response.config); <span style="color:#8b949e;font-style:italic">// 這個 Request 的 config
+</span></span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="2-用-axios-發出-line-通知-1">2. 用 axios 發出 LINE 通知<a class="h-anchor" href="#2-%e7%94%a8-axios-%e7%99%bc%e5%87%ba-line-%e9%80%9a%e7%9f%a5-1" aria-label="這個段落的連結"></a></h2>
+<p>在對 axios 有基礎了解後我們就把昨日在 POSTMAN 設定 Request 的參數搬移到專案程式吧。<code>在專案 tools 資料夾內新增 lineNotify.js</code>，今天我們要用這隻程式發出 LINE 通知</p>
+<ul>
+<li>因為傳送 data 的資料格式為 form-data ，所以請先下指令 <code>yarn add form-data</code> 安裝套件喔</li>
+</ul>
+<h3 id="toolslinenotifyjs">tools/lineNotify.js<a class="h-anchor" href="#toolslinenotifyjs" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> axios <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;axios&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> FormData <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;form-data&#39;</span>);
+</span></span><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> lineNotify () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> token <span style="color:#ff7b72;font-weight:bold">=</span> process.env.LINE_TOKEN;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 使用 form-data 傳遞資料
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> form_data <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> FormData();
+</span></span><span style="display:flex;"><span>    form_data.append(<span style="color:#a5d6ff">&#34;message&#34;</span>, <span style="color:#a5d6ff">&#39;測試 lineNotify&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 設定 LINE Notify 的 權杖 &amp; form-data
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> headers <span style="color:#ff7b72;font-weight:bold">=</span> Object.assign({
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#39;Authorization&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`Bearer </span><span style="color:#a5d6ff">${</span>token<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>
+</span></span><span style="display:flex;"><span>    }, form_data.getHeaders());
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    axios({
+</span></span><span style="display:flex;"><span>        method<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;post&#39;</span>,
+</span></span><span style="display:flex;"><span>        url<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;https://notify-api.line.me/api/notify&#39;</span>,
+</span></span><span style="display:flex;"><span>        data<span style="color:#ff7b72;font-weight:bold">:</span> form_data,
+</span></span><span style="display:flex;"><span>        headers<span style="color:#ff7b72;font-weight:bold">:</span> headers
+</span></span><span style="display:flex;"><span>    }).then(<span style="color:#ff7b72">function</span> (response) {
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// HTTP狀態碼 200 代表成功
+</span></span></span><span style="display:flex;"><span>        console.log(<span style="color:#a5d6ff">&#34;HTTP狀態碼:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> response.status);
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// 觀察回傳的資料是否與 POSTMAN 測試一致
+</span></span></span><span style="display:flex;"><span>        console.log(response.data);
+</span></span><span style="display:flex;"><span>    }).<span style="color:#ff7b72">catch</span>(<span style="color:#ff7b72">function</span> (error) {
+</span></span><span style="display:flex;"><span>        console.error(<span style="color:#a5d6ff">&#34;LINE通知發送失敗&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> (error.response) { <span style="color:#8b949e;font-style:italic">// 顯示錯誤原因            
+</span></span></span><span style="display:flex;"><span>            console.error(<span style="color:#a5d6ff">&#34;HTTP狀態碼:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> error.response.status);
+</span></span><span style="display:flex;"><span>            console.error(error.response.data);
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>            console.error(error);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>lineNotify()
+</span></span></code></pre></div><hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>node tools/lineNotify.js
+</span></span></code></pre></div></li>
+<li>
+<p>確認印出的 HTTP狀態碼 &amp; 回傳的資料與 POSTMAN 測試結果一致</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01.webp" width="1024" height="70" alt="執行程式（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>如果你的 LINE 收到發出的通知就代表你成功嚕！</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-02.webp" width="716" height="444" alt="執行程式（圖 2）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day28">這裡</a>找到喔</li>
+<li>我昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day27_sample_code.zip">壓縮檔</a>，你可以在乾淨的環境為專案加入發出LINE通知的功能
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>要在tools/google_sheets資料夾放上自己的憑證，申請流程請參考<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+<li>調整fanspages資料夾內目標爬蟲的粉專網址</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+<li>填上SPREADSHEET_ID</li>
+<li>填上爬蟲執行時間(CRONJOB_TIME)</li>
+<li>填上LINE Notify申請的權杖(LINE_TOKEN)，申請流程請參考<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/">Day27</a></li>
+</ul>
+</li>
+<li>在終端機下指令 <strong>npm install forever -g</strong> ，讓你在終端機的任何位置都能管控排程</li>
+<li>在sh資料夾中設定執行排程的shell script</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://medium.com/dot-js/%E7%94%B1%E5%89%8D%E7%AB%AFrequest-%E7%9A%84%E5%B9%BE%E7%A8%AE%E6%96%B9%E6%B3%95-fbf8a0b4023a">由前端request 的幾種方法</a></li>
+<li><a href="https://www.twilio.com/blog/2017/08/http-requests-in-node-js.html">5 Ways to Make HTTP Requests in Node.js</a></li>
+<li><a href="https://ithelp.ithome.com.tw/articles/10212120">axios 基本使用 &amp; Config</a></li>
+</ol>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-03.webp" width="1024" height="233" alt="參考資源（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

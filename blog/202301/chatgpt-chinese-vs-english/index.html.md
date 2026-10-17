@@ -36,7 +36,7 @@
 
 「失控的正向思考」是由英文翻譯過來的書，而「天龍八部」有中文翻譯成英文的版本；就用這兩本書來看看 ChatGPT 的能耐吧！
 
-### ➤ 用中文詢問 ChatGPT 「失控的正向思考」摘要
+### 用中文詢問 ChatGPT 「失控的正向思考」摘要
 
 **我**：「請給我“失控的正向思考”這本書的重點摘要，以及適合閱讀的對象。」
 
@@ -60,7 +60,7 @@
 一開始 ChatGPT 是無法回答我問題的，但當我給他英文的書名時，他就能夠給予回應。
 書籍的內容大體上是正確的，不過作者的名字是「Barbara Ehrenreich」而且是個專欄作家…
 
-### ➤ 用英文詢問 ChatGPT 「失控的正向思考」摘要
+### 用英文詢問 ChatGPT 「失控的正向思考」摘要
 
 **我**：「Please provide me with a summary of the key points and the suitable audience of the book “How Positive Thinking is Undermining America”.」
 
@@ -68,7 +68,7 @@
 
 從書摘與作者訊息的角度來說，英文的回應都是正確的。
 
-### ➤ 用中文詢問 ChatGPT 「天龍八部」摘要
+### 用中文詢問 ChatGPT 「天龍八部」摘要
 
 **我**：「請給我“天龍八部”這本書的重點摘要，以及適合閱讀的對象。」
 
@@ -80,7 +80,7 @@
 
 看完 ChatGPT 的解釋後，我馬上 Google 了一下天龍八部，這劇情跟我記憶中的不太一樣啊？東方不敗怎麼變成了主角？ChatGPT 是讀到哪本被魔改的小說了！？
 
-### ➤ 用英文詢問 ChatGPT 「天龍八部」摘要
+### 用英文詢問 ChatGPT 「天龍八部」摘要
 
 **我**：「Please provide me with a summary of the key points and the suitable audience of the book “Demi-Gods and Semi-Devils”.」
 
@@ -90,7 +90,7 @@
 
 ## 都是擔任「 Node.js Backend Developer 面試官」，中文與英文的差異在哪？
 
-### ➤ 中文面試官
+### 中文面試官
 
 **我**：「我希望你能擔任一個面試官。我將是候選人，你將向我提出 Node.js Backend Developer 職位的面試問題。我希望你就像是面試官一樣回應。不要一次問完所有問題。我希望你只對我進行面試。問我問題，並等待我的回答。不要額外的解釋。像面試官那樣一個一個地問我問題，並等待我的回答。我的第一句話是 “你好”」
 
@@ -116,7 +116,7 @@
 
 **ChatGPT**：「非常好，謝謝您的回答。這是我們的所有問題，謝謝您抽空參加面試，我們會盡快給您答覆。」
 
-### ➤ 英文面試官
+### 英文面試官
 
 **我**：「I want you to act as an interviewer. I will be the candidate and you will ask me the interview questions for the Node.js Backend Developer position. I want you to only reply as the interviewer. Do not write all the conservation at once. I want you to only do the interview with me. Ask me the questions and wait for my answers. Do not write explanations. Ask me the questions one by one like an interviewer does and wait for my answers. My first sentence is “Hi”（大意是：我希望你能擔任一個面試官。我將是候選人，你將向我提出 Node.js Backend Developer 職位的面試問題。我希望你就像是面試官一樣回應。）」
 
@@ -150,7 +150,7 @@
 
 **ChatGPT**：「Thank you, I appreciate your time and interest in the position. We’ll get back to you soon regarding next steps. Have a great day!（謝謝你，感謝你的時間和對這個職位的興趣。我們會盡快與你聯繫。祝你有個愉快的一天）」
 
-### ➤ 兩個面試官有什麼不同呢？
+### 兩個面試官有什麼不同呢？
 
 中文面試官只問了「2」道技術題，而英文面試官總共問了「5」道技術題。
 
@@ -166,15 +166,15 @@
 
 不過這裡筆者還是提供一個「曲線救國」的方案，我們就拿開頭「失控的正向思考」這本書來當範例。
 
-### ➤ SETP 1：既然知道 ChatGPT 沒有中文的資料，那我們先取得英文的書名「How Positive Thinking is Undermining America」。
+### SETP 1：既然知道 ChatGPT 沒有中文的資料，那我們先取得英文的書名「How Positive Thinking is Undermining America」。
 
-### ➤ SETP 2：讓 ChatGPT 的專業翻譯員幫忙翻譯。
+### SETP 2：讓 ChatGPT 的專業翻譯員幫忙翻譯。
 
 我：「I want you to act as an English translator, spelling corrector and improver. I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations. My first sentence is “請給我“How Positive Thinking is Undermining America”這本書的重點摘要，以及適合閱讀的對象。"」
 
 ChatGPT：「Please give me a summary of the key points and the appropriate audience for the book “Bright-Sided: How Positive Thinking is Undermining America”.」
 
-### ➤ SETP 3：開一個新的聊天室，貼上 ChatGPT 的回覆外要求他擔任中文翻譯
+### SETP 3：開一個新的聊天室，貼上 ChatGPT 的回覆外要求他擔任中文翻譯
 
 我：「Please give me a summary of the key points and the appropriate audience for the book “Bright-Sided: How Positive Thinking is Undermining America”.And I want you to act as traditional chinese translator.」
 

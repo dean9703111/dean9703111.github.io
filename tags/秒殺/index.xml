@@ -8,8 +8,275 @@
     <generator>Hugo</generator>
     <language>zh-tw</language>
     <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
-    <lastBuildDate>Wed, 18 Aug 2021 20:06:42 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 05 Oct 2021 08:10:05 +0800</lastBuildDate>
     <atom:link href="https://deanlin.net/tags/%E7%A7%92%E6%AE%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[面試][資料庫]如何解決高併發情境的商品秒殺問題</title>
+      <link>https://deanlin.net/blog/202110/fullstack-career-notes-day-20/</link>
+      <pubDate>Tue, 05 Oct 2021 08:10:05 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202110/fullstack-career-notes-day-20/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>職涯成長</category>
+      <description>如果今天有上萬人在同一時間搶限量商品，昨天分享的方案基本撐不住。</description>
+      <media:content url="https://deanlin.net/blog/202110/fullstack-career-notes-day-20/images/fullstack-career-notes-day-20-og_hu_767c6fd86353c668.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<p>如果今天有<code>上萬人在同一時間搶限量商品</code>，昨天分享的方案基本撐不住。</p>
+<p>不過面對這個情境，Redis 表示終於輪到我了！今天這篇文章會以 <code>Node.js + Redis</code> 為範例，帶讀者一起解決這個問題。</p>
+<h2 id="大綱">大綱<a class="h-anchor" href="#%e5%a4%a7%e7%b6%b1" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li><strong>如何解決高併發情境的商品秒殺問題</strong>
+<ul>
+<li>1.1 面試官為什麼會問？</li>
+<li>1.2 面試官想從答案確認什麼？</li>
+<li>1.3 筆者提供的簡答</li>
+</ul>
+</li>
+<li><strong>回答問題所需具備的知識</strong>
+<ul>
+<li>2.1 先了解 Redis 的基礎知識</li>
+<li>2.2 使用 Node.js + Redis 解決高併發秒殺問題</li>
+<li>2.3 模擬秒殺情境確認商品沒有超賣</li>
+</ul>
+</li>
+<li><strong>衍伸問題</strong>
+<ul>
+<li>3.1 如果有數萬用戶同時查看 TOP100 的點數排行榜，資料庫如何設計？</li>
+<li>3.2 Redis 跟 Memcached 的差異</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-如何解決高併發商品秒殺問題">1. 如何解決高併發商品秒殺問題<a class="h-anchor" href="#1-%e5%a6%82%e4%bd%95%e8%a7%a3%e6%b1%ba%e9%ab%98%e4%bd%b5%e7%99%bc%e5%95%86%e5%93%81%e7%a7%92%e6%ae%ba%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-面試官為什麼會問">1.1 面試官為什麼會問？<a class="h-anchor" href="#11-%e9%9d%a2%e8%a9%a6%e5%ae%98%e7%82%ba%e4%bb%80%e9%ba%bc%e6%9c%83%e5%95%8f" aria-label="這個段落的連結"></a></h3>
+<p>這算是資料庫的<code>常見面試題</code>，除了<code>金融、電商</code>喜歡考這題外；<code>社交平台、新創公司、遊戲產業</code>也會換個形式考類似的題目。</p>
+<p>因為這算是<code>職缺所需具備的技術</code>，如果求職者沒有相關經驗可能就會止步於這個關卡。</p>
+<blockquote>
+<p>如果有去以上產業的打算，最好有一定的 NoSQL（ex：Redis、MongoDB） 基礎再去面試；因為在面試官的眼中<code>有基礎跟完全不會的差距很大</code>，求職者可以沒有實務經驗，但明知產業會碰到這些技術還不去學習就是態度問題了。</p>
+</blockquote>
+<hr>
+<h3 class="h-nomark" id="12-面試官想從答案確認什麼">1.2 面試官想從答案確認什麼？<a class="h-anchor" href="#12-%e9%9d%a2%e8%a9%a6%e5%ae%98%e6%83%b3%e5%be%9e%e7%ad%94%e6%a1%88%e7%a2%ba%e8%aa%8d%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>能提出高併發情境商品秒殺的解決方案</li>
+<li>如果解決方案為 NoSQL，對它的認知有多少</li>
+<li>是否接觸過同類型的 NoSQL</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="13-筆者提供的簡答">1.3 筆者提供的簡答<a class="h-anchor" href="#13-%e7%ad%86%e8%80%85%e6%8f%90%e4%be%9b%e7%9a%84%e7%b0%a1%e7%ad%94" aria-label="這個段落的連結"></a></h3>
+<p>通常這類型的秒殺活動都有固定檔期，我會先將活動用的<code>商品及庫存數量同步到 Redis 資料庫</code>；為了避免超賣，在 Client 端下單時會<code>執行 Lua 腳本</code>，當秒殺到指定數量或是時間結束後就不再接受請求，活動結束後<code>將 Redis 的資料同步到關聯式資料庫</code>。</p>
+<hr>
+<h2 class="h-nomark" id="2-回答問題所需具備的知識">2. 回答問題所需具備的知識<a class="h-anchor" href="#2-%e5%9b%9e%e7%ad%94%e5%95%8f%e9%a1%8c%e6%89%80%e9%9c%80%e5%85%b7%e5%82%99%e7%9a%84%e7%9f%a5%e8%ad%98" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-先了解-redis-的基礎知識">2.1 先了解 Redis 的基礎知識<a class="h-anchor" href="#21-%e5%85%88%e4%ba%86%e8%a7%a3-redis-%e7%9a%84%e5%9f%ba%e7%a4%8e%e7%9f%a5%e8%ad%98" aria-label="這個段落的連結"></a></h3>
+<p>如果有<code>短時間大量訪問、需要性能提升</code>的需求，往往會先想到 Redis 這個記憶體資料庫。</p>
+<ul>
+<li>
+<p><strong>Redis 為什麼快？</strong></p>
+<ul>
+<li>
+<p><strong>記憶體資料庫</strong><br>記憶體讀寫本來就快。</p>
+</li>
+<li>
+<p><strong>單執行緒（single-threaded）</strong><br>如果使用<code>多執行緒</code>會耗費時間在<code>上下文的切換</code>以及<code>加鎖</code>上面；而<code>單執行緒</code>會依照<code>請求順序執行</code>，不需考慮同步以及加鎖帶來的效能問題。<br>Redis 是基於記憶體操作，所以效能的瓶頸不在 CPU 而在記憶體、網路頻寬；因為 CPU 不是瓶頸，所以可以<code>開多個 Redis 建立 Cluster</code> 分散壓力。</p>
+</li>
+<li>
+<p><strong>I/O 多路複用（multiplexing）</strong><br>Redis 使用了 <code>epoll IO 多路複用</code>，可以用一條執行緒處理併發的網路請求。</p>
+<blockquote>
+<p><strong>這個有點抽象，我用<code>繳交作業</code>為情境說明</strong>：<br>假設你是一個老師，採用多路復用的原則批改作業，那你批改的順序就是<code>看誰先繳交作業</code>，而不是按照學號順序批改（此作法中間有人沒交作業就會卡住）；這樣就能避免大量無用操作，為非阻塞模式的實現。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Redis 資料保存方案</strong><br>可以使用 <code>RDB 、AOF</code> 來做持久化。</p>
+<ul>
+<li><strong>RDB 持久化（Redis Database）</strong><br>在指定的時間間隔內將資料 dump 到硬碟；因為是<code>定期操作</code>，如果 Redis <code>當機會遺失部分資料</code>，此方案適合<code>大規模資料恢復</code>。</li>
+<li><strong>AOF 持久化（Append Only File）</strong><br>這個方案可以<code>完整紀錄</code>所有資料的變化，因為採用日誌追加的方式，所以<code>就算當機也不會影響已經儲存的日誌，災難復原的完成度高</code>；缺點是<code>檔案比 RDB 大</code>、大規模資料<code>恢復速度較 RDB 慢</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong>Redis 資料淘汰機制</strong><br>Redis 主要<code>保存的都是熱點資訊</code>，在儲存資料有限的狀態下（記憶體不足，無法寫入新資料）；就要合理的設定淘汰機制：</p>
+<ul>
+<li>選擇性移除有設定<code>過期時間</code>的資料
+<ul>
+<li><strong>volatile-lru</strong>：挑選最近較少使用的資料淘汰。</li>
+<li><strong>volatile-ttl</strong>：挑選即將過期的資料淘汰。</li>
+<li><strong>volatile-random</strong>：挑選隨機資料淘汰。</li>
+</ul>
+</li>
+<li><strong>allkeys-lru</strong>：挑選最近較少使用的資料淘汰。</li>
+<li><strong>allkeys-random</strong>：挑選隨機資料淘汰。</li>
+<li><strong>no-enviction</strong>：禁止淘汰；若選用這個設定，當數據到達 maxmemory 時會回傳 OOM 錯誤。</li>
+</ul>
+<blockquote>
+<p>原則上淘汰策略以「<code>volatile-lru、allkeys-lru</code>」為主（淘汰較少使用的資料）。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="22-使用-nodejs--redis-解決高併發秒殺問題">2.2 使用 Node.js + Redis 解決高併發秒殺問題<a class="h-anchor" href="#22-%e4%bd%bf%e7%94%a8-nodejs--redis-%e8%a7%a3%e6%b1%ba%e9%ab%98%e4%bd%b5%e7%99%bc%e7%a7%92%e6%ae%ba%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>目標</strong>
+<ul>
+<li>產生秒殺商品基礎資訊（商品名稱、庫存）</li>
+<li>模擬秒殺情境，確認是否會超賣</li>
+<li>確認有保存購買人資訊</li>
+</ul>
+</li>
+<li><strong>使用技術</strong>
+<ul>
+<li>
+<p><strong>Redis</strong><br>本篇文章使用 Redis 的 Hash、List type 來儲存資訊。</p>
+<blockquote>
+<p>如果完全沒有相關基礎，建議先參考<a href="https://medium.com/dean-lin/8d0b45062f9">這篇文章</a>來安裝 Redis 以及它的 GUI 工具。</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Lua 腳本</strong><br>為了避免超賣，這裡採用 Lua 腳本；<code>在 Redis Server 執行 EVAL 指令時，在結果回傳前只會執行當下 Lua 腳本的邏輯</code>，其他 Client 端的命令須等待直到 EVAL 執行完為止。</p>
+<blockquote>
+<p>Lua 腳本的邏輯應盡量簡單以保證執行效率，否則會影響 Client 端的體驗。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><strong>程式架構</strong>
+<ul>
+<li>
+<p><strong>主程式：redisSecKill.js</strong></p>
+<ul>
+<li>先啟用 Redis Client 端（如未安裝相關套件，請在專案資料夾下輸入 <code>yarn add ioredis</code>）。</li>
+<li>用 <code>prepare</code> 函式，以 Hash type 建立參加秒殺的產品庫存。</li>
+<li>用 <code>secKill</code> 函式模擬使用者購買行為，緩存並執行 Lua 腳本。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fs <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;fs&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> Redis <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;ioredis&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> redis <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Redis({
+</span></span><span style="display:flex;"><span>  host<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;127.0.0.1&#34;</span>,
+</span></span><span style="display:flex;"><span>  port<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">6379</span>,
+</span></span><span style="display:flex;"><span>  password<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>redis.on(<span style="color:#a5d6ff">&#34;error&#34;</span>, <span style="color:#ff7b72">function</span> (error) {
+</span></span><span style="display:flex;"><span>  console.error(error);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> prepare(item_name) {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 參加秒殺活動的商品庫存
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">await</span> redis.hmset(item_name, <span style="color:#a5d6ff">&#34;Total&#34;</span>, <span style="color:#a5d6ff">100</span>, <span style="color:#a5d6ff">&#34;Booked&#34;</span>, <span style="color:#a5d6ff">0</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> secKillScript <span style="color:#ff7b72;font-weight:bold">=</span> fs.readFileSync(<span style="color:#a5d6ff">&#34;./secKill.lua&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> secKill(item_name, user_name) {
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 1. 緩存腳本取得 sha1 值
+</span></span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> sha1 <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> redis.script(<span style="color:#a5d6ff">&#34;load&#34;</span>, secKillScript);
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// console.log(sha1);
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// 2. 透過 evalsha 執行腳本
+</span></span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// redis Evalsha 命令基本語法如下
+</span></span></span><span style="display:flex;"><span>  <span style="color:#8b949e;font-style:italic">// EVALSHA sha1 numkeys key [key ...] arg [arg ...]
+</span></span></span><span style="display:flex;"><span>  redis.evalsha(sha1, <span style="color:#a5d6ff">1</span>, item_name, <span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">&#34;order_list&#34;</span>, user_name);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> main() {
+</span></span><span style="display:flex;"><span>  console.time(<span style="color:#a5d6ff">&#34;secKill&#34;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> item_name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;item_name&#34;</span>;
+</span></span><span style="display:flex;"><span>  prepare(item_name);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">var</span> i <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">1</span>; i <span style="color:#ff7b72;font-weight:bold">&lt;</span> <span style="color:#a5d6ff">10000</span>; i<span style="color:#ff7b72;font-weight:bold">++</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> user_name <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;baobao&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> i;
+</span></span><span style="display:flex;"><span>    secKill(item_name, user_name);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  console.timeEnd(<span style="color:#a5d6ff">&#34;secKill&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>main();
+</span></span></code></pre></div></li>
+<li>
+<p><strong>Lua 腳本：secKill.lua</strong><br>在 Lua 腳本執行邏輯：「確認下單數量」➜「取得商品庫存」➜「如果庫存足夠就下單」➜「儲存購買者資訊（List type）」。</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#ff7b72">local</span> item_name <span style="color:#ff7b72;font-weight:bold">=</span> KEYS[<span style="color:#a5d6ff">1</span>]
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">local</span> n <span style="color:#ff7b72;font-weight:bold">=</span> tonumber(ARGV[<span style="color:#a5d6ff">1</span>])
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">local</span> order_list <span style="color:#ff7b72;font-weight:bold">=</span> ARGV[<span style="color:#a5d6ff">2</span>]
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">local</span> user_name <span style="color:#ff7b72;font-weight:bold">=</span> ARGV[<span style="color:#a5d6ff">3</span>]
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> <span style="color:#ff7b72;font-weight:bold">not</span> n  <span style="color:#ff7b72;font-weight:bold">or</span> n <span style="color:#ff7b72;font-weight:bold">==</span> <span style="color:#a5d6ff">0</span> <span style="color:#ff7b72">then</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">local</span> vals <span style="color:#ff7b72;font-weight:bold">=</span> redis.call(<span style="color:#a5d6ff">&#34;HMGET&#34;</span>, item_name, <span style="color:#a5d6ff">&#34;Total&#34;</span>, <span style="color:#a5d6ff">&#34;Booked&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">local</span> total <span style="color:#ff7b72;font-weight:bold">=</span> tonumber(vals[<span style="color:#a5d6ff">1</span>])
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">local</span> booked <span style="color:#ff7b72;font-weight:bold">=</span> tonumber(vals[<span style="color:#a5d6ff">2</span>])
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> <span style="color:#ff7b72;font-weight:bold">not</span> total <span style="color:#ff7b72;font-weight:bold">or</span> <span style="color:#ff7b72;font-weight:bold">not</span> booked <span style="color:#ff7b72">then</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">if</span> booked <span style="color:#ff7b72;font-weight:bold">+</span> n <span style="color:#ff7b72;font-weight:bold">&lt;=</span> total <span style="color:#ff7b72">then</span>
+</span></span><span style="display:flex;"><span>  redis.call(<span style="color:#a5d6ff">&#34;HINCRBY&#34;</span>, item_name, <span style="color:#a5d6ff">&#34;Booked&#34;</span>, n)
+</span></span><span style="display:flex;"><span>  redis.call(<span style="color:#a5d6ff">&#34;LPUSH&#34;</span>, order_list, user_name)
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">return</span> n
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">return</span> <span style="color:#a5d6ff">0</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="23-模擬秒殺情境確認商品沒有超賣">2.3 模擬秒殺情境確認商品沒有超賣<a class="h-anchor" href="#23-%e6%a8%a1%e6%93%ac%e7%a7%92%e6%ae%ba%e6%83%85%e5%a2%83%e7%a2%ba%e8%aa%8d%e5%95%86%e5%93%81%e6%b2%92%e6%9c%89%e8%b6%85%e8%b3%a3" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p><strong>SETP 1</strong>：在專案資料夾下輸入 <code>node redisSecKill.js</code> 模擬秒殺</p>
+<p><img src="https://deanlin.net/blog/202110/fullstack-career-notes-day-20/images/fullstack-career-notes-day-20-01.webp" width="1019" height="73" alt="2.3 模擬秒殺情境確認商品沒有超賣（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p><strong>SETP 2</strong>：待執行完後，用 Redis GUI 程式確認商品沒有超賣</p>
+<p><img src="https://deanlin.net/blog/202110/fullstack-career-notes-day-20/images/fullstack-career-notes-day-20-02.webp" width="1024" height="412" alt="2.3 模擬秒殺情境確認商品沒有超賣（圖 2）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p><strong>SETP 3</strong>：確認訂單都有對應的買家</p>
+<p><img src="https://deanlin.net/blog/202110/fullstack-career-notes-day-20/images/fullstack-career-notes-day-20-03.webp" width="1024" height="734" alt="2.3 模擬秒殺情境確認商品沒有超賣（圖 3）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+<blockquote>
+<p><strong>補充</strong><br>文章程式只是 MVP，現實狀況還有很多要設計的：</p>
+<ul>
+<li>哪些商品被列為秒殺，如何紀錄。</li>
+<li>設定秒殺開始、結束時間。</li>
+<li>如何將 Redis 資料存入關聯式資料庫中。</li>
+</ul>
+</blockquote>
+<hr>
+<h2 class="h-nomark" id="3-衍伸問題">3. 衍伸問題<a class="h-anchor" href="#3-%e8%a1%8d%e4%bc%b8%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="31-如果有數萬用戶同時查看-top100-的點數排行榜資料庫如何設計">3.1 如果有數萬用戶同時查看 TOP100 的點數排行榜，資料庫如何設計？<a class="h-anchor" href="#31-%e5%a6%82%e6%9e%9c%e6%9c%89%e6%95%b8%e8%90%ac%e7%94%a8%e6%88%b6%e5%90%8c%e6%99%82%e6%9f%a5%e7%9c%8b-top100-%e7%9a%84%e9%bb%9e%e6%95%b8%e6%8e%92%e8%a1%8c%e6%a6%9c%e8%b3%87%e6%96%99%e5%ba%ab%e5%a6%82%e4%bd%95%e8%a8%ad%e8%a8%88" aria-label="這個段落的連結"></a></h3>
+<p><code>考點：對 Redis Zset 這個資料型態的認知與應用</code></p>
+<p>我會使用 Redis 這個記憶體資料庫，建立一個<code>有序集合（Zset）</code>來儲存用戶的資訊。</p>
+<p>在設計上，用戶（member）是唯一值，且每個用戶都會關聯一個點數（score），這樣用戶就可以按照分數來排序。</p>
+<p>功能實現上會透過 <code>zrevrange Leaderboard 0 99 withscores</code> 這段指令來顯示 TOP100 的點數排行榜。</p>
+<blockquote>
+<ul>
+<li><strong>zrevrange</strong>：依照點數（score）檢視排行榜</li>
+<li><strong>Leaderboard</strong>：排行榜名稱（可以自行定義）</li>
+<li><strong>0 99</strong>：TOP100 的意思</li>
+<li><strong>withscores</strong>：連點數（score）一起顯示</li>
+</ul>
+</blockquote>
+<hr>
+<h3 class="h-nomark" id="32-redis-跟-memcached-的差異">3.2 Redis 跟 Memcached 的差異<a class="h-anchor" href="#32-redis-%e8%b7%9f-memcached-%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h3>
+<p><code>考點：是否了解過同類型的技術以及差異</code></p>
+<ul>
+<li>Memcached 只支援<code>簡單的資料型態</code>，而 Redis <code>支援多種資料型態</code>（String、Hash、List、Set、Zset、Stream）。</li>
+<li>Memcached <code>不支援資料持久化</code>，而 Redis <code>提供 RDB 跟 AOF 兩種方案</code>。</li>
+</ul>
+<p>同樣身為記憶體資料庫，Memcached 提供簡單的使用方式，而 Redis 提供豐富的功能。</p>
+<hr>
+<p>感謝大家的閱讀，如果喜歡我的文章可以<code>訂閱</code>接收通知；如果有幫助到你，按<code>Like</code>可以讓我更有寫文的動力，我們明天見～</p>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://medium.com/dean-lin/8d0b45062f9">手把手帶你在 MacOS 安裝 Redis ＆Another Redis Desktop Manager(筆者部落格)</a></li>
+<li><a href="https://medium.com/dean-lin/e814fe26a0f2">用 Node.js + Redis 解決高併發秒殺問題(筆者部落格)</a></li>
+<li><a href="https://www.huaweicloud.com/articles/6785018d60d6272a49565cb148d661af.html">redis 之 sorted sets 類型及操作</a></li>
+<li><a href="https://www.gushiciku.cn/pl/2MPj/zh-tw">使用 redis 的有序集合實現排行榜功能</a></li>
+</ol>
+<hr>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202110/fullstack-career-notes-day-20/images/fullstack-career-notes-day-20-04.webp" width="1024" height="233" alt="參考資源（圖 4）" loading="lazy" decoding="async"></p>
+<p>在許多人的幫助下，本系列文章已成功出版，除了添加新的篇章，更完善了每個案例的應對進退；如果對現在的職涯感到迷茫，也許這本書能帶給你不一樣的觀點～</p>
+<p><strong>天瓏書局：</strong> <a href="https://www.tenlong.com.tw/products/9786263334571">https://www.tenlong.com.tw/products/9786263334571</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
     <item>
       <title>用 Node.js &#43; Redis 解決高併發秒殺問題</title>
       <link>https://deanlin.net/blog/202108/nodejs-redis-flash-sale-concurrency/</link>
@@ -39,12 +306,12 @@
 </ol>
 <hr>
 <h2 id="二使用技術">二、使用技術<a class="h-anchor" href="#%e4%ba%8c%e4%bd%bf%e7%94%a8%e6%8a%80%e8%a1%93" aria-label="這個段落的連結"></a></h2>
-<h3 id="-redis">➤ Redis<a class="h-anchor" href="#-redis" aria-label="這個段落的連結"></a></h3>
+<h3 id="-redis">Redis<a class="h-anchor" href="#-redis" aria-label="這個段落的連結"></a></h3>
 <ol>
 <li>如果完全沒有相關基礎，建議先參考<a href="https://deanlin.net/blog/202108/install-redis-on-macos/">這篇文章</a>來安裝 Redis 以及他的 GUI 工具</li>
 <li>本篇文章使用 Redis 的 Hash、List type 來儲存資訊</li>
 </ol>
-<h3 id="-lua">➤ Lua<a class="h-anchor" href="#-lua" aria-label="這個段落的連結"></a></h3>
+<h3 id="-lua">Lua<a class="h-anchor" href="#-lua" aria-label="這個段落的連結"></a></h3>
 <ol>
 <li>為了避免超賣，這裡採用 Lua 腳本</li>
 <li>在 Redis Server 執行 EVAL 指令時，在結果回傳前只會執行當下 Lua 腳本的邏輯，其他 Client 端的命令須等待直到 EVAL 執行完為止。</li>
@@ -54,7 +321,7 @@
 </blockquote>
 <hr>
 <h2 id="三程式架構">三、程式架構<a class="h-anchor" href="#%e4%b8%89%e7%a8%8b%e5%bc%8f%e6%9e%b6%e6%a7%8b" aria-label="這個段落的連結"></a></h2>
-<h3 id="-主程式redisseckilljs">➤ 主程式：redisSecKill.js<a class="h-anchor" href="#-%e4%b8%bb%e7%a8%8b%e5%bc%8fredisseckilljs" aria-label="這個段落的連結"></a></h3>
+<h3 id="-主程式redisseckilljs">主程式：redisSecKill.js<a class="h-anchor" href="#-%e4%b8%bb%e7%a8%8b%e5%bc%8fredisseckilljs" aria-label="這個段落的連結"></a></h3>
 <ol>
 <li>先啟用 Redis Client 端（如未安裝相關套件，請在專案資料夾下輸入 <code>yarn add ioredis</code>）</li>
 <li>用 <strong>prepare</strong> 函式，以 Hash type 建立參加秒殺的產品庫存</li>
@@ -102,7 +369,7 @@
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>main()
 </span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/64cfadcce24bc32d5fabbafd07da98a6" rel="noopener">redisSecKill.js</a>（GitHub Gist）</p>
-<h3 id="-lua-腳本seckilllua">➤ Lua 腳本：secKill.lua<a class="h-anchor" href="#-lua-%e8%85%b3%e6%9c%acseckilllua" aria-label="這個段落的連結"></a></h3>
+<h3 id="-lua-腳本seckilllua">Lua 腳本：secKill.lua<a class="h-anchor" href="#-lua-%e8%85%b3%e6%9c%acseckilllua" aria-label="這個段落的連結"></a></h3>
 <p>在 Lua 腳本執行「取得商品庫存」➜「如果庫存足夠就-1」➜「儲存購買者資訊(List type)」</p>
 <pre tabindex="0"><code>local n = tonumber(ARGV[1])
 local order_name = ARGV[2]

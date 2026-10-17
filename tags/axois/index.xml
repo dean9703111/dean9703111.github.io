@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Axois｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/axois/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Axois｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/axois/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Wed, 14 Oct 2020 09:00:25 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/axois/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</title>
+      <link>https://deanlin.net/blog/202010/fb-ig-crawler-day-29/</link>
+      <pubDate>Wed, 14 Oct 2020 09:00:25 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202010/fb-ig-crawler-day-29/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>這份專案所用到的各種技術都不難，難的是將這些技術整合成一個能讓客戶買單的專案；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此低成本的方式完成，而且真的能幫客戶解決問題</description>
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-og_hu_16b02b2e5f958e0c.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>除了要有專業外，你更要有技術整合的能力</p>
+</blockquote>
+<h2 id="筆者有話先說">筆者有話先說<a class="h-anchor" href="#%e7%ad%86%e8%80%85%e6%9c%89%e8%a9%b1%e5%85%88%e8%aa%aa" aria-label="這個段落的連結"></a></h2>
+<p>這份專案所用到的各種技術都不難，難的是<code>將這些技術整合成一個能讓客戶買單的專案</code>；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此<code>低成本</code>的方式完成，而且真的能<code>幫客戶解決問題</code></p>
+<p>今天這篇文章是實作的最後一篇，我們要將爬蟲執行時的資訊做成一份摘要，透過 LINE 發送給使用者</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>分析爬蟲摘要訊息來源</li>
+<li>調整爬蟲函式回傳的資料結構</li>
+<li>調整主程式傳遞 lineNotify 所需的參數</li>
+<li>在 <code>lineNotify</code> 函式中整合摘要訊息</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-分析爬蟲摘要訊息來源">1. 分析爬蟲摘要訊息來源<a class="h-anchor" href="#1-%e5%88%86%e6%9e%90%e7%88%ac%e8%9f%b2%e6%91%98%e8%a6%81%e8%a8%8a%e6%81%af%e4%be%86%e6%ba%90" aria-label="這個段落的連結"></a></h2>
+<p>根據需求規格書，在摘要中需包含以下訊息：</p>
+<ol>
+<li><strong>爬蟲總費時</strong>：在主程式計算從爬蟲開始到更新完 Google sheet 的時間</li>
+<li><strong>總計掃描FB粉專、IG帳號數量</strong>：因為爬蟲函式 <code>crawlerIG、crawlerFB</code> 回傳的結果 <code>result_array</code> 是陣列的形式，所以數量的部分使用陣列的長度即可</li>
+<li><strong>Google Sheets 連結</strong>：依照 .env 環境檔中的 <code>SPREADSHEET_ID</code> 組成連結</li>
+<li><strong>無法爬蟲的FB粉專、IG帳號名稱</strong>：在爬蟲函式 <code>crawlerIG、crawlerFB</code> 中紀錄無法爬蟲的標題</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-調整爬蟲函式回傳的資料結構">2. 調整爬蟲函式回傳的資料結構<a class="h-anchor" href="#2-%e8%aa%bf%e6%95%b4%e7%88%ac%e8%9f%b2%e5%87%bd%e5%bc%8f%e5%9b%9e%e5%82%b3%e7%9a%84%e8%b3%87%e6%96%99%e7%b5%90%e6%a7%8b" aria-label="這個段落的連結"></a></h2>
+<p>下面用 <strong>crawlerFB</strong> 來舉例，crawlerIG 可以自己嘗試修改看看喔～</p>
+<ul>
+<li>使用 <code>error_title_array</code> 來紀錄無法爬蟲的標題</li>
+<li>完成爬蟲後回傳 <strong>爬蟲結果（result_array)、無法爬蟲的粉專標題（error_title_array)</strong> 這兩個參數，讓後續 Google Sheet 更新、LINE Notify 傳送通知時使用</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> crawlerFB (driver) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> isLogin <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> loginFacebook(driver)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (isLogin) {
+</span></span><span style="display:flex;"><span>        console.log(<span style="color:#a5d6ff">`FB開始爬蟲`</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">let</span> result_array <span style="color:#ff7b72;font-weight:bold">=</span> [], error_title_array <span style="color:#ff7b72;font-weight:bold">=</span> []<span style="color:#8b949e;font-style:italic">// 紀錄無法爬蟲的標題
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">for</span> (fanpage <span style="color:#ff7b72">of</span> fanpage_array) {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">let</span> trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#79c0ff">null</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff7b72">const</span> isGoFansPage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> goFansPage(driver, fanpage.url)
+</span></span><span style="display:flex;"><span>                <span style="color:#ff7b72">if</span> (isGoFansPage) {
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff7b72">await</span> driver.sleep((Math.floor(Math.random() <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">4</span>) <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">3</span>) <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>)
+</span></span><span style="display:flex;"><span>                    trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> getTrace(driver, By, until)
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#ff7b72">if</span> (trace <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#79c0ff">null</span>) {<span style="color:#8b949e;font-style:italic">// 將無法爬蟲的標題放入陣列
+</span></span></span><span style="display:flex;"><span>                    error_title_array.push(fanpage.title)
+</span></span><span style="display:flex;"><span>                    console.log(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>fanpage.title<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">無法抓取追蹤人數`</span>)
+</span></span><span style="display:flex;"><span>                } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>                    console.log(<span style="color:#a5d6ff">`</span><span style="color:#a5d6ff">${</span>fanpage.title<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">追蹤人數：</span><span style="color:#a5d6ff">${</span>trace<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            } <span style="color:#ff7b72">catch</span> (e) {
+</span></span><span style="display:flex;"><span>                console.error(e);
+</span></span><span style="display:flex;"><span>                <span style="color:#ff7b72">continue</span>;
+</span></span><span style="display:flex;"><span>            } <span style="color:#ff7b72">finally</span> {
+</span></span><span style="display:flex;"><span>                result_array.push({
+</span></span><span style="display:flex;"><span>                    url<span style="color:#ff7b72;font-weight:bold">:</span> fanpage.url,
+</span></span><span style="display:flex;"><span>                    title<span style="color:#ff7b72;font-weight:bold">:</span> fanpage.title,
+</span></span><span style="display:flex;"><span>                    trace<span style="color:#ff7b72;font-weight:bold">:</span> trace
+</span></span><span style="display:flex;"><span>                })
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// 回傳爬蟲結果、無法爬蟲的粉專標題
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> { <span style="color:#a5d6ff">&#34;result_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> result_array, <span style="color:#a5d6ff">&#34;error_title_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> error_title_array }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 class="h-nomark" id="3-調整主程式傳遞-linenotify-所需的參數">3. 調整主程式傳遞 lineNotify 所需的參數<a class="h-anchor" href="#3-%e8%aa%bf%e6%95%b4%e4%b8%bb%e7%a8%8b%e5%bc%8f%e5%82%b3%e9%81%9e-linenotify-%e6%89%80%e9%9c%80%e7%9a%84%e5%8f%83%e6%95%b8" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>
+<p><strong>爬蟲總費時</strong>：使用 <code>spend_time</code> 函式把時間差<code>轉換成 時 分 秒</code>的格式</p>
+<blockquote>
+<p>因為朋友數百個品牌爬蟲總費時快兩小時，如果用秒數呈現實在太不人性化了</p>
+</blockquote>
+</li>
+<li>
+<p>整合 <code>lineNotify</code> 所需的參數： 爬蟲總費時（<strong>spend_time</strong>）、總計掃描FB粉專、IG帳號數量（<strong>result_array.length</strong>）、無法爬蟲的FB粉專、IG帳號名稱（<strong>error_title_array</strong>）</p>
+</li>
+</ul>
+<h3 id="indexjs">index.js<a class="h-anchor" href="#indexjs" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { initDrive } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/initDrive.js&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { crawlerFB } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/crawlerFB.js&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { crawlerIG } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/crawlerIG.js&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { updateGoogleSheets } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/google_sheets&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> { lineNotify } <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;./tools/lineNotify.js&#34;</span>);
+</span></span><span style="display:flex;"><span>exports.crawler <span style="color:#ff7b72;font-weight:bold">=</span> crawler;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> crawler () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> start_time <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Date(); <span style="color:#8b949e;font-style:italic">// 取得開始時間
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> driver <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> initDrive();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (<span style="color:#ff7b72;font-weight:bold">!</span>driver) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 分別取出爬蟲結果、無法爬蟲的粉專標題
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> { <span style="color:#a5d6ff">&#34;result_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> ig_result_array, <span style="color:#a5d6ff">&#34;error_title_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> ig_error_title_array } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> crawlerIG(driver)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> { <span style="color:#a5d6ff">&#34;result_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> fb_result_array, <span style="color:#a5d6ff">&#34;error_title_array&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> fb_error_title_array } <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> crawlerFB(driver)
+</span></span><span style="display:flex;"><span>    driver.quit();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> updateGoogleSheets(ig_result_array, fb_result_array)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> end_time <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> Date(); <span style="color:#8b949e;font-style:italic">// 取得結束時間
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 計算爬蟲作業總費時
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> spend_time <span style="color:#ff7b72;font-weight:bold">=</span> spendTime(start_time, end_time)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 執行完畢後用 lineNotify 回報爬蟲狀況
+</span></span></span><span style="display:flex;"><span>    lineNotify(spend_time, ig_result_array.length, fb_result_array.length, ig_error_title_array, fb_error_title_array)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> spendTime (start_time, end_time) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> milisecond <span style="color:#ff7b72;font-weight:bold">=</span> end_time.getTime() <span style="color:#ff7b72;font-weight:bold">-</span> start_time.getTime()  <span style="color:#8b949e;font-style:italic">//時間差的毫秒數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//計算出相差天數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> days <span style="color:#ff7b72;font-weight:bold">=</span> Math.floor(milisecond <span style="color:#ff7b72;font-weight:bold">/</span> (<span style="color:#a5d6ff">24</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">3600</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//計算出小時數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> leave1 <span style="color:#ff7b72;font-weight:bold">=</span> milisecond <span style="color:#ff7b72;font-weight:bold">%</span> (<span style="color:#a5d6ff">24</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">3600</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>)<span style="color:#8b949e;font-style:italic">// 計算天數後剩余的毫秒數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> hours <span style="color:#ff7b72;font-weight:bold">=</span> Math.floor(leave1 <span style="color:#ff7b72;font-weight:bold">/</span> (<span style="color:#a5d6ff">3600</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//計算相差分鐘數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> leave2 <span style="color:#ff7b72;font-weight:bold">=</span> leave1 <span style="color:#ff7b72;font-weight:bold">%</span> (<span style="color:#a5d6ff">3600</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>)<span style="color:#8b949e;font-style:italic">// 計算小時數後剩余的毫秒數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> minutes <span style="color:#ff7b72;font-weight:bold">=</span> Math.floor(leave2 <span style="color:#ff7b72;font-weight:bold">/</span> (<span style="color:#a5d6ff">60</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//計算相差秒數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> leave3 <span style="color:#ff7b72;font-weight:bold">=</span> leave2 <span style="color:#ff7b72;font-weight:bold">%</span> (<span style="color:#a5d6ff">60</span> <span style="color:#ff7b72;font-weight:bold">*</span> <span style="color:#a5d6ff">1000</span>)<span style="color:#8b949e;font-style:italic">// 計算分鐘數後剩余的毫秒數  
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> seconds <span style="color:#ff7b72;font-weight:bold">=</span> Math.round(leave3 <span style="color:#ff7b72;font-weight:bold">/</span> <span style="color:#a5d6ff">1000</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> time_msg <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (days <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>        time_msg <span style="color:#ff7b72;font-weight:bold">=</span> time_msg <span style="color:#ff7b72;font-weight:bold">+</span> days <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;天&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (hours <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>        time_msg <span style="color:#ff7b72;font-weight:bold">=</span> time_msg <span style="color:#ff7b72;font-weight:bold">+</span> hours <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;小時&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (minutes <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>        time_msg <span style="color:#ff7b72;font-weight:bold">=</span> time_msg <span style="color:#ff7b72;font-weight:bold">+</span> minutes <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;分&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (seconds <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">0</span>)
+</span></span><span style="display:flex;"><span>        time_msg <span style="color:#ff7b72;font-weight:bold">=</span> time_msg <span style="color:#ff7b72;font-weight:bold">+</span> seconds <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;秒&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> time_msg
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 class="h-nomark" id="4-在-linenotify-中整合摘要訊息">4. 在 <code>lineNotify</code> 中整合摘要訊息<a class="h-anchor" href="#4-%e5%9c%a8-linenotify-%e4%b8%ad%e6%95%b4%e5%90%88%e6%91%98%e8%a6%81%e8%a8%8a%e6%81%af" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>使用 <code>combineErrMsg</code> 將無法爬蟲的FB粉專、IG帳號標題整合</li>
+<li>將最終要傳送的訊息組合在 <code>message</code> 變數中</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> axios <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;axios&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">var</span> FormData <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;form-data&#39;</span>);
+</span></span><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config();
+</span></span><span style="display:flex;"><span>module.exports.lineNotify <span style="color:#ff7b72;font-weight:bold">=</span> lineNotify;
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> combineErrMsg (error_title_array, type) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> error_msg <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">const</span> error_title <span style="color:#ff7b72">of</span> error_title_array) {
+</span></span><span style="display:flex;"><span>        error_msg <span style="color:#ff7b72;font-weight:bold">=</span> error_msg <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39;\n&#39;</span> <span style="color:#ff7b72;font-weight:bold">+</span> error_title
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (error_msg <span style="color:#ff7b72;font-weight:bold">!==</span> <span style="color:#a5d6ff">&#34;&#34;</span>) {
+</span></span><span style="display:flex;"><span>        error_msg <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`\n\n下列</span><span style="color:#a5d6ff">${</span>type<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">標題無法正常爬蟲:`</span> <span style="color:#ff7b72;font-weight:bold">+</span> error_msg
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> error_msg
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> lineNotify (time, ig_total_page, fb_total_page, ig_error_title_array, fb_error_title_array) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> token <span style="color:#ff7b72;font-weight:bold">=</span> process.env.LINE_TOKEN;
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 無法爬蟲的FB粉專、IG帳號名稱整合
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fb_error_msg <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> combineErrMsg(fb_error_title_array, <span style="color:#a5d6ff">&#34;FB&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> ig_error_msg <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> combineErrMsg(ig_error_title_array, <span style="color:#a5d6ff">&#34;IG&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> error_msg <span style="color:#ff7b72;font-weight:bold">=</span> fb_error_msg <span style="color:#ff7b72;font-weight:bold">+</span> ig_error_msg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 組合傳送訊息
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> message <span style="color:#ff7b72;font-weight:bold">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">`\n\n已完成今日爬蟲排程作業`</span> <span style="color:#ff7b72;font-weight:bold">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">`\n共費時:</span><span style="color:#a5d6ff">${</span>time<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span> <span style="color:#ff7b72;font-weight:bold">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">`\n總計掃描FB粉專: </span><span style="color:#a5d6ff">${</span>fb_total_page<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff"> 、IG帳號: </span><span style="color:#a5d6ff">${</span>ig_total_page<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span> <span style="color:#ff7b72;font-weight:bold">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">`\nGoogle Sheet: https://docs.google.com/spreadsheets/d/</span><span style="color:#a5d6ff">${</span>process.env.SPREADSHEET_ID<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span> <span style="color:#ff7b72;font-weight:bold">+</span>
+</span></span><span style="display:flex;"><span>        error_msg;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> form_data <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> FormData();
+</span></span><span style="display:flex;"><span>    form_data.append(<span style="color:#a5d6ff">&#34;message&#34;</span>, message);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> headers <span style="color:#ff7b72;font-weight:bold">=</span> Object.assign({
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#39;Authorization&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`Bearer </span><span style="color:#a5d6ff">${</span>token<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>
+</span></span><span style="display:flex;"><span>    }, form_data.getHeaders());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    axios({
+</span></span><span style="display:flex;"><span>        method<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;post&#39;</span>,
+</span></span><span style="display:flex;"><span>        url<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;https://notify-api.line.me/api/notify&#39;</span>,
+</span></span><span style="display:flex;"><span>        data<span style="color:#ff7b72;font-weight:bold">:</span> form_data,
+</span></span><span style="display:flex;"><span>        headers<span style="color:#ff7b72;font-weight:bold">:</span> headers
+</span></span><span style="display:flex;"><span>    }).then(<span style="color:#ff7b72">function</span> (response) {
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// HTTP狀態碼 200 代表成功
+</span></span></span><span style="display:flex;"><span>        console.log(<span style="color:#a5d6ff">&#34;HTTP狀態碼:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> response.status);
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">// 觀察回傳的資料是否與 POSTMAN 測試一致
+</span></span></span><span style="display:flex;"><span>        console.log(response.data);
+</span></span><span style="display:flex;"><span>    }).<span style="color:#ff7b72">catch</span>(<span style="color:#ff7b72">function</span> (error) {
+</span></span><span style="display:flex;"><span>        console.error(<span style="color:#a5d6ff">&#34;LINE通知發送失敗&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> (error.response) { <span style="color:#8b949e;font-style:italic">// 顯示錯誤原因            
+</span></span></span><span style="display:flex;"><span>            console.error(<span style="color:#a5d6ff">&#34;HTTP狀態碼:&#34;</span> <span style="color:#ff7b72;font-weight:bold">+</span> error.response.status);
+</span></span><span style="display:flex;"><span>            console.error(error.response.data);
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>            console.error(error);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>為了確認我們爬蟲摘要能紀錄無法爬蟲的頁面，<code>我在 ig.json、fb.json 裡面各新增了兩個無效的粉專網址</code></p>
+</li>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div></li>
+<li>
+<p>程式執行完畢後確認 Google Sheets 的資料有正確寫入</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01.webp" width="1024" height="301" alt="執行程式（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>收到 LINE 通知爬蟲摘要訊息就代表大功告成啦！！！</p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-02.webp" width="708" height="609" alt="執行程式（圖 2）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day29">這裡</a>找到喔</li>
+<li>我昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day28_sample_code.zip">壓縮檔</a>，你可以在乾淨的環境完成專案的最後一步：發出LINE通知讓使用者知道這次爬蟲的情況
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>要在tools/google_sheets資料夾放上自己的憑證，申請流程請參考<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+<li>調整fanspages資料夾內目標爬蟲的粉專網址</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+<li>填上SPREADSHEET_ID</li>
+<li>填上爬蟲執行時間(CRONJOB_TIME)</li>
+<li>填上LINE Notify申請的權杖(LINE_TOKEN)，申請流程請參考<a href="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/">Day27</a></li>
+</ul>
+</li>
+<li>在終端機下指令 <strong>npm install forever -g</strong> ，讓你在終端機的任何位置都能管控排程</li>
+<li>在sh資料夾中設定執行排程的shell script</li>
+</ul>
+</li>
+</ul>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-03.webp" width="1024" height="233" alt="ℹ️ 專案原始碼（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

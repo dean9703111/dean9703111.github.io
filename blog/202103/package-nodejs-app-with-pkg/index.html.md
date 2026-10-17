@@ -24,7 +24,7 @@
 
 ## 一、打包工具 pkg
 
-### ➤ 安裝
+### 安裝
 
 全局安裝，讓每個 Node.js 專案都能使用
 
@@ -33,7 +33,7 @@ npm install -g pkg
 
 ```
 
-### ➤ pkg 打包參數說明
+### pkg 打包參數說明
 
 安裝完後輸入 `pkg -h` 會顯示他能用的打包參數，下面說明常用的：
 
@@ -41,7 +41,7 @@ npm install -g pkg
 - -c：打包會參考 package.json 或是其他 json 檔案
 - -o：檔案輸出名稱
 
-### ➤ package.json 參數說明
+### package.json 參數說明
 
 ```
 {
@@ -65,7 +65,7 @@ npm install -g pkg
 
 這裏我就使用之前分享的 side project — 『透過爬蟲讓 Airtable 管理你的 Medium 文章』一步步說明如何操作。
 
-### ➤ package.json 參數設定
+### package.json 參數設定
 
 - **撰寫 scripts**：記得不要去死背套件指令，需要記憶的事情交給電腦就好。這裏我新增了一個『build』的指令，他會以 main.js 作為入口檔，依據 package.json 的設定產生一個給 macOS 使用的執行檔。
 - **設定 pkg**：把『node_modeles』的資料夾全部視為靜態檔即可
@@ -86,7 +86,7 @@ npm install -g pkg
 
 ```
 
-### ➤ 產生執行檔
+### 產生執行檔
 
 在上一步我們寫好 scripts 後可以用如下指令產生執行檔：
 
@@ -95,7 +95,7 @@ npm install -g pkg
 
 如果沒有特別指定檔案產生的位置就會出現在資料夾的根目錄喔～
 
-### ➤ 執行上可能遇到的問題
+### 執行上可能遇到的問題
 
 你可以直接下載macOS的執行檔玩玩看：[https://github.com/dean9703111/medium_to_airtable/raw/master/app/medium-to-airtable](https://github.com/dean9703111/medium_to_airtable/raw/master/app/medium-to-airtable)
 
@@ -103,7 +103,7 @@ npm install -g pkg
 
 回去看程式碼會發現錯誤的原因是因為無法讀取 .env 的環境變數
 
-### ➤ 搭配環境變數執行的方式
+### 搭配環境變數執行的方式
 
 所以我們只需要在執行檔案前輸入原本設定在 .env 檔的資料就能夠順利執行：
 

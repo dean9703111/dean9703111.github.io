@@ -43,7 +43,7 @@ npm i jsonschema
 
 ## 三、「jsonschema」驗證範例
 
-### ➤ 簡單範例：
+### 簡單範例：
 
 我們要驗證 「4」 這個 instance 的 type 是否為 number。
 
@@ -80,7 +80,7 @@ ValidatorResult {
 
 **解說**：因為 「4」的確是「number」的type，所以在「errors」參數的結果為 empty array。
 
-### ➤ 複雜點的範例：
+### 複雜點的範例：
 
 - 建立「驗證地址格式」的「addressSchema」
 - 建立「驗證個人格式」的「schema」，並且讓個人格式的「address」關聯到「addressSchema」
@@ -182,7 +182,7 @@ ValidatorResult {
 
 **解說**：因為我們在「shemca」這個變數下設定「vote」需要為「integer」的type；但是我們傳入的「vote」內容為「lots」的字串，所以「errors」會回傳一個「is not of a type(s) integer」的錯誤訊息。
 
-### ➤ 常見的陣列範例：
+### 常見的陣列範例：
 
 後端 api 其實很常回傳這類陣列的資訊，但因為各種歷史業障；在版本更新時，舊資料在新欄位的資料往往是空的，這時驗證回傳資料的動作就很重要了！
 

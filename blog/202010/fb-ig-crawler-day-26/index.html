@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>【Day26】排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動</title>
+  <meta name="description" content="昨天的教學讓你的排程穩定的在背景執行，但是你重開機在終端機(Terminal)輸入 forever list 的指令你會發現 forever 根本沒有 forever">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/index.html.md" title="Markdown">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="【Day26】排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動">
+  <meta property="og:description" content="昨天的教學讓你的排程穩定的在背景執行，但是你重開機在終端機(Terminal)輸入 forever list 的指令你會發現 forever 根本沒有 forever">
+  <meta property="og:url" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-10-11T10:00:01&#43;08:00">
+  <meta property="article:modified_time" content="2020-10-11T10:00:01&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="排程設定">
+  <meta property="article:tag" content="Shellscript">
+  <meta property="article:tag" content="觸發node程式">
+  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-og_hu_afce4f8c43d95129.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="【Day26】排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-og_hu_afce4f8c43d95129.jpg">
+  <meta name="twitter:title" content="【Day26】排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動">
+  <meta name="twitter:description" content="昨天的教學讓你的排程穩定的在背景執行，但是你重開機在終端機(Terminal)輸入 forever list 的指令你會發現 forever 根本沒有 forever">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-26/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-11T10:00:01+08:00","datePublished":"2020-10-11T10:00:01+08:00","description":"昨天的教學讓你的排程穩定的在背景執行，但是你重開機在終端機(Terminal)輸入 forever list 的指令你會發現 forever 根本沒有 forever","headline":"【Day26】排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-og_hu_afce4f8c43d95129.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-og_hu_c33222ddc5e93807.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-og_hu_9e337a31c0f67fed.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, 排程設定, Shellscript, 觸發node程式","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-26/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-og_hu_afce4f8c43d95129.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10250811"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-og_hu_afce4f8c43d95129.jpg","timeRequired":"PT4M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-26/","wordCount":1881},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-26/","name":"【Day26】排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">【Day26】排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-10-11">2020.10.11</time>
+              <span>閱讀約 4 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>26</b>/ 30</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0">為什麼寫這篇文章</a></li><li><a href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">今日目標</a></li><li class="is-sub"><a href="#1-%e8%a8%ad%e5%ae%9a-mac-%e6%8e%92%e7%a8%8b">1. 設定 mac 排程</a></li><li class="is-sub"><a href="#2-%e8%a8%ad%e5%ae%9a-windows-%e6%8e%92%e7%a8%8b">2. 設定 windows 排程</a></li><li><a href="#1-%e8%a8%ad%e5%ae%9a-mac-%e6%8e%92%e7%a8%8b-1">1. 設定 mac 排程</a></li><li class="is-sub"><a href="#11-%e6%92%b0%e5%af%ab%e5%9f%b7%e8%a1%8c%e6%8e%92%e7%a8%8b%e7%9a%84-shell-script-crawler_cronsh">1.1 撰寫執行排程的 shell script ：crawler_cron.sh</a></li><li class="is-sub"><a href="#12-%e5%b0%87-crawler_cronsh-%e8%a8%ad%e5%ae%9a%e7%82%ba%e5%8f%af%e4%bb%a5%e8%a2%ab%e5%9f%b7%e8%a1%8c">1.2 將 crawler_cron.sh 設定為可以被執行</a></li><li class="is-sub"><a href="#13-%e8%a8%ad%e5%ae%9a-crawler_cronsh-%e5%9c%a8%e4%bd%bf%e7%94%a8%e8%80%85%e7%99%bb%e5%85%a5%e5%be%8c%e8%87%aa%e5%8b%95%e5%9f%b7%e8%a1%8c">1.3 設定 crawler_cron.sh 在使用者登入後自動執行</a></li><li class="is-sub"><a href="#14-%e9%87%8d%e6%96%b0%e7%99%bb%e5%85%a5%e7%a2%ba%e8%aa%8d-forever-%e6%98%af%e5%90%a6%e9%81%8b%e8%a1%8c">1.4 重新登入確認 forever 是否運行</a></li><li><a href="#2-%e8%a8%ad%e5%ae%9a-windows-%e6%8e%92%e7%a8%8b-1">2. 設定 windows 排程</a></li><li class="is-sub"><a href="#21-%e9%80%b2%e5%85%a5%e6%8e%92%e7%a8%8b%e8%a8%ad%e5%ae%9a%e9%a0%81%e9%9d%a2">2.1 進入排程設定頁面</a></li><li class="is-sub"><a href="#22-%e8%a8%ad%e5%ae%9a%e8%a7%b8%e7%99%bc%e6%a2%9d%e4%bb%b6">2.2 設定觸發條件</a></li><li class="is-sub"><a href="#23-%e6%89%93%e9%96%8b-windows-%e6%ad%b7%e7%a8%8b%e7%b4%80%e9%8c%84">2.3 打開 windows 歷程紀錄</a></li><li class="is-sub"><a href="#24-%e9%87%8d%e9%96%8b%e6%a9%9f%e7%a2%ba%e8%aa%8d-forever-%e6%98%af%e5%90%a6%e9%81%8b%e8%a1%8c">2.4 重開機確認 forever 是否運行</a></li><li class="is-sub"><a href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc">ℹ️ 專案原始碼</a></li><li class="is-sub"><a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90">參考資源</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <blockquote>
+<p>解決問題的方法 ≠ 最好的方法；我只是提出我的解法，了解問題發生的原因後你可以想想自己如果遇到了會怎麼解決</p>
+</blockquote>
+<h2 id="為什麼寫這篇文章">為什麼寫這篇文章<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0" aria-label="這個段落的連結"></a></h2>
+<p>昨天的教學讓你的排程穩定的在背景執行，但是你重開機在終端機(Terminal)輸入 <strong>forever list</strong> 的指令你會發現 <code>forever 根本沒有 forever</code></p>
+<p>為了決這個問題，今天會教你如何在<code>電腦啟動時執行 script 讓 forever 跑起來</code>的方法，這塊我會分成 windows 跟 mac 來說明，請大家安心服用</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-設定-mac-排程">1. 設定 mac 排程<a class="h-anchor" href="#1-%e8%a8%ad%e5%ae%9a-mac-%e6%8e%92%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p>1.1 撰寫執行排程的 shell script ：<code>crawler_cron.sh</code><br>1.2 將 crawler_cron.sh 設定為可以被執行<br>1.3 設定 crawler_cron.sh 在使用者登入後自動執行<br>1.4 重新登入確認 forever 是否運行</p>
+<h3 class="h-nomark" id="2-設定-windows-排程">2. 設定 windows 排程<a class="h-anchor" href="#2-%e8%a8%ad%e5%ae%9a-windows-%e6%8e%92%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p>2.1 進入排程設定頁面<br>2.2 設定觸發條件<br>2.3 打開 windows 歷程紀錄<br>2.4 重開機確認 forever 是否運行</p>
+<hr>
+<h2 class="h-nomark" id="1-設定-mac-排程-1">1. 設定 mac 排程<a class="h-anchor" href="#1-%e8%a8%ad%e5%ae%9a-mac-%e6%8e%92%e7%a8%8b-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-撰寫執行排程的-shell-script-crawler_cronsh">1.1 撰寫執行排程的 shell script ：<code>crawler_cron.sh</code><a class="h-anchor" href="#11-%e6%92%b0%e5%af%ab%e5%9f%b7%e8%a1%8c%e6%8e%92%e7%a8%8b%e7%9a%84-shell-script-crawler_cronsh" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在專案目錄下建立存放 shell script 的 <code>sh 資料夾</code>，並<code>新增 crawler_cron.sh</code></p>
+<ul>
+<li>
+<p>shell script 寫法很簡單，平常你怎麼在終端機下指令就怎麼寫</p>
+</li>
+<li>
+<p><strong>專案資料夾路徑</strong>可用 <code>pwd</code> 指令取得</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-01.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-01_hu_4693aee5a7194fe5.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="59" alt="1.1 撰寫執行排程的 shell script ：crawler_cron.sh（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+<h4 id="crawler_cronsh">crawler_cron.sh<a class="h-anchor" href="#crawler_cronsh" aria-label="這個段落的連結"></a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 進入專案資料夾</span>
+</span></span><span style="display:flex;"><span>cd /專案資料夾路徑
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 啟動排程服務</span>
+</span></span><span style="display:flex;"><span>yarn forever
+</span></span></code></pre></div></li>
+<li>
+<p>執行 crawler_cron.sh 確認運作邏輯跟你想的一樣</p>
+<pre tabindex="0"><code>sh crawler_cron.sh
+</code></pre><blockquote>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-02.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-02_hu_a2218afbc4f656b2.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-02.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="141" alt="crawler_cron.sh（圖 2）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+</ol>
+<h3 class="h-nomark" id="12-將-crawler_cronsh-設定為可以被執行">1.2 將 crawler_cron.sh 設定為可以被執行<a class="h-anchor" href="#12-%e5%b0%87-crawler_cronsh-%e8%a8%ad%e5%ae%9a%e7%82%ba%e5%8f%af%e4%bb%a5%e8%a2%ab%e5%9f%b7%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>建立的檔案<code>一開始只有讀寫功能</code>，我們要將 crawler_cron.sh <code>設定為可以被執行</code>，才不會在自動化時因權限不足執行失敗</p>
+<ol>
+<li>
+<p>我們先觀察 <strong>crawler_cron.sh</strong> 的權限</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 進入資料夾</span>
+</span></span><span style="display:flex;"><span>cd sh
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># 列出資料夾地下檔案權限</span>
+</span></span><span style="display:flex;"><span>ll
+</span></span></code></pre></div><blockquote>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-03.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-03_hu_e9f48010fc0d78b9.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-03.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="163" alt="1.2 將 crawler_cron.sh 設定為可以被執行（圖 3）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>目前 crawler_cron.sh 的權限是 <code>-rw-r--r-- </code></p>
+<ul>
+<li>
+<p>權限要把他切分成 3 段來看：owner/group/others，所以代表檔案的 owner 有讀(r)寫(w)的權限，而 group/others 只有讀(r)的權限</p>
+</li>
+<li>
+<p>而我們要讓這個檔案可以被執行(x)需要下指令更改權限</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>chmod <span style="color:#a5d6ff">755</span> crawler_cron.sh
+</span></span></code></pre></div><blockquote>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-04.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-04_hu_14ab36fe10ef6227.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-04.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="155" alt="1.2 將 crawler_cron.sh 設定為可以被執行（圖 4）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<p>想要深入了解 chmod 檔案權限概念的請參考<a href="https://shian420.pixnet.net/blog/post/344938711-%5Blinux%5D-chmod-%E6%AA%94%E6%A1%88%E6%AC%8A%E9%99%90%E5%A4%A7%E7%B5%B1%E6%95%B4!">這篇文章</a></p>
+</blockquote>
+</li>
+</ol>
+<h3 class="h-nomark" id="13-設定-crawler_cronsh-在使用者登入後自動執行">1.3 設定 crawler_cron.sh 在使用者登入後自動執行<a class="h-anchor" href="#13-%e8%a8%ad%e5%ae%9a-crawler_cronsh-%e5%9c%a8%e4%bd%bf%e7%94%a8%e8%80%85%e7%99%bb%e5%85%a5%e5%be%8c%e8%87%aa%e5%8b%95%e5%9f%b7%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>我們要先確認 crawler_cron.sh 的檔案資訊</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-05.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-05_hu_edcdac9a5a8a4206.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-05.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="587" alt="1.3 設定 crawler_cron.sh 在使用者登入後自動執行（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>將打開檔案的應用程式設定成 <strong>iTerm</strong> (如果設定成 mac 原生的 <strong>終端機</strong> 也可以)</p>
+<ul>
+<li>
+<p><code>shell script 必須在終端機相關應用程式下執行</code></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-06.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-06.webp 364w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="364" height="640" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+<li>
+<p>設定 crawler_cron.sh 在使用者登入後自動執行</p>
+<blockquote>
+<ol>
+<li>
+<p>進入 <strong>系統偏好設定</strong> 後，選擇 <strong>使用者與群組</strong></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-07.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-07_hu_1347f0a7ca39a049.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-07.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="1020" alt="1.3 設定 crawler_cron.sh 在使用者登入後自動執行（圖 7）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>選擇要觸法這個 shell script 的使用者，在 <strong>登入項目</strong> 下按 <strong>+</strong> 來新增觸發的項目</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-08.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-08_hu_466525ca8ade13a1.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-08.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="785" alt="1.3 設定 crawler_cron.sh 在使用者登入後自動執行（圖 8）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>請選擇剛剛設定為可以 <strong>被執行的 crawler_cron.sh</strong></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-09.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-09_hu_50181548d3a8a0fb.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-09.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="725" alt="1.3 設定 crawler_cron.sh 在使用者登入後自動執行（圖 9）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>加入項目後把 <strong>隱藏</strong> 打勾</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-10.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-10_hu_eaa4ac7a25a4286e.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-10.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="785" alt="1.3 設定 crawler_cron.sh 在使用者登入後自動執行（圖 10）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</blockquote>
+</li>
+</ol>
+<h3 class="h-nomark" id="14-重新登入確認-forever-是否運行">1.4 重新登入確認 forever 是否運行<a class="h-anchor" href="#14-%e9%87%8d%e6%96%b0%e7%99%bb%e5%85%a5%e7%a2%ba%e8%aa%8d-forever-%e6%98%af%e5%90%a6%e9%81%8b%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>請你重新登入後在終端機(Trerminal)輸入 <strong>forever list</strong> 的指令確認是否正常運行</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-11.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-11_hu_16826f45d3509e2b.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-11.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="77" alt="1.4 重新登入確認 forever 是否運行（圖 11）" loading="lazy" decoding="async"></p>
+<hr>
+<h2 class="h-nomark" id="2-設定-windows-排程-1">2. 設定 windows 排程<a class="h-anchor" href="#2-%e8%a8%ad%e5%ae%9a-windows-%e6%8e%92%e7%a8%8b-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-進入排程設定頁面">2.1 進入排程設定頁面<a class="h-anchor" href="#21-%e9%80%b2%e5%85%a5%e6%8e%92%e7%a8%8b%e8%a8%ad%e5%ae%9a%e9%a0%81%e9%9d%a2" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>在鍵盤同時按下 : WIN + R</p>
+</li>
+<li>
+<p>輸入 : taskschd.msc</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-12.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-12.webp 507w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="507" height="255" alt="2.1 進入排程設定頁面（圖 12）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+<h3 class="h-nomark" id="22-設定觸發條件">2.2 設定觸發條件<a class="h-anchor" href="#22-%e8%a8%ad%e5%ae%9a%e8%a7%b8%e7%99%bc%e6%a2%9d%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>建立工作</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-13.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-13_hu_e4f9f2bed6bbe3e5.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-13.webp 984w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="984" height="705" alt="2.2 設定觸發條件（圖 13）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>選擇以<code>最高權限執行</code>，這裡我選擇 <strong>不論使用者登入與否均執行</strong> 是因為我要在開機時就觸發，而剛開機的時候使用者是還沒登入的；這塊可以依照自己的實際需求去做調整</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-14.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-14_hu_5e5b9ae42fa2dc53.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-14.webp 788w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="788" height="639" alt="2.2 設定觸發條件（圖 14）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在這裡設定為<code>啟動時</code>會開始工作</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-15.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-15_hu_8613bc87210dcc15.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-15.webp 737w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="737" height="647" alt="2.2 設定觸發條件（圖 15）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>編輯動作的部分有幾個需要注意</p>
+<ul>
+<li>
+<p>程式或指令碼 : 你要找到當初安裝 yarn 的路徑，及 yarn.cmd 的檔案</p>
+</li>
+<li>
+<p>新增引數 : 填上 <strong>forever</strong> ，因為我們是用 yarn forever 啟動程式的</p>
+</li>
+<li>
+<p>開始位置 : 把專案的路徑複製上去即可</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-16.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-16.webp 568w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="568" height="630" alt="2.2 設定觸發條件（圖 16）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 class="h-nomark" id="23-打開-windows-歷程紀錄">2.3 打開 windows 歷程紀錄<a class="h-anchor" href="#23-%e6%89%93%e9%96%8b-windows-%e6%ad%b7%e7%a8%8b%e7%b4%80%e9%8c%84" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>windows 需打開歷程紀錄否則不會執行該排程</p>
+<blockquote>
+<ol>
+<li>
+<p>我們看到建立的工作在歷程紀錄旁邊顯示 <strong>(已停用)</strong>，我們需要把他開啟</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-17.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-17_hu_6dbea95ae126b388.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-17.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="332" alt="2.3 打開 windows 歷程紀錄（圖 17）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在左上角 <strong>工作排程器(本機)</strong> 按右鍵，選擇 <strong>啟用所有工作歷程紀錄</strong></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-18.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-18_hu_cb4e407ac51866.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-18.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="334" alt="2.3 打開 windows 歷程紀錄（圖 18）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>確認你要執行工作的歷程紀錄旁邊 <strong>沒有(已停用)</strong>，就代表設定完成嚕</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-19.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-19_hu_8dc9581fc5f1d2c4.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-19.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="276" alt="2.3 打開 windows 歷程紀錄（圖 19）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<h3 class="h-nomark" id="24-重開機確認-forever-是否運行">2.4 重開機確認 forever 是否運行<a class="h-anchor" href="#24-%e9%87%8d%e9%96%8b%e6%a9%9f%e7%a2%ba%e8%aa%8d-forever-%e6%98%af%e5%90%a6%e9%81%8b%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>請注意因為使用的是最高權限執行 <strong>yarn forever</strong>，所以你在 cmd 裡面用 <strong>forever list</strong> 是看不到的</p>
+<ol>
+<li>
+<p>必須要用<code>系統管理員身分執行 cmd</code></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-20.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-20_hu_f51591c14438fa2a.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-20.webp 981w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="981" height="800" alt="2.4 重開機確認 forever 是否運行（圖 20）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在這個權限下輸入指令 <strong>forever list</strong> 才能確認是否正常運行</p>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-21.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-21_hu_e7b3a5a2fd605438.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-21.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="164" alt="2.4 重開機確認 forever 是否運行（圖 21）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day26">這裡</a>找到喔</li>
+<li>我昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day25_sample_code.zip">壓縮檔</a>，你可以在乾淨的環境試試看排程是不是重開機後依舊存在呢~
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>要在tools/google_sheets資料夾放上自己的憑證，申請流程請參考<a href="/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+<li>調整fanspages資料夾內目標爬蟲的粉專網址</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+<li>填上SPREADSHEET_ID</li>
+<li>填上爬蟲執行時間(CRONJOB_TIME)</li>
+</ul>
+</li>
+<li>在終端機下指令 <strong>npm install forever -g</strong> ，讓你在終端機的任何位置都能管控排程</li>
+<li>在sh資料夾中設定執行排程的shell script</li>
+</ul>
+</li>
+</ul>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://shian420.pixnet.net/blog/post/344938711-%5Blinux%5D-chmod-%E6%AA%94%E6%A1%88%E6%AC%8A%E9%99%90%E5%A4%A7%E7%B5%B1%E6%95%B4!">[LINUX] chmod 檔案權限大統整</a></li>
+<li><a href="https://cjy998.pixnet.net/blog/post/63190869-%E5%B7%A5%E4%BD%9C%E6%8E%92%E7%A8%8B%E5%99%A8-%E5%95%9F%E7%94%A8%E6%AD%B7%E7%A8%8B%E8%A8%98%E9%8C%84-%E5%8E%9F%E9%A1%AF%E7%A4%BA%28%E5%B7%B2%E5%81%9C%E7%94%A8%29--win">工作排程器 啟用歷程記錄 原顯示(已停用) windows 2012</a></li>
+</ol>
+<hr>
+<blockquote>
+<p><img src="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-22.webp" srcset="/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-22_hu_aa4c23d5ca4c7363.webp 720w, /blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-22.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="233" alt="參考資源（圖 22）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.10.11），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10250811" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/%E6%8E%92%E7%A8%8B%E8%A8%AD%E5%AE%9A/">排程設定</a>
+            <a class="chip chip-hash" href="/tags/shellscript/">Shellscript</a>
+            <a class="chip chip-hash" href="/tags/%E8%A7%B8%E7%99%BCnode%E7%A8%8B%E5%BC%8F/">觸發node程式</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-26%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-26%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/" data-title="【Day26】排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>26</b> 篇・共 30 篇</p>
+          </div>
+          <ol class="steps" data-collapsible>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-01/"><span class="n">01</span><span>技術只能陪你一陣子，學會解決問題才能過一輩子</span></a>
+            </li>
+            <li class="steps-gap" aria-hidden="true">⋮</li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-02/"><span class="n">02</span><span>開發環境大補帖 - Node.js、NVM、git、yarn、VSCode</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-03/"><span class="n">03</span><span>努力寫出更好的程式碼，有時你不是一個人在戰鬥</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-04/"><span class="n">04</span><span>建立Node.js專案 &amp; 全面解析專案管家package.json</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-05/"><span class="n">05</span><span>用yarn安裝及控管套件 &amp; 善用關鍵字讓全世界的大神幫你一把</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-06/"><span class="n">06</span><span>env - 善用環境變數幫你快速遷移專案</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-07/"><span class="n">07</span><span>gitignore - 杜絕上傳錯誤資料，從此不再發生慘痛經驗</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-08/"><span class="n">08</span><span>selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-09/"><span class="n">09</span><span>爬蟲第一步，FB先登入</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-10/"><span class="n">10</span><span>關閉干擾爬蟲的彈窗，將FB粉專追蹤數納入囊中</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-11/"><span class="n">11</span><span>舉一反三，帶你了解IG爬蟲不可忽略的細節</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-12/"><span class="n">12</span><span>合體吧！用一隻程式搞定FB、IG爬蟲</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-13/"><span class="n">13</span><span>重構程式碼，減少歷史業障</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-14/"><span class="n">14</span><span>爬蟲執行時又又又崩潰了嗎？來點 try-catch 吧</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-15/"><span class="n">15</span><span>json x 爬蟲 = 瑣事自動化，生命應該浪費在美好的事情上</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-16/"><span class="n">16</span><span>不藏私，加上5行程式就能優化爬蟲的小技巧 ＆ 學會爬蟲，之後呢？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-17/"><span class="n">17</span><span>Google Sheets - 免費儲存資料的好選擇，一起進入省錢起手式</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-18/"><span class="n">18</span><span>Google Sheets - 加入版控後被github警告了，官方範例做了什麼？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-19/"><span class="n">19</span><span>Google Sheets - 你在文件迷路了嗎？用兩個處理Sheet的範例帶你攻略官方文件</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-20/"><span class="n">20</span><span>Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-21/"><span class="n">21</span><span>Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-22/"><span class="n">22</span><span>Google Sheets - 客戶：我希望新資料插在最前面 &amp; 談需求變更</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-23/"><span class="n">23</span><span>Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗</span></a>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-24/"><span class="n">24</span><span>排程 - Cron套件超詳解，讓爬蟲自己動起來</span></a>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-25/"><span class="n">25</span><span>排程 - 用forever套件來控管排程，背景執行才是王道！</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">26</span><span>排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-27/"><span class="n">27</span><span>為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</span></a>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-28/"><span class="n">28</span><span>為爬蟲加上通知 - 用 axios 發出 LINE 通知</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-29/"><span class="n">29</span><span>為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-30/"><span class="n">30</span><span>時間只是考驗，心中信念絲毫未減</span></a>
+            </li>
+          </ol>
+          <button class="steps-more" type="button" aria-expanded="false">顯示全部 30 篇 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
+          <a class="sb-next" href="/blog/202010/fb-ig-crawler-day-27/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="link-arrow" href="/about/#teaching">企業內訓・演講邀約 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202010/fb-ig-crawler-day-25/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！</span></a>
+          <a class="next" href="/blog/202010/fb-ig-crawler-day-27/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0">為什麼寫這篇文章</a></li><li><a href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">今日目標</a></li><li class="is-sub"><a href="#1-%e8%a8%ad%e5%ae%9a-mac-%e6%8e%92%e7%a8%8b">1. 設定 mac 排程</a></li><li class="is-sub"><a href="#2-%e8%a8%ad%e5%ae%9a-windows-%e6%8e%92%e7%a8%8b">2. 設定 windows 排程</a></li><li><a href="#1-%e8%a8%ad%e5%ae%9a-mac-%e6%8e%92%e7%a8%8b-1">1. 設定 mac 排程</a></li><li class="is-sub"><a href="#11-%e6%92%b0%e5%af%ab%e5%9f%b7%e8%a1%8c%e6%8e%92%e7%a8%8b%e7%9a%84-shell-script-crawler_cronsh">1.1 撰寫執行排程的 shell script ：crawler_cron.sh</a></li><li class="is-sub"><a href="#12-%e5%b0%87-crawler_cronsh-%e8%a8%ad%e5%ae%9a%e7%82%ba%e5%8f%af%e4%bb%a5%e8%a2%ab%e5%9f%b7%e8%a1%8c">1.2 將 crawler_cron.sh 設定為可以被執行</a></li><li class="is-sub"><a href="#13-%e8%a8%ad%e5%ae%9a-crawler_cronsh-%e5%9c%a8%e4%bd%bf%e7%94%a8%e8%80%85%e7%99%bb%e5%85%a5%e5%be%8c%e8%87%aa%e5%8b%95%e5%9f%b7%e8%a1%8c">1.3 設定 crawler_cron.sh 在使用者登入後自動執行</a></li><li class="is-sub"><a href="#14-%e9%87%8d%e6%96%b0%e7%99%bb%e5%85%a5%e7%a2%ba%e8%aa%8d-forever-%e6%98%af%e5%90%a6%e9%81%8b%e8%a1%8c">1.4 重新登入確認 forever 是否運行</a></li><li><a href="#2-%e8%a8%ad%e5%ae%9a-windows-%e6%8e%92%e7%a8%8b-1">2. 設定 windows 排程</a></li><li class="is-sub"><a href="#21-%e9%80%b2%e5%85%a5%e6%8e%92%e7%a8%8b%e8%a8%ad%e5%ae%9a%e9%a0%81%e9%9d%a2">2.1 進入排程設定頁面</a></li><li class="is-sub"><a href="#22-%e8%a8%ad%e5%ae%9a%e8%a7%b8%e7%99%bc%e6%a2%9d%e4%bb%b6">2.2 設定觸發條件</a></li><li class="is-sub"><a href="#23-%e6%89%93%e9%96%8b-windows-%e6%ad%b7%e7%a8%8b%e7%b4%80%e9%8c%84">2.3 打開 windows 歷程紀錄</a></li><li class="is-sub"><a href="#24-%e9%87%8d%e9%96%8b%e6%a9%9f%e7%a2%ba%e8%aa%8d-forever-%e6%98%af%e5%90%a6%e9%81%8b%e8%a1%8c">2.4 重開機確認 forever 是否運行</a></li><li class="is-sub"><a href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc">ℹ️ 專案原始碼</a></li><li class="is-sub"><a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90">參考資源</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-26%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-26%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/" data-title="【Day26】排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAADQBACdASoYABIAPw1yrE0mIyIhKAqoxiGJ7ACw7BPeE2oIaCaN3Lgg019HxL1AAAD&#43;6VqvbWQQV3wPCI3hTf0XS8IzmMLg&#43;MqkR4ZJFWTV/OL&#43;YLOYZT2HUVlk4MVYT0HOwjqHcWiAqX7zmkxQd8l1nKdu/cjhCBrhUPDHH7rQtx1aW9kmHLGdMOozoq/9V1a6acAA" alt="" width="24" height="18"><img src="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01_hu_9f6e10b40195d9c4.webp" srcset="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01_hu_c25dd74d5fdb075f.webp 240w, /blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01_hu_9f6e10b40195d9c4.webp 480w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="480" height="360" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-30/">【Day30】時間只是考驗，心中信念絲毫未減</a></h3>
+    <p class="card-desc">因為在過去的鐵人賽中很少看到從專案角度來分享技術的文章，所以我選擇從這個角度出發，因為我認為了解專案中每個技術選擇的動機，與學習一個新的技術一樣重要；技術可能被淘汰，但經驗會留下來，希望大家會喜歡我這個系列的文章。</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-15">2020.10.15</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADQAwCdASoYAAcAPw1oqEemIqIYBABjEMT0gGUAEtyV5KhK/R9OjcAA/udFLXYAQK7ApOJIDWBV1gzCDeAW9BuWi8yUewFtsYEIXBQbVgAAAA==" alt="" width="24" height="7"><img src="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_e91da7b1b31343a9.webp" srcset="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_aa3fcdc79115e628.webp 240w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_ca94eec5a967a9cb.webp 480w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_7241a37a4f2a51f5.webp 800w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_e91da7b1b31343a9.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="301" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-29/">【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</a></h3>
+    <p class="card-desc">這份專案所用到的各種技術都不難，難的是將這些技術整合成一個能讓客戶買單的專案；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此低成本的方式完成，而且真的能幫客戶解決問題</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-14">2020.10.14</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRoIAAABXRUJQVlA4WAoAAAAQAAAAFwAAAQAAQUxQSBwAAAABHyAUQGMsrUQyKiLiBGIaYpNM/1I&#43;GSL6n9gAVlA4IEAAAACwAwCdASoYAAIAPw1srUkmIyIYBABjEMTyAFR6E54sX7q371tJAAD&#43;ud2s336cLo8VV4Pyj8hR85dquBfFmYAA" alt="" width="24" height="2"><img src="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp" srcset="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_76e2413246fac6d2.webp 240w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_d635d6ed8622900a.webp 480w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_5f9e74b22b8e0483.webp 800w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="70" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-28/">【Day28】為爬蟲加上通知 - 用 axios 發出 LINE 通知</a></h3>
+    <p class="card-desc">雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-13">2020.10.13</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>4 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 23 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

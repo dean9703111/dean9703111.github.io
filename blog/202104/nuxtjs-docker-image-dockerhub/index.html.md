@@ -22,7 +22,7 @@
 
 ## 一、事先準備
 
-### ➤ 創建 Nuxt.js 專案
+### 創建 Nuxt.js 專案
 
 如果你已經有 Nuxt.js 的專案可以跳過下面的操作流程
 
@@ -47,7 +47,7 @@ $ yarn dev
 
   開啟 [http://localhost:3000/](http://localhost:3000/) 可以順利看到畫面了喔！
 
-### ➤ 下載 & 安裝 Docker
+### 下載 & 安裝 Docker
 
 **STEP 1：**下載 Docker
 
@@ -70,7 +70,7 @@ $ docker login
 
 ## 二、在 local 把 Nuxt.js 專案 Build 成 docker image
 
-### ➤ 撰寫 dockerfile & .dockerignore
+### 撰寫 dockerfile & .dockerignore
 
 **STEP 1：先用指令建立這兩個檔案**
 
@@ -119,7 +119,7 @@ node_modules
 
 原始碼：[.dockerignore](https://gist.github.com/dean9703111/3d2509de3aba92d14d42b530c2e654ed)（GitHub Gist）
 
-### ➤ 把 Nuxt.js 專案 build 成 Docker Image
+### 把 Nuxt.js 專案 build 成 Docker Image
 
 **STEP 1**：Build Docker Image
 

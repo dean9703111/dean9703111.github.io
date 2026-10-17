@@ -31,10 +31,10 @@
   ➤ 執行上可能遇到的問題
   ➤ 搭配環境變數執行的方式
 </code></pre><h2 id="一打包工具-pkg">一、打包工具 pkg<a class="h-anchor" href="#%e4%b8%80%e6%89%93%e5%8c%85%e5%b7%a5%e5%85%b7-pkg" aria-label="這個段落的連結"></a></h2>
-<h3 id="-安裝">➤ 安裝<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d" aria-label="這個段落的連結"></a></h3>
+<h3 id="-安裝">安裝<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d" aria-label="這個段落的連結"></a></h3>
 <p>全局安裝，讓每個 Node.js 專案都能使用</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm install -g pkg
-</span></span></code></pre></div><h3 id="-pkg-打包參數說明">➤ pkg 打包參數說明<a class="h-anchor" href="#-pkg-%e6%89%93%e5%8c%85%e5%8f%83%e6%95%b8%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
+</span></span></code></pre></div><h3 id="-pkg-打包參數說明">pkg 打包參數說明<a class="h-anchor" href="#-pkg-%e6%89%93%e5%8c%85%e5%8f%83%e6%95%b8%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
 <p>安裝完後輸入 <code>pkg -h</code> 會顯示他能用的打包參數，下面說明常用的：</p>
 <ul>
 <li>-t：目標打包給哪個系統用的(Linux, macOS and Windows)，如未設定會產生 3 個檔案</li>
@@ -42,7 +42,7 @@
 <li>-o：檔案輸出名稱</li>
 </ul>
 <p><img src="https://deanlin.net/blog/202103/package-nodejs-app-with-pkg/images/package-nodejs-app-with-pkg-02.webp" width="701" height="558" alt="pkg 打包參數說明（圖 2）" loading="lazy" decoding="async"></p>
-<h3 id="-packagejson-參數說明">➤ package.json 參數說明<a class="h-anchor" href="#-packagejson-%e5%8f%83%e6%95%b8%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
+<h3 id="-packagejson-參數說明">package.json 參數說明<a class="h-anchor" href="#-packagejson-%e5%8f%83%e6%95%b8%e8%aa%aa%e6%98%8e" aria-label="這個段落的連結"></a></h3>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#7ee787">&#34;pkg&#34;</span>: {
 </span></span><span style="display:flex;"><span>        <span style="color:#7ee787">&#34;scripts&#34;</span>: [
@@ -59,7 +59,7 @@
 </blockquote>
 <p>有時你設計了一個很有趣的功能，但如果他的前置作業太麻煩，非相關領域的人沒法無腦操作時就會阻礙他的推廣；相反如果他毫無使用門檻就會很多人願意嘗試看看。</p>
 <p>這裏我就使用之前分享的 side project — 『透過爬蟲讓 Airtable 管理你的 Medium 文章』一步步說明如何操作。</p>
-<h3 id="-packagejson-參數設定">➤ package.json 參數設定<a class="h-anchor" href="#-packagejson-%e5%8f%83%e6%95%b8%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<h3 id="-packagejson-參數設定">package.json 參數設定<a class="h-anchor" href="#-packagejson-%e5%8f%83%e6%95%b8%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
 <ul>
 <li><strong>撰寫 scripts</strong>：記得不要去死背套件指令，需要記憶的事情交給電腦就好。這裏我新增了一個『build』的指令，他會以 main.js 作為入口檔，依據 package.json 的設定產生一個給 macOS 使用的執行檔。</li>
 <li><strong>設定 pkg</strong>：把『node_modeles』的資料夾全部視為靜態檔即可</li>
@@ -76,7 +76,7 @@
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span><span style="color:#f85149">...</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="-產生執行檔">➤ 產生執行檔<a class="h-anchor" href="#-%e7%94%a2%e7%94%9f%e5%9f%b7%e8%a1%8c%e6%aa%94" aria-label="這個段落的連結"></a></h3>
+</span></span></code></pre></div><h3 id="-產生執行檔">產生執行檔<a class="h-anchor" href="#-%e7%94%a2%e7%94%9f%e5%9f%b7%e8%a1%8c%e6%aa%94" aria-label="這個段落的連結"></a></h3>
 <p>在上一步我們寫好 scripts 後可以用如下指令產生執行檔：</p>
 <ol>
 <li>使用 npm：<code>npm run build</code></li>
@@ -85,7 +85,7 @@
 <p><img src="https://deanlin.net/blog/202103/package-nodejs-app-with-pkg/images/package-nodejs-app-with-pkg-03.webp" width="1350" height="188" alt="產生執行檔（圖 3）" loading="lazy" decoding="async"></p>
 <p>如果沒有特別指定檔案產生的位置就會出現在資料夾的根目錄喔～</p>
 <p><img src="https://deanlin.net/blog/202103/package-nodejs-app-with-pkg/images/package-nodejs-app-with-pkg-04.webp" width="488" height="746" alt="產生執行檔（圖 4）" loading="lazy" decoding="async"></p>
-<h3 id="-執行上可能遇到的問題">➤ 執行上可能遇到的問題<a class="h-anchor" href="#-%e5%9f%b7%e8%a1%8c%e4%b8%8a%e5%8f%af%e8%83%bd%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<h3 id="-執行上可能遇到的問題">執行上可能遇到的問題<a class="h-anchor" href="#-%e5%9f%b7%e8%a1%8c%e4%b8%8a%e5%8f%af%e8%83%bd%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
 <blockquote>
 <p>你可以直接下載macOS的執行檔玩玩看：<a href="https://github.com/dean9703111/medium_to_airtable/raw/master/app/medium-to-airtable">https://github.com/dean9703111/medium_to_airtable/raw/master/app/medium-to-airtable</a></p>
 </blockquote>
@@ -93,7 +93,7 @@
 <p><img src="https://deanlin.net/blog/202103/package-nodejs-app-with-pkg/images/package-nodejs-app-with-pkg-05.webp" width="800" height="308" alt="執行上可能遇到的問題（圖 5）" loading="lazy" decoding="async"></p>
 <p>回去看程式碼會發現錯誤的原因是因為無法讀取 .env 的環境變數</p>
 <p><img src="https://deanlin.net/blog/202103/package-nodejs-app-with-pkg/images/package-nodejs-app-with-pkg-06.webp" width="845" height="400" alt="執行上可能遇到的問題（圖 6）" loading="lazy" decoding="async"></p>
-<h3 id="-搭配環境變數執行的方式">➤ 搭配環境變數執行的方式<a class="h-anchor" href="#-%e6%90%ad%e9%85%8d%e7%92%b0%e5%a2%83%e8%ae%8a%e6%95%b8%e5%9f%b7%e8%a1%8c%e7%9a%84%e6%96%b9%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<h3 id="-搭配環境變數執行的方式">搭配環境變數執行的方式<a class="h-anchor" href="#-%e6%90%ad%e9%85%8d%e7%92%b0%e5%a2%83%e8%ae%8a%e6%95%b8%e5%9f%b7%e8%a1%8c%e7%9a%84%e6%96%b9%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
 <p>所以我們只需要在執行檔案前輸入原本設定在 .env 檔的資料就能夠順利執行：</p>
 <pre tabindex="0"><code>ENV1=xxx ENV2=yyy ENV3=zzz ./execute_file
 </code></pre><p>以這個 side-project 來說會長這個樣子（參數要怎麼填請<a href="https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-2/">參考這篇文章</a>）：</p>

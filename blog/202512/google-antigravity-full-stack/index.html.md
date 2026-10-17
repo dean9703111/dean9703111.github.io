@@ -56,7 +56,7 @@
 
 這個 … 打開後有 3 個選項，分別是「客製化、MCP 伺服器，以及下載診斷」
 
-### ➤ 設定 Rules，讓 AI 更懂你
+### 設定 Rules，讓 AI 更懂你
 
 建議大家可以選擇「Customizations」來設定一下自己的使用偏好，在 Rules 這個地方，我選擇 Global。
 
@@ -98,13 +98,13 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 另外如果你想給目前的專案設定特定的 Rules，比如程式碼規則這類的，也可以點擊 Workspace 來設定喔。
 
-### ➤ 跨模型支援
+### 跨模型支援
 
 在模型這塊，Google 除了自家的 Gemini 外，還提供了 Claude 與 GPT 的模型讓大家使用。
 
 這邊要提醒一下，每個模型使用是有額度限制的，超過後需要換一個模型使用。
 
-### ➤ 對話模式
+### 對話模式
 
 在對話上，有分成 Planning 跟 Fast 兩種。
 
@@ -112,7 +112,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 假使你只是想要簡單快速的得到解答，那選擇 Fast 更省時喔。
 
-### ➤ 不要完全賦權給 AI Agent
+### 不要完全賦權給 AI Agent
 
 - Terminal Command Auto Execution 不建議用 Turbo 模式（此模式僅建議在獨立容器內執行）
 - 編輯 Deny List Terminal Commands 放黑名單指令
@@ -165,7 +165,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 下面跟大家說明一下我的提示詞架構：
 
-### ➤ 前端風格
+### 前端風格
 
 首先，我做了角色設定，讓他扮演資深的 React 前端工程師與遊戲設計師。
 
@@ -175,7 +175,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 並且關主的圖片要先下載好，每一關都要配置一個。
 
-### ➤ 前後端邏輯設計
+### 前後端邏輯設計
 
 接下來，我則是非常明確的規範專案的「功能需求」，這塊就是講解前後端的運作邏輯。
 
@@ -187,7 +187,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 另外作答完畢後，會把答題結果傳送到 Google Apps Script 計算成績，並記錄到 Google Sheets。
 
-### ➤ 資料庫設計
+### 資料庫設計
 
 然後為了要讓 AI 明白資料如何讀取與寫入，所以我提供了非常明確的 Google Sheets 配置，減少模糊地帶。
 
@@ -197,7 +197,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 還有特別補充一點，Google Apps Script 是直接從這份 Google Sheet 擴充功能配置的，這是表達工具間的相依性。
 
-### ➤ 環境變數設計
+### 環境變數設計
 
 最後考量到專案完成後的「易用性」，所以我把「Google Apps Script 連結、通過門檻、題目數量」等設計為環境變數。
 
@@ -213,7 +213,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 但部署前，我先提醒一下要注意的事項：
 
-### ➤ 設計 .gitignore
+### 設計 .gitignore
 
 在這裡放不要加入 Git 版控的檔案、資料夾，比如：
 
@@ -223,7 +223,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 - 暫存檔（.tmp）
 - 隱私檔（.nev）
 
-### ➤ 設計 .env.example
+### 設計 .env.example
 
 雖然 .env 不可以上傳，但為了讓其他人知道可以如何使用這個專案，我會設計一個 .env.example 的範例檔：
 
@@ -232,7 +232,7 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 ```
 
-### ➤ 設計 Github Actions
+### 設計 Github Actions
 
 另外因為我們想要在 GitHub 部署，所以這邊我也請 AI 協助設計對應的工作流
 

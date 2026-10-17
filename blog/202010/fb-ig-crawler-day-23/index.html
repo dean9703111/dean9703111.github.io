@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-tw" class="no-js"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>【Day23】Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗</title>
+  <meta name="description" content="1.1 那些不堪回首的共同回憶1.2 是什麼原因製造出這些體驗的1.3 有在使用產品的人才會給你最真實的回饋，專案還有哪些地方要改善呢？">
+  <meta name="author" content="林鼎淵">
+  <link rel="canonical" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0d0e11">
+  <script>(function(d){var r=d.documentElement;r.className=r.className.replace(/\bno-js\b/,'js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')r.setAttribute('data-theme',t)}catch(e){}setTimeout(function(){if(!window.__mainReady)r.classList.add('reveal-all')},3000)})(document);</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
+  <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
+  <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/index.html.md" title="Markdown">
+  <meta property="og:site_name" content="林鼎淵 Dean Lin">
+  <meta property="og:title" content="【Day23】Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗">
+  <meta property="og:description" content="1.1 那些不堪回首的共同回憶1.2 是什麼原因製造出這些體驗的1.3 有在使用產品的人才會給你最真實的回饋，專案還有哪些地方要改善呢？">
+  <meta property="og:url" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-10-08T08:10:42&#43;08:00">
+  <meta property="article:modified_time" content="2020-10-08T08:10:42&#43;08:00">
+  <meta property="article:author" content="https://deanlin.net/about/">
+  <meta property="article:section" content="技術教學">
+  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="Google Sheets">
+  <meta property="article:tag" content="使用者體驗">
+  <meta property="article:tag" content="Ux">
+  <meta property="article:tag" content="網頁爬蟲">
+  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-og_hu_bc24d9b13ddb045.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675">
+  <meta property="og:image:alt" content="【Day23】Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-og_hu_bc24d9b13ddb045.jpg">
+  <meta name="twitter:title" content="【Day23】Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗">
+  <meta name="twitter:description" content="1.1 那些不堪回首的共同回憶1.2 是什麼原因製造出這些體驗的1.3 有在使用產品的人才會給你最真實的回饋，專案還有哪些地方要改善呢？">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-23/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-08T08:10:42+08:00","datePublished":"2020-10-08T08:10:42+08:00","description":"1.1 那些不堪回首的共同回憶1.2 是什麼原因製造出這些體驗的1.3 有在使用產品的人才會給你最真實的回饋，專案還有哪些地方要改善呢？","headline":"【Day23】Google Sheets - 優化格式，滿足客戶需求 \u0026 談使用者體驗","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-og_hu_bc24d9b13ddb045.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-og_hu_c3bc89146f2cbb4c.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-og_hu_36e4da36e90e2899.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Google Sheets, 使用者體驗, Ux, 網頁爬蟲","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-23/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-og_hu_bc24d9b13ddb045.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10249403"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-og_hu_bc24d9b13ddb045.jpg","timeRequired":"PT6M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-23/","wordCount":2579},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-23/","name":"【Day23】Google Sheets - 優化格式，滿足客戶需求 \u0026 談使用者體驗","position":3}]}]}</script>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-P4NGEYYJ35');
+  </script>
+</head>
+
+<body class="page-page">
+  <a class="skip-link" href="#main">跳到主要內容</a><header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">林鼎淵<em>Dean Lin</em><span class="visually-hidden">（回到首頁）</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <ul>
+        <li><a href="/blog/">文章</a></li>
+        <li><a href="/categories/ai/">AI 實戰</a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學</a></li>
+        <li><a href="/categories/teamwork/">團隊合作</a></li>
+        <li><a href="/categories/career/">職涯成長</a></li>
+        <li><a href="/series/">系列專題</a></li>
+        <li><a href="/about/">關於我</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K /">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg><span class="st-label">搜尋</span><kbd aria-hidden="true">⌘K</kbd>
+      </button>
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切換亮暗模式" title="切換亮暗模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="開啟選單"><span class="burger"></span></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="行動版導覽">
+      <ul class="mm-nav">
+        <li><a href="/">首頁<span class="en">Home</span></a></li>
+        <li><a href="/blog/">文章<span class="en">Articles</span></a></li>
+        <li><a href="/categories/ai/">AI 實戰<span class="en">AI in Practice</span></a></li>
+        <li><a href="/categories/tech/" aria-current="page">技術教學<span class="en">Tutorials</span></a></li>
+        <li><a href="/categories/teamwork/">團隊合作<span class="en">Teamwork</span></a></li>
+        <li><a href="/categories/career/">職涯成長<span class="en">Career</span></a></li>
+        <li><a href="/series/">系列專題<span class="en">Series</span></a></li>
+        <li><a href="/about/">關於我<span class="en">About</span></a></li>
+      </ul>
+    </nav>
+    <div class="mm-social">
+      <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+      <a href="https://github.com/dean9703111" target="_blank" rel="noopener" aria-label="Github"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg></a>
+      <a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener" aria-label="Linkedin"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      <a href="https://medium.com/@dean-lin" target="_blank" rel="noopener" aria-label="Medium"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg></a>
+    </div>
+</div>
+
+  <main id="main" tabindex="-1">
+
+<article class="wrap" data-article>
+  <div class="article-grid has-toc">
+    <header class="article-head">
+      <nav class="breadcrumbs" aria-label="目前位置">
+        <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
+        <a href="/categories/tech/">技術教學</a>
+      </nav>
+      <h1 class="article-title">【Day23】Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗</h1>
+      <div class="article-meta">
+        <div class="am-author">
+          <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
+          <div>
+            <div class="am-name">林鼎淵</div>
+            <div class="am-sub">
+              <time class="meta-date" datetime="2020-10-08">2020.10.08</time>
+              <span>閱讀約 6 分鐘</span>
+            </div>
+          </div>
+        </div>
+        <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>23</b>/ 30</a>
+      </div>
+    </header>
+
+    <div class="article-main">
+      <details class="toc-mobile">
+        <summary>本文目錄 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <ol class="toc-list"><li><a href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">今日目標</a></li><li class="is-sub"><a href="#1-%e4%ba%86%e8%a7%a3%e4%bd%bf%e7%94%a8%e8%80%85%e9%ab%94%e9%a9%97%e7%82%ba%e4%bb%80%e9%ba%bc%e9%87%8d%e8%a6%81">1. 了解使用者體驗為什麼重要</a></li><li class="is-sub"><a href="#2-%e5%84%aa%e5%8c%96%e7%94%a8%e6%89%8b%e6%a9%9f%e4%be%86%e7%9c%8b-google-sheets-%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e7%9a%84%e9%ab%94%e9%a9%97">2. 優化用手機來看 Google Sheets 的爬蟲資料的體驗</a></li><li><a href="#1-%e4%ba%86%e8%a7%a3%e4%bd%bf%e7%94%a8%e8%80%85%e9%ab%94%e9%a9%97%e7%82%ba%e4%bb%80%e9%ba%bc%e9%87%8d%e8%a6%81-1">1. 了解使用者體驗為什麼重要</a></li><li class="is-sub"><a href="#11-%e9%82%a3%e4%ba%9b%e4%b8%8d%e5%a0%aa%e5%9b%9e%e9%a6%96%e7%9a%84%e5%85%b1%e5%90%8c%e5%9b%9e%e6%86%b6">1.1 那些不堪回首的共同回憶</a></li><li class="is-sub"><a href="#12-%e6%98%af%e4%bb%80%e9%ba%bc%e5%8e%9f%e5%9b%a0%e8%a3%bd%e9%80%a0%e5%87%ba%e9%80%99%e4%ba%9b%e9%ab%94%e9%a9%97%e7%9a%84">1.2 是什麼原因製造出這些體驗的</a></li><li class="is-sub"><a href="#13-%e6%9c%89%e5%9c%a8%e4%bd%bf%e7%94%a8%e7%94%a2%e5%93%81%e7%9a%84%e4%ba%ba%e6%89%8d%e6%9c%83%e7%b5%a6%e4%bd%a0%e6%9c%80%e7%9c%9f%e5%af%a6%e7%9a%84%e5%9b%9e%e9%a5%8b%e5%b0%88%e6%a1%88%e9%82%84%e6%9c%89%e5%93%aa%e4%ba%9b%e5%9c%b0%e6%96%b9%e8%a6%81%e6%94%b9%e5%96%84%e5%91%a2">1.3 有在使用產品的人才會給你最真實的回饋，專案還有哪些地方要改善呢？</a></li><li><a href="#2-%e5%84%aa%e5%8c%96%e7%94%a8%e6%89%8b%e6%a9%9f%e4%be%86%e7%9c%8b-google-sheets-%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e7%9a%84%e9%ab%94%e9%a9%97-1">2. 優化用手機來看 Google Sheets 的爬蟲資料的體驗</a></li><li class="is-sub"><a href="#21-%e5%a6%82%e4%bd%95%e8%ae%93%e6%89%8b%e6%a9%9f%e7%9c%8b-google-sheets-%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e6%99%82%e8%88%92%e6%9c%8d%e9%bb%9e">2.1 如何讓手機看 Google Sheets 爬蟲資料時舒服點</a></li><li class="is-sub"><a href="#22-%e7%aa%97%e5%8f%a3%e5%87%8d%e7%b5%90%e5%b0%87%e6%9c%80%e4%b8%8a%e6%96%b9%e7%9a%84%e7%88%ac%e8%9f%b2%e6%97%a5%e6%9c%9f%e5%b7%a6%e6%96%b9%e7%9a%84%e7%b2%89%e5%b0%88%e5%90%8d%e7%a8%b1%e6%ac%84%e4%bd%8d%e5%87%8d%e7%b5%90">2.2 窗口凍結：將最上方的爬蟲日期、左方的粉專名稱欄位凍結</a></li><li class="is-sub"><a href="#23-%e6%ac%84%e4%bd%8d%e5%af%ac%e5%ba%a6%e8%aa%bf%e6%95%b4%e6%b8%9b%e5%b0%91%e8%bf%bd%e8%b9%a4%e4%ba%ba%e6%95%b8%e7%9a%84%e6%ac%84%e4%bd%8d%e5%af%ac%e5%ba%a6">2.3 欄位寬度調整：減少追蹤人數的欄位寬度</a></li><li class="is-sub"><a href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f">執行程式</a></li><li class="is-sub"><a href="#-%e4%b8%8b%e5%80%8b%e9%9a%8e%e6%ae%b5">⏭️ 下個階段</a></li><li class="is-sub"><a href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc">ℹ️ 專案原始碼</a></li><li class="is-sub"><a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90">參考資源</a></li></ol>
+
+      </details>
+
+      <div class="prose" data-prose>
+        <blockquote>
+<p>你是做好一件作品，還是完成一項任務</p>
+</blockquote>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-了解使用者體驗為什麼重要">1. 了解使用者體驗為什麼重要<a class="h-anchor" href="#1-%e4%ba%86%e8%a7%a3%e4%bd%bf%e7%94%a8%e8%80%85%e9%ab%94%e9%a9%97%e7%82%ba%e4%bb%80%e9%ba%bc%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h3>
+<p>1.1 那些不堪回首的共同回憶<br>1.2 是什麼原因製造出這些體驗的<br>1.3 有在使用產品的人才會給你最真實的回饋，專案還有哪些地方要改善呢？</p>
+<h3 class="h-nomark" id="2-優化用手機來看-google-sheets-的爬蟲資料的體驗">2. 優化<code>用手機來看 Google Sheets 的爬蟲資料</code>的體驗<a class="h-anchor" href="#2-%e5%84%aa%e5%8c%96%e7%94%a8%e6%89%8b%e6%a9%9f%e4%be%86%e7%9c%8b-google-sheets-%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e7%9a%84%e9%ab%94%e9%a9%97" aria-label="這個段落的連結"></a></h3>
+<p>2.1 如何讓手機看 Google Sheets 爬蟲資料時舒服點<br>2.2 窗口凍結：將最上方的爬蟲日期、左方的粉專名稱欄位凍結<br>2.3 欄位寬度調整：減少追蹤人數的欄位寬度</p>
+<hr>
+<h2 class="h-nomark" id="1-了解使用者體驗為什麼重要-1">1. 了解使用者體驗為什麼重要<a class="h-anchor" href="#1-%e4%ba%86%e8%a7%a3%e4%bd%bf%e7%94%a8%e8%80%85%e9%ab%94%e9%a9%97%e7%82%ba%e4%bb%80%e9%ba%bc%e9%87%8d%e8%a6%81-1" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>讓客戶用的開心他們才會買單</p>
+</blockquote>
+<h3 class="h-nomark" id="11-那些不堪回首的共同回憶">1.1 那些不堪回首的共同回憶<a class="h-anchor" href="#11-%e9%82%a3%e4%ba%9b%e4%b8%8d%e5%a0%aa%e5%9b%9e%e9%a6%96%e7%9a%84%e5%85%b1%e5%90%8c%e5%9b%9e%e6%86%b6" aria-label="這個段落的連結"></a></h3>
+<p>我想每個人都有過類似經驗：</p>
+<ol>
+<li><strong>操作系統時讓你感到焦慮</strong>
+<ul>
+<li>我Ｘ，到底這個系統要怎麼操作啊？為什麼按下去沒反應？到底哪裡弄錯了？</li>
+<li>卡在 loading 的畫面已經 10 分鐘，所以我要繼續等嗎？</li>
+</ul>
+</li>
+<li><strong>你想要用的功能會隱身術</strong>
+<ul>
+<li>我想要用XXX功能，到底他在哪裡才能操作？</li>
+<li>為什麼要改版啦？功能都不知道跑去哪了？</li>
+</ul>
+</li>
+<li><strong>每個按鈕都像定時炸彈</strong>
+<ul>
+<li>所以這個按鈕是什麼意思？是下一步還是送出？</li>
+<li>痾&hellip;下單了？這不是加入購物車嗎？</li>
+</ul>
+</li>
+<li><strong>懷疑設計者是不是嗑藥</strong>
+<ul>
+<li>簡訊的驗證碼有 6 碼，可是眼前能輸入的欄位只有 4 碼，是在哈嚕？</li>
+<li>線上填完表格後不能儲存只能下載列印後寄給主辦單位，如果要用郵件寄出幹嘛設計成網頁?</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 class="h-nomark" id="12-是什麼原因製造出這些體驗的">1.2 是什麼原因製造出這些體驗的<a class="h-anchor" href="#12-%e6%98%af%e4%bb%80%e9%ba%bc%e5%8e%9f%e5%9b%a0%e8%a3%bd%e9%80%a0%e5%87%ba%e9%80%99%e4%ba%9b%e9%ab%94%e9%a9%97%e7%9a%84" aria-label="這個段落的連結"></a></h3>
+<blockquote>
+<p>相信遇到這些經驗的時候大家心裡都會想：<code>這麼爛的東西到底是誰設計出來的啊？他自己真的有用過嗎？</code></p>
+</blockquote>
+<p>總結發生這些不好的經驗通常都是因為：</p>
+<ol>
+<li><strong>沒有了解使用者真正的需求</strong>：這是許多外包案的真實狀況，工程師的目標是驗收通過，而承包商也只是為了把事情做完有績效，當<code>甲乙方都不在乎終端使用者的需求時，完成的產品通常不堪入目</code></li>
+<li><strong>經驗不足</strong>：很多時候有些報價比較低的案子會交給公司的新人，如果公司也沒有讓前輩在旁邊給予指導會讓這個<code>產品有非常多的漏洞</code></li>
+<li><strong>沒有足夠的測試</strong>：有些案子時程非常的趕，在這樣的狀態下通常<code>產品的穩定度很低，且操作時也很容易發生錯誤</code></li>
+<li><strong>經費不足</strong>：花大錢的案子不一定做得好，但是錢少的案子基本上都不太好，一分錢一分貨，<code>壓價格的時候一定會喪失品質</code></li>
+</ol>
+<hr>
+<h3 class="h-nomark" id="13-有在使用產品的人才會給你最真實的回饋專案還有哪些地方要改善呢">1.3 有在使用產品的人才會給你最真實的回饋，專案還有哪些地方要改善呢？<a class="h-anchor" href="#13-%e6%9c%89%e5%9c%a8%e4%bd%bf%e7%94%a8%e7%94%a2%e5%93%81%e7%9a%84%e4%ba%ba%e6%89%8d%e6%9c%83%e7%b5%a6%e4%bd%a0%e6%9c%80%e7%9c%9f%e5%af%a6%e7%9a%84%e5%9b%9e%e9%a5%8b%e5%b0%88%e6%a1%88%e9%82%84%e6%9c%89%e5%93%aa%e4%ba%9b%e5%9c%b0%e6%96%b9%e8%a6%81%e6%94%b9%e5%96%84%e5%91%a2" aria-label="這個段落的連結"></a></h3>
+<p>沒有一開始就完美的專案，<strong>客戶的需求會在使用的過程中慢慢增加</strong>，這個專案也在業主使用的過程中增加了一些需求：</p>
+<ol>
+<li>下班後會<code>用手機來看 Google Sheets 的爬蟲資料</code>，操作起來不是很順，想問有沒有好的建議</li>
+<li>上班太忙會忘記跑爬蟲程式，能不能<code>指定爬蟲程式在某個時間點自動執行</code></li>
+<li>因為執行爬蟲程式的時候我也要做事情，能不能<code>有個通知提醒我爬蟲執行的狀況</code></li>
+</ol>
+<p>接下來的日子就讓我們把這些需求一一實踐吧！</p>
+<hr>
+<h2 class="h-nomark" id="2-優化用手機來看-google-sheets-的爬蟲資料的體驗-1">2. 優化<code>用手機來看 Google Sheets 的爬蟲資料</code>的體驗<a class="h-anchor" href="#2-%e5%84%aa%e5%8c%96%e7%94%a8%e6%89%8b%e6%a9%9f%e4%be%86%e7%9c%8b-google-sheets-%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e7%9a%84%e9%ab%94%e9%a9%97-1" aria-label="這個段落的連結"></a></h2>
+<blockquote>
+<p>原則上你想對 Google Sheets 的任何操作官方都有提供 api 給你，如果你時常會使用到的話請一定要讀懂官方文件，閱讀的技巧可以參考<a href="https://ithelp.ithome.com.tw/day19/README.md">這篇文章</a>喔</p>
+</blockquote>
+<h3 class="h-nomark" id="21-如何讓手機看-google-sheets-爬蟲資料時舒服點">2.1 如何讓手機看 Google Sheets 爬蟲資料時舒服點<a class="h-anchor" href="#21-%e5%a6%82%e4%bd%95%e8%ae%93%e6%89%8b%e6%a9%9f%e7%9c%8b-google-sheets-%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e6%99%82%e8%88%92%e6%9c%8d%e9%bb%9e" aria-label="這個段落的連結"></a></h3>
+<p>這個問題分析起來很簡單，主要就是下面兩點：</p>
+<ol>
+<li>因為資料存在 Google sheets 上面，資料量一大就很難觀看</li>
+<li>手機螢幕小，能呈現的資料不多</li>
+</ol>
+<p>後來再跟客戶討論的過程中發現<code>這個問題在使用電腦時也會有，但是使用手機時問題更嚴重</code>，於是我在操作他 Google Sheets 的爬蟲資料時提出了優化方案，讓他在使用上方便許多：</p>
+<ol>
+<li><strong>將最上方的爬蟲日期、左方的粉專名稱欄位凍結</strong>
+<ul>
+<li>這樣在瀏覽時就不需要一直往上確認日期、往左確認他是哪個粉專了</li>
+</ul>
+</li>
+<li><strong>減少追蹤人數的欄位寬度</strong>
+<ul>
+<li>我們無法改變手機的螢幕寬度，但是改變資料欄位的寬度能讓一個螢幕能呈現更多的資訊</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>測試環境通常資料量不足，很多問題在資料量逐漸上升的正式環境才會浮現</p>
+</blockquote>
+<hr>
+<h3 class="h-nomark" id="22-窗口凍結將最上方的爬蟲日期左方的粉專名稱欄位凍結">2.2 窗口凍結：將最上方的爬蟲日期、左方的粉專名稱欄位凍結<a class="h-anchor" href="#22-%e7%aa%97%e5%8f%a3%e5%87%8d%e7%b5%90%e5%b0%87%e6%9c%80%e4%b8%8a%e6%96%b9%e7%9a%84%e7%88%ac%e8%9f%b2%e6%97%a5%e6%9c%9f%e5%b7%a6%e6%96%b9%e7%9a%84%e7%b2%89%e5%b0%88%e5%90%8d%e7%a8%b1%e6%ac%84%e4%bd%8d%e5%87%8d%e7%b5%90" aria-label="這個段落的連結"></a></h3>
+<p>我將這個功能合併到建立 sheet 的函式 <code>addSheet</code>，窗口凍結這件事在<code>建立 sheet 時執行一次就夠了</code></p>
+<blockquote>
+<p>詳細的官方文件請參考<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets#gridproperties">窗口凍結</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> addSheet (title, sheet_id, auth) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> sheets <span style="color:#ff7b72;font-weight:bold">=</span> google.sheets({ version<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;v4&#39;</span>, auth });
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> request <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;spreadsheetId&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> process.env.SPREADSHEET_ID,
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;resource&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a5d6ff">&#34;requests&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> [{
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;addSheet&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>          <span style="color:#a5d6ff">&#34;properties&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;title&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> title,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;gridProperties&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>              <span style="color:#a5d6ff">&#34;frozenRowCount&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,<span style="color:#8b949e;font-style:italic">//最上面那一列(爬蟲日期)設定為凍結
+</span></span></span><span style="display:flex;"><span>              <span style="color:#a5d6ff">&#34;frozenColumnCount&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span><span style="color:#8b949e;font-style:italic">//最左邊那一欄(粉專名稱)設定為凍結
+</span></span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>          }
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>      }]
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> sheets.spreadsheets.batchUpdate(request)
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#39;added sheet:&#39;</span> <span style="color:#ff7b72;font-weight:bold">+</span> title)
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#39;The API returned an error: &#39;</span> <span style="color:#ff7b72;font-weight:bold">+</span> err);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h3 class="h-nomark" id="23-欄位寬度調整減少追蹤人數的欄位寬度">2.3 欄位寬度調整：減少追蹤人數的欄位寬度<a class="h-anchor" href="#23-%e6%ac%84%e4%bd%8d%e5%af%ac%e5%ba%a6%e8%aa%bf%e6%95%b4%e6%b8%9b%e5%b0%91%e8%bf%bd%e8%b9%a4%e4%ba%ba%e6%95%b8%e7%9a%84%e6%ac%84%e4%bd%8d%e5%af%ac%e5%ba%a6" aria-label="這個段落的連結"></a></h3>
+<p>為了能容納能多的資訊量，所以我們要在插入新欄位 <code>insertEmptyCol</code> 時給他一個合適的欄位寬度</p>
+<ul>
+<li>提醒你 <code>Google Sheets 的 requests 是可以執行多個要求的</code>，像下面的範例程式中的 requests 就包含 insertDimension、updateDimensionProperties 這兩個</li>
+</ul>
+<blockquote>
+<p>詳細的官方文件請參考<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/request#UpdateDimensionPropertiesRequest">欄位寬度調整</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> insertEmptyCol (title, sheet_id, auth) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> sheets <span style="color:#ff7b72;font-weight:bold">=</span> google.sheets({ version<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#39;v4&#39;</span>, auth });
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">const</span> request <span style="color:#ff7b72;font-weight:bold">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;spreadsheetId&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> process.env.SPREADSHEET_ID,
+</span></span><span style="display:flex;"><span>    <span style="color:#a5d6ff">&#34;resource&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a5d6ff">&#34;requests&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> [{
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;insertDimension&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>          <span style="color:#a5d6ff">&#34;range&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;sheetId&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> sheet_id,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;dimension&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;COLUMNS&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;startIndex&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;endIndex&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">2</span>
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>          <span style="color:#a5d6ff">&#34;inheritFromBefore&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#a5d6ff">&#34;updateDimensionProperties&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {<span style="color:#8b949e;font-style:italic">//這裡是為了修正欄寬
+</span></span></span><span style="display:flex;"><span>          <span style="color:#a5d6ff">&#34;range&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;sheetId&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> sheet_id,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;dimension&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;COLUMNS&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;startIndex&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span>,<span style="color:#8b949e;font-style:italic">//只需要首欄
+</span></span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;endIndex&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">2</span>
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>          <span style="color:#a5d6ff">&#34;properties&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;pixelSize&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">85</span><span style="color:#8b949e;font-style:italic">//欄位寬度
+</span></span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>          <span style="color:#a5d6ff">&#34;fields&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">&#34;pixelSize&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      }]
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> sheets.spreadsheets.batchUpdate(request)
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#39;update sheet:&#39;</span> <span style="color:#ff7b72;font-weight:bold">+</span> title <span style="color:#ff7b72;font-weight:bold">+</span> <span style="color:#a5d6ff">&#39; new column&#39;</span>)
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff7b72">catch</span> (err) {
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">&#39;The API returned an error: &#39;</span> <span style="color:#ff7b72;font-weight:bold">+</span> err);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在執行程式之前請先把 Google Sheets 的&rsquo;FB粉專&rsquo;、&lsquo;IG帳號&rsquo;這兩個 sheet 刪除，因為<code>要觸發 addSheet 才會有窗口凍結</code>的功能</p>
+</li>
+<li>
+<p>刪除 sheet 後在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div><blockquote>
+<p><img src="/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-01.webp" srcset="/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-01_hu_b71da676dee4c018.webp 720w, /blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="604" alt="執行程式（圖 1）" loading="lazy" decoding="async"></p>
+</blockquote>
+</li>
+<li>
+<p>執行完畢後確認 Google Sheets 是否有符合今天設定的格式：<strong>窗口凍結、欄位寬度調整</strong></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-02.webp" srcset="/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-02_hu_82492fd6cdc488f3.webp 720w, /blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-02.webp 868w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="868" height="316" alt="執行程式（圖 2）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<hr>
+<h3 class="h-nomark" id="-下個階段">⏭️ 下個階段<a class="h-anchor" href="#-%e4%b8%8b%e5%80%8b%e9%9a%8e%e6%ae%b5" aria-label="這個段落的連結"></a></h3>
+<p>Google Sheets 對爬蟲資料處理的系列文章到這裡告一個段落，接下來我們依照今天提到專案要改善的地方繼續前進，接著來聊聊<code>把排程加入爬蟲專案</code>這個主題吧</p>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day23">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day22_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來完成業主要求的需求變更吧
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>要在tools/google_sheets資料夾放上自己的憑證，申請流程請參考<a href="/blog/202010/fb-ig-crawler-day-17/">Day17</a></li>
+<li>調整fanspages資料夾內目標爬蟲的粉專網址</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+<li>填上SPREADSHEET_ID</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://designtongue.me/%E4%BA%86%E8%A7%A3%E4%BD%BF%E7%94%A8%E8%80%85%E9%AB%94%E9%A9%97-ux-%E7%9A%84%E7%AC%AC%E4%B8%80%E5%A0%82%E8%AA%B2/">了解使用者體驗 (UX) 的第一堂課</a></li>
+</ol>
+<hr>
+<blockquote>
+<p><img src="/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-03.webp" srcset="/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-03_hu_aa4c23d5ca4c7363.webp 720w, /blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-03.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="233" alt="參考資源（圖 3）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+
+      </div>
+
+      <footer class="article-foot">
+        <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.10.08），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10249403" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
+        <div class="foot-row">
+          <div class="post-tags">
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/google-sheets/">Google Sheets</a>
+            <a class="chip chip-hash" href="/tags/%E4%BD%BF%E7%94%A8%E8%80%85%E9%AB%94%E9%A9%97/">使用者體驗</a>
+            <a class="chip chip-hash" href="/tags/ux/">Ux</a>
+            <a class="chip chip-hash" href="/tags/%E7%B6%B2%E9%A0%81%E7%88%AC%E8%9F%B2/">網頁爬蟲</a>
+          </div>
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-23%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-23%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/" data-title="【Day23】Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+        </div>
+        <section class="series-box" id="series-box" aria-label="系列文章">
+          <div class="sb-head">
+            <div>
+              <p class="sb-kicker">系列文章</p>
+              <h2 class="sb-title"><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></h2>
+            </div>
+            <p class="sb-pos">第 <b>23</b> 篇・共 30 篇</p>
+          </div>
+          <ol class="steps" data-collapsible>
+            <li>
+              <a href="/blog/202009/fb-ig-crawler-day-01/"><span class="n">01</span><span>技術只能陪你一陣子，學會解決問題才能過一輩子</span></a>
+            </li>
+            <li class="steps-gap" aria-hidden="true">⋮</li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-02/"><span class="n">02</span><span>開發環境大補帖 - Node.js、NVM、git、yarn、VSCode</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-03/"><span class="n">03</span><span>努力寫出更好的程式碼，有時你不是一個人在戰鬥</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-04/"><span class="n">04</span><span>建立Node.js專案 &amp; 全面解析專案管家package.json</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-05/"><span class="n">05</span><span>用yarn安裝及控管套件 &amp; 善用關鍵字讓全世界的大神幫你一把</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-06/"><span class="n">06</span><span>env - 善用環境變數幫你快速遷移專案</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-07/"><span class="n">07</span><span>gitignore - 杜絕上傳錯誤資料，從此不再發生慘痛經驗</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-08/"><span class="n">08</span><span>selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-09/"><span class="n">09</span><span>爬蟲第一步，FB先登入</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-10/"><span class="n">10</span><span>關閉干擾爬蟲的彈窗，將FB粉專追蹤數納入囊中</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-11/"><span class="n">11</span><span>舉一反三，帶你了解IG爬蟲不可忽略的細節</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-12/"><span class="n">12</span><span>合體吧！用一隻程式搞定FB、IG爬蟲</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-13/"><span class="n">13</span><span>重構程式碼，減少歷史業障</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-14/"><span class="n">14</span><span>爬蟲執行時又又又崩潰了嗎？來點 try-catch 吧</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202009/fb-ig-crawler-day-15/"><span class="n">15</span><span>json x 爬蟲 = 瑣事自動化，生命應該浪費在美好的事情上</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-16/"><span class="n">16</span><span>不藏私，加上5行程式就能優化爬蟲的小技巧 ＆ 學會爬蟲，之後呢？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-17/"><span class="n">17</span><span>Google Sheets - 免費儲存資料的好選擇，一起進入省錢起手式</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-18/"><span class="n">18</span><span>Google Sheets - 加入版控後被github警告了，官方範例做了什麼？</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-19/"><span class="n">19</span><span>Google Sheets - 你在文件迷路了嗎？用兩個處理Sheet的範例帶你攻略官方文件</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-20/"><span class="n">20</span><span>Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</span></a>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-21/"><span class="n">21</span><span>Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？</span></a>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-22/"><span class="n">22</span><span>Google Sheets - 客戶：我希望新資料插在最前面 &amp; 談需求變更</span></a>
+            </li>
+            <li>
+              <span class="is-here" aria-current="page"><span class="n">23</span><span>Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗<span class="here-tag">正在閱讀</span></span></span>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-24/"><span class="n">24</span><span>排程 - Cron套件超詳解，讓爬蟲自己動起來</span></a>
+            </li>
+            <li>
+              <a href="/blog/202010/fb-ig-crawler-day-25/"><span class="n">25</span><span>排程 - 用forever套件來控管排程，背景執行才是王道！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-26/"><span class="n">26</span><span>排程 - 重開機後排程不見惹？簡單幾個步驟，從此以後完全自動</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-27/"><span class="n">27</span><span>為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-28/"><span class="n">28</span><span>為爬蟲加上通知 - 用 axios 發出 LINE 通知</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-29/"><span class="n">29</span><span>為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</span></a>
+            </li>
+            <li class="is-far">
+              <a href="/blog/202010/fb-ig-crawler-day-30/"><span class="n">30</span><span>時間只是考驗，心中信念絲毫未減</span></a>
+            </li>
+          </ol>
+          <button class="steps-more" type="button" aria-expanded="false">顯示全部 30 篇 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
+          <a class="sb-next" href="/blog/202010/fb-ig-crawler-day-24/"><span class="sb-next-label">繼續讀下一篇</span><span class="sb-next-title">排程 - Cron套件超詳解，讓爬蟲自己動起來</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </section>
+
+        <section class="author-card" aria-label="關於作者">
+  <img src="/images/author_hu_c1056cf8d44682be.webp" srcset="/images/author_hu_c1056cf8d44682be.webp 136w" sizes="68px" width="136" height="136" alt="" loading="lazy" decoding="async" class="avatar">
+  <div>
+    <p class="ac-kicker">關於作者</p>
+    <p class="ac-name">林鼎淵<em>Dean Lin</em></p>
+    <p class="ac-bio">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+    <div class="ac-links">
+      <a class="link-arrow" href="/about/">認識我 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="link-arrow" href="/about/#teaching">企業內訓・演講邀約 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="social">
+        <a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener" aria-label="facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+        <a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+        <nav class="post-nav" aria-label="上一篇與下一篇">
+          <a class="prev" href="/blog/202010/fb-ig-crawler-day-22/" rel="prev"><span class="pn-label">← 上一篇</span><span class="pn-title">【Day22】Google Sheets - 客戶：我希望新資料插在最前面 &amp; 談需求變更</span></a>
+          <a class="next" href="/blog/202010/fb-ig-crawler-day-24/" rel="next"><span class="pn-label">下一篇 →</span><span class="pn-title">【Day24】排程 - Cron套件超詳解，讓爬蟲自己動起來</span></a>
+        </nav>
+      </footer>
+    </div>
+    <aside class="toc-aside" aria-label="本文目錄">
+      <nav class="toc">
+        <p class="toc-label">本文目錄</p>
+        <ol class="toc-list"><li><a href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99">今日目標</a></li><li class="is-sub"><a href="#1-%e4%ba%86%e8%a7%a3%e4%bd%bf%e7%94%a8%e8%80%85%e9%ab%94%e9%a9%97%e7%82%ba%e4%bb%80%e9%ba%bc%e9%87%8d%e8%a6%81">1. 了解使用者體驗為什麼重要</a></li><li class="is-sub"><a href="#2-%e5%84%aa%e5%8c%96%e7%94%a8%e6%89%8b%e6%a9%9f%e4%be%86%e7%9c%8b-google-sheets-%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e7%9a%84%e9%ab%94%e9%a9%97">2. 優化用手機來看 Google Sheets 的爬蟲資料的體驗</a></li><li><a href="#1-%e4%ba%86%e8%a7%a3%e4%bd%bf%e7%94%a8%e8%80%85%e9%ab%94%e9%a9%97%e7%82%ba%e4%bb%80%e9%ba%bc%e9%87%8d%e8%a6%81-1">1. 了解使用者體驗為什麼重要</a></li><li class="is-sub"><a href="#11-%e9%82%a3%e4%ba%9b%e4%b8%8d%e5%a0%aa%e5%9b%9e%e9%a6%96%e7%9a%84%e5%85%b1%e5%90%8c%e5%9b%9e%e6%86%b6">1.1 那些不堪回首的共同回憶</a></li><li class="is-sub"><a href="#12-%e6%98%af%e4%bb%80%e9%ba%bc%e5%8e%9f%e5%9b%a0%e8%a3%bd%e9%80%a0%e5%87%ba%e9%80%99%e4%ba%9b%e9%ab%94%e9%a9%97%e7%9a%84">1.2 是什麼原因製造出這些體驗的</a></li><li class="is-sub"><a href="#13-%e6%9c%89%e5%9c%a8%e4%bd%bf%e7%94%a8%e7%94%a2%e5%93%81%e7%9a%84%e4%ba%ba%e6%89%8d%e6%9c%83%e7%b5%a6%e4%bd%a0%e6%9c%80%e7%9c%9f%e5%af%a6%e7%9a%84%e5%9b%9e%e9%a5%8b%e5%b0%88%e6%a1%88%e9%82%84%e6%9c%89%e5%93%aa%e4%ba%9b%e5%9c%b0%e6%96%b9%e8%a6%81%e6%94%b9%e5%96%84%e5%91%a2">1.3 有在使用產品的人才會給你最真實的回饋，專案還有哪些地方要改善呢？</a></li><li><a href="#2-%e5%84%aa%e5%8c%96%e7%94%a8%e6%89%8b%e6%a9%9f%e4%be%86%e7%9c%8b-google-sheets-%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e7%9a%84%e9%ab%94%e9%a9%97-1">2. 優化用手機來看 Google Sheets 的爬蟲資料的體驗</a></li><li class="is-sub"><a href="#21-%e5%a6%82%e4%bd%95%e8%ae%93%e6%89%8b%e6%a9%9f%e7%9c%8b-google-sheets-%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e6%99%82%e8%88%92%e6%9c%8d%e9%bb%9e">2.1 如何讓手機看 Google Sheets 爬蟲資料時舒服點</a></li><li class="is-sub"><a href="#22-%e7%aa%97%e5%8f%a3%e5%87%8d%e7%b5%90%e5%b0%87%e6%9c%80%e4%b8%8a%e6%96%b9%e7%9a%84%e7%88%ac%e8%9f%b2%e6%97%a5%e6%9c%9f%e5%b7%a6%e6%96%b9%e7%9a%84%e7%b2%89%e5%b0%88%e5%90%8d%e7%a8%b1%e6%ac%84%e4%bd%8d%e5%87%8d%e7%b5%90">2.2 窗口凍結：將最上方的爬蟲日期、左方的粉專名稱欄位凍結</a></li><li class="is-sub"><a href="#23-%e6%ac%84%e4%bd%8d%e5%af%ac%e5%ba%a6%e8%aa%bf%e6%95%b4%e6%b8%9b%e5%b0%91%e8%bf%bd%e8%b9%a4%e4%ba%ba%e6%95%b8%e7%9a%84%e6%ac%84%e4%bd%8d%e5%af%ac%e5%ba%a6">2.3 欄位寬度調整：減少追蹤人數的欄位寬度</a></li><li class="is-sub"><a href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f">執行程式</a></li><li class="is-sub"><a href="#-%e4%b8%8b%e5%80%8b%e9%9a%8e%e6%ae%b5">⏭️ 下個階段</a></li><li class="is-sub"><a href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc">ℹ️ 專案原始碼</a></li><li class="is-sub"><a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90">參考資源</a></li></ol>
+
+        <div class="toc-tools">
+          <div class="share">
+  <span class="share-label">分享</span>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-23%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg></a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fdeanlin.net%2Fblog%2F202010%2Ffb-ig-crawler-day-23%2F" target="_blank" rel="noopener" aria-label="分享到 LINE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 19.8l1.3-3.9A8 8 0 1 1 20 11.5z"/></svg></a>
+  <button type="button" data-copy-link="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/" aria-label="複製文章連結"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+  <button type="button" data-share-native data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/" data-title="【Day23】Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗" aria-label="用其他 App 分享" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3.5M7.8 7.6 12 3.4l4.2 4.2"/><path d="M8.5 10.5H6.4A1.9 1.9 0 0 0 4.5 12.4v6.2a1.9 1.9 0 0 0 1.9 1.9h11.2a1.9 1.9 0 0 0 1.9-1.9v-6.2a1.9 1.9 0 0 0-1.9-1.9h-2.1"/></svg></button>
+</div>
+
+          <a class="link-arrow" href="#top">回到頂部 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></a>
+        </div>
+      </nav>
+    </aside>
+  </div>
+</article>
+
+
+<section class="wrap related" aria-labelledby="related-title">
+  <div class="sec-head">
+    <span class="sec-no">More</span>
+    <h2 class="sec-title" id="related-title">延伸閱讀</h2>
+    <span class="sec-line"></span>
+  </div>
+  <div class="card-grid">
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRooAAABXRUJQVlA4WAoAAAAQAAAAFwAADAAAQUxQSB4AAAABHyAUQPzN8mgGkUZExAkIJG3G&#43;lceL/AAEf3PJk9WUDggRgAAANADAJ0BKhgADQA/DWipSCYjIhgEAGMQxPSAADVz4inJF1wSczfCcAD&#43;umm4v4RY58p0Kk6RhonlAEJt12Ojm&#43;v3r&#43;rYAAA=" alt="" width="24" height="13"><img src="/blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01_hu_abbe0a137883025d.webp" srcset="/blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01_hu_53ab5f82fb2c58f.webp 240w, /blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01_hu_43ccedba1f041e96.webp 480w, /blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01_hu_9cc336b113c8dd5f.webp 800w, /blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01_hu_abbe0a137883025d.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="562" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-22/">【Day22】Google Sheets - 客戶：我希望新資料插在最前面 &amp; 談需求變更</a></h3>
+    <p class="card-desc">3.1 插入一個空白欄位：insertEmptyCol3.2 把空白欄位更新成最新的追蹤人數資訊</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-07">2020.10.07</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>5 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADwAwCdASoYAAgAPw1oqEgmIyIYBABjEMT0gAAzJ1r3p6TN&#43;osnxP&#43;gAP7nRTeRjJalengHu&#43;eys6BSAG2ez/qhAAA=" alt="" width="24" height="8"><img src="/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01_hu_a8544c5da97d1a48.webp" srcset="/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01_hu_619e82380513776.webp 240w, /blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01_hu_a263ce03a2e6f9c0.webp 480w, /blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01_hu_3d2862c00854330e.webp 800w, /blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01_hu_a8544c5da97d1a48.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="349" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-21/">【Day21】Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？</a></h3>
+    <p class="card-desc">其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了 但一個案子通常很難一次就通過，無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug，我大概歸類成以下幾種：</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-06">2020.10.06</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>6 分鐘</span>
+    </div>
+  </div>
+</article>
+
+    <article class="card">
+  <div class="card-media">
+    <img class="cover-bg" src="data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAwCdASoYAAgAPw1qqEgmIyIYBABjEMT0gAAzJ2saN4rJoO7aklgAAP7nRTeRvDXMGLYdurH0ED2A&#43;ytOVyWchKk&#43;qEAA" alt="" width="24" height="8"><img src="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_beb305e19e69cce0.webp" srcset="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_8adc63c2f8014883.webp 240w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_38e303ebf5808d1d.webp 480w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_9356f4c793d26fc.webp 800w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_beb305e19e69cce0.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="351" alt="" loading="lazy" decoding="async" class="is-contain">
+  </div>
+  <div class="card-body">
+    <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
+
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-20/">【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</a></h3>
+    <p class="card-desc">1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例</p>
+    <div class="card-meta">
+      <time class="meta-date" datetime="2020-10-05">2020.10.05</time>
+      <span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg>8 分鐘</span>
+    </div>
+  </div>
+</article>
+
+  </div>
+</section>
+
+
+<section class="wrap comments" id="comments" aria-labelledby="comments-title">
+  <div class="article-grid has-toc">
+    <div class="article-main">
+      <div class="sec-head">
+        <span class="sec-no">Talk</span>
+        <h2 class="sec-title" id="comments-title">留言討論</h2>
+        <span class="sec-line"></span>
+      </div>
+      <div class="comments-box">
+        <div id="disqus_thread" data-disqus="deanlin" data-url="https://deanlin.net/blog/202010/fb-ig-crawler-day-23/">
+          <div class="comments-placeholder">
+            <p>留言載入中…</p>
+            <button class="btn btn-ghost btn-sm" type="button" data-disqus-load>立即載入留言</button>
+          </div>
+        </div>
+        <noscript>請開啟 JavaScript 以查看 <a href="https://disqus.com/?ref_noscript">Disqus</a> 留言。</noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  </main><footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-name">林鼎淵<em>DEAN LIN</em></p>
+        <p class="foot-about">生成式 AI 企業內訓講師、外商資安公司軟體專家、生成式 AI 創新學院發起人，出版過 7 本專業書籍。熱愛分享 AI 知識、自我成長與職涯發展。</p>
+      </div>
+      <div class="foot-col">
+        <h2>導覽</h2>
+        <ul>
+          <li><a href="/blog/">所有文章</a></li>
+          <li><a href="/categories/">主題分類</a></li>
+          <li><a href="/series/">系列專題</a></li>
+          <li><a href="/about/">關於我</a></li>
+          <li><a href="/search/">搜尋</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>主題</h2>
+        <ul>
+          <li><a href="/categories/ai/">AI 實戰</a></li>
+          <li><a href="/categories/tech/">技術教學</a></li>
+          <li><a href="/categories/teamwork/">團隊合作</a></li>
+          <li><a href="/categories/career/">職涯成長</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>系列</h2>
+        <ul>
+          <li><a href="/series/after-office/">工程師下班有約</a></li>
+          <li><a href="/series/claude-code/">Claude Code 實戰</a></li>
+          <li><a href="/series/hugo/">Hugo 自架站</a></li>
+          <li><a href="/series/design-thinking/">設計思考</a></li>
+          <li><a href="/series/manus/">Manus AI Agent</a></li>
+          <li><a href="/series/my-story/">那些我走過的路與故事</a></li>
+          <li><a href="/series/">全部 23 個系列 →</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>社群</h2>
+        <ul>
+          <li><a href="https://www.facebook.com/deanlinbao" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0 0 24 12z"/></svg>Facebook</a></li>
+          <li><a href="https://github.com/dean9703111" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z"/></svg>GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/lindingyuan/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@dlcorner" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z"/></svg>YouTube</a></li>
+          <li><a href="https://medium.com/@dean-lin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M13.5 12A6.8 6.8 0 1 1 0 12a6.8 6.8 0 0 1 13.5 0zm7.4 0c0 3.5-1.5 6.4-3.4 6.4s-3.4-2.9-3.4-6.4 1.5-6.4 3.4-6.4 3.4 2.9 3.4 6.4zm3.1 0c0 3.2-.5 5.7-1.2 5.7S21.6 15.2 21.6 12s.5-5.7 1.2-5.7S24 8.8 24 12z"/></svg>Medium</a></li>
+          <li><a href="/index.xml"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.2"/></svg>RSS 訂閱</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2020–2026 林鼎淵 Dean Lin・All Rights Reserved.</span>
+      <a class="to-top" href="#top">回到頂部 ↑</a>
+    </div>
+  </div>
+</footer>
+<dialog class="search-dialog" id="search-dialog" aria-label="搜尋文章">
+  <div class="sd-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.6"/><path d="m20 20-4.2-4.2"/></svg>
+    <input class="sd-input" id="search-input" type="search" placeholder="搜尋文章、主題或關鍵字…" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="search-results" aria-label="搜尋關鍵字">
+    <button class="sd-close" type="button" data-search-close aria-label="關閉搜尋">Esc</button>
+  </div>
+  <div class="sd-body">
+    <p class="sd-status" id="search-status" role="status" aria-live="polite"></p>
+    <ul class="sd-results" id="search-results" role="listbox" aria-label="搜尋結果"></ul>
+    <div class="sd-suggest" id="search-suggest">
+      <h2>主題與系列</h2>
+      <div class="chips">
+        <a class="chip" href="/categories/ai/">AI 實戰</a>
+        <a class="chip" href="/categories/tech/">技術教學</a>
+        <a class="chip" href="/categories/teamwork/">團隊合作</a>
+        <a class="chip" href="/categories/career/">職涯成長</a>
+        <a class="chip" href="/series/after-office/">工程師下班有約</a>
+        <a class="chip" href="/series/claude-code/">Claude Code 實戰</a>
+        <a class="chip" href="/series/hugo/">Hugo 自架站</a>
+        <a class="chip" href="/series/design-thinking/">設計思考</a>
+        <a class="chip" href="/series/manus/">Manus AI Agent</a>
+        <a class="chip" href="/series/my-story/">那些我走過的路與故事</a>
+      </div>
+      <h2>讀者最愛</h2>
+      <ol class="sd-popular">
+        <li><a href="/blog/202512/vibe-coding-learning-map/">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</a></li>
+        <li><a href="/blog/202603/claude-code-openspec/">【Claude Code 實戰】用 OpenSpec 規格驅動開發，Vibe Coding 也能完成複雜專案</a></li>
+        <li><a href="/blog/202602/git-worktree-ai-agents/">【Git Worktree 實戰】指揮 AI Agents 同時運作，搭配 Agent Skills 建立自動化協作體系</a></li>
+        <li><a href="/blog/202609/spec-kit-claude-code-hostinger/">【Spec-Kit × Claude Code 教學】用規格驅動開發全端專案，再搭配 MCP 部署到 Hostinger VPS</a></li>
+        <li><a href="/blog/202610/when-rest-feels-like-guilt/">當休息開始讓你感到罪惡，努力還算是一種美德嗎？</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="sd-foot" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd>選擇</span>
+    <span><kbd>Enter</kbd>開啟</span>
+    <span><kbd>Esc</kbd>關閉</span>
+  </div>
+</dialog>
+
+<div class="cookie" id="cookie-notice" role="region" aria-label="Cookie 使用說明" data-days="2" hidden>
+  <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
+  <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
+</div>
+<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+
+</body>
+</html>

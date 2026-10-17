@@ -79,7 +79,7 @@ GPT4All 的操作介面跟 ChatGPT 很像，你也可以將聊天記錄保存在
 
 點擊上方的「齒輪」，可以進一步調整 GPT4All 的設定。
 
-### ➤ Model（調整模型參數）
+### Model（調整模型參數）
 
 - **System Prompt**：這是對話開始前會執行的指令，你可以在這邊設定 AI 要扮演的角色（ex:翻譯員、工程師），這邊有很多優秀的 Prompt 可以參考: [https://github.com/f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts%E3%80%82)
 - **Prompt Template**： 設計 AI 要如何回應你，如果你希望 AI 都以中文回覆，就可以加上「用繁體中文回應。」
@@ -89,7 +89,7 @@ GPT4All 的操作介面跟 ChatGPT 很像，你也可以將聊天記錄保存在
 
   大家可以看到就算指定繁體中文，很多時候還是會以簡體呈現。
 
-### ➤ Application（基礎設定）
+### Application（基礎設定）
 
 - **Theme**：調整主題為深色（Dark）、淺色（Light）。
 - **Font Size**：字體大小。

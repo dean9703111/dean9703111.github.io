@@ -31,25 +31,25 @@
 
 基本上筆者就是把它當成一個公司內部存放檔案的管理工具，下面重點介紹我覺得有用的 Feaure。
 
-### ➤ 熟悉的目錄文件結構
+### 熟悉的目錄文件結構
 
 可以像 Google Drive、Dropbox 一樣拖拉操作，使用直覺；如果要說缺點應該就是不能用滑鼠右鍵來操作新增、刪除這類的操作，但以一款免費工具而言已經非常好用了。
 
-### ➤ 簡易文件編輯
+### 簡易文件編輯
 
 如果你新增/上傳的是文件類型（ex：txt/html/md）的檔案，他也可以直接在線上編輯喔！
 
-### ➤ 分享檔案/資料夾
+### 分享檔案/資料夾
 
 其實裡面讓我覺得最有趣的是這個功能，他可以設定分享檔案的「時效、密碼」，當然你也可以都不設定直接分享啦 XD
 
 收到連結的人，打開會長這個畫面
 
-### ➤ 個人資訊設定
+### 個人資訊設定
 
 他支援多國語言體系、使用者可以自行改變帳號密碼的系統喔～
 
-### ➤ 使用者帳號管理
+### 使用者帳號管理
 
 如果你的權限是 Administrator，那你就可以新增/刪除帳號，並且設定該帳號的存取權限。
 
@@ -63,7 +63,7 @@
 
 下面指令適用於 Linux 的 Ubuntu 系統
 
-### ➤ STEP 1：安裝 docker 並建立目錄
+### STEP 1：安裝 docker 並建立目錄
 
 ```
 # 安裝 Docker
@@ -79,7 +79,7 @@ cd /apps
 
 原始碼：[file_browser.sh](https://gist.github.com/dean9703111/dc5d38dce42b62e44f3892ba1a3ac653)（GitHub Gist）
 
-### ➤ STEP 2：抓取官方最新 Docker image
+### STEP 2：抓取官方最新 Docker image
 
 ```
 # 抓取官方最新 docker image
@@ -92,7 +92,7 @@ docker images
 
 原始碼：[file_browser_pull.sh](https://gist.github.com/dean9703111/e2c910b28e824d26e5f94498031f3f73)（GitHub Gist）
 
-### ➤ STEP 3：建立 docker-compose.yml，啟動 File Browser
+### STEP 3：建立 docker-compose.yml，啟動 File Browser
 
 ```
 # 建立執行的資料夾
@@ -141,7 +141,7 @@ docker-compose down
 
   感覺在空空的 File Browser 上面新增檔案吧～
 
-### ➤ Bonus：增加 docker 安全性、SSL、設定資料儲存目錄
+### Bonus：增加 docker 安全性、SSL、設定資料儲存目錄
 
 目前只是讓這個服務啟動而已，但是他並不安全；像是缺少 https 設定，如果 Docker 重啟後檔案、使用者都會消失，因此建議先做如下調整：
 
@@ -192,7 +192,7 @@ services:
 
 以上就是 File Browser 的簡介以及安裝說明，原則上依照步驟就可以順利安裝及使用嚕～
 
-### ➤ 查看 Docker log
+### 查看 Docker log
 
 因為不久前有同仁使用時遇到錯誤，所以我這邊也把查看 log 的步驟記錄下來。
 

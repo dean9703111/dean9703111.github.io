@@ -78,7 +78,7 @@ sudo  /opt/zbox/zbox start
 
 稍微使用一下後覺得有些設定還是說明一下
 
-### ➤ HTTPS 設定
+### HTTPS 設定
 
 - 先進入 apache 的設定檔
 
@@ -122,7 +122,7 @@ sudo /opt/zbox/zbox restart
 
   順利的話就可以看到**左上角的鎖頭**，成功建立安全連線嚕～
 
-### ➤ 系統 email 通知
+### 系統 email 通知
 
 以下為 Gmail 信箱的設置
 
@@ -133,7 +133,7 @@ sudo /opt/zbox/zbox restart
 
   建立後可以用**測試發信**喔！
 
-### ➤ 修改預設入口頁面路徑
+### 修改預設入口頁面路徑
 
 系統預設的路徑會讓首頁導向到下面這個畫面：
 
@@ -161,7 +161,7 @@ sudo /opt/zbox/zbox restart
 
 **STEP 4**：重新輸入網址就會發現入口頁面變成禪道的登入頁面嚕～
 
-### ➤ 移除url中的『zentao』路徑
+### 移除url中的『zentao』路徑
 
 我們明明已經在zentao底下了，還有一個 `zentao` 的路徑真的多此一舉，移除他其實很簡單（官方給的教學基本上無效…搞了我好久）
 
@@ -178,7 +178,7 @@ vi /opt/zbox/app/zentao/config/my.php
 
   『zentao』真的消失惹呢！
 
-### ➤ 備份方式
+### 備份方式
 
 - 備份完整資料夾
 

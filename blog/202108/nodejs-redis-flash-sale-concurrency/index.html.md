@@ -31,12 +31,12 @@
 
 ## 二、使用技術
 
-### ➤ Redis
+### Redis
 
 - 如果完全沒有相關基礎，建議先參考[這篇文章](https://deanlin.net/blog/202108/install-redis-on-macos/)來安裝 Redis 以及他的 GUI 工具
 - 本篇文章使用 Redis 的 Hash、List type 來儲存資訊
 
-### ➤ Lua
+### Lua
 
 - 為了避免超賣，這裡採用 Lua 腳本
 - 在 Redis Server 執行 EVAL 指令時，在結果回傳前只會執行當下 Lua 腳本的邏輯，其他 Client 端的命令須等待直到 EVAL 執行完為止。
@@ -45,7 +45,7 @@ Lua 腳本的邏輯應盡量簡單以保證執行效率，否則會影響 Client
 
 ## 三、程式架構
 
-### ➤ 主程式：redisSecKill.js
+### 主程式：redisSecKill.js
 
 - 先啟用 Redis Client 端（如未安裝相關套件，請在專案資料夾下輸入 `yarn add ioredis`）
 - 用 **prepare** 函式，以 Hash type 建立參加秒殺的產品庫存
@@ -98,7 +98,7 @@ main()
 
 原始碼：[redisSecKill.js](https://gist.github.com/dean9703111/64cfadcce24bc32d5fabbafd07da98a6)（GitHub Gist）
 
-### ➤ Lua 腳本：secKill.lua
+### Lua 腳本：secKill.lua
 
 在 Lua 腳本執行「取得商品庫存」➜「如果庫存足夠就-1」➜「儲存購買者資訊(List type)」
 

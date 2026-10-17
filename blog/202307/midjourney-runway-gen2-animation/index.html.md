@@ -45,15 +45,15 @@ Midjourney 是一款輸入關鍵字就能產出唯美圖片的工具，而 Gen-2
 
 下面是筆者將圖片轉為動畫的各種實驗，大家可以先瀏覽看看，最後我再分享自己的心得。
 
-### ➤ 場景
+### 場景
 
   A beautiful place wallpaper — ar 16:9
 
-### ➤ 可愛動物（有點魔性）
+### 可愛動物（有點魔性）
 
   **The rabbit and his two friends are crazing Sprinkle banknotes towards the sky, the picture is full of banknotes and celebrate New Year , 3d , shiny , cute , painting by ghibli studio — ar 16:9**
 
-### ➤ 人像
+### 人像
 
   a young male person with silver hair standing on the beach, in the style of sandara tang, piratepunk, karol bak, video, white and amber, hiroshi nagai, enchanting — ar 128:71
 

@@ -52,7 +52,7 @@
 
 <h2 id="二實作-mysql-master-slave-replication">二、實作 MySQL Master Slave replication<a class="h-anchor" href="#%e4%ba%8c%e5%af%a6%e4%bd%9c-mysql-master-slave-replication" aria-label="這個段落的連結"></a></h2>
 <h2 id="前置作業">前置作業<a class="h-anchor" href="#%e5%89%8d%e7%bd%ae%e4%bd%9c%e6%a5%ad" aria-label="這個段落的連結"></a></h2>
-<h3 id="-準備兩台-ubuntu-server-自己實驗建議使用-vmware筆者環境配置如下">➤ 準備兩台 ubuntu server (自己實驗建議使用 VMWARE)，筆者環境配置如下<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e5%85%a9%e5%8f%b0-ubuntu-server-%e8%87%aa%e5%b7%b1%e5%af%a6%e9%a9%97%e5%bb%ba%e8%ad%b0%e4%bd%bf%e7%94%a8-vmware%e7%ad%86%e8%80%85%e7%92%b0%e5%a2%83%e9%85%8d%e7%bd%ae%e5%a6%82%e4%b8%8b" aria-label="這個段落的連結"></a></h3>
+<h3 id="-準備兩台-ubuntu-server-自己實驗建議使用-vmware筆者環境配置如下">準備兩台 ubuntu server (自己實驗建議使用 VMWARE)，筆者環境配置如下<a class="h-anchor" href="#-%e6%ba%96%e5%82%99%e5%85%a9%e5%8f%b0-ubuntu-server-%e8%87%aa%e5%b7%b1%e5%af%a6%e9%a9%97%e5%bb%ba%e8%ad%b0%e4%bd%bf%e7%94%a8-vmware%e7%ad%86%e8%80%85%e7%92%b0%e5%a2%83%e9%85%8d%e7%bd%ae%e5%a6%82%e4%b8%8b" aria-label="這個段落的連結"></a></h3>
 <blockquote>
 <p>硬體配置一定會影響到效能，筆者只是建置一個提供實驗的環境而已</p>
 </blockquote>
@@ -61,7 +61,7 @@
 <li>RAM：1G</li>
 <li>ROM：8G</li>
 </ul>
-<h3 id="-給兩台-sever-安裝-mysql">➤ 給兩台 sever 安裝 MySQL<a class="h-anchor" href="#-%e7%b5%a6%e5%85%a9%e5%8f%b0-sever-%e5%ae%89%e8%a3%9d-mysql" aria-label="這個段落的連結"></a></h3>
+<h3 id="-給兩台-sever-安裝-mysql">給兩台 sever 安裝 MySQL<a class="h-anchor" href="#-%e7%b5%a6%e5%85%a9%e5%8f%b0-sever-%e5%ae%89%e8%a3%9d-mysql" aria-label="這個段落的連結"></a></h3>
 <p>安裝指令如下</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt update
 </span></span><span style="display:flex;"><span>sudo apt install mysql-server
@@ -69,7 +69,7 @@
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mysql -u root -p
 </span></span></code></pre></div><p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-03.webp" width="1400" height="491" alt="給兩台 sever 安裝 MySQL（圖 3）" loading="lazy" decoding="async"></p>
 <h2 id="建立mysql-replication">建立MySQL Replication<a class="h-anchor" href="#%e5%bb%ba%e7%ab%8bmysql-replication" aria-label="這個段落的連結"></a></h2>
-<h3 id="-master-server-設定">➤ Master server 設定<a class="h-anchor" href="#-master-server-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<h3 id="-master-server-設定">Master server 設定<a class="h-anchor" href="#-master-server-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
 <p><strong>STEP 1</strong>：設定 Master server 的 my.cnf</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo vi /etc/mysql/my.cnf
 </span></span></code></pre></div><pre tabindex="0"><code>[mysqld]
@@ -108,7 +108,7 @@ log-bin=mysql-bin
 </code></pre><p><strong>STEP 4</strong>：檢查 Master 是否已經啟動</p>
 <pre tabindex="0"><code>mysql&gt; SHOW MASTER STATUS \G
 </code></pre><p><img src="https://deanlin.net/blog/202103/mysql-master-slave-replication/images/mysql-master-slave-replication-04.webp" width="1142" height="330" alt="Master server 設定（圖 4）" loading="lazy" decoding="async"></p>
-<h3 id="-slave-server-設定">➤ Slave server 設定<a class="h-anchor" href="#-slave-server-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<h3 id="-slave-server-設定">Slave server 設定<a class="h-anchor" href="#-slave-server-%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
 <p><strong>STEP 1</strong>：將剛剛備份的 <code>master.sql</code> 還原到 Slave server 的 DB</p>
 <p>先複製 master.sql 到 Slave server 的目錄下</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo scp master.sql &lt;username&gt;@&lt;IP or hostname&gt;:&lt;Destination&gt;

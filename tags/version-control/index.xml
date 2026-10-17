@@ -18,7 +18,7 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>Node.js 版本更新速度極快，但未必所有套件都能相容於新的版本，這造成每個專案的 Node.js 版本不盡相同；所以今天要介紹如何透過 .nvmrc 搭配 zsh or bash script 讓你在專案間自動切換 Node.js 版本。</description>
-      <media:content url="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-og_hu_17a68fb27eaaf9ca.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-og_hu_5470ca57d11f8c34.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<p>Node.js 版本更新速度極快，但未必所有套件都能相容於新的版本，這造成每個專案的 Node.js 版本不盡相同；即使 nvm 可以幫我們快速切換 Node.js 版本還是不太方便，所以今天要介紹如何透過 .nvmrc 搭配 zsh or bash script 讓你在專案間自動切換 Node.js 版本。</p>
 <p><img src="https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/images/nvm-nvmrc-auto-switch-01.webp" width="1400" height="731" alt="使用 nvm &#43; .nvmrc 讓 Node.js 版本在不同的專案間自動切換（圖 1）" loading="lazy" decoding="async"></p>
 <blockquote>
@@ -99,7 +99,7 @@ load-nvmrc
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>如果你用上圖的錯誤訊息去 Google 搜尋，相信會得到很多解答；但這篇文章遇到的問題，如果用關鍵字搜尋是找不到真正解答的；也因為這次的經驗讓我對 Ubuntu Server、MySQL、apt-mark 有更深一層的認識。</description>
-      <media:content url="https://deanlin.net/blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-og_hu_4a05026c1288ab49.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-og_hu_941c008b1b9af0f6.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202206/mysql-server-down-after-holiday/images/mysql-server-down-after-holiday-01.webp" width="1060" height="561" alt="放完假後 MySQL Server 就掛了，不是每個錯誤都能靠 Google 找到解答（圖 1）" loading="lazy" decoding="async"></p>
 <p>如果你用上圖的錯誤訊息去 Google 搜尋，相信會得到很多解答；但這篇文章遇到的問題，如果用關鍵字搜尋是找不到真正解答的；也因為這次的經驗讓我對 Ubuntu Server、MySQL、apt-mark 有更深一層的認識。</p>
 <pre tabindex="0"><code>大綱
@@ -163,6 +163,388 @@ load-nvmrc
 <p>這個問題花了不少時間才解決，主要是因為我在一開始判斷問題時就走偏了；過去我都是從錯誤訊息找答案，而這次的錯誤訊息卻把我引導到另一個錯誤的方向。</p>
 <p>這次的經驗也讓我明白，除了發生問題的本體外，還要多觀察其他有「相依性」的資訊，否則會陷入死胡同，還期待用錯誤的方法得到正確的結果。</p>
 <p>但同時也提醒大家，千萬不要看完這篇文章後，回去就把所有安裝的套件版本都鎖死；除非有不得已的理由，不然系統、套件都是需要定期更新的，這樣穩定性、安全性才足夠。</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>【Day7】gitignore - 杜絕上傳錯誤資料，從此不再發生慘痛經驗</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-07/</link>
+      <pubDate>Tue, 22 Sep 2020 08:42:57 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-07/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>筆者曾待過超瞎的公司，他們對於一個專案遷移的概念還停留在把程式 copy 到 USB，到現場的時候再把他放到正式的server上面</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-07/images/fb-ig-crawler-day-07-og_hu_dcc00b9ddd7a343d.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>在你的成長的路上總有不少值得你警惕的前輩</p>
+</blockquote>
+<h2 id="為什麼寫這篇文章">為什麼寫這篇文章？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0" aria-label="這個段落的連結"></a></h2>
+<h3 id="慘痛經驗-part-1">慘痛經驗 part 1<a class="h-anchor" href="#%e6%85%98%e7%97%9b%e7%b6%93%e9%a9%97-part-1" aria-label="這個段落的連結"></a></h3>
+<p>筆者曾待過超瞎的公司，他們對於一個<code>專案遷移的概念還停留在把程式 copy 到 USB</code>，到現場的時候再把他放到正式的server上面</p>
+<p>所以每次發布新版本都超級心驚膽跳擔心會不會檔案沒有 call 完全(如果你曾經在 windows 上複製過 node_modules 超過 2G 的專案就會知道我在說什麼惹)、會不會到現場的 server 跑不動，這個詭異的問題直到我離開那間公司後才知道根本是一道假命題&hellip;</p>
+<ul>
+<li><code>都用 git 了，為什麼還要把程式 call 到 USB？？？</code></li>
+<li><code>都有 package.json 紀錄要安裝的套件跟版本了，我幹嘛要複製好幾G的套件進去 USB？？？</code><br>不要笑，我相信現在還是有公司用這麼瞎的方式在發布新版本XD</li>
+</ul>
+<h3 id="慘痛經驗-part-2">慘痛經驗 part 2<a class="h-anchor" href="#%e6%85%98%e7%97%9b%e7%b6%93%e9%a9%97-part-2" aria-label="這個段落的連結"></a></h3>
+<p>筆者曾在公司兼職 MIS，幫公司架一個 gitlab 提供內部使用；但每個人 git 使用的習慣相差很大，有些部門的同事根本就沒在管什麼檔案適合傳到 gitlab 什麼不適合，每次 push 都全部上傳(各種執行檔、暫存檔全部上傳，<code>根本把 gitlab 當成 NAS 在用...</code>)</p>
+<p>因為 git 版本控管的特性，他的專案在 gitlab 就越來越肥，儘管跟他溝通很多次這樣的 git 版控很有問題但都被當成耳邊風，直到有一天 gitlab 的硬碟終於被他用完了&hellip;(<code>他一個專案就用了 15GB 的容量</code>)，他才開始願意去了解自己專案中有多少檔案是不需要上傳的</p>
+<blockquote>
+<p>PS.因為 gitlab 一般只會儲存程式碼，所以當時只劃分了 100GB 的硬碟空間</p>
+</blockquote>
+<h3 id="慘痛經驗-part-3">慘痛經驗 part 3<a class="h-anchor" href="#%e6%85%98%e7%97%9b%e7%b6%93%e9%a9%97-part-3" aria-label="這個段落的連結"></a></h3>
+<p>這個事件發生在一個熱愛技術的朋友身上，他使用了一個需要憑證的套件，這個憑證會根據使用者使用的次數去做收費，不知道他當時是喝多了還是太累了；<code>他居然把憑證加入 git 版控上傳，我永遠記得下個月他收到帳單時臉上的表情有多麼的驚嚇</code></p>
+<h3 id="昨日經驗">昨日經驗<a class="h-anchor" href="#%e6%98%a8%e6%97%a5%e7%b6%93%e9%a9%97" aria-label="這個段落的連結"></a></h3>
+<p>昨天我們說到 <code>.env 裡面存放的資料有許多都不適合公開</code>(ex:資料庫帳號密碼、token&hellip;)，這些資料外流出去我想就不是檢討報告能解決的問題惹，為了避免誤傳檔案，今天我來介紹一個好用的東西 <code>.gitignore</code>，他是一份忽略清單，<code>忽略清單上的都是不需要加入版本控制的檔案</code></p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>了解哪些檔案/資料夾不需要放入版控</li>
+<li>在專案加入 .gitignore</li>
+<li>透過 VSCode 知道是否成功將檔案加入忽略清單</li>
+<li>為環境變數加上一個可以上傳的範例檔</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-哪些檔案資料夾不需要放入版控">1. 哪些檔案/資料夾不需要放入版控?<a class="h-anchor" href="#1-%e5%93%aa%e4%ba%9b%e6%aa%94%e6%a1%88%e8%b3%87%e6%96%99%e5%a4%be%e4%b8%8d%e9%9c%80%e8%a6%81%e6%94%be%e5%85%a5%e7%89%88%e6%8e%a7" aria-label="這個段落的連結"></a></h2>
+<p>有了上方慘痛經驗的範例，我想大家應該對要加入 .gitignore 的檔案/資料夾有基礎概念了，在這我也整理了常見在忽略清單如下：</p>
+<ol>
+<li><strong>機敏性資料</strong>：資料庫帳號密碼、存取權限的權杖(token)、憑證(credentials)&hellip;</li>
+<li><strong>環境變數</strong>：專案env檔(因為裡面通常存有ip、password&hellip;等隱私資訊)</li>
+<li><strong>套件資料夾</strong>：node_module、vendor&hellip;</li>
+<li><strong>日誌檔案</strong>：log相關紀錄</li>
+<li><strong>程式編譯時產生的檔案</strong>：快取檔案、暫存檔案、編譯結果</li>
+</ol>
+<p>透過這份清單，大家可以想一下昨天的專案有哪些檔案/資料夾是要加入這份忽略清單的呢</p>
+<hr>
+<h2 class="h-nomark" id="2-在專案加入gitignore">2. 在專案加入.gitignore<a class="h-anchor" href="#2-%e5%9c%a8%e5%b0%88%e6%a1%88%e5%8a%a0%e5%85%a5gitignore" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>上一篇有提到我們這次的爬蟲會用到 FB &amp; IG 的帳號密碼還有你 google sheet 的 id，<code>這些資訊我們統一設定在 .env 環境變數裡面</code>，我相信大家都不希望把這些機敏資訊放到 git 外流出去</li>
+<li>另外我們 <code>透過 yarn 安裝的 dotenv 套件也產生了一個 node_modules 的資料夾</code>，從經以後你所安裝的套件都會儲存到這個資料夾裡面，通常一個中型專案套件他的大小都高達 300MB 以上，所以這個 node_modules 的資料夾是不適合上傳到到 git 的(這些套件到新環境下指令yarn就能安裝)</li>
+</ol>
+<p>所以我們的忽略清單會長這樣</p>
+<h3 id="gitignore">.gitignore<a class="h-anchor" href="#gitignore" aria-label="這個段落的連結"></a></h3>
+<pre tabindex="0"><code>node_modules
+.env
+</code></pre><hr>
+<h2 class="h-nomark" id="3-透過-vscode-知道是否成功將檔案加入忽略清單">3. 透過 VSCode 知道是否成功將檔案加入忽略清單<a class="h-anchor" href="#3-%e9%80%8f%e9%81%8e-vscode-%e7%9f%a5%e9%81%93%e6%98%af%e5%90%a6%e6%88%90%e5%8a%9f%e5%b0%87%e6%aa%94%e6%a1%88%e5%8a%a0%e5%85%a5%e5%bf%bd%e7%95%a5%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h2>
+<p>如果你也是用 VSCode 當成編輯器，可以用他觀察使用 .gitignore 的前後變化</p>
+<ul>
+<li>
+<p><strong>使用 .gitignore 前：</strong> .env 及 node_modules 會被列入變更；<code>綠色的字代表有新增(U)的檔案，棕色的字代表有改變(M)的檔案</code></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-07/images/fb-ig-crawler-day-07-01.webp" width="439" height="640" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>在 <code>SOURCE CONTROL</code> 中可以看到有哪些檔案被列入變更</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-07/images/fb-ig-crawler-day-07-02.webp" width="354" height="640" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p><strong>使用 .gitignore 後：</strong> .env 及 node_modules 會變成<code>淺灰色</code>，代表不會被列入變更</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-07/images/fb-ig-crawler-day-07-03.webp" width="437" height="640" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+<p><strong>這份忽略清單會隨著你專案的變動而調整</strong>，如果你在撰寫其他種類程式語言可以參考<a href="https://github.com/github/gitignore">github的官網</a>來調整自己的.gitignore</p>
+<hr>
+<h2 class="h-nomark" id="4-為環境變數加上一個可以上傳的範例檔">4. 為環境變數加上一個可以上傳的範例檔<a class="h-anchor" href="#4-%e7%82%ba%e7%92%b0%e5%a2%83%e8%ae%8a%e6%95%b8%e5%8a%a0%e4%b8%8a%e4%b8%80%e5%80%8b%e5%8f%af%e4%bb%a5%e4%b8%8a%e5%82%b3%e7%9a%84%e7%af%84%e4%be%8b%e6%aa%94" aria-label="這個段落的連結"></a></h2>
+<p>今天我們把 .env 放入 .gitignore 中讓他不會加入版控，<code>但為了讓專案快速遷移，我會建立一個 .env.example 的檔案</code>，他是環境變數的範例檔，這樣你在新環境只需要將他複製一份到 .env 檔填上自己的參數就能完成環境設定了，下面是本專案未來會用到的環境變數</p>
+<h3 id="envexmaple">.env.exmaple<a class="h-anchor" href="#envexmaple" aria-label="這個段落的連結"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#填寫你目標放入的sheet id</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">SPREADSHEET_ID</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;your sheet id&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#你FB及IG的帳號密碼(建議用小帳號)</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">IG_USERNAME</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;ig username&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">IG_PASSWORD</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;ig password&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">FB_USERNAME</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;fb username&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">FB_PASSWORD</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;fb password&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#這是設定排程的時間參數(目前預設每日22:30準時執行)</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">CRONJOB_TIME</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;0 30 22 * * *&#39;</span>
+</span></span></code></pre></div><hr>
+<h2 class="h-nomark" id="-下個階段">⏭️ 下個階段<a class="h-anchor" href="#-%e4%b8%8b%e5%80%8b%e9%9a%8e%e6%ae%b5" aria-label="這個段落的連結"></a></h2>
+<p>關於撰寫程式的基礎介紹就到今天，從明天會開始<strong>撰寫爬蟲</strong>，這裡先跟各位分享一下我對於功能撰寫順序的邏輯以及技術文章未來的規劃</p>
+<ul>
+<li><strong>判斷哪個功能需要最先研究</strong>
+<ol>
+<li>我們先前列出很多功能項目，我個人對於研究的前後順序是<code>先把不熟悉的完成，因為他通常會花你最多時間</code></li>
+<li>如果中間有遇到無法解決的問題，最慘的結果就是你必須放棄這個專案，所以我建議不熟悉的東西你最好再接案前要做一下功課確認是可以完成的，這就是你從最難的部分開始實作的好處：<code>及時止損，避免你完成大部分功能最後因為卡在一個關鍵功能無法完成交付</code></li>
+</ol>
+</li>
+<li><strong>專案撰寫順序</strong><br>我會按照我當時撰寫的思路完整的呈現給大家，目前的順序是：
+<ul>
+<li>爬蟲功能 → 儲存到雲端Google Sheets → 電腦自動排程執行 → LINE通知提醒執行結果</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h2>
+<p>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day7">這裡</a>找到喔</p>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-07/images/fb-ig-crawler-day-07-04.webp" width="1024" height="233" alt="ℹ️ 專案原始碼（圖 4）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>【Day5】用yarn安裝及控管套件 &amp; 善用關鍵字讓全世界的大神幫你一把</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-05/</link>
+      <pubDate>Sun, 20 Sep 2020 10:52:25 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-05/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>我周圍有些人在面對需求時很喜歡寫一些市面上已經提供的套件而不是直接使用它，而且他們寫出來的套件 bug 通常比原版多很多...</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-og_hu_930ddc250cb24634.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>如果屠龍刀是系統贈送的武器，你為什麼要自己打造一個破鐵刀?</p>
+</blockquote>
+<h2 id="為什麼寫這篇文章">為什麼寫這篇文章？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0" aria-label="這個段落的連結"></a></h2>
+<p>我周圍有些人在面對需求時很喜歡寫一些市面上已經提供的套件而不是直接使用它，而且他們寫出來的套件 bug 通常比原版多很多&hellip;</p>
+<p>以個人的開發經驗來說，有 97% 以上的套件我是看過說明文檔就去使用，只有 3% 會去看這份套件到底怎麼寫，<code>會去看他怎麼寫的套件通常不是因為他寫的太好，而是他寫的很爛</code>，因為 bug 影響到功能導致使用者需要去修正或者評估使用其他解法</p>
+<p><strong>請不要重複造輪子</strong>，人類的進步，大部分是繼承前人的知識繼續發展<br>EX：你需要了解怎麼使用電腦，但你不需要買材料自己做出一台電腦</p>
+<hr>
+<h2 id="這篇文章除了套件安裝跟版控外我還能學到什麼">這篇文章除了套件安裝跟版控外，我還能學到什麼?<a class="h-anchor" href="#%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0%e9%99%a4%e4%ba%86%e5%a5%97%e4%bb%b6%e5%ae%89%e8%a3%9d%e8%b7%9f%e7%89%88%e6%8e%a7%e5%a4%96%e6%88%91%e9%82%84%e8%83%bd%e5%ad%b8%e5%88%b0%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<p>我們身處在一個開源工具大爆炸的時代，每天都有無數個程式大神寫好套件公開在網路平台供大家使用，所以當我們想要做某些功能的時候我們可以先找找看有沒有好心的前輩們幫我們完成這些功能了</p>
+<p>但同時正因為開源工具爆炸，我們面對的不是沒有工具而是工具太多不知道怎麼選，所以在<code>了解套件的重要性後，更重要的是知道如何找出適合的套件</code></p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<ol>
+<li>了解套件對專案幫助有多大</li>
+<li>如何找出適合的套件</li>
+<li>學會安裝套件，觀察安裝後目錄結構的變化</li>
+<li>學會控制套件版本範圍</li>
+<li>知道如何下關鍵字找工具</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="1-套件對專案的幫助">1. 套件對專案的幫助<a class="h-anchor" href="#1-%e5%a5%97%e4%bb%b6%e5%b0%8d%e5%b0%88%e6%a1%88%e7%9a%84%e5%b9%ab%e5%8a%a9" aria-label="這個段落的連結"></a></h2>
+<p>身為一個工程師，<code>比起撰寫一個新功能，我更多的時間在研究如何使用一個套件</code>，下面舉例說明套件對於專案的幫助：</p>
+<ol>
+<li>能夠快速評估專案功能的可行性</li>
+<li>可以更準確預估每個功能的完成時間</li>
+<li>節省大量自己重頭寫功能的時間</li>
+<li>你可以更專心地維護自己寫的程式邏輯</li>
+<li>避免專案主程式肥大</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="2-如何找出適合的套件">2. 如何找出適合的套件<a class="h-anchor" href="#2-%e5%a6%82%e4%bd%95%e6%89%be%e5%87%ba%e9%81%a9%e5%90%88%e7%9a%84%e5%a5%97%e4%bb%b6" aria-label="這個段落的連結"></a></h2>
+<p>由於套件的資源實在是太多了，不管是大神還是新手都可以發布套件，這造成了套件本身的良莠不齊，我這裡提供幾個幫助你<code>判斷套件是否符合需求以及套件品質</code>的方法：</p>
+<ol>
+<li>我會先用下面幾個最基礎的指標來做判斷
+<ul>
+<li><strong>套件最後發布時間</strong>：太久沒維護的套件請謹慎選用</li>
+<li><strong>每週下載次數</strong>：越多人下載的套件穩定性越高</li>
+<li><strong>版本</strong>：一般來說 1.0.0 以前的版本通常穩定性上有疑慮，盡可能避免使用</li>
+</ul>
+</li>
+<li>有時候你需要的功能有很多個套件可以完成，這時上面的指標便可成為我們選用的依據
+<ul>
+<li>
+<p>我們在提供 <a href="https://www.npmjs.com/search?q=env">npm 套件的網頁搜尋 env</a> 就出現了<strong>高達149頁</strong>的套件資源</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-01.webp" width="1024" height="509" alt="2. 如何找出適合的套件（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>我們點開前兩個套件：<a href="https://www.npmjs.com/package/env">env</a>、<a href="https://www.npmjs.com/package/dotenv">dotenv</a>來做比較，你就很清楚選哪個是比較有保障的了</p>
+<table>
+  <thead>
+      <tr>
+          <th>套件</th>
+          <th>env</th>
+          <th>dotenv</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>最後發布時間</td>
+          <td>9 years ago</td>
+          <td>10 months ago</td>
+      </tr>
+      <tr>
+          <td>每週下載次數</td>
+          <td>2,171</td>
+          <td>11,326,358</td>
+      </tr>
+      <tr>
+          <td>版本</td>
+          <td>0.0.2</td>
+          <td>8.2.0</td>
+      </tr>
+  </tbody>
+</table>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-02.webp" width="1024" height="408" alt="2. 如何找出適合的套件（圖 2）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-03.webp" width="1024" height="486" alt="2. 如何找出適合的套件（圖 3）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+<li>你同時要<code>關心該套件的 issues 數量</code>，如果太多建議你點進去看看 open issues，因為有些套件很久沒維護了
+<ul>
+<li>
+<p>點擊 issues 的數字便可跳到 github 的頁面來看 <strong>open issues</strong> 與 <strong>closed issues</strong> 的數量</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-04.webp" width="1024" height="486" alt="2. 如何找出適合的套件（圖 4）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-05.webp" width="1024" height="503" alt="2. 如何找出適合的套件（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+<li>先透過<code>閱讀套件的文件來確認是否有你想要的功能</code>
+<ul>
+<li>
+<p>通常在 npm 網頁裡面就會有套件的說明，<strong>但部分套件因為使用上相對複雜，詳細的使用方法會放在 Homepage 的連結</strong>，點擊後會導向更詳細的說明文件(也可能是套件官網)</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-06.webp" width="1024" height="464" alt="2. 如何找出適合的套件（圖 6）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-07.webp" width="1024" height="500" alt="2. 如何找出適合的套件（圖 7）" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+<li>大部分的套件都有提供 sample code，<code>建議把套件加入專案前先用 sample code 測試來確認這個套件是否符合你的需求</code></li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="3-安裝套件觀察安裝後目錄結構的變化">3. 安裝套件，觀察安裝後目錄結構的變化<a class="h-anchor" href="#3-%e5%ae%89%e8%a3%9d%e5%a5%97%e4%bb%b6%e8%a7%80%e5%af%9f%e5%ae%89%e8%a3%9d%e5%be%8c%e7%9b%ae%e9%8c%84%e7%b5%90%e6%a7%8b%e7%9a%84%e8%ae%8a%e5%8c%96" aria-label="這個段落的連結"></a></h2>
+<p>在這裡我們以明天要講的主題 <strong>環境變數</strong> 為範例，在 Node.js 專案要讀取 .env 的資料需要安裝一個 <strong>dotenv</strong> 的套件來抓 .env 的資料，安裝套件時請輸入指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn add dotenv
+</span></span></code></pre></div><p>安裝完後你會發現專案目錄下多了一些東西</p>
+<ul>
+<li>
+<p><strong>node_modules</strong> 資料夾：他會儲存你所安裝的套件</p>
+</li>
+<li>
+<p><strong>yarn.lock</strong> 檔案：為了保證在不同機器上能得到一樣的結果，所以需要這個檔案儲存每個相依性所安裝的確切的版本</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-08.webp" width="194" height="242" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>同時 <strong>package.json</strong> 檔案內容也有變化</p>
+<ul>
+<li>
+<p>你會發現在 <strong>dependencies</strong> 中多了你剛剛安裝的套件 <strong>dotenv</strong> 版本為 <strong>&quot;^8.2.0&quot;</strong></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-09.webp" width="370" height="351" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="4-套件不是安裝完就沒事了你得學會控制套件版本範圍">4. 套件不是安裝完就沒事了，你得學會控制套件版本範圍<a class="h-anchor" href="#4-%e5%a5%97%e4%bb%b6%e4%b8%8d%e6%98%af%e5%ae%89%e8%a3%9d%e5%ae%8c%e5%b0%b1%e6%b2%92%e4%ba%8b%e4%ba%86%e4%bd%a0%e5%be%97%e5%ad%b8%e6%9c%83%e6%8e%a7%e5%88%b6%e5%a5%97%e4%bb%b6%e7%89%88%e6%9c%ac%e7%af%84%e5%9c%8d" aria-label="這個段落的連結"></a></h2>
+<p><strong>因為部分套件有版本相依性，所以你需要學會如何控制套件的版本</strong>，常見狀況如下：</p>
+<ul>
+<li>套件更新到最新版本後壞掉是常有的事</li>
+<li>有些套件甚至是在某個框架下只有某幾個版本能用</li>
+</ul>
+<p><strong>所以我們需要了解如何<code>透過版號控制專案下的套件版本</code></strong></p>
+<ol>
+<li><strong>控制 package.json 裡面套件的版本</strong><br><strong>版本格式</strong>：<code>主版號.次版號.修訂號</code>
+<ul>
+<li>1.0.0.
+<ul>
+<li><code>指定版本</code>，限定只使用 1.0.0 版本</li>
+</ul>
+</li>
+<li>^1.0.0
+<ul>
+<li>可使用 &gt;=1.0.0 且 &lt;(1+1).0.0 的版本</li>
+<li>範例：
+<ul>
+<li>^1.2.3 版本範圍 &gt;=1.2.3 &lt;2.0.0</li>
+<li>^0.2.3 版本範圍 &gt;=0.2.3 &lt;0.3.0</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>latest
+<ul>
+<li><code>當前發布的版本，使用 npm install 所安裝的套件就是標記 latest 的版本 </code></li>
+</ul>
+</li>
+<li>~0.1.1
+<ul>
+<li>可使用 &gt;=0.1.1 且 &lt;0.(1+1).0 的版本</li>
+<li>範例：
+<ul>
+<li>~1.2.3 版本範圍 &gt;=1.2.3 &lt;1.3.0</li>
+<li>~0.2 版本範圍 &gt;=0.2.0 &lt;0.3.0</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>git://github.com/user/project.git#commit-ish
+<ul>
+<li><code>直接使用 Git URL 的套件</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>練習控制套件版本</strong>
+<ol>
+<li>打開專案 <strong>package.json</strong>，調整套件版本</li>
+<li>在專案資料夾的終端機(Terminal)執行指令 <strong>yarn</strong> 安裝套件</li>
+<li>在 <strong>yarn.lock</strong> 檔案觀察下載的套件版本是否正確</li>
+</ol>
+</li>
+</ol>
+<hr>
+<h2 class="h-nomark" id="5-如何下關鍵字找工具">5. 如何下關鍵字找工具<a class="h-anchor" href="#5-%e5%a6%82%e4%bd%95%e4%b8%8b%e9%97%9c%e9%8d%b5%e5%ad%97%e6%89%be%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h2>
+<p>我個人的找資料的方向是：</p>
+<ul>
+<li><strong>查官方資源提供的方法</strong>：因為通常資料及提供的方法最齊全</li>
+<li><strong>看網路資源</strong>：是否有前輩做過相同的事情並提供範例</li>
+<li><strong>查詢 npm 套件</strong>：有人已經將他的經驗無私的打包成套件讓大家直接使用了</li>
+</ul>
+<p>在這我以本次的專案功能為例，我是以下面這些關鍵字來找需要的資源，<code>通常用英文搜尋比較容易找到</code>：</p>
+<ol>
+<li><strong>FB、IG爬蟲</strong>
+<ul>
+<li>官方資源：FB api、IG api</li>
+<li>網路經驗：FB crawler、IG crawler</li>
+<li>換成更廣義的方式找工具：網頁爬蟲、web crawler</li>
+</ul>
+</li>
+<li><strong>excel處理</strong>
+<ul>
+<li>官方資源：excel api、google sheet api</li>
+<li>套件資源：excel npm、google sheet npm</li>
+</ul>
+</li>
+<li><strong>排程</strong>
+<ul>
+<li>套件資源：cron npm</li>
+</ul>
+</li>
+<li><strong>LINE通知</strong>
+<ul>
+<li>官方資源：LINE api</li>
+<li>套件資源：LINE npm</li>
+</ul>
+</li>
+</ol>
+<p>基本上靠著這些關鍵字就能找出你所需要的資源了，我會先測試過些工具提供的 sample code 符合我的需求後才會正式接案，雖然多花了一份工，但卻可以保證你結案的穩定性；歡迎大家在下方留言分享自己找工具的方法喔～</p>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://classic.yarnpkg.com/zh-Hant/docs/yarn-lock/">yarn.lock</a></li>
+<li><a href="https://blog.poychang.net/package-json-version/">package.json 套件版本控制</a></li>
+<li><a href="https://docs.npmjs.com/misc/semver">npm-semver</a></li>
+</ol>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-05/images/fb-ig-crawler-day-05-10.webp" width="1024" height="233" alt="參考資源（圖 10）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
 ]]></content:encoded>
     </item>
   </channel>

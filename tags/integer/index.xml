@@ -18,7 +18,7 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>因為剛好朋友在專案的搜尋上遇到效能瓶頸，在看過程式碼後，發現他在 Table 做 Join 時都是挑選文字欄位，因此研判這應該就是導致效率低下的主要原因；為了實驗文字欄位（VARCHAR）與數值欄位（INTEGER）在 Join…</description>
-      <media:content url="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-og_hu_de91b7e8e52e2ff8.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-og_hu_70ef2de9769a14b2.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<p>因為剛好朋友在專案的搜尋上遇到效能瓶頸，在看過程式碼後，發現他在 Table 做 Join 時都是挑選文字欄位，因此研判這應該就是導致效率低下的主要原因；為了實驗文字欄位（VARCHAR）與數值欄位（INTEGER）在 Join 時的效能差異，特別撰寫了這篇文章，但實驗有點結果打破了我過往的認知…</p>
 <p><img src="https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/images/join-performance-varchar-vs-integer-01.webp" width="1233" height="652" alt="Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能上的差異（圖 1）" loading="lazy" decoding="async"></p>
 <pre tabindex="0"><code>大綱
@@ -45,7 +45,7 @@
 <p>這裡我們分成 3 種情境來做測試：</p>
 <p><strong>情境 A</strong>： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index<br><strong>情境 B</strong>： 將 Foreign Key 的設計拿掉，改為使用 Index<br><strong>情境 C</strong>： 把 Index 全部拿掉，來看看到底有多慘</p>
 <p>DB 我選擇的是 MySQL，而 Table 的設計如下：</p>
-<h3 id="-users顧客">➤ users（顧客）<a class="h-anchor" href="#-users%e9%a1%a7%e5%ae%a2" aria-label="這個段落的連結"></a></h3>
+<h3 id="-users顧客">users（顧客）<a class="h-anchor" href="#-users%e9%a1%a7%e5%ae%a2" aria-label="這個段落的連結"></a></h3>
 <a class="linkcard" href="https://sheetsu.com/tables/b96042fd7f" target="_blank" rel="noopener">
   <span class="lc-body">
     <span class="lc-title">Table</span>
@@ -53,7 +53,7 @@
   </span>
 </a>
 
-<h3 id="-orders訂單">➤ orders（訂單）<a class="h-anchor" href="#-orders%e8%a8%82%e5%96%ae" aria-label="這個段落的連結"></a></h3>
+<h3 id="-orders訂單">orders（訂單）<a class="h-anchor" href="#-orders%e8%a8%82%e5%96%ae" aria-label="這個段落的連結"></a></h3>
 <a class="linkcard" href="https://sheetsu.com/tables/74b89104e6" target="_blank" rel="noopener">
   <span class="lc-body">
     <span class="lc-title">Table</span>
@@ -62,7 +62,7 @@
 </a>
 
 <p>設計「user_id、user_name」是為了對比文字欄位（ex：VARCHAR）與數值欄位（ex：INTEGER）的差異，<strong>皆有建立 Foreign Key</strong>。</p>
-<h3 id="-items購買的商品">➤ items（購買的商品）<a class="h-anchor" href="#-items%e8%b3%bc%e8%b2%b7%e7%9a%84%e5%95%86%e5%93%81" aria-label="這個段落的連結"></a></h3>
+<h3 id="-items購買的商品">items（購買的商品）<a class="h-anchor" href="#-items%e8%b3%bc%e8%b2%b7%e7%9a%84%e5%95%86%e5%93%81" aria-label="這個段落的連結"></a></h3>
 <a class="linkcard" href="https://sheetsu.com/tables/5417e3d700" target="_blank" rel="noopener">
   <span class="lc-body">
     <span class="lc-title">Table</span>
@@ -197,7 +197,7 @@
 </span></span></span></code></pre></div><p class="code-source">原始碼：<a href="https://gist.github.com/dean9703111/30fa6b0419a8ffd10886ab7aba9921f5" rel="noopener">table-join-index.js</a>（GitHub Gist）</p>
 <hr>
 <h2 id="五模擬每個情境取得測試結果">五、模擬每個情境，取得測試結果<a class="h-anchor" href="#%e4%ba%94%e6%a8%a1%e6%93%ac%e6%af%8f%e5%80%8b%e6%83%85%e5%a2%83%e5%8f%96%e5%be%97%e6%b8%ac%e8%a9%a6%e7%b5%90%e6%9e%9c" aria-label="這個段落的連結"></a></h2>
-<h3 id="-情境-a-將-join-的欄位設計-foreign-key搜尋用到的欄位也設計-index">➤ 情境 A： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-a-%e5%b0%87-join-%e7%9a%84%e6%ac%84%e4%bd%8d%e8%a8%ad%e8%a8%88-foreign-key%e6%90%9c%e5%b0%8b%e7%94%a8%e5%88%b0%e7%9a%84%e6%ac%84%e4%bd%8d%e4%b9%9f%e8%a8%ad%e8%a8%88-index" aria-label="這個段落的連結"></a></h3>
+<h3 id="-情境-a-將-join-的欄位設計-foreign-key搜尋用到的欄位也設計-index">情境 A： 將 Join 的欄位設計 Foreign Key，搜尋用到的欄位也設計 Index<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-a-%e5%b0%87-join-%e7%9a%84%e6%ac%84%e4%bd%8d%e8%a8%ad%e8%a8%88-foreign-key%e6%90%9c%e5%b0%8b%e7%94%a8%e5%88%b0%e7%9a%84%e6%ac%84%e4%bd%8d%e4%b9%9f%e8%a8%ad%e8%a8%88-index" aria-label="這個段落的連結"></a></h3>
 <ul>
 <li>ER Diagram</li>
 </ul>
@@ -221,7 +221,7 @@
 <li>VARCHAR 多筆查詢：773.861ms</li>
 <li>VARCHAR 設定條件的批量查詢：6.049s</li>
 </ul>
-<h3 id="-情境-b-將-foreign-key-的設計拿掉改為使用-index">➤ 情境 B： 將 Foreign Key 的設計拿掉，改為使用 Index<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-b-%e5%b0%87-foreign-key-%e7%9a%84%e8%a8%ad%e8%a8%88%e6%8b%bf%e6%8e%89%e6%94%b9%e7%82%ba%e4%bd%bf%e7%94%a8-index" aria-label="這個段落的連結"></a></h3>
+<h3 id="-情境-b-將-foreign-key-的設計拿掉改為使用-index">情境 B： 將 Foreign Key 的設計拿掉，改為使用 Index<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-b-%e5%b0%87-foreign-key-%e7%9a%84%e8%a8%ad%e8%a8%88%e6%8b%bf%e6%8e%89%e6%94%b9%e7%82%ba%e4%bd%bf%e7%94%a8-index" aria-label="這個段落的連結"></a></h3>
 <ul>
 <li>ER Diagram</li>
 </ul>
@@ -242,7 +242,7 @@
 <li>VARCHAR 多筆查詢：549.225ms</li>
 <li>VARCHAR 設定條件的批量查詢：4.824s</li>
 </ul>
-<h3 id="-情境-c-把-index-全部拿掉來看看到底有多慘">➤ 情境 C： 把 Index 全部拿掉，來看看到底有多慘<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-c-%e6%8a%8a-index-%e5%85%a8%e9%83%a8%e6%8b%bf%e6%8e%89%e4%be%86%e7%9c%8b%e7%9c%8b%e5%88%b0%e5%ba%95%e6%9c%89%e5%a4%9a%e6%85%98" aria-label="這個段落的連結"></a></h3>
+<h3 id="-情境-c-把-index-全部拿掉來看看到底有多慘">情境 C： 把 Index 全部拿掉，來看看到底有多慘<a class="h-anchor" href="#-%e6%83%85%e5%a2%83-c-%e6%8a%8a-index-%e5%85%a8%e9%83%a8%e6%8b%bf%e6%8e%89%e4%be%86%e7%9c%8b%e7%9c%8b%e5%88%b0%e5%ba%95%e6%9c%89%e5%a4%9a%e6%85%98" aria-label="這個段落的連結"></a></h3>
 <ul>
 <li>ER Diagram</li>
 </ul>

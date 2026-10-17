@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Instagram｜林鼎淵 Dean Lin</title>
+    <link>https://deanlin.net/tags/instagram/</link>
+    <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Instagram｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/instagram/</link><width>144</width><height>144</height></image>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <generator>Hugo</generator>
+    <language>zh-tw</language>
+    <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
+    <lastBuildDate>Sun, 27 Sep 2020 07:59:57 +0800</lastBuildDate>
+    <atom:link href="https://deanlin.net/tags/instagram/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【Day12】合體吧！用一隻程式搞定FB、IG爬蟲</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-12/</link>
+      <pubDate>Sun, 27 Sep 2020 07:59:57 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-12/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>1.1 瀏覽器關閉導致無法讀取網頁元件1.2 跨網域(CORS)錯誤</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-og_hu_c711c613b847e16f.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>有些需求不是複製貼上就能解決的</p>
+</blockquote>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-分析實作過程中可能會遇到的問題">1. 分析實作過程中可能會遇到的問題<a class="h-anchor" href="#1-%e5%88%86%e6%9e%90%e5%af%a6%e4%bd%9c%e9%81%8e%e7%a8%8b%e4%b8%ad%e5%8f%af%e8%83%bd%e6%9c%83%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
+<p>1.1 瀏覽器關閉導致無法讀取網頁元件<br>1.2 跨網域(CORS)錯誤</p>
+<h3 class="h-nomark" id="2-一隻程式爬完-fb--ig-粉專">2. 一隻程式爬完 FB &amp; IG 粉專<a class="h-anchor" href="#2-%e4%b8%80%e9%9a%bb%e7%a8%8b%e5%bc%8f%e7%88%ac%e5%ae%8c-fb--ig-%e7%b2%89%e5%b0%88" aria-label="這個段落的連結"></a></h3>
+<p>2.1 分析程式結構邏輯<br>2.2 思考程式上有什麼地方需要改進</p>
+<hr>
+<h2 class="h-nomark" id="1-實作過程中可能會遇到的問題">1. 實作過程中可能會遇到的問題<a class="h-anchor" href="#1-%e5%af%a6%e4%bd%9c%e9%81%8e%e7%a8%8b%e4%b8%ad%e5%8f%af%e8%83%bd%e6%9c%83%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-瀏覽器關閉導致無法讀取網頁元件">1.1 瀏覽器關閉導致無法讀取網頁元件<a class="h-anchor" href="#11-%e7%80%8f%e8%a6%bd%e5%99%a8%e9%97%9c%e9%96%89%e5%b0%8e%e8%87%b4%e7%84%a1%e6%b3%95%e8%ae%80%e5%8f%96%e7%b6%b2%e9%a0%81%e5%85%83%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<p>如果你直接把兩天文章複製貼上爬的話一定會看到這個錯誤訊息</p>
+<pre tabindex="0"><code>WebDriverError: element not interactable
+</code></pre><ul>
+<li>這是因為<strong>一次跳出兩個瀏覽器</strong>在執行，只要其中一個瀏覽器完成爬蟲任務觸發 <strong>driver.quit()</strong> 就會導致另一個還沒爬蟲完畢的<strong>瀏覽器因無法讀取元件而掛掉</strong></li>
+<li>面對這個問題，我建議<strong>開一個瀏覽器</strong>來處理：
+<ol>
+<li>因為<code>跑爬蟲會消耗電腦的記憶體以及網路流量</code>，我希望電腦跑爬蟲的時候不要影響我做其他事情的效率</li>
+<li>使用一個瀏覽器在跑<code>遇到問題時方便除錯</code></li>
+</ol>
+</li>
+</ul>
+<h3 class="h-nomark" id="12-跨網域cors錯誤">1.2 跨網域(CORS)錯誤<a class="h-anchor" href="#12-%e8%b7%a8%e7%b6%b2%e5%9f%9fcors%e9%8c%af%e8%aa%a4" aria-label="這個段落的連結"></a></h3>
+<p>如果你把他<strong>改成一個瀏覽器</strong>執行，跑完 FB 粉專再跑 IG 粉專應該又會出現<strong>跨網域(CORS)問題</strong>的錯誤(目前只有 windows 作業系統才會遇到)</p>
+<ul>
+<li>
+<p>這是<code>網域切換時因為一些安全性的疑慮而拒絕跳轉</code>，像是從 <a href="https://www.facebook.com/">https://www.facebook.com/</a> 跳轉到 <a href="https://www.instagram.com/">https://www.instagram.com</a> 就會遇到這個問題</p>
+</li>
+<li>
+<p>這個問題在建立瀏覽器時加上設定 <code>{ acceptSslCerts: true, acceptInsecureCerts: true }</code> 即可解決</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">let</span> driver <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> webdriver.Builder().forBrowser(<span style="color:#a5d6ff">&#34;chrome&#34;</span>).withCapabilities(options,
+</span></span><span style="display:flex;"><span>    { acceptSslCerts<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span>, acceptInsecureCerts<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#79c0ff">true</span> }<span style="color:#8b949e;font-style:italic">//這是為了解決跨網域問題
+</span></span></span><span style="display:flex;"><span>).build();
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="2-一隻程式爬完-fb--ig-粉專-1">2. 一隻程式爬完 FB &amp; IG 粉專<a class="h-anchor" href="#2-%e4%b8%80%e9%9a%bb%e7%a8%8b%e5%bc%8f%e7%88%ac%e5%ae%8c-fb--ig-%e7%b2%89%e5%b0%88-1" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="21-分析程式結構邏輯">2.1 分析程式結構邏輯<a class="h-anchor" href="#21-%e5%88%86%e6%9e%90%e7%a8%8b%e5%bc%8f%e7%b5%90%e6%a7%8b%e9%82%8f%e8%bc%af" aria-label="這個段落的連結"></a></h3>
+<p>為了幫助讀者能較快掌握程式的邏輯，我根據每個函式所做的功能以及執行步驟列出結構如下：</p>
+<ul>
+<li><code>crawler</code> : 觸發爬蟲的函式
+<ol>
+<li>
+<p>檢查 Driver 是否是設定</p>
+</li>
+<li>
+<p>建立這個 browser 的類型</p>
+</li>
+<li>
+<p>設定 browser 的視窗大小</p>
+</li>
+<li>
+<p><code>loginInstagramGetTrace</code> : 登入IG並取得指定帳號的追蹤人數</p>
+<blockquote>
+<p>先執行 IG 爬蟲是因為有些人登入 IG 的方式是綁定 FB 帳號，這會導致我們程式需要判斷更多狀況；而讓IG先爬蟲就能避免這個問題嚕～</p>
+</blockquote>
+<ol>
+<li>前往 IG 登入頁，填入登入資訊</li>
+<li>點擊登入按紐</li>
+<li>判斷是否登入成功</li>
+<li>登入成功後跳轉指定帳號頁面</li>
+<li>獲取指定帳號追蹤人數</li>
+</ol>
+</li>
+<li>
+<p><code>loginFacebookGetTrace</code> : 登入 FB 並取得粉絲專業的追蹤人數</p>
+<ol>
+<li>前往 FB 登入頁，填入登入資訊</li>
+<li>點擊登入按紐</li>
+<li>判斷是否登入成功</li>
+<li>登入成功後跳轉指定粉專頁面</li>
+<li>獲取指定粉專追蹤人數</li>
+</ol>
+</li>
+<li>
+<p>關閉 browser</p>
+</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p>寫程式如同拼積木，隨著功能的增加程式的體積會越來越大，這裡我建議你寫一份程式架構圖的文件來輔助，未來遇到需求變更時看架構圖就能迅速修改</p>
+</blockquote>
+<h4 id="indexjs">index.js<a class="h-anchor" href="#indexjs" aria-label="這個段落的連結"></a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>require(<span style="color:#a5d6ff">&#39;dotenv&#39;</span>).config(); <span style="color:#8b949e;font-style:italic">//載入.env環境檔
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> path <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;path&#39;</span>);<span style="color:#8b949e;font-style:italic">//用於處理文件路徑的小工具
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fs <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#34;fs&#34;</span>);<span style="color:#8b949e;font-style:italic">//讀取檔案用
+</span></span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//取出.env檔案的FB、IG資訊
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> ig_username <span style="color:#ff7b72;font-weight:bold">=</span> process.env.IG_USERNAME
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> ig_userpass <span style="color:#ff7b72;font-weight:bold">=</span> process.env.IG_PASSWORD
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fb_username <span style="color:#ff7b72;font-weight:bold">=</span> process.env.FB_USERNAME
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fb_userpass <span style="color:#ff7b72;font-weight:bold">=</span> process.env.FB_PASSWORD
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> webdriver <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver&#39;</span>), <span style="color:#8b949e;font-style:italic">// 加入虛擬網頁套件
+</span></span></span><span style="display:flex;"><span>    By <span style="color:#ff7b72;font-weight:bold">=</span> webdriver.By,<span style="color:#8b949e;font-style:italic">//你想要透過什麼方式來抓取元件，通常使用xpath、css
+</span></span></span><span style="display:flex;"><span>    until <span style="color:#ff7b72;font-weight:bold">=</span> webdriver.until;<span style="color:#8b949e;font-style:italic">//直到抓到元件才進入下一步(可設定等待時間)
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> chrome <span style="color:#ff7b72;font-weight:bold">=</span> require(<span style="color:#a5d6ff">&#39;selenium-webdriver/chrome&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> options <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> chrome.Options();
+</span></span><span style="display:flex;"><span>options.setUserPreferences({ <span style="color:#a5d6ff">&#39;profile.default_content_setting_values.notifications&#39;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1</span> });<span style="color:#8b949e;font-style:italic">//因為FB會有notifications干擾到爬蟲，所以要先把它關閉
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> getCrawlerPath () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (process.env.FB_VERSION <span style="color:#ff7b72;font-weight:bold">===</span> <span style="color:#a5d6ff">&#39;new&#39;</span>) {<span style="color:#8b949e;font-style:italic">//如果是新版FB
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;fb_head_path&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`//*[contains(@class,&#34;fzdkajry&#34;)]`</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;fb_trace_path&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`//*[contains(@class,&#34;knvmm38d&#34;)]`</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">else</span> {<span style="color:#8b949e;font-style:italic">//如果為設定皆默認為舊版
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;fb_head_path&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`//*[contains(@class,&#34;_1vp5&#34;)]`</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a5d6ff">&#34;fb_trace_path&#34;</span><span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">`//*[@id=&#34;PagesProfileHomeSecondaryColumnPagelet&#34;]//*[contains(@class,&#34;_4bl9&#34;)]`</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> loginFacebookGetTrace (driver) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> web <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;https://www.facebook.com/login&#39;</span>;<span style="color:#8b949e;font-style:italic">//我們要前往FB
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> driver.get(web)<span style="color:#8b949e;font-style:italic">//在這裡要用await確保打開完網頁後才能繼續動作
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//填入fb登入資訊
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fb_email_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;email&#34;]`</span>)));
+</span></span><span style="display:flex;"><span>    fb_email_ele.sendKeys(fb_username)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fb_pass_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;pass&#34;]`</span>)));
+</span></span><span style="display:flex;"><span>    fb_pass_ele.sendKeys(fb_userpass)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//抓到登入按鈕然後點擊
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> login_elem <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;loginbutton&#34;]`</span>)))
+</span></span><span style="display:flex;"><span>    login_elem.click()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// FB有經典版以及新版的區分，兩者的爬蟲路徑不同，我們藉由函式取得各自的路徑
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> { fb_head_path, fb_trace_path } <span style="color:#ff7b72;font-weight:bold">=</span> getCrawlerPath();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//因為登入這件事情要等server回應，你直接跳轉粉絲專頁會導致登入失敗
+</span></span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//用登入後才有的元件，來判斷是否登入
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(fb_head_path)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//登入成功後要前往粉專頁面
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fanpage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.facebook.com/baobaonevertell/&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> driver.get(fanpage)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> fb_trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>;<span style="color:#8b949e;font-style:italic">//這是紀錄FB追蹤人數
+</span></span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//因為考慮到登入之後每個粉專顯示追蹤人數的位置都不一樣，所以就採用全抓在分析
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fb_trace_eles <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementsLocated(By.xpath(fb_trace_path)))
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">for</span> (<span style="color:#ff7b72">const</span> fb_trace_ele <span style="color:#ff7b72">of</span> fb_trace_eles) {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> fb_text <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> fb_trace_ele.getText()
+</span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> (fb_text.includes(<span style="color:#a5d6ff">&#39;人在追蹤&#39;</span>)) {
+</span></span><span style="display:flex;"><span>            fb_trace <span style="color:#ff7b72;font-weight:bold">=</span> fb_text
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">break</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">`FB追蹤人數：</span><span style="color:#a5d6ff">${</span>fb_trace<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> loginInstagramGetTrace (driver) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> web <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;https://www.instagram.com/accounts/login&#39;</span>;<span style="color:#8b949e;font-style:italic">//前往IG登入頁面
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> driver.get(web)<span style="color:#8b949e;font-style:italic">//在這裡要用await確保打開完網頁後才能繼續動作
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//填入ig登入資訊
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> ig_username_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;input[name=&#39;username&#39;]&#34;</span>)));
+</span></span><span style="display:flex;"><span>    ig_username_ele.sendKeys(ig_username)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> ig_password_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;input[name=&#39;password&#39;]&#34;</span>)));
+</span></span><span style="display:flex;"><span>    ig_password_ele.sendKeys(ig_userpass)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//抓到登入按鈕然後點擊
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> login_elem <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;button[type=&#39;submit&#39;]&#34;</span>)))
+</span></span><span style="display:flex;"><span>    login_elem.click()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//登入後才會有右上角功能列，我們以這個來判斷是否登入
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;react-root&#34;]//*[contains(@class,&#34;_47KiJ&#34;)]`</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//登入成功後要前往粉專頁面
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> fanpage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.instagram.com/baobaonevertell/&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> driver.get(fanpage)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> ig_trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>;<span style="color:#8b949e;font-style:italic">//這是紀錄IG追蹤人數
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> ig_trace_xpath <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`//*[@id=&#34;react-root&#34;]/section/main/div/header/section/ul/li[2]/a/span`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">const</span> ig_trace_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(ig_trace_xpath)))
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// ig因為當人數破萬時文字不會顯示，所以改抓title
+</span></span></span><span style="display:flex;"><span>    ig_trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> ig_trace_ele.getAttribute(<span style="color:#a5d6ff">&#39;title&#39;</span>)
+</span></span><span style="display:flex;"><span>    console.log(<span style="color:#a5d6ff">`IG追蹤人數：</span><span style="color:#a5d6ff">${</span>ig_trace<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">function</span> checkDriver() {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">try</span> {
+</span></span><span style="display:flex;"><span>        chrome.getDefaultService()<span style="color:#8b949e;font-style:italic">//確認是否有預設
+</span></span></span><span style="display:flex;"><span>    } <span style="color:#ff7b72">catch</span> {
+</span></span><span style="display:flex;"><span>        console.warn(<span style="color:#a5d6ff">&#39;找不到預設driver!&#39;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//&#39;../chromedriver.exe&#39;記得調整成自己的路徑
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">const</span> file_path <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#39;../chromedriver.exe&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//請確認印出來日誌中的位置是否與你路徑相同
+</span></span></span><span style="display:flex;"><span>        console.log(path.join(__dirname, file_path));
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#8b949e;font-style:italic">//確認路徑下chromedriver.exe是否存在            
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">if</span> (fs.existsSync(path.join(__dirname, file_path))) {
+</span></span><span style="display:flex;"><span>            <span style="color:#8b949e;font-style:italic">//設定driver路徑
+</span></span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">const</span> service <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">new</span> chrome.ServiceBuilder(path.join(__dirname, file_path)).build();
+</span></span><span style="display:flex;"><span>            chrome.setDefaultService(service);
+</span></span><span style="display:flex;"><span>            console.log(<span style="color:#a5d6ff">&#39;設定driver路徑&#39;</span>);
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff7b72">else</span> {
+</span></span><span style="display:flex;"><span>            console.error(<span style="color:#a5d6ff">&#39;無法設定driver路徑&#39;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">false</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">return</span> <span style="color:#79c0ff">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> crawler () {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">if</span> (<span style="color:#ff7b72;font-weight:bold">!</span>checkDriver()) {<span style="color:#8b949e;font-style:italic">// 檢查Driver是否是設定，如果無法設定就結束程式
+</span></span></span><span style="display:flex;"><span>        <span style="color:#ff7b72">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">// 建立這個browser的類型
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">let</span> driver <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> <span style="color:#ff7b72">new</span> webdriver.Builder().forBrowser(<span style="color:#a5d6ff">&#34;chrome&#34;</span>).withCapabilities(options).build();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//考慮到ig在不同螢幕寬度時的Xpath不一樣，所以我們要在這裡設定統一的視窗大小
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> driver.manage().window().setRect({ width<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1280</span>, height<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">800</span>, x<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">0</span>, y<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">0</span> });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8b949e;font-style:italic">//因為有些人是用FB帳號登入IG，為了避免增加FB登出的動作，所以採取先對IG進行爬蟲
+</span></span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> loginInstagramGetTrace(driver)
+</span></span><span style="display:flex;"><span>    <span style="color:#ff7b72">await</span> loginFacebookGetTrace(driver)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    driver.quit();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>crawler()
+</span></span></code></pre></div><hr>
+<h3 class="h-nomark" id="22-思考程式上有什麼地方需要改進">2.2 思考程式上有什麼地方需要改進<a class="h-anchor" href="#22-%e6%80%9d%e8%80%83%e7%a8%8b%e5%bc%8f%e4%b8%8a%e6%9c%89%e4%bb%80%e9%ba%bc%e5%9c%b0%e6%96%b9%e9%9c%80%e8%a6%81%e6%94%b9%e9%80%b2" aria-label="這個段落的連結"></a></h3>
+<p>看完上面的程式後，我想大部分的人都有點暈了XD，如果你有認真看程式應該有以下體會：</p>
+<ol>
+<li>閱讀起來有點吃力</li>
+<li>遇到錯誤時不好找問題</li>
+<li>很難掌握每個函式的功能</li>
+<li>幾個月後回來看這隻程式估計一臉茫然</li>
+</ol>
+<p>如果還有更多的體會歡迎大家在下方留言(請鞭小力一點QQ)<br>明天會講<a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-13/">程式碼的重構</a>，透過重構我們可以更有效率的掌握程式；後天會講<a href="https://deanlin.net/blog/202009/fb-ig-crawler-day-14/">try-catch在本專案的應用</a>，方便日後的除錯</p>
+<hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div></li>
+<li>
+<p>觀察執行順序是否為：Instagram自動登入 → 跳轉到指定帳號 → Facebook自動登入 → 跳轉到粉絲頁 → 關閉</p>
+<blockquote>
+<p>如果想要中斷終端機(Terminal)執行的程式，可以用下面按鍵組合:</p>
+<ul>
+<li>Windows: Ctrl + c</li>
+<li>Mac: control + c</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>順利的話就能看到FB &amp; IG的追蹤人數嚕～</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-01.webp" width="1024" height="155" alt="執行程式（圖 1）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day12">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day11_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來實作今天的功能喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>調整.env檔
+<ul>
+<li>填上FB登入資訊</li>
+<li>填上FB版本(classic/new)</li>
+<li>填上IG登入資訊</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><em>免責聲明:文章技術僅抓取公開數據作爲研究，任何組織和個人不得以此技術盜取他人智慧財產、造成網站損害，否則一切后果由該組織或個人承擔。作者不承擔任何法律及連帶責任！</em></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-02.webp" width="1024" height="233" alt="ℹ️ 專案原始碼（圖 2）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>【Day11】舉一反三，帶你了解IG爬蟲不可忽略的細節</title>
+      <link>https://deanlin.net/blog/202009/fb-ig-crawler-day-11/</link>
+      <pubDate>Sat, 26 Sep 2020 08:44:52 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202009/fb-ig-crawler-day-11/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>技術教學</category>
+      <description>有了 Facebook 爬蟲的經驗後，我相信這篇大家是有能力獨自完成的，建議大家先用自己的方式來完成今日目標，這篇文章適合實作遇到問題或是你實作完成後再來參考</description>
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-og_hu_639b6a34d672f5c9.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>學習，從複製開始</p>
+</blockquote>
+<h2 id="筆者有話先說">筆者有話先說<a class="h-anchor" href="#%e7%ad%86%e8%80%85%e6%9c%89%e8%a9%b1%e5%85%88%e8%aa%aa" aria-label="這個段落的連結"></a></h2>
+<p>有了 Facebook 爬蟲的經驗後，我相信這篇大家是有能力獨自完成的，<code>建議大家先用自己的方式來完成今日目標</code>，這篇文章適合實作遇到問題或是你實作完成後再來參考</p>
+<hr>
+<h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="1-完成-ig-自動登入">1. 完成 IG 自動登入<a class="h-anchor" href="#1-%e5%ae%8c%e6%88%90-ig-%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5" aria-label="這個段落的連結"></a></h3>
+<p>1.1 分析 IG 登入頁面的元件<br>1.2 改用 css 抓取元件，完成 IG 自動登入</p>
+<h3 class="h-nomark" id="2-從畫面判斷使用者是否登入成功">2. 從畫面判斷使用者是否登入成功<a class="h-anchor" href="#2-%e5%be%9e%e7%95%ab%e9%9d%a2%e5%88%a4%e6%96%b7%e4%bd%bf%e7%94%a8%e8%80%85%e6%98%af%e5%90%a6%e7%99%bb%e5%85%a5%e6%88%90%e5%8a%9f" aria-label="這個段落的連結"></a></h3>
+<h3 class="h-nomark" id="3-前往-ig-帳號並取得追蹤人數">3. 前往 IG 帳號並取得追蹤人數<a class="h-anchor" href="#3-%e5%89%8d%e5%be%80-ig-%e5%b8%b3%e8%99%9f%e4%b8%a6%e5%8f%96%e5%be%97%e8%bf%bd%e8%b9%a4%e4%ba%ba%e6%95%b8" aria-label="這個段落的連結"></a></h3>
+<p>3.1 了解響應式網頁對爬蟲的影響<br>3.2 設定瀏覽器開啟時的視窗大小<br>3.3 完成前往 IG 帳號並取得追蹤人數的程式</p>
+<hr>
+<h2 class="h-nomark" id="1-ig-自動登入">1. IG 自動登入<a class="h-anchor" href="#1-ig-%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="11-分析-ig-登入頁面的元件">1.1 分析 IG 登入頁面的元件<a class="h-anchor" href="#11-%e5%88%86%e6%9e%90-ig-%e7%99%bb%e5%85%a5%e9%a0%81%e9%9d%a2%e7%9a%84%e5%85%83%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>我在反覆使用 <a href="https://www.instagram.com/accounts/login">IG 登入</a> 時發現<code>登入的畫面偶爾會長不一樣</code>(如下圖)導致Xpath路徑錯誤</p>
+<table>
+  <thead>
+      <tr>
+          <th>版本1</th>
+          <th>版本2</th>
+      </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-01.webp" width="1400" height="1267" alt="Imgur" loading="lazy" decoding="async"></p>
+<p>|</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-02.webp" width="1400" height="1267" alt="Imgur" loading="lazy" decoding="async"></p>
+</li>
+<li>
+<p>先<code>進入開發者模式</code>確認紅框內元件的特徵</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-03.webp" width="1400" height="1267" alt="Imgur" loading="lazy" decoding="async"></p>
+<ul>
+<li>在下圖我們觀察到 <strong>電話號碼、用戶名稱或電子郵件</strong> 以及 <strong>密碼</strong> 這兩個元件的 <strong>共通點</strong>：
+<ol>
+<li>
+<p>都是 <code>input 的 html 標籤</code></p>
+</li>
+<li>
+<p>用 <code>name 這個 attribute</code> 來表示他們的作用</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-04.webp" width="968" height="142" alt="1.1 分析 IG 登入頁面的元件（圖 4）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-05.webp" width="946" height="142" alt="1.1 分析 IG 登入頁面的元件（圖 5）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+<li><strong>登入按鈕</strong> 則用以下條件來取出：
+<ol>
+<li>
+<p>使用 <code>button 的 html 標籤</code></p>
+</li>
+<li>
+<p>用 <code>type 這個 attribute</code> 來表示他要執行的動作</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-06.webp" width="1024" height="302" alt="1.1 分析 IG 登入頁面的元件（圖 6）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="12-改用-css-抓取元件完成-ig-自動登入">1.2 改用 css 抓取元件，完成 IG 自動登入<a class="h-anchor" href="#12-%e6%94%b9%e7%94%a8-css-%e6%8a%93%e5%8f%96%e5%85%83%e4%bb%b6%e5%ae%8c%e6%88%90-ig-%e8%87%aa%e5%8b%95%e7%99%bb%e5%85%a5" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>根據上面的分析後我們<code>改用 css 抓取 IG 登入的元件</code>來操作</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//填入ig登入資訊
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> ig_username_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;input[name=&#39;username&#39;]&#34;</span>)));
+</span></span><span style="display:flex;"><span>ig_username_ele.sendKeys(ig_username)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> ig_password_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;input[name=&#39;password&#39;]&#34;</span>)));
+</span></span><span style="display:flex;"><span>ig_password_ele.sendKeys(ig_userpass)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//抓到登入按鈕然後點擊
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> login_elem <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.css(<span style="color:#a5d6ff">&#34;button[type=&#39;submit&#39;]&#34;</span>)))
+</span></span><span style="display:flex;"><span>login_elem.click()
+</span></span></code></pre></div><blockquote>
+<ul>
+<li>
+<p>別忘記在 .env檔填寫 IG登入的帳號密碼</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">#填寫自己登入IG的真實資訊(建議開小帳號來實驗，因為帳號使用太頻繁會被官方鎖住)</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">IG_USERNAME</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;ig username&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">IG_PASSWORD</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;ig password&#39;</span>
+</span></span></code></pre></div></li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="2-判斷使用者是否登入成功">2. 判斷使用者是否登入成功<a class="h-anchor" href="#2-%e5%88%a4%e6%96%b7%e4%bd%bf%e7%94%a8%e8%80%85%e6%98%af%e5%90%a6%e7%99%bb%e5%85%a5%e6%88%90%e5%8a%9f" aria-label="這個段落的連結"></a></h2>
+<ul>
+<li>
+<p>與 FB 類似，<code>IG 要登入之後才會有右上角功能列</code>，這裡我使用他作為判斷登入與否</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-07.webp" width="1024" height="1013" alt="2. 判斷使用者是否登入成功（圖 7）" loading="lazy" decoding="async"></p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//登入後才會有右上角功能列，我們以這個來判斷是否登入
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(<span style="color:#a5d6ff">`//*[@id=&#34;react-root&#34;]//*[contains(@class,&#34;_47KiJ&#34;)]`</span>)))
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h2 class="h-nomark" id="3-抓出-ig-追蹤人數">3. 抓出 IG 追蹤人數<a class="h-anchor" href="#3-%e6%8a%93%e5%87%ba-ig-%e8%bf%bd%e8%b9%a4%e4%ba%ba%e6%95%b8" aria-label="這個段落的連結"></a></h2>
+<h3 class="h-nomark" id="31-了解響應式網頁對爬蟲的影響">3.1 了解響應式網頁對爬蟲的影響<a class="h-anchor" href="#31-%e4%ba%86%e8%a7%a3%e9%9f%bf%e6%87%89%e5%bc%8f%e7%b6%b2%e9%a0%81%e5%b0%8d%e7%88%ac%e8%9f%b2%e7%9a%84%e5%bd%b1%e9%9f%bf" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li><strong>響應式網頁設計(RWD)是什麼？</strong>：網頁會根據瀏覽器解析度的不同重新排版，同一個網頁你在手機、平板、電腦看到的畫面配置都是不一樣的</li>
+<li>如果你跟我一樣充滿實驗精神，你會發現 <code>IG 的頁面會隨著螢幕寬度更改而重新排版</code>，Xpath 的路徑也會跟著改變
+<ul>
+<li>
+<p><strong>寬螢幕</strong> Xpath</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-08.webp" width="640" height="94" alt="Imgur" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>//*[@id=&#34;react-root&#34;]/section/main/div/header/section/ul/li[2]/a/span
+</code></pre></li>
+<li>
+<p><strong>窄螢幕</strong> Xpath</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-09.webp" width="640" height="71" alt="Imgur" loading="lazy" decoding="async"></p>
+<pre tabindex="0"><code>//*[@id=&#34;react-root&#34;]/section/main/div/ul/li[2]/a/span
+</code></pre></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="32-設定瀏覽器開啟時的視窗大小">3.2 設定瀏覽器開啟時的視窗大小<a class="h-anchor" href="#32-%e8%a8%ad%e5%ae%9a%e7%80%8f%e8%a6%bd%e5%99%a8%e9%96%8b%e5%95%9f%e6%99%82%e7%9a%84%e8%a6%96%e7%aa%97%e5%a4%a7%e5%b0%8f" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>為了避免因為螢幕寬度不一樣造成 Xpath 不同，所以我們要<code>設定瀏覽器開啟時的視窗大小</code>(本專案以寬螢幕作為範例)，這樣才能保證你的爬蟲在不同電腦有一樣的執行結果</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// 建立browser的類型
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> driver <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> <span style="color:#ff7b72">new</span> webdriver.Builder().forBrowser(<span style="color:#a5d6ff">&#34;chrome&#34;</span>).withCapabilities(options).build();
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//考慮到ig在不同螢幕寬度時的Xpath不一樣，所以我們要在這裡設定統一的視窗大小
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> driver.manage().window().setRect({ width<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">1280</span>, height<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">800</span>, x<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">0</span>, y<span style="color:#ff7b72;font-weight:bold">:</span> <span style="color:#a5d6ff">0</span> });
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h3 class="h-nomark" id="33-完成前往-ig-帳號並取得追蹤人數的程式">3.3 完成前往 IG 帳號並取得追蹤人數的程式<a class="h-anchor" href="#33-%e5%ae%8c%e6%88%90%e5%89%8d%e5%be%80-ig-%e5%b8%b3%e8%99%9f%e4%b8%a6%e5%8f%96%e5%be%97%e8%bf%bd%e8%b9%a4%e4%ba%ba%e6%95%b8%e7%9a%84%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>
+<p>在固定螢幕寬度後，使用 Xpath 就能穩定的抓出帳號追蹤人數</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">//登入成功後要前往粉專頁面
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> fanpage <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">&#34;https://www.instagram.com/baobaonevertell/&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> driver.get(fanpage)
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">await</span> driver.sleep(<span style="color:#a5d6ff">3000</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">let</span> ig_trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">0</span>;<span style="color:#8b949e;font-style:italic">//這是紀錄IG追蹤人數
+</span></span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> ig_trace_xpath <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">`//*[@id=&#34;react-root&#34;]/section/main/div/header/section/ul/li[2]/a/span`</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">const</span> ig_trace_ele <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> driver.wait(until.elementLocated(By.xpath(ig_trace_xpath)))
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic">// ig因為當人數破萬時文字不會顯示，所以改抓title
+</span></span></span><span style="display:flex;"><span>ig_trace <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#ff7b72">await</span> ig_trace_ele.getAttribute(<span style="color:#a5d6ff">&#39;title&#39;</span>)
+</span></span><span style="display:flex;"><span>console.log(<span style="color:#a5d6ff">`追蹤人數：</span><span style="color:#a5d6ff">${</span>ig_trace<span style="color:#a5d6ff">}</span><span style="color:#a5d6ff">`</span>)
+</span></span><span style="display:flex;"><span>driver.quit();
+</span></span></code></pre></div></li>
+</ul>
+<hr>
+<h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>
+<p>在專案資料夾的終端機(Terminal)執行指令</p>
+<div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
+</span></span></code></pre></div></li>
+<li>
+<p>你會看到 Instagram 自動登入 → 跳轉到指定帳號 → 關閉</p>
+</li>
+<li>
+<p>確認輸出正確的粉專追蹤人數你就成功嚕～</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-10.webp" width="1024" height="133" alt="執行程式（圖 10）" loading="lazy" decoding="async"></p>
+</li>
+</ol>
+<p>到目前為止我們已經可以抓出 FB &amp; IG 粉專的追蹤人數了，充滿好奇心的讀者可以先試著看看利用爬蟲爬完 FB 粉專後繼續爬 IG</p>
+<hr>
+<h3 id="ℹ-專案原始碼">ℹ️ 專案原始碼<a class="h-anchor" href="#%e2%84%b9-%e5%b0%88%e6%a1%88%e5%8e%9f%e5%a7%8b%e7%a2%bc" aria-label="這個段落的連結"></a></h3>
+<ul>
+<li>今天的完整程式碼可以在<a href="https://github.com/dean9703111/ithelp_30days/tree/master/day11">這裡</a>找到喔</li>
+<li>我也貼心地把昨天的把昨天FB爬蟲的程式碼打包成<a href="https://github.com/dean9703111/ithelp_30days/raw/master/sampleCode/day10_sample_code.zip">壓縮檔</a>，你可以用裡面乾淨的環境來實作今天的功能喔
+<ul>
+<li>請記得在終端機下指令 <strong>yarn</strong> 才會把之前的套件安裝</li>
+<li>windows需下載與你chrome版本相同的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a>放在專案根目錄</li>
+<li>調整你.env檔填上IG登入資訊</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><a href="https://stackoverflow.com/a/49940401">Filling in login forms in Instagram using selenium and webdriver (chrome) python OSX</a></li>
+</ol>
+<blockquote>
+<p><em>免責聲明:文章技術僅抓取公開數據作爲研究，任何組織和個人不得以此技術盜取他人智慧財產、造成網站損害，否則一切后果由該組織或個人承擔。作者不承擔任何法律及連帶責任！</em></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-11/images/fb-ig-crawler-day-11-11.webp" width="1024" height="233" alt="參考資源（圖 11）" loading="lazy" decoding="async"></p>
+<p><strong>在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：</strong></p>
+<ul>
+<li>加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項</li>
+<li>將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門</li>
+<li>調整專案架構
+<ul>
+<li>優化爬蟲程式，以更廣的視角來擷取網頁資訊</li>
+<li>增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者</li>
+<li>排程部分改用 node-schedule &amp; pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊</li>
+</ul>
+</li>
+</ul>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+</blockquote>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>

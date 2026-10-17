@@ -43,7 +43,7 @@
 
 我們安裝 Python 不是為了寫程式，而是為了讓 AI Agent 在面對問題時，有更多的解決方案。
 
-### ➤ 安裝 Python
+### 安裝 Python
 
 安裝 Python 這塊，大家可以直接到[官網](http://python.org/downloads/)，根據自己的作業系統下載安裝檔即可。
 
@@ -58,7 +58,7 @@ python --version
 
 若輸入 `python –version` 沒有反應，請改用 `python3 –version`
 
-### ➤ 提取文件資訊
+### 提取文件資訊
 
 像有些人會把 Cursor 當成 RAG 的工具使用，透過他快速檢索、分析、統整資訊。
 
@@ -99,7 +99,7 @@ python --version
 
 稍等一段時間，在「integrate」資料夾，就能看到 AI 按照需求，幫我們完成了資料的彙整。
 
-### ➤ 用網頁爬蟲蒐集資訊
+### 用網頁爬蟲蒐集資訊
 
 另外有些人會使用 AI 來蒐集網路資料，但許多網站是禁止爬蟲的。
 
@@ -140,7 +140,7 @@ https://chatgpt.com/s/t_68d21677946081918576092e1c2d37c1
 
 這些框架生成出來的結果會更符合現代審美，未來想擴充功能時，也有豐富的套件可以直接使用。
 
-### ➤ 安裝 Node.js
+### 安裝 Node.js
 
 在安裝 Node.js 這塊，我建議大家透過 NVM 來安裝
 
@@ -163,7 +163,7 @@ nvm 安裝完成後，開啟終端機輸入 `nvm -v`，確認有成功安裝：
 
 完成上述步驟後，接下來就可以開始製作網頁了。
 
-### ➤ 生成個人形象網頁
+### 生成個人形象網頁
 
 在前面，已經透過 AI 從 Word/PDF/PPT 裡面取出了個人資訊與相關照片，接下來我就直接示範如何用 Cursor 生成個人形象網頁的初版。
 
@@ -219,7 +219,7 @@ Vibe Coding 時，你的每個指令都可能大幅調整專案的程式。
 
 為了把改壞的內容救回來，我會建議大家安裝 Git，這個程式碼版本控制工具，並註冊 GitHub 帳號來管理專案。
 
-### ➤ 安裝 Git
+### 安裝 Git
 
 首先，我們可以到 [Git 官網下載](https://git-scm.com/downloads%E3%80%8D)安裝檔
 
@@ -247,7 +247,7 @@ cat ~/.ssh/id_ed25519.pub
 
 ```
 
-### ➤ 註冊 GitHub
+### 註冊 GitHub
 
 這邊我們來到 [GitHub 的官網](https://github.com/)，你可以直接使用 Gmail 來註冊。
 
@@ -261,7 +261,7 @@ Repository name 可以自由輸入，這邊我打「personal-website」，Descri
 
 如果你不想把這個 Repository 公開，可以在「Configuration」把 visibility 改成「Private」
 
-### ➤ 把專案更新到 GitHub
+### 把專案更新到 GitHub
 
 接著回到剛剛 Cursor 幫我們生成的專案，在終端機輸入 `git init` 來初始化專案 git。
 
