@@ -254,7 +254,7 @@ tail /usr/local/mysql-proxy/log/sql_test.log
 
 ```
 
-**參考資訊**：[下載libmysqlclient.so.16檔案](http://files.directadmin.com/services/debian_5.0_64/libmysqlclient.so.16)、[讀寫分離測試](https://www.jianshu.com/p/67d4b34b2af4)、[Mysql访问中间件 — Atlas初探](https://zhuanlan.zhihu.com/p/94279867)、[Atlas](https://www.jianshu.com/p/b68e429d09c7)、[Atlas Github](https://github.com/Qihoo360/Atlas/blob/master/README_ZH.md)
+**參考資訊**：[下載libmysqlclient.so.16檔案](https://web.archive.org/web/20170127083654/http://files.directadmin.com:80/services/debian_5.0_64/libmysqlclient.so.16)、[讀寫分離測試](https://www.jianshu.com/p/67d4b34b2af4)、[Mysql访问中间件 — Atlas初探](https://zhuanlan.zhihu.com/p/94279867)、[Atlas](https://www.jianshu.com/p/b68e429d09c7)、[Atlas Github](https://github.com/Qihoo360/Atlas/blob/master/README_ZH.md)
 
 ---
 

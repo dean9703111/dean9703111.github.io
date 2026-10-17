@@ -12,7 +12,7 @@
 
 而且隨著公司規模的擴張，接下來可能會有專門的團隊來分析使用者行為，公司高層與投資人會想看具體的業務狀況，系統需要建立即時監控系統，甚至要整合外部資源…如果資料串流沒設計好，系統架構就會變成下面這張圖。
 
-  image from [link](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying)
+  image from [link](https://web.archive.org/web/20260612105408/https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying)
 
 如果你覺得這個畫面很可怕，那不妨花點時間了解 Kafka 這門技術；本篇文章會帶讀者了解它的精神，以及選擇它的理由。
 

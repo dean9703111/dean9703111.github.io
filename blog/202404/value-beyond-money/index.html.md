@@ -71,7 +71,7 @@
 
 文末跟大家分享一句我很喜歡的話：「你的堅持到底，是從後面追上別人的原因。」
 
-延伸閱讀：[那些我走過的路與故事](https://dean-lin.medium.com/list/8f9ffd735e98)
+延伸閱讀：[那些我走過的路與故事](https://deanlin.net/series/my-story/)
 
 ---
 

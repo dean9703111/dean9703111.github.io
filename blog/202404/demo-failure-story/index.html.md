@@ -54,7 +54,7 @@
 
 如果這次失敗的經驗能給大家帶來一些警惕，那就值得了。
 
-延伸閱讀：[那些我走過的路與故事](https://dean-lin.medium.com/list/8f9ffd735e98)
+延伸閱讀：[那些我走過的路與故事](https://deanlin.net/series/my-story/)
 
 ---
 

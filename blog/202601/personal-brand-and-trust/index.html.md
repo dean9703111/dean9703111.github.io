@@ -329,7 +329,7 @@ AI 只是讓產出變簡單，但好的內容，從過去到現在都不容易
 
 別忘了按讚、訂閱，並把影片分享給需要的朋友。
 
-延伸閱讀：[List: 下班有約系列文 | Curated by 林鼎淵 | Medium](https://dean-lin.medium.com/list/b9f7a7403936)
+延伸閱讀：[工程師下班有約](https://deanlin.net/series/after-office/)
 
 ---
 

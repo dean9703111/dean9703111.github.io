@@ -240,7 +240,7 @@ REPL（Read Eval Print Loop）是一個用來執行程式語言的虛擬環境�
 ### 參考資源：
 
 1. [Node.js 的 Event Loop (事件輪詢)到底在做什麼？(筆者部落格)](https://medium.com/dean-lin/c7129063d0f4)
-2. [15 個常見的 Node.js 面試問題及答案](https://www.gushiciku.cn/pl/gOTo/zh-tw)
+2. 15 個常見的 Node.js 面試問題及答案
 3. [你有沒有想過，到底 Server 是如何「同時處理多個 requests」的？ - Node.js 篇](https://ithelp.ithome.com.tw/articles/10230126)
 
 > 在許多人的幫助下，本系列文章已成功出版，除了添加新的篇章，更完善了每個案例的應對進退；如果對現在的職涯感到迷茫，也許這本書能帶給你不一樣的觀點～

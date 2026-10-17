@@ -69,7 +69,7 @@
 
 - 在 try-catch 的後面加上 finally，在 finally 階段才把粉專物件存入 result_array 是因為無論這個粉專爬蟲成功或是失敗我們都要記錄他的數據
 
-> finally 代表在 try-catch 結束後會執行的任務，忘記的可以回到[Day14 try-catch-finally 基礎語法說明](https://ithelp.ithome.com.tw/day14/README.md)複習喔
+> finally 代表在 try-catch 結束後會執行的任務，忘記的可以回到[Day14 try-catch-finally 基礎語法說明](https://deanlin.net/blog/202009/fb-ig-crawler-day-14/)複習喔
 
 - 在 FB粉專爬蟲完成後，回傳儲存所有粉專資訊的 result_array 讓主程式做資料串接
 

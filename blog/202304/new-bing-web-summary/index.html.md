@@ -7,7 +7,7 @@
 - 標籤：Bing、ChatGPT、Summary、摘要、URL
 - 摘要：目前 ChatGPT 並沒有連網功能，訓練的資料也截止於 2021 年，儘管有 WebChatGPT 之類外掛讓他達成「偽」上網，但說真的功能限制很多。 幸好 New Bing 的出現補足了這塊的缺口，就讓我們透過 New Bing 來取得網頁摘要吧！
 
-目前 ChatGPT 並沒有連網功能（[除非使用 ChatGPT PLUS 新功能](https://www.1111gpt.com.tw/2023/05/16/chatgpt-is-now-internet-enabled-but-is-all-the-content-acquired-through-web-browsing-correct/)），訓練的資料也截止於 2021 年，儘管有 WebChatGPT 之類外掛讓他達成「偽」上網，但說真的功能限制很多；而 AIRPM 儘管有提供即時爬蟲功能，但需要額外付費。
+目前 ChatGPT 並沒有連網功能（除非使用 ChatGPT PLUS 新功能），訓練的資料也截止於 2021 年，儘管有 WebChatGPT 之類外掛讓他達成「偽」上網，但說真的功能限制很多；而 AIRPM 儘管有提供即時爬蟲功能，但需要額外付費。
 
 幸好 New Bing 的出現補足了這塊的缺口（免費使用），就讓我們透過 New Bing 來取得網頁摘要吧！
 
@@ -41,7 +41,7 @@
 
 另外這個功能要登入微軟（Microsft）帳號，並申請體驗才能使用喔！
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

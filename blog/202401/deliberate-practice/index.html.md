@@ -69,7 +69,7 @@
 
 **這次，我想驗證「用對方法」對結果有多大的影響。**
 
-延伸閱讀：[那些我走過的路與故事](https://dean-lin.medium.com/list/8f9ffd735e98)
+延伸閱讀：[那些我走過的路與故事](https://deanlin.net/series/my-story/)
 
 ---
 

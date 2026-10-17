@@ -150,7 +150,7 @@ STEP 3：在終端機輸入`python youtube-summary.py`，然後稍等一段時�
 
 這邊用 OpenAI 官方文件比較好說明，每個 GPT 模型都有自己的 `max_tokens`，我們選用的 `gpt-3.5-turbo` 最高上限是 4096。
 
-  [https://platform.openai.com/docs/models/gpt-3.5](https://platform.openai.com/docs/models/gpt-3.5)
+  [https://platform.openai.com/docs/models/gpt-3.5](https://platform.openai.com/docs/models/gpt-3.5-turbo)
 
 所以截斷的原因就是我們的 prompt 太長了，這邊跟大家科普一下，所謂 prompt 長度就是我們傳入的逐字稿長度。
 
@@ -326,7 +326,7 @@ with open("path/to/save/directory/text.txt", "w") as file:
 
 > 我喜歡依照自己的「節奏」來吸收資訊，而閱讀滿足了這點。
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

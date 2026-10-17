@@ -79,7 +79,7 @@
 
 ## 2. 優化用手機來看 Google Sheets 的爬蟲資料的體驗
 
-> 原則上你想對 Google Sheets 的任何操作官方都有提供 api 給你，如果你時常會使用到的話請一定要讀懂官方文件，閱讀的技巧可以參考[這篇文章](https://ithelp.ithome.com.tw/day19/README.md)喔
+> 原則上你想對 Google Sheets 的任何操作官方都有提供 api 給你，如果你時常會使用到的話請一定要讀懂官方文件，閱讀的技巧可以參考[這篇文章](https://deanlin.net/blog/202010/fb-ig-crawler-day-19/)喔
 
 ### 2.1 如何讓手機看 Google Sheets 爬蟲資料時舒服點
 

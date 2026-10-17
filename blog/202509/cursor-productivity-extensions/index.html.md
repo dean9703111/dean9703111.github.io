@@ -221,7 +221,7 @@ Vibe Coding 時，你的每個指令都可能大幅調整專案的程式。
 
 ### 安裝 Git
 
-首先，我們可以到 [Git 官網下載](https://git-scm.com/downloads%E3%80%8D)安裝檔
+首先，我們可以到 [Git 官網下載](https://git-scm.com/downloads)安裝檔
 
 安裝好 Git 後，開啟 Cursor 終端機輸入指令 `git -v` 確認有正確安裝
 
@@ -352,7 +352,7 @@ git fetch：抓取遠端最新狀態
 
   [https://www.tenlong.com.tw/products/9786264142083](https://www.tenlong.com.tw/products/9786264142083)
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 ---
 

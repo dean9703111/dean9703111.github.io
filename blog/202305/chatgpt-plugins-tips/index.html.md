@@ -74,7 +74,7 @@ ChatGPT Plugins 讓 ChatGPT 打破限制，可以串接第三方服務來滿足�
 
 **任何服務在發展初期、充滿不確定因素時才會有紅利，如果等到這個生態圈成熟再入場，那面對的就是競爭激烈的紅海市場了。**
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

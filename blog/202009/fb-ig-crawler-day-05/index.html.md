@@ -179,9 +179,9 @@ yarn add dotenv
 
 ### 參考資源
 
-1. [yarn.lock](https://classic.yarnpkg.com/zh-Hant/docs/yarn-lock/)
+1. [yarn.lock](https://classic.yarnpkg.com/en/docs/yarn-lock)
 2. [package.json 套件版本控制](https://blog.poychang.net/package-json-version/)
-3. [npm-semver](https://docs.npmjs.com/misc/semver)
+3. [npm-semver](https://docs.npmjs.com/cli/v6/using-npm/semver)
 
 > **在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：**
 > 加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項

@@ -49,7 +49,7 @@ sudo chmod -R ug+rwx storage bootstrap/cache
 
 ### composer 版本太舊無法更新問題
 
-[https://lequ7.com/2019/06/19/richang/composer-fu-wu-qi-an-zhuang-kuo-zhan-shi-bai-ban-ben-guo-di-de-sheng-ji-guo-cheng/](https://lequ7.com/2019/06/19/richang/composer-fu-wu-qi-an-zhuang-kuo-zhan-shi-bai-ban-ben-guo-di-de-sheng-ji-guo-cheng/)
+https://lequ7.com/2019/06/19/richang/composer-fu-wu-qi-an-zhuang-kuo-zhan-shi-bai-ban-ben-guo-di-de-sheng-ji-guo-cheng/
 
 ### nginx 出现504 Gateway Time-out的解决方法
 

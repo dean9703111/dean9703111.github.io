@@ -193,7 +193,7 @@
 
   [https://www.tenlong.com.tw/products/9786264142083](https://www.tenlong.com.tw/products/9786264142083)
 
-延伸閱讀：[List: 下班有約系列文 | Curated by 林鼎淵 | Medium](https://dean-lin.medium.com/list/b9f7a7403936)
+延伸閱讀：[工程師下班有約](https://deanlin.net/series/after-office/)
 
 ---
 

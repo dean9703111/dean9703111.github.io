@@ -9,7 +9,7 @@
 
 即使是一位工程師也不免要出席各式各樣的技術研討會，這類的會議與其說在討論技術，最主要的功能還是人脈的拓展。相信很多人到了這些場合都有點手足無措，面對陌生人的主動交流也會有所抗拒，今天我就用Dan Lok的影片來跟大家分享一下我的心得吧。
 
-  Photo by :[**ROBINBORTNER**](https://www.fluentu.com/blog/english/author/robinbortner/) And [**FRANCISCO J. VARE**](https://www.fluentu.com/blog/english/author/frankovare1/)
+  Photo by :[**ROBINBORTNER**](https://web.archive.org/web/20240619165809/https://www.fluentu.com/blog/english/author/robinbortner/) And [**FRANCISCO J. VARE**](https://web.archive.org/web/20240715103707/https://www.fluentu.com/blog/english/author/frankovare1/)
 
 [YouTube 影片：How To Introduce Yourself And Others](https://www.youtube.com/watch?v=lEYMLXEQeBk)
 

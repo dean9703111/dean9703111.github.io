@@ -53,7 +53,7 @@
 
 既然模仿是人的天性，那我們就能透過改變環境來控制慾望的方向。
 
-延伸閱讀：[那些我走過的路與故事](https://dean-lin.medium.com/list/8f9ffd735e98)
+延伸閱讀：[那些我走過的路與故事](https://deanlin.net/series/my-story/)
 
 ---
 

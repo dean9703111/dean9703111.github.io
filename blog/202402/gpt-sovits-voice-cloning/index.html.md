@@ -139,7 +139,7 @@ STEP 6: 推理，輸入文字讓 AI 生成聲音
 
 如果你跟筆者一樣容易講話卡螺絲，但又有錄不露臉教學影片的需求，相信善用工具能大幅提升你的工作效率。
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

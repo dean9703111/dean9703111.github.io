@@ -73,7 +73,7 @@ Midjourney 是一款輸入關鍵字就能產出唯美圖片的工具，而 Gen-2
 
 雖然部分結果不如預期，但這些成果也足夠驚人了；從筆者的角度來看，AI 將對影視產業產生巨大的衝擊，就像綠幕剛誕生的時候一樣。
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

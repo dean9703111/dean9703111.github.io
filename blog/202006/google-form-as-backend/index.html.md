@@ -188,9 +188,9 @@ github帳戶的創建應該很多地方都有教學，這裡我就簡化這個�
 
 EX:
 
-根目錄 [https://dean9703111.github.io/test/](https://dean9703111.github.io/test/)
+根目錄 https://dean9703111.github.io/test/
 
-實體檔案位置 [https://dean9703111.github.io/test/](https://dean9703111.github.io/test/)**index.html**
+實體檔案位置 https://dean9703111.github.io/test/**index.html**
 
 做到這裡順利的話就能分享連結給朋友炫耀自己的表單啦～
 

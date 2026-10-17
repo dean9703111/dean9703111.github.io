@@ -246,7 +246,7 @@ sudo lvextend -rl +100%FREE /dev/mapper/ubuntu — vg-ubuntu — lv
 
 [**Ufw防火牆設定**](https://www.peterdavehello.org/2016/01/ubuntu-based-gnulinux-firewall-ufw-essential-config/)
 
-[**如何在Ubuntu 16.04上使用PM2部署Node.js应用程序**](https://www.howtoing.com/deploy-node-js-application-with-pm2-on-ubuntu)
+[**如何在Ubuntu 16.04上使用PM2部署Node.js应用程序**](https://web.archive.org/web/20210411220744/https://www.howtoing.com/deploy-node-js-application-with-pm2-on-ubuntu)
 
 [**windows下如何使用ssh遠端登入Linux**](https://tw.saowen.com/a/45fd6b0293c602372e720ea216d07c8ac0751f49c19e235126260221367818e6)
 

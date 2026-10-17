@@ -216,7 +216,7 @@ sudo /sbin/route add 10.1.1.1(目標內網ip) gw 10.1.1.254(內網閘道) dev en
 
 > 設定NAS上此共享資料夾必須符合NFS設定可參閱這篇文章
 
-[http://blog.xuite.net/tolarku/blog/495291815-Qnap+%E8%A8%AD%E5%AE%9A+NFS+%E5%88%86%E4%BA%AB%E8%A8%AD%E5%AE%9A+-+nfs+export](http://blog.xuite.net/tolarku/blog/495291815-Qnap+%E8%A8%AD%E5%AE%9A+NFS+%E5%88%86%E4%BA%AB%E8%A8%AD%E5%AE%9A+-+nfs+export)
+[http://blog.xuite.net/tolarku/blog/495291815-Qnap+%E8%A8%AD%E5%AE%9A+NFS+%E5%88%86%E4%BA%AB%E8%A8%AD%E5%AE%9A+-+nfs+export](https://web.archive.org/web/20180906074211/http://blog.xuite.net:80/tolarku/blog/495291815-Qnap+%E8%A8%AD%E5%AE%9A+NFS+%E5%88%86%E4%BA%AB%E8%A8%AD%E5%AE%9A+-+nfs+export)
 
 > 確認是否可連通，並觀看有哪些資料夾
 

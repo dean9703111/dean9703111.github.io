@@ -154,7 +154,7 @@ git config --global user.email
 
 這個專案我是參考 [Claude Code 官方的範本](https://github.com/anthropics/claude-code/tree/main/.devcontainer)修改的
 
-我在它的基礎上，加上了前端網頁設計與 Git Commit 的 Skill，以及給 AI 參考的 CLAUDE.md，[這份 CLAUDE.md 是參考 andrej-karpathy 的版本](https://github.com/multica-ai/%E2%89%88-karpathy-skills/blob/main/CLAUDE.md)
+我在它的基礎上，加上了前端網頁設計與 Git Commit 的 Skill，以及給 AI 參考的 CLAUDE.md，[這份 CLAUDE.md 是參考 andrej-karpathy 的版本](https://github.com/multica-ai/andrej-karpathy-skills/blob/main/CLAUDE.md)
 
 ### 在 IDE 啟動沙盒
 

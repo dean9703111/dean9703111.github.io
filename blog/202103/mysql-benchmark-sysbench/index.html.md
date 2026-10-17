@@ -14,7 +14,7 @@ sysbench 是我目前使用上最順手的一個測試工具，安裝、使用�
 
 ### 安裝 sysbench
 
-> 如果還沒安裝過 brew 請[參考官網](https://brew.sh/index_zh-tw)
+> 如果還沒安裝過 brew 請[參考官網](https://brew.sh/zh-tw/)
 
 ```
 brew install sysbench
@@ -218,7 +218,7 @@ cleanup
 
 > 以上是今天的分享，想了解更多功能請參考[官方的 github](https://github.com/akopytov/sysbench)
 
-**參考資源**：[Ubuntu 16.04中進行Sysbench環境搭建](https://www.itread01.com/content/1549085775.html)、[sysbench安装和使用](https://blog.51cto.com/13990437/2400940)
+**參考資源**：Ubuntu 16.04中進行Sysbench環境搭建、[sysbench安装和使用](https://blog.51cto.com/13990437/2400940)
 
 ---
 

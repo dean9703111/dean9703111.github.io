@@ -359,7 +359,7 @@ references 資料夾放著 Markdown 格式的參考文件，而 scripts 則是�
 
 比如 Open Graph，也就是 OG；如果你最終完成的成品打算公開分享，但沒有設定標題（title）、描述（description）、縮圖（image），那網址預覽畫面會很醜。
 
-> 如果想知道網頁有沒有設定，可以到這個網站：[https://www.opengraph.xyz/](https://www.opengraph.xyz/%E3%80%8D)
+> 如果想知道網頁有沒有設定，可以到這個網站：[https://www.opengraph.xyz/](https://www.opengraph.xyz/)
 
 這邊貼上剛剛部署的網址，就能看到 OG 是否有完成相關設定嚕～
 

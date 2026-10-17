@@ -325,7 +325,7 @@ it("確認 Router 可以順利導向", async () => {
 
 今天的文章就分享到這邊，我們下次再見～
 
-延伸閱讀：[單元測試系列文](https://dean-lin.medium.com/list/2680ca82395e)
+延伸閱讀：[前端單元測試](https://deanlin.net/series/frontend-testing/)
 
 ---
 

@@ -118,7 +118,7 @@ NotebookLM 是搭配 AI（Gemini 1.5 Pro）為助手，專門為使用者處理�
 
 也歡迎 Follow 筆者的部落格，我會持續分享最新 AI 工具，目前已有超過 80 篇 AI 相關文章等你來看！
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 ---
 

@@ -15,9 +15,9 @@
 
 ## STEP 1：建立 Tome 帳號
 
-註冊連結：[https://tome.app/invite/l-d-cliswkv8u2g533co9eltp3m8e](https://tome.app/invite/l-d-cliswkv8u2g533co9eltp3m8e)
+註冊連結：https://tome.app/invite/l-d-cliswkv8u2g533co9eltp3m8e
 
-  使用這個[註冊連結](https://tome.app/invite/l-d-cliswkv8u2g533co9eltp3m8e)可以多獲得 50 credits 喔！
+  使用這個註冊連結可以多獲得 50 credits 喔！
 
 基本上使用 Google 帳號登入最方便。
 
@@ -69,21 +69,23 @@
 - AI 生成完整簡報 -15 credits
 - AI 生成單頁簡報 -5 credits
 - DALL-E 產生一張圖片 -5 credits
-- [邀請註冊](https://tome.app/invite/l-d-cliswkv8u2g533co9eltp3m8e) + 100 credits
+- 邀請註冊 + 100 credits
 
 ## 結語
 
-從 AI 生成簡報的角度來看，[Tome](https://tome.app/invite/l-d-cliswkv8u2g533co9eltp3m8e) 相比於 [GAMMA](https://gamma.app/signup?r=xxndt061vudg1pr)，他生成的簡報格式感太重，基本上就是清一色左邊文字右邊圖片。
+從 AI 生成簡報的角度來看，Tome 相比於 [GAMMA](https://gamma.app/signup?r=xxndt061vudg1pr)，他生成的簡報格式感太重，基本上就是清一色左邊文字右邊圖片。
 
 而且要付費版才能夠匯出 PDF、增加自己的 LOGO，這些是 GAMMA 在免費版就有提供的服務；而且他目前不支援匯出 PPT 格式也是一個缺點。
 
 當然能直接在撰寫簡報的過程透過 DALLE 產生圖片是一個優勢，但這個功能有沒有那麼重要，就見人見智了。
 
-筆者鼓勵大家多嘗試看看各家的產品，畢竟要嘗試過才能判斷這個產品是否適合自己，用筆者提供的[註冊連結](https://tome.app/invite/l-d-cliswkv8u2g533co9eltp3m8e)可以多獲得 50 Credits 喔：
+筆者鼓勵大家多嘗試看看各家的產品，畢竟要嘗試過才能判斷這個產品是否適合自己，用筆者提供的註冊連結可以多獲得 50 Credits 喔：
 
-延伸閱讀：[You've been gifted 50 credits](https://tome.app/invite/l-d-cliswkv8u2g533co9eltp3m8e)
+    You've been gifted 50 credits
+    L D is inviting you to try Tome!
+    tome.app
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

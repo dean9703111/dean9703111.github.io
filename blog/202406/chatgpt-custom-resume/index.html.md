@@ -49,7 +49,7 @@ PDF 下載連結如下（職涯創新致勝力這期），希望幫助到有需�
 
 > 祝⼤家都能找到⾃⼰理想的⼯作。
 
-延伸閱讀：[職涯筆記](https://dean-lin.medium.com/list/f8a47679852d)
+延伸閱讀：[職涯成長](https://deanlin.net/categories/career/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

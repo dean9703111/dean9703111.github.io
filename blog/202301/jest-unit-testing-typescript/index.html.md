@@ -197,7 +197,7 @@ test('toThrow 可以用來檢核錯誤訊息', () => {
 
 以上是 Jest 測試框架的入門應用，如果想更深入的了解，可以參考筆者的文章： [Jest 框架進階應用（describe、Setup and Teardown、Mock function）](https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/)
 
-延伸閱讀：[單元測試系列文](https://dean-lin.medium.com/list/2680ca82395e)
+延伸閱讀：[前端單元測試](https://deanlin.net/series/frontend-testing/)
 
 ---
 

@@ -56,7 +56,7 @@
 
 像我去年報名的「設計實戰全方位」這堂課，每一位講師都是該領域的頂尖設計師。
 
-從去年 11 月開始，我陸續分享了[一些設計文章](https://dean-lin.medium.com/list/6c6883c6a3f2)，其實這些就是這堂線上課程的心得筆記（作業）。
+從去年 11 月開始，我陸續分享了[一些設計文章](https://deanlin.net/series/design-thinking/)，其實這些就是這堂線上課程的心得筆記（作業）。
 
 然後寫著寫者，就收到 [Motioner 二棲知學](https://motioner.tw/professor/%E6%9E%97%E9%BC%8E%E6%B7%B5) 的文章轉載邀請了。
 
@@ -68,7 +68,7 @@
 
 **我只是一個工程師，但卻靠寫心得，讓自己的名字出現在設計領域的網站上。**
 
-延伸閱讀：[那些我走過的路與故事](https://dean-lin.medium.com/list/8f9ffd735e98)
+延伸閱讀：[那些我走過的路與故事](https://deanlin.net/series/my-story/)
 
 ---
 

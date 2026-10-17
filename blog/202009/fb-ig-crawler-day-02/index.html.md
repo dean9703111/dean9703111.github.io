@@ -176,11 +176,11 @@ git push
 
 > 筆者windows安裝版本：2.27.0.windows.1
 
-## 4. yarn [官網](https://classic.yarnpkg.com/zh-Hant/)
+## 4. yarn [官網](https://classic.yarnpkg.com/en/)
 
 這是專門安裝套件的軟體，站在巨人的肩膀上你才能看得更遠，妥善運用別人提供的套件，程式的路能走得更遠
 
-[windows下載頁面](https://classic.yarnpkg.com/zh-Hant/docs/install#windows-stable)、[mac下載頁面](https://classic.yarnpkg.com/zh-Hant/docs/install#mac-stable)
+[windows下載頁面](https://classic.yarnpkg.com/en/docs/install#windows-stable)、[mac下載頁面](https://classic.yarnpkg.com/en/docs/install#mac-stable)
 
 ### 常用指令
 

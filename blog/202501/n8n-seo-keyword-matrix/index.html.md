@@ -93,7 +93,7 @@
 - [[n8n 教學]用 Docker 在 Local 建立免費 & 無限次數使用的自動化工具](https://deanlin.net/blog/202501/n8n-docker-local-setup/)
 - [[n8n 教學]掌握重要節點 (Node) 使用情境：Set、Loop Over Items、If、Code、HTTP Request、Wait](https://deanlin.net/blog/202501/n8n-core-nodes/)
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

@@ -166,7 +166,7 @@ SOLID 是一個物件導向的設計原則，核心目標是為了讓程式碼�
 1. [【翻譯】JavaScript 設計模式](https://wyattkidd.medium.com/fca4e2e16752)
 2. [什麼是 Design Pattern?](https://ithelp.ithome.com.tw/articles/10234830)
 3. [我為什麼想學設計模式 ( Design Pattern )](https://ithelp.ithome.com.tw/articles/10201706)
-4. [設計模式五大基本原則 SOLID](http://www.andrewchen.tw/2017/04/09/20170409_NOTE_%E8%A8%AD%E8%A8%88%E6%A8%A1%E5%BC%8F%E4%BA%94%E5%A4%A7%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%89%87SOLID/)
+4. [設計模式五大基本原則 SOLID](https://web.archive.org/web/20210226100242/http://www.andrewchen.tw/2017/04/09/20170409_NOTE_%E8%A8%AD%E8%A8%88%E6%A8%A1%E5%BC%8F%E4%BA%94%E5%A4%A7%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%89%87SOLID/)
 
 > 在許多人的幫助下，本系列文章已成功出版，除了添加新的篇章，更完善了每個案例的應對進退；如果對現在的職涯感到迷茫，也許這本書能帶給你不一樣的觀點～
 > **天瓏書局：** [https://www.tenlong.com.tw/products/9786263334571](https://www.tenlong.com.tw/products/9786263334571)

@@ -100,7 +100,7 @@ ERROR:root:code for hash md5 was not found.
 
 然後網路上你查到[大部分的答案](https://stackoverflow.com/questions/25372911/python-pip-error-on-osx)都是唬爛你的
 
-所以我個人建議你使用[homebrew](https://brew.sh/index_zh-tw)安裝吧
+所以我個人建議你使用[homebrew](https://brew.sh/zh-tw/)安裝吧
 
 ```
 brew cask install google-cloud-sdk

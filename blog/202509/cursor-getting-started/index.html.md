@@ -247,7 +247,7 @@ Always respond in 繁體中文
 
   [https://www.tenlong.com.tw/products/9786264142083](https://www.tenlong.com.tw/products/9786264142083)
 
-延伸閱讀：[List: 讓我們一起掌握 AI 帶來的紅利 | Curated by 林鼎淵 | Medium](https://medium.com/@dean-lin/list/ai-ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 ---
 

@@ -56,7 +56,7 @@
 
 畢竟，絕大多數的機會，都是從勇敢詢問開始的。
 
-延伸閱讀：[下班有約系列文](https://dean-lin.medium.com/list/b9f7a7403936)
+延伸閱讀：[工程師下班有約](https://deanlin.net/series/after-office/)
 
 **如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《[工程師下班有約](https://www.tenlong.com.tw/products/9786264142083)》這本書能為你帶來靈感與啟發：**
 

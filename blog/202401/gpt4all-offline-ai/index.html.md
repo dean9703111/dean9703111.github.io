@@ -81,7 +81,7 @@ GPT4All 的操作介面跟 ChatGPT 很像，你也可以將聊天記錄保存在
 
 ### Model（調整模型參數）
 
-- **System Prompt**：這是對話開始前會執行的指令，你可以在這邊設定 AI 要扮演的角色（ex:翻譯員、工程師），這邊有很多優秀的 Prompt 可以參考: [https://github.com/f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts%E3%80%82)
+- **System Prompt**：這是對話開始前會執行的指令，你可以在這邊設定 AI 要扮演的角色（ex:翻譯員、工程師），這邊有很多優秀的 Prompt 可以參考: [https://github.com/f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts)
 - **Prompt Template**： 設計 AI 要如何回應你，如果你希望 AI 都以中文回覆，就可以加上「用繁體中文回應。」
 - **Generation Setting**：如果沒有特別需求，筆者並不建議調整；另外 Max Length 儘管可以調整，但如果超過模型可以承受的長度，他是不會理你的。
 
@@ -121,7 +121,7 @@ GPT4All 的操作介面跟 ChatGPT 很像，你也可以將聊天記錄保存在
 
 ➤ **小提醒：**筆者並沒有仔細研究裡面的程式碼，若打算上傳機敏資料，請自行評估風險。
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

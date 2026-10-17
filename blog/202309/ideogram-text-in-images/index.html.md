@@ -54,7 +54,7 @@ Ideogram 網站：[https://ideogram.ai/](https://ideogram.ai/)
 - 產出幾張圖後，接下來會需要等待一段時間，目前是「2」分鐘。
 - 產出的圖都是「公開的」，如果公司想要用它來產圖需要思考一下。
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

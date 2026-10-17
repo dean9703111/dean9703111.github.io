@@ -23,7 +23,7 @@
 
 但其實 AI 早在幾年前就對部分職業產生衝擊了，在 2018 年，就有一個月薪 12 萬的專業翻譯，因為公司引進的 AI 翻譯系統比他更強而慘遭裁員，相關報導：[她月薪12萬負責翻譯慘遭取代，公司引進AI兩年發覺「比人好用」](https://www.businesstoday.com.tw/article/category/183034/post/202303230013/)
 
-> 從法律的角度來講，如果 AI 能替代人類工作，雇主是可以依法資遣員工的；這部分參考勞基法第 11 條第 4 款「[業務性質變更，有減少勞工之必要，又無適當工作可供安置時](https://verdict.tw/%E5%8B%9E%E5%9F%BA%E6%B3%95%E7%AC%AC11%E6%A2%9D%E7%AC%AC4%E6%AC%BE%E6%89%80%E8%AC%82%E3%80%8C%E7%84%A1%E9%81%A9%E7%95%B6%E5%B7%A5%E4%BD%9C%E5%8F%AF%E4%BE%9B%E5%AE%89%E7%BD%AE%E6%99%82%E3%80%8D-2/)」之規定。
+> 從法律的角度來講，如果 AI 能替代人類工作，雇主是可以依法資遣員工的；這部分參考勞基法第 11 條第 4 款「業務性質變更，有減少勞工之必要，又無適當工作可供安置時」之規定。
 
 ## AI 在每個國家的法律都是不同的
 
@@ -31,7 +31,7 @@
 
 因為 AI 發展得太過快速，目前的現行法律大部分都沒有規範到這塊，所以界線是相當模糊的，而且每個國家的基準不同，比如日本為了鼓勵 AI 發展就把[著作權法](https://infolaw.iias.sinica.edu.tw/?p=612)寫得相當寬鬆，而歐盟也推出了[人工智能法案](https://www.saint-island.com.tw/TW/News/News_Info.aspx?IT=News_1&CID=266&ID=62704)。
 
-以台灣來說，在著作權上有五項要件[「四必一沒有」](https://www.tipo.gov.tw/tw/cp-180-219594-7f8ac-1.html)：
+以台灣來說，在著作權上有五項要件[「四必一沒有」](https://web.archive.org/web/20250425021157/https://www.tipo.gov.tw/tw/cp-180-219594-7f8ac-1.html)：
 
 - 必須是人類精神力作用的成果
 - 必須經由「表達」而外顯
@@ -58,9 +58,9 @@
 
 ### DALLE
 
-你可以拿創作出來的作品去商用、販售、移除浮水印；但不可以去誤導你的對象，需要告知這些是 AI 生成的，[連結](https://help.openai.com/en/articles/6468065-dall-e-content-policy-faq)。
+你可以拿創作出來的作品去商用、販售、移除浮水印；但不可以去誤導你的對象，需要告知這些是 AI 生成的，[連結](https://web.archive.org/web/20231128084953/https://help.openai.com/en/articles/6468065-dall-e-content-policy-faq)。
 
-  [https://help.openai.com/en/articles/6640875-how-should-i-credit-dall-e-in-my-work](https://help.openai.com/en/articles/6640875-how-should-i-credit-dall-e-in-my-work)
+  [https://help.openai.com/en/articles/6640875-how-should-i-credit-dall-e-in-my-work](https://web.archive.org/web/20250427065327/https://help.openai.com/en/articles/6640875-how-should-i-credit-dall-e-in-my-work)
 
 ### Adobe Firefly、Shutterstock
 
@@ -78,7 +78,7 @@
 - **使用生成內容/作品要有的認知**：內容可能有不實訊息、毀損他人名譽，甚至侵犯他人著作權（比如要求產生特定畫家、作家風格的作品）。
 - **如果想利用生成內容/作品**：可能侵害他人商標權、設計專利權，或包含虛偽的個人資料、毀謗毀損名譽。如果想擁有著作權，請勿直接使用生成內容，要經過自己的編輯、改寫、組合，並記錄這些過程。同時要遵守各個 AI 工具的使用條款。
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

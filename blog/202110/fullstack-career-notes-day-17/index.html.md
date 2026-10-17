@@ -227,7 +227,7 @@ NoSQL 具備水平擴充能力，只要增加新的伺服器節點就能擴充�
 
 ### 參考資源
 
-1. [MySQL 資料庫面試題](https://www.gushiciku.cn/pl/poXE/zh-tw)
+1. MySQL 資料庫面試題
 2. [你在 Table 建立的 Index 真的有效嗎？用範例帶你理解 Coverage Index 的意義(筆者部落格)](https://medium.com/dean-lin/f852af308c27)
 3. [MySQL 與 PostgreSQL 相比哪個更好？](https://zi.media/@yidianzixun/post/FaABsS)
 

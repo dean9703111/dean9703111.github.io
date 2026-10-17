@@ -148,7 +148,7 @@ PrivateGPT 有幾種模式供大家使用：
 - **回答不全面**：你可能需要 A、B、C 文件的綜合資訊，但他給的內容遺漏許多細節，這邊會建議每個文檔分開詢問。
 - **答案錯誤或相互矛盾**：如果來源品質本身就不好，那就不要期待他能給出多好的答案；建議先做資料清洗，以維持來源品質。
 
-其實 NotebookLM 官方有表明[不會將個人資料用於訓練 NotebookLM](https://support.google.com/notebooklm/answer/14275965?hl=zh-Hant)，因此企業除非有很強的 AI 人才了解如何優化模型提高輸出品質，否則 NotebookLM 也許是目前的最優解。
+其實 NotebookLM 官方有表明[不會將個人資料用於訓練 NotebookLM](https://web.archive.org/web/20241118233308/https://support.google.com/notebooklm/answer/14275965)，因此企業除非有很強的 AI 人才了解如何優化模型提高輸出品質，否則 NotebookLM 也許是目前的最優解。
 
 **如果你想更全面的掌握生成式 AI 工具，歡迎購買筆者出版的新書，他將幫助您在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 
@@ -156,7 +156,7 @@ PrivateGPT 有幾種模式供大家使用：
 
 也歡迎 Follow 筆者的部落格，我會持續分享最新 AI 工具，目前已有超過 80 篇 AI 相關文章等你來看！
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 ---
 

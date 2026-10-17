@@ -121,7 +121,7 @@
 
 最後誠懇地跟大家說：「錢，真的很重要，他能增加你抵抗風險的能力。」
 
-延伸閱讀：[那些我走過的路與故事](https://dean-lin.medium.com/list/8f9ffd735e98)
+延伸閱讀：[那些我走過的路與故事](https://deanlin.net/series/my-story/)
 
 ---
 

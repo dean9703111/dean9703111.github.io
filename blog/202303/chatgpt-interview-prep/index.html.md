@@ -190,7 +190,7 @@
 > **小提醒**：
 > 筆者了解對許多人來說，英文面試才是最大的難關；所以提醒大家，文中 ChatGPT 所做出的回應，可以請 ChatGPT 扮演翻譯專家，將內容轉換成「英文」喔！
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

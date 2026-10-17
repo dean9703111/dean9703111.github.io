@@ -77,7 +77,7 @@
 
 專業是需要時間積累的，你的努力最終會成為自己的護城河；所謂的「捷徑」，只不過是跟隨時代的腳步罷了。
 
-延伸閱讀：[職涯筆記](https://dean-lin.medium.com/list/f8a47679852d)
+延伸閱讀：[職涯成長](https://deanlin.net/categories/career/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

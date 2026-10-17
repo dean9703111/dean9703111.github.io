@@ -93,7 +93,7 @@
 
 好的 Prompt 與大量嘗試能產出更好的結果，這篇文章僅是拋磚引玉，舉出幾個常見的應用分享給大家，也歡迎留言分享自己的應用場景，我相信透過彼此的交流能激發更多的想法 🔄
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

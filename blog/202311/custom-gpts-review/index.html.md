@@ -102,7 +102,7 @@ ChatGPT 爆紅後，許多公司都在打造自己的 AI 產品，想辦法在�
 
 也許在不久後，有能力建立出優秀「GPT」的人，會變成市場炙手可熱的人才；並且創造、傳遞「知識」的方式將會重新定義。
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

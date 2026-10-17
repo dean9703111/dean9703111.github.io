@@ -89,7 +89,9 @@ Suno 官網: [https://suno.com/](https://suno.com/)
 
 我們來試聽看看 ChatGPT 與 Suno 合作的成果如何：
 
-延伸閱讀：[拳擊之夢ChatGPT | Suno](https://suno.com/song/a5b8ab40-3de5-4713-a414-94adab71b13f)
+    拳擊之夢ChatGPT | Suno
+    熱血流行 勵志 song. Listen and make your own with Suno.
+    suno.com
 
 ## 使用專業 GPTs 生成歌曲
 
@@ -121,7 +123,7 @@ Suno 官網: [https://suno.com/](https://suno.com/)
 
 另外因為生成的音樂隨機性較高，所以如果想生成優秀的歌曲，就把他當成手遊抽 SSR 稀有角色吧（誤
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

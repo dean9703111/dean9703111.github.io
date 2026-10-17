@@ -56,13 +56,13 @@ OpenAI 提供了許多 API 讓開發人員使用，其中有語言模型如「GP
 
 ChatGPT 算是「GPT-3.5、GPT-4」的一個應用，主要功能就是文字的問答。
 
-至於 Line 聊天室裡面能夠輸入文字就產圖，其實是「DALL.E」的應用，你可以直接在他的官網上試玩：[https://labs.openai.com/](https://labs.openai.com/)
+至於 Line 聊天室裡面能夠輸入文字就產圖，其實是「DALL.E」的應用，你可以直接在他的官網上試玩：[https://labs.openai.com/](https://web.archive.org/web/20250601174514/https://labs.openai.com/)
 
 「abstract pencil and watercolor art of a lonely robot holding a balloon」
 
 > 一個拿著氣球的孤獨機器人，畫風為抽象的鉛筆水彩藝術
 
-至於 Line 聊天室能夠產圖，其實就是應用他們的 API：[https://platform.openai.com/docs/guides/images/introduction](https://platform.openai.com/docs/guides/images/introduction)
+至於 Line 聊天室能夠產圖，其實就是應用他們的 API：[https://platform.openai.com/docs/guides/images/introduction](https://web.archive.org/web/20260129222923/https://platform.openai.com/docs/guides/images/introduction)
 
 現在大部分的聊天室都會要求你去 OpenAI 官網申請 API Key 才能使用他們的服務，筆者提醒如下：
 
@@ -116,7 +116,7 @@ GPT 過去受限於訓練模型，以及資料截止於 2021 年 9 月，導致�
 
 當然，別人給的資訊自己也要有判斷對錯的能力，就像我寫的這篇文章可能也有漏洞，歡迎大家批評指教，這樣我們才能進步成長，感謝大家的閱讀！
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

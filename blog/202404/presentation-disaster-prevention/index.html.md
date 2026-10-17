@@ -67,7 +67,7 @@
 
 儘管我們沒辦法預知未來，但做好事前準備就能將傷害降到最小。
 
-延伸閱讀：[那些我走過的路與故事](https://dean-lin.medium.com/list/8f9ffd735e98)
+延伸閱讀：[那些我走過的路與故事](https://deanlin.net/series/my-story/)
 
 ---
 

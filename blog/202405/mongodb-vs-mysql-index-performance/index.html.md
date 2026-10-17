@@ -617,7 +617,7 @@ client.close()
 
 當然小弟的實驗可能有許多考量不足的地方，歡迎各位大神留言交流，謝謝。
 
-延伸閱讀：[Database 資料庫](https://dean-lin.medium.com/list/8207e2016ac8)
+延伸閱讀：[Database](https://deanlin.net/tags/database/)
 
 ---
 

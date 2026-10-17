@@ -268,7 +268,7 @@ test("測試 hideComplete 函式運作", async () => {
 
 常用的 Jest 應用就介紹到這邊，真的要自己動手實驗過才會理解裏面的原理喔！
 
-延伸閱讀：[單元測試系列文](https://dean-lin.medium.com/list/2680ca82395e)
+延伸閱讀：[前端單元測試](https://deanlin.net/series/frontend-testing/)
 
 ---
 

@@ -209,7 +209,7 @@ supervisor 也可以做專案資料夾的監控，但是要記得排除一些資
 ### 參考資源：
 
 1. [PHP + Apache Stack vs Node.js](https://thomashunter.name/posts/2012-06-21-php-vs-nodejs)
-2. [服務端 I/O 效能大比拼：Node、PHP、Java、Go](https://www.itread01.com/content/1549876684.html)
+2. [服務端 I/O 效能大比拼：Node、PHP、Java、Go](https://web.archive.org/web/20220124190306/https://www.itread01.com/content/1549876684.html)
 3. [簡析 Node.js 特點與應用場景](https://jishuin.proginn.com/p/763bfbd2cab5)
 4. [詳細版 | 用 Supervisor 守護你的 Node.js 進程](https://www.jianshu.com/p/6d84e5efe99d)
 5. [淺談 Node.js 和 PHP 程式管理](https://iter01.com/403097.html)

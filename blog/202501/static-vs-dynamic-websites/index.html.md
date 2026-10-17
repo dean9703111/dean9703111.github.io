@@ -107,7 +107,7 @@
 
 如果有描述不夠完善的地方歡迎在下方留言，讓我們一起交流、成長。
 
-延伸閱讀：[自架站研究筆記](https://dean-lin.medium.com/list/3c5b50864c9e)
+延伸閱讀：[Hugo 自架站](https://deanlin.net/series/hugo/)
 
 ---
 

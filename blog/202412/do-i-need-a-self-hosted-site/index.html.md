@@ -101,7 +101,7 @@
 
 [下一篇將探討選擇「自架站工具」時，有哪些細節需要注意](https://deanlin.net/blog/202501/static-vs-dynamic-websites/)。我們真的需要 WordPress 這類有後台工具嗎？還是用 Hugo、Hexo 生成的靜態網站就已經滿足需求了？
 
-延伸閱讀：[自架站研究筆記](https://dean-lin.medium.com/list/3c5b50864c9e)
+延伸閱讀：[Hugo 自架站](https://deanlin.net/series/hugo/)
 
 ---
 

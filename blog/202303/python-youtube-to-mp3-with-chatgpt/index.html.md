@@ -39,7 +39,7 @@ audio_stream.download(output_path="path/to/save/directory", filename="audio")
 
 **SETP 2**：如果要執行程式，請安裝套件：`pip install pytube`。
 
-**SETP 3**：將 url 替換成自己的：[https://www.youtube.com/watch?v=IvOdTbIYZs4](https://www.youtube.com/watch?v=IvOdTbIYZs4%22%EF%BC%88%E9%80%99%E6%98%AF%E7%AD%86%E8%80%85%E5%88%86%E4%BA%AB%E5%87%BA%E6%9B%B8%E5%BF%83%E5%BE%97%E7%9A%84%E5%BD%B1%E7%89%87%EF%BC%89%E3%80%82)
+**SETP 3**：將 url 替換成自己的：[https://www.youtube.com/watch?v=IvOdTbIYZs4](https://www.youtube.com/watch?v=IvOdTbIYZs4)
 
 > 這是筆者分享出書心得的影片。
 
@@ -130,7 +130,7 @@ mp3_file = audio_file.export("path/to/save/directory/audio.mp3", format="mp3")
 > 不過這對程式教育產業來說，可說是巨大的衝擊，因為人們多了一個全新的選擇（而且還不賴）。
 > 下一篇就來分享[如何搭配 OpenAI 的 whisper api 將音檔（mp3）轉換成文字吧](https://deanlin.net/blog/202303/python-youtube-transcript-whisper/)！
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

@@ -44,7 +44,7 @@
 
 **SETP 3**：打開終端機，輸入 `ngrok http 3000` (3000 是您的本地環境的 HTTP Server 的通訊埠)，啟動 ngrok。
 
-**SETP 4**：ngrok 將會顯示一個可供外部訪問的 URL（上圖紅框處 `[https://xxxx.ngrok.io](https://xxxx.ngrok.io)`），您可以在 LINE 的 Developer Console 中設定 webhook 的 URL。
+**SETP 4**：ngrok 將會顯示一個可供外部訪問的 URL（上圖紅框處 `https://xxxx.ngrok.io`），您可以在 LINE 的 Developer Console 中設定 webhook 的 URL。
 
 > **小提醒**：Session 2 小時後會過期，到時再重新執行一次 `ngrok http 3000` 就好了，然後別忘記把新的 URL 設定到 Line 的 webhook。
 
@@ -249,7 +249,7 @@ console.log('Linebot is running on 3000 port');
 
 未來筆者會出一系列使用 ChatGPT、openAI 的文章，如果你對這個議題感興趣，可以持續關注我的文章！
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

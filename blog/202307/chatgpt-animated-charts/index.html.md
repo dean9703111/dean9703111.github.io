@@ -11,7 +11,7 @@
 
 ## STEP 1：取得分析數據 — 以消費者物價指數為例
 
-筆者到[經濟部統計處](https://www.moea.gov.tw/Mns/dos/home/Home.aspx)的網頁，下載民國 91~112 年的「[消費者物價指數](https://dmz26.moea.gov.tw/GA/common/Common.aspx?code=K&no=2)」。
+筆者到[經濟部統計處](https://www.moea.gov.tw/Mns/dos/home/Home.aspx)的網頁，下載民國 91~112 年的「[消費者物價指數](https://web.archive.org/web/20250225041521/https://dmz26.moea.gov.tw/GA/common/Common.aspx?code=K&no=2)」。
 
 我們打開 Excel 看一下目前的資料格式：
 
@@ -80,7 +80,7 @@
 
 希望這篇文章有拓寬大家對 Advanced data analysis 的使用思路！
 
-延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
+延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 
 **想將 AI 導入自己的職場與生活嗎？歡迎[購買筆者出版的新書](https://www.books.com.tw/products/0011004216)**，幫助您**在 AI 的浪潮中站穩腳步，並在未來的職場競爭中佔據優勢！**
 

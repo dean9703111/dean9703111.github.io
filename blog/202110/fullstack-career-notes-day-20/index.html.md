@@ -241,7 +241,7 @@ return 0
 1. [手把手帶你在 MacOS 安裝 Redis ＆Another Redis Desktop Manager(筆者部落格)](https://medium.com/dean-lin/8d0b45062f9)
 2. [用 Node.js + Redis 解決高併發秒殺問題(筆者部落格)](https://medium.com/dean-lin/e814fe26a0f2)
 3. [redis 之 sorted sets 類型及操作](https://www.huaweicloud.com/articles/6785018d60d6272a49565cb148d661af.html)
-4. [使用 redis 的有序集合實現排行榜功能](https://www.gushiciku.cn/pl/2MPj/zh-tw)
+4. 使用 redis 的有序集合實現排行榜功能
 
 > 在許多人的幫助下，本系列文章已成功出版，除了添加新的篇章，更完善了每個案例的應對進退；如果對現在的職涯感到迷茫，也許這本書能帶給你不一樣的觀點～
 > **天瓏書局：** [https://www.tenlong.com.tw/products/9786263334571](https://www.tenlong.com.tw/products/9786263334571)

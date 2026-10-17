@@ -193,7 +193,7 @@ describe("HelloWorld", () => {
 
 那今天的文章就分享到這裡，[下一篇文章會以實際案例跟大家分享 Vue Test Utils 的應用](https://deanlin.net/blog/202301/vue-test-utils-examples/)！
 
-延伸閱讀：[單元測試系列文](https://dean-lin.medium.com/list/2680ca82395e)
+延伸閱讀：[前端單元測試](https://deanlin.net/series/frontend-testing/)
 
 ---
 

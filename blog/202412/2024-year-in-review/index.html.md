@@ -64,7 +64,7 @@
 
 > 我不怕被三振，人生中的各種不完美，不就是讓自己有再次挑戰的理由嗎？
 
-延伸閱讀：[那些我走過的路與故事](https://dean-lin.medium.com/list/8f9ffd735e98)
+延伸閱讀：[那些我走過的路與故事](https://deanlin.net/series/my-story/)
 
 ---
 

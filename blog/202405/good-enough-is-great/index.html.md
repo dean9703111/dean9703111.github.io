@@ -59,7 +59,7 @@
 
 透過後天的學習、改進，也許我們最終無法成為大神；但回過頭來看，我們已經遠遠超越了過去的自己。
 
-延伸閱讀：[那些我走過的路與故事](https://dean-lin.medium.com/list/8f9ffd735e98)
+延伸閱讀：[那些我走過的路與故事](https://deanlin.net/series/my-story/)
 
 ---
 

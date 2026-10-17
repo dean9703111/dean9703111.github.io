@@ -103,7 +103,7 @@ Hash: hash:timestamp (e.g., hash:1620000000)
 
 以上就是朋友跟我分享的資料庫遷移案例，希望對大家有幫助，如果有更好的方案，也歡迎留言分享。
 
-延伸閱讀：[Database 資料庫](https://dean-lin.medium.com/list/8207e2016ac8)
+延伸閱讀：[Database](https://deanlin.net/tags/database/)
 
 ---
 
