@@ -37,7 +37,7 @@
 - **Git**：管理程式版本的工具，[官網](https://git-scm.com/downloads)
 - **VSCode**：方便編輯相關設定檔案，[官網](https://code.visualstudio.com/)
 
-**筆者的電腦環境為**： `MacBook Pro，Apple M1 MAX 晶片，macOS 為 15.0.1`
+> **筆者的電腦環境為**： `MacBook Pro，Apple M1 MAX 晶片，macOS 為 15.0.1`
 
 ## 二、安裝 PrivateGPT
 
@@ -51,7 +51,7 @@ cd private-gpt
 
 **STEP 2**：安裝 `Poetry` 來下載相關資源
 
-本文以 Mac 安裝步驟為主，Windows 可以參考[官網](https://python-poetry.org/docs/#installing-with-the-official-installer)
+> 本文以 Mac 安裝步驟為主，Windows 可以參考[官網](https://python-poetry.org/docs/#installing-with-the-official-installer)
 
 ```
 curl -sSL https://install.python-poetry.org | python3 -
@@ -104,7 +104,7 @@ PGPT_PROFILES=ollama make run
 
 目前預設使用的 llama 模型是 3.1，你可以進去專案文件，編輯 `settings-ollama.yaml` 的內容，將它改成最新的版本（筆者撰寫文章時，最新版本為 3.2）。
 
-調整完要關閉重啟才會生效喔！
+> 調整完要關閉重啟才會生效喔！
 
 ## 五、體驗離線與文件對話的功能
 
@@ -121,7 +121,7 @@ PrivateGPT 有幾種模式供大家使用：
 
 筆者測試過多種情境後，體驗的結果是「尚可使用」，想擁有良好體驗需要再做很多人為的設計；目前跟 NotebookLM 相比，還有很大的差距。
 
-關於 NotebookLM 可以[參考這篇文章](https://deanlin.net/blog/202411/notebooklm-workplace-uses/)
+> 關於 NotebookLM 可以[參考這篇文章](https://deanlin.net/blog/202411/notebooklm-workplace-uses/)
 
 另外 llama3.2 的基礎對話能力其實已經表現得挺不錯了。
 

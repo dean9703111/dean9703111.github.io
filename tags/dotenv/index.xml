@@ -4,7 +4,7 @@
     <title>Dotenv｜林鼎淵 Dean Lin</title>
     <link>https://deanlin.net/tags/dotenv/</link>
     <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Dotenv｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/dotenv/</link><width>144</width><height>144</height></image>
-    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。360 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
     <generator>Hugo</generator>
     <language>zh-tw</language>
     <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
@@ -18,7 +18,7 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>如果你曾經有撰寫網頁端的經驗，你也許體會過以下狀況</description>
-      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-06/images/fb-ig-crawler-day-06-og_hu_dc531a6d3497b460.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-06/images/cover_hu_3c22e35dc7a1a64b.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<blockquote>
 <p>用知識解決問題代表你持續進步，用勞力解決問題只能說明你原地踏步</p>
 </blockquote>
@@ -41,19 +41,19 @@
 </ol>
 <hr>
 <h2 class="h-nomark" id="1-環境變數使用時機">1. 環境變數使用時機?<a class="h-anchor" href="#1-%e7%92%b0%e5%a2%83%e8%ae%8a%e6%95%b8%e4%bd%bf%e7%94%a8%e6%99%82%e6%a9%9f" aria-label="這個段落的連結"></a></h2>
-<p>環境變數的功能就是把<code>散佈在各個檔案且會在不同環境需要調整的參數集合到一個檔案</code>裡面，這樣就能讓你的程式在不同環境中快速發布</p>
+<p>環境變數的功能就是把<mark>散佈在各個檔案且會在不同環境需要調整的參數集合到一個檔案</mark>裡面，這樣就能讓你的程式在不同環境中快速發布</p>
 <h3 id="常用情境如下">常用情境如下：<a class="h-anchor" href="#%e5%b8%b8%e7%94%a8%e6%83%85%e5%a2%83%e5%a6%82%e4%b8%8b" aria-label="這個段落的連結"></a></h3>
 <ol>
 <li>用來<code>區分正式(prod) / 測試(dev)環境</code></li>
-<li>設定<code>重要不得外流的資料</code>(資料庫帳號、密碼，使用者權杖&hellip;)</li>
-<li>需要<code>統一設定的變數內容</code>(系統ip、網址、port&hellip;)</li>
+<li>設定<mark>重要不得外流的資料</mark>(資料庫帳號、密碼，使用者權杖&hellip;)</li>
+<li>需要<mark>統一設定的變數內容</mark>(系統ip、網址、port&hellip;)</li>
 </ol>
 <hr>
 <h2 class="h-nomark" id="2-專案中哪些參數適合當環境變數">2. 專案中哪些參數適合當環境變數?<a class="h-anchor" href="#2-%e5%b0%88%e6%a1%88%e4%b8%ad%e5%93%aa%e4%ba%9b%e5%8f%83%e6%95%b8%e9%81%a9%e5%90%88%e7%95%b6%e7%92%b0%e5%a2%83%e8%ae%8a%e6%95%b8" aria-label="這個段落的連結"></a></h2>
 <p>我們專案目標是做 FB、IG 的爬蟲，爬蟲會定時執行且將資料儲存到雲端方便瀏覽，最後透過 LINE 回報今日執行狀況。基於這些需求，我會設定環境變數如下：</p>
 <h3 id="不得外流的資料">不得外流的資料：<a class="h-anchor" href="#%e4%b8%8d%e5%be%97%e5%a4%96%e6%b5%81%e7%9a%84%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h3>
 <ol>
-<li><strong>FB &amp; IG 的帳號密碼</strong><br>原本我想要使用 FB &amp; IG 提供的 api 來抓取我想要的追蹤者人數即每日發文篇數等等資訊，但實際研究後發現由於隱私安全相關問題，所以他們提供的api只能查自己有權限的粉專，所以我<code>放棄使用官方api 改用 selenium 網頁模擬器</code>來做爬蟲，在實際操作中發現以下規則，所以必需使用真實存在的帳戶來爬蟲:
+<li><strong>FB &amp; IG 的帳號密碼</strong><br>原本我想要使用 FB &amp; IG 提供的 api 來抓取我想要的追蹤者人數即每日發文篇數等等資訊，但實際研究後發現由於隱私安全相關問題，所以他們提供的api只能查自己有權限的粉專，所以我<mark>放棄使用官方api 改用 selenium 網頁模擬器</mark>來做爬蟲，在實際操作中發現以下規則，所以必需使用真實存在的帳戶來爬蟲:
 <ul>
 <li>FB 部分粉專必須要登入後才能觀看</li>
 <li>IG則是全部都要登入，部分粉專要按追蹤後才能觀看</li>
@@ -68,7 +68,7 @@
 </ol>
 <hr>
 <h2 class="h-nomark" id="3-使用環境變數">3. 使用環境變數<a class="h-anchor" href="#3-%e4%bd%bf%e7%94%a8%e7%92%b0%e5%a2%83%e8%ae%8a%e6%95%b8" aria-label="這個段落的連結"></a></h2>
-<p>接著我們要知道<code>如何在程式中引入昨天安裝的 dotenv 套件</code>，如果還沒安裝的請在終端機(Terminal)輸入指令</p>
+<p>接著我們要知道<mark>如何在程式中引入昨天安裝的 dotenv 套件</mark>，如果還沒安裝的請在終端機(Terminal)輸入指令</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn add dotenv
 </span></span></code></pre></div><p>套件安裝完後，我下面的說明建議你搭配<a href="https://www.npmjs.com/package/dotenv">官方文件</a>來了解如何使用，畢竟不是所有套件都有中文資源，你要練習自己讀懂官方文件</p>
 <ul>
@@ -103,8 +103,8 @@
 <p>在專案資料夾的終端機(Terminal)執行指令</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>yarn start
 </span></span></code></pre></div><blockquote>
-<p>如果有輸出<code>這是環境變數</code>的字串就代表你成功嚕～</p>
-<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-06/images/fb-ig-crawler-day-06-01.webp" width="1024" height="127" alt="執行程式（圖 1）" loading="lazy" decoding="async"></p>
+<p>如果有輸出<mark>這是環境變數</mark>的字串就代表你成功嚕～</p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-06/images/fb-ig-crawler-day-06-01.webp" width="1024" height="127" alt="執行程式（圖 1）" fetchpriority="high" decoding="async"></p>
 </blockquote>
 </li>
 <li>
@@ -133,7 +133,8 @@
 </ul>
 </li>
 </ul>
-<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong></p>
+<p><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
 </blockquote>
 ]]></content:encoded>
     </item>

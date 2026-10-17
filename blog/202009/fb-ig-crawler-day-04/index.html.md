@@ -25,14 +25,18 @@
 ### 3. 認識 package.json
 
 3.1 了解 package.json 各項參數的意義
+
 3.2 善用 scipts(腳本) 來執行 Node.js
+
 3.3 使用 license 保護自己的權益
 
 ## 1. 建立 Node.js 專案
 
-- 請你先建立好專案的資料夾，並使用 VScode 打開它
+1.
+請你先建立好專案的資料夾，並使用 VScode 打開它
 
-- 接著新增一個 **index.js** 的檔案，內容如下
+2.
+接著新增一個 **index.js** 的檔案，內容如下
 
 ```
 function helloWorld () { // 創建函式
@@ -59,6 +63,7 @@ node index.js
 ## 3. 認識 package.json
 
 他是一種`描述專案的檔案，裡面包含你專案的各項資訊(名稱、描述、版本、作者、協議...)`
+
 在昨天的文章有提到**不要重複造輪子**，多使用別人已經完善的套件，一個專案除了你自己的程式外通常還需要大量引入其他人寫的程式套件，`package.json 能幫助你管理這些套件的版本`(明天文章會詳細說明)
 
 - **初始化 package.json**
@@ -71,7 +76,7 @@ npm init
 
 ### 3.1 了解 package.json 各項參數的意義
 
-真實的 package.json 不可以用 //來當備註喔，下面範例加上備註只是為了讓大家方便理解
+> 真實的 package.json 不可以用 //來當備註喔，下面範例加上備註只是為了讓大家方便理解
 
 ```
 {
@@ -111,14 +116,14 @@ npm init
 
 - **優點**
 
-- 透過 scripts 讓指令長度大幅縮減
-- 可自定義多組 script 名稱，以處理不同的需求
-- 可以在 package.json 裡面管理指令，再也不用特別開一個記事本來儲存了XD
+1. 透過 scripts 讓指令長度大幅縮減
+2. 可自定義多組 script 名稱，以處理不同的需求
+3. 可以在 package.json 裡面管理指令，再也不用特別開一個記事本來儲存了XD
 
 - **筆者經驗範例**
 下面是筆者前端網頁在 merge branch 時所需要下的指令，我想如果是人工來下應該會崩潰吧？
 
-- **執行內容**：`移除local端套件→重新安裝套件→更新套件→根據開發環境執行`
+- **執行內容**：移除local端套件→重新安裝套件→更新套件→根據開發環境執行
 
 ```
 rm -rf node_modules package-lock.json .nuxt yarn.lock yarn-error.log && yarn && yarn upgrade && yarn dev
@@ -173,80 +178,43 @@ yarn start
 
 我想應該不少人建立 package.json 時都是不停按下一步使用默認參數，但如果你正在開發一個商業用專案，卻把這份專案的 license 設定成 BSD 這類可以讓其他人改寫甚至商業化的 license 就搞笑了
 
-`選擇 license 前請了解他的作用範圍，因為他會影響到這份專案的使用權益`
+選擇 license 前請了解他的作用範圍，因為他會影響到這份專案的使用權益
 
 - **依據流程圖釐清自己的需求**來做選擇，[圖片來源](https://progressbar.tw/posts/61)
 
 - **用表格看是否符合需求**，[表格來源](https://noob.tw/open-source-licenses/)
 
-          條款 |
-          GPL |
-          LGPL |
-          BSD |
-          APACHE |
-          MIT |
-
-          公開原始碼 |
-          ✓ |
-          ✓ |
-           |
-           |
-           |
-
-          以同樣方式授權 |
-          ✓ |
-          ✓ |
-           |
-           |
-           |
-
-          標註修改的部分 |
-          ✓ |
-          ✓ |
-           |
-          ✓ |
-           |
-
-          必須包含 Copyright |
-          ✓ |
-          ✓ |
-          ✓ |
-          ✓ |
-          ✓ |
-
-          必須包含 License |
-          ✓ |
-          ✓ |
-           |
-          ✓ |
-          ✓ |
+| 條款 | GPL | LGPL | BSD | APACHE | MIT |
+| --- | --- | --- | --- | --- | --- |
+| 公開原始碼 | ✓ | ✓ |  |  |  |
+| 以同樣方式授權 | ✓ | ✓ |  |  |  |
+| 標註修改的部分 | ✓ | ✓ |  | ✓ |  |
+| 必須包含 Copyright | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 必須包含 License | ✓ | ✓ |  | ✓ | ✓ |
 
 ### ℹ️ 專案原始碼
 
 今天的完整程式碼可以在[這裡](https://github.com/dean9703111/ithelp_30days/tree/master/day4)找到喔
 
-如果大家對於文章的內容有任何想法歡迎討論，希望這篇文章有給正在學習程式的人一些幫助與方向
+> 如果大家對於文章的內容有任何想法歡迎討論，希望這篇文章有給正在學習程式的人一些幫助與方向
 
 ### 參考資源
 
-- [開始使用 GitHub， 註冊與建立repo](https://progressbar.tw/posts/3)
-- [Choose an open source license](https://choosealicense.com/)
-- [常見的五個開源專案授權條款，使用軟體更自由](https://noob.tw/open-source-licenses/)
-- [在開源時代的興起下，如何透過License共享並保有權益](https://progressbar.tw/posts/61)
-- [如何使用 npm script 變成你的建立工具](http://jamestw.logdown.com/posts/1378697-egghead-how-to-use-npm-scripts-as-your-build-tool)
+1. [開始使用 GitHub， 註冊與建立repo](https://progressbar.tw/posts/3)
+2. [Choose an open source license](https://choosealicense.com/)
+3. [常見的五個開源專案授權條款，使用軟體更自由](https://noob.tw/open-source-licenses/)
+4. [在開源時代的興起下，如何透過License共享並保有權益](https://progressbar.tw/posts/61)
+5. [如何使用 npm script 變成你的建立工具](http://jamestw.logdown.com/posts/1378697-egghead-how-to-use-npm-scripts-as-your-build-tool)
 
-**在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：**
-
-- 加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項
-- 將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門
-- 調整專案架構
-
-- 優化爬蟲程式，以更廣的視角來擷取網頁資訊
-- 增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者
-- 排程部分改用 node-schedule & pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊
-
-**有興趣的朋友可以到天瓏書局選購，感謝大家的支持。**
-**購書連結**：[https://www.tenlong.com.tw/products/9789864348008](https://www.tenlong.com.tw/products/9789864348008)
+> **在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：**
+> 加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項
+> 將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門
+> 調整專案架構
+> 優化爬蟲程式，以更廣的視角來擷取網頁資訊
+> 增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者
+> 排程部分改用 node-schedule & pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊
+> **有興趣的朋友可以到天瓏書局選購，感謝大家的支持。**
+> **購書連結**：[https://www.tenlong.com.tw/products/9789864348008](https://www.tenlong.com.tw/products/9789864348008)
 
 ---
 

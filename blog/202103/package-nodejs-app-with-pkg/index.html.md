@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202103/package-nodejs-app-with-pkg/
-- 發布：2021-03-05（更新：2023-05-05）
+- 發布：2021-03-05
 - 主題：技術教學
 - 標籤：Node.js、執行檔打包工具、Pkg、無需環境設定、產生執行檔
 - 摘要：如果你是一個很常寫 side project 的人，你一定遇到過想跟朋友炫耀自己完成的 side project；但卻因為雙方電腦環境不同而無法炫耀的問題🤣，今天跟各位介紹一款打包 node 專案成為執行檔的工具 — 『pkg』，同時佐以我過去分享過的 side…
@@ -59,7 +59,7 @@ npm install -g pkg
 
 ## 二、實際範例展示
 
-以下範例的原始碼：[https://github.com/dean9703111/medium_to_airtable](https://github.com/dean9703111/medium_to_airtable)
+> 以下範例的原始碼：[https://github.com/dean9703111/medium_to_airtable](https://github.com/dean9703111/medium_to_airtable)
 
 有時你設計了一個很有趣的功能，但如果他的前置作業太麻煩，非相關領域的人沒法無腦操作時就會阻礙他的推廣；相反如果他毫無使用門檻就會很多人願意嘗試看看。
 
@@ -90,14 +90,14 @@ npm install -g pkg
 
 在上一步我們寫好 scripts 後可以用如下指令產生執行檔：
 
-- 使用 npm：`npm run build`
-- 使用 yarn：`yarn build`
+1. 使用 npm：`npm run build`
+2. 使用 yarn：`yarn build`
 
 如果沒有特別指定檔案產生的位置就會出現在資料夾的根目錄喔～
 
 ### 執行上可能遇到的問題
 
-你可以直接下載macOS的執行檔玩玩看：[https://github.com/dean9703111/medium_to_airtable/raw/master/app/medium-to-airtable](https://github.com/dean9703111/medium_to_airtable/raw/master/app/medium-to-airtable)
+> 你可以直接下載macOS的執行檔玩玩看：[https://github.com/dean9703111/medium_to_airtable/raw/master/app/medium-to-airtable](https://github.com/dean9703111/medium_to_airtable/raw/master/app/medium-to-airtable)
 
 只要用 Terminal 前往檔案資料夾的位置，輸入 `./medium-to-airtable` 即可執行，但應該會遇到如下錯誤：
 
@@ -129,7 +129,7 @@ MEDIUM_PAGE="https://medium.com/你的網頁" SHOW_BROWSER=false AIRTABLE_API_KE
 
 ```
 
-認真說這個打包工具比我想像的還要神，而且使用起來也沒什麼難度，如果手上剛好有熱騰騰的 side-project 趕快用這個套件來炫耀一波吧！
+> 認真說這個打包工具比我想像的還要神，而且使用起來也沒什麼難度，如果手上剛好有熱騰騰的 side-project 趕快用這個套件來炫耀一波吧！
 
 ---
 

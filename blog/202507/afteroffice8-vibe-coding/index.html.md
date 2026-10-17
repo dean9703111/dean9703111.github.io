@@ -7,7 +7,7 @@
 - 標籤：AI、YouTube、Vibe Coding、影片
 - 摘要：開始拍 YouTube 影片後，因為我總是記不住台詞，所以需要提詞機。但免費版廣告一堆，付費版又塞了一堆用不到的功能。既然如此，我乾脆直接用 Vibe Coding 寫一款無廣告的提詞機給大家免費使用！
 
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=tQZXzb88jmo)
+[YouTube 影片：給我 1 分鐘，帶你認識現在最夯的 Vibe Coding #ai #aicoding #vibecoding #chatgpt #cursor #githubpages](https://www.youtube.com/watch?v=tQZXzb88jmo)
 
 開始拍 YouTube 影片後，因為我總是記不住台詞，所以需要提詞機；但免費版廣告一堆，付費版又塞了一堆用不到的功能。
 
@@ -37,7 +37,7 @@
 
 不過 Vibe Coding 雖然聽起來輕鬆，但背後仍需要反覆測試，以及對錯誤訊息保持耐心。
 
-AI 是助力，不是萬能！
+> AI 是助力，不是萬能！
 
 ## 成果展示
 
@@ -56,9 +56,9 @@ AI 是助力，不是萬能！
 
 歡迎追蹤[我的 YouTube](https://www.youtube.com/@dlcorner)，帶你掌握時代趨勢！
 
-《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
+> 《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

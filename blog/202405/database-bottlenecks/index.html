@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文</title>
-  <meta name="description" content="除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）。…">
+  <meta name="description" content="除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）但隨著商…">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202405/database-bottlenecks/">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -14,15 +14,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202405/database-bottlenecks/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
   <meta property="og:title" content="當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文">
-  <meta property="og:description" content="除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）。…">
+  <meta property="og:description" content="除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）但隨著商…">
   <meta property="og:url" content="https://deanlin.net/blog/202405/database-bottlenecks/">
   <meta property="og:locale" content="zh_TW">
   <meta property="og:type" content="article">
@@ -42,8 +44,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_ccbbf47985bdbe62.jpg">
   <meta name="twitter:title" content="當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文">
-  <meta name="twitter:description" content="除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）。…">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202405/database-bottlenecks/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2024-05-25T18:47:12+08:00","datePublished":"2024-05-22T16:17:09+08:00","description":"除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）。…","headline":"當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_ccbbf47985bdbe62.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_d4cdc56a61b4bf4a.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_dfcf2958ead9bc50.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"工程師下班有約","url":"https://deanlin.net/series/after-office/"}],"keywords":"Database, Database Design, MongoDB, Redis, Database Migration","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202405/database-bottlenecks/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_ccbbf47985bdbe62.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E7%95%B6%E8%B3%87%E6%96%99%E5%BA%AB%E9%81%87%E5%88%B0%E7%93%B6%E9%A0%B8-%E4%BD%A0%E6%9C%83%E5%A6%82%E4%BD%95%E8%99%95%E7%90%86-%E4%B8%8B%E7%8F%AD%E6%9C%89%E7%B4%84%E7%B3%BB%E5%88%97%E6%96%87-d89310099473"],"thumbnailUrl":"https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_ccbbf47985bdbe62.jpg","timeRequired":"PT3M","url":"https://deanlin.net/blog/202405/database-bottlenecks/","wordCount":1383},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202405/database-bottlenecks/","name":"當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文","position":3}]}]}</script>
+  <meta name="twitter:description" content="除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）但隨著商…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202405/database-bottlenecks/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2024-05-25T18:47:12+08:00","datePublished":"2024-05-22T16:17:09+08:00","description":"除非真的撐不住了，否則我覺得應該沒幾間公司會想換資料庫。今天跟大家分享一個資料庫遇到瓶頸必須遷移的的案例。過去朋友的公司用 Redis 來紀錄每件商品每分鐘的瀏覽數、庫存等資訊，以此來呈現即時的商品統計圖表（資料只要保存 1 個月）但隨著商…","headline":"當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_ccbbf47985bdbe62.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_d4cdc56a61b4bf4a.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_dfcf2958ead9bc50.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"工程師下班有約","url":"https://deanlin.net/series/after-office/"}],"keywords":"Database, Database Design, MongoDB, Redis, Database Migration","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202405/database-bottlenecks/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_ccbbf47985bdbe62.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E7%95%B6%E8%B3%87%E6%96%99%E5%BA%AB%E9%81%87%E5%88%B0%E7%93%B6%E9%A0%B8-%E4%BD%A0%E6%9C%83%E5%A6%82%E4%BD%95%E8%99%95%E7%90%86-%E4%B8%8B%E7%8F%AD%E6%9C%89%E7%B4%84%E7%B3%BB%E5%88%97%E6%96%87-d89310099473"],"thumbnailUrl":"https://deanlin.net/blog/202405/database-bottlenecks/images/database-bottlenecks-og_hu_ccbbf47985bdbe62.jpg","timeRequired":"PT3M","url":"https://deanlin.net/blog/202405/database-bottlenecks/","wordCount":1383},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202405/database-bottlenecks/","name":"當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -113,12 +115,12 @@
         <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
         <a href="/categories/tech/">技術教學</a>
       </nav>
-      <h1 class="article-title">當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文</h1>
+      <h1 class="article-title">當資料庫遇到瓶<span class="nobr">頸，</span>你會如何處<span class="nobr">理？</span> ── 下班有約系列文</h1>
       <div class="article-meta">
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2024-05-22">2024.05.22</time>
               <span>更新於 <time datetime="2024-05-25">2024.05.25</time></span>
@@ -145,7 +147,7 @@
 <p>過去還可以用課金增加記憶體的方式來解決，但最新的需求是將資料保存的時限拉長到一年（統計圖表時間搜尋範圍）。</p>
 <p>而每天的資料量大約有 250MB，30 天還好說，變成 365 天成本就真的太可怕了。</p>
 <p>於是團隊就開始討論合適的遷移方案。</p>
-<p><img src="/blog/202405/database-bottlenecks/images/database-bottlenecks-01.webp" srcset="/blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_f6ee07087efdaf16.webp 720w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01.webp 1144w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1144" height="642" alt="當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202405/database-bottlenecks/images/database-bottlenecks-01.webp" srcset="/blog/202405/database-bottlenecks/images/database-bottlenecks-01_hu_f6ee07087efdaf16.webp 720w, /blog/202405/database-bottlenecks/images/database-bottlenecks-01.webp 1144w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1144" height="642" alt="當資料庫遇到瓶頸，你會如何處理？ ── 下班有約系列文（圖 1）" fetchpriority="high" decoding="async"></p>
 <h2 id="方案一redis-僅保留-1-個月的資料量過期的轉移到其他資料庫">方案一：Redis 僅保留 1 個月的資料量，過期的轉移到其他資料庫<a class="h-anchor" href="#%e6%96%b9%e6%a1%88%e4%b8%80redis-%e5%83%85%e4%bf%9d%e7%95%99-1-%e5%80%8b%e6%9c%88%e7%9a%84%e8%b3%87%e6%96%99%e9%87%8f%e9%81%8e%e6%9c%9f%e7%9a%84%e8%bd%89%e7%a7%bb%e5%88%b0%e5%85%b6%e4%bb%96%e8%b3%87%e6%96%99%e5%ba%ab" aria-label="這個段落的連結"></a></h2>
 <p>最初的方案是增加一個排程腳本，每天定時將快過期的資料寫到其他資料庫保存。</p>
 <p>之所以讓 Redis 保留一個月的資料量，因為系統默認顯示當前一個月的統計資料，存取次數較高。</p>
@@ -570,7 +572,7 @@ Hash: hash:timestamp (e.g., hash:1620000000)
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

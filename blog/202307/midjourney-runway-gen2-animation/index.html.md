@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/
-- 發布：2023-07-29（更新：2024-10-24）
+- 發布：2023-07-29
 - 主題：AI 實戰
 - 標籤：Midjourney、Gen 2、Runway、AI、Animation
 - 摘要：Midjourney 是一款輸入關鍵字就能產出唯美圖片的工具，而 Gen-2 可以讓靜態的圖片動起來；那如果將這兩款工具結合，是否能產生令人歎為觀止的唯美動畫？
@@ -13,7 +13,7 @@ Midjourney 是一款輸入關鍵字就能產出唯美圖片的工具，而 Gen-2
 
 ## STEP 1：用 Midjourney 產生圖片
 
-目前 [Midjourney](https://www.midjourney.com/) 需要付費才能使用，如果這是你第一次認識 Midjourney，可以參考筆者先前分享的[文章](https://deanlin.net/blog/202301/midjourney-getting-started/)；如果你沒有 Midjourney 帳戶，透過 DALLE 或是使用筆者在後面提供的圖片也可以體驗。
+> 目前 [Midjourney](https://www.midjourney.com/) 需要付費才能使用，如果這是你第一次認識 Midjourney，可以參考筆者先前分享的[文章](https://deanlin.net/blog/202301/midjourney-getting-started/)；如果你沒有 Midjourney 帳戶，透過 DALLE 或是使用筆者在後面提供的圖片也可以體驗。
 
 筆者的 Prompt 為「`**musical imitation –ar 16:9**`」
 
@@ -33,7 +33,7 @@ Midjourney 是一款輸入關鍵字就能產出唯美圖片的工具，而 Gen-2
 
 在 Gen-2 的模式下，可以使用「上傳圖片」或搭配「輸入文字」來產生影片，這邊我們採用**上傳圖片**的方案，點擊「Generate」後便會開始生成。
 
-[用文字產生影片的教學文章在這裡](https://deanlin.net/blog/202307/runway-gen2-text-to-video/)。
+> [用文字產生影片的教學文章在這裡](https://deanlin.net/blog/202307/runway-gen2-text-to-video/)。
 
   你會發現右上角的 105s 變成 101s 惹
 

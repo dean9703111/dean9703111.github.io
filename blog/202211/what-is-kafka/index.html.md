@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202211/what-is-kafka/
-- 發布：2022-11-20（更新：2023-05-05）
+- 發布：2022-11-20
 - 主題：技術教學
 - 系列：Kafka 與分散式追蹤
 - 標籤：Kafka、Big Data、Kafka Streams、Throughput、Pub Sub
@@ -26,7 +26,7 @@
 
 ```
 
-本篇文章是筆者揉合許多大神的經驗後，再用自己理解的話語表達出來，相關的資源放在最下方，有興趣的讀者可以參考看看。
+> 本篇文章是筆者揉合許多大神的經驗後，再用自己理解的話語表達出來，相關的資源放在最下方，有興趣的讀者可以參考看看。
 
 ## 一、Kafka 具體能解決哪些問題，為什麼能解決？
 
@@ -95,7 +95,7 @@ Producer1->               └── Partition0(Leader)  -> Consumer Group B
 - **批量發送**：Producer 在發送消息時，可以等消息到固定數量後再一次發送（假設網路頻寬為 10MB/s，一次傳送 10MB 的消息會比 1KB 的消息分 10,000 次傳送快很多）。
 - **批量壓縮**：有時系統的瓶頸不在 CPU 或是硬碟，而是在網路 IO；針對這個問題，我們可以在批量發送的基礎上，一次對多筆消息進行批量壓縮，以此降低 IO 負擔。
 
-Kafka 的訊息傳送是基於 TCP 協定，擁有比 HTTP 更好的效能，並且比 UDP 更加安全。
+> Kafka 的訊息傳送是基於 TCP 協定，擁有比 HTTP 更好的效能，並且比 UDP 更加安全。
 
 ## 四、Redis 也能處理 Pub/Sub，為什麼要用 Kafka？
 
@@ -103,25 +103,25 @@ Kafka 的訊息傳送是基於 TCP 協定，擁有比 HTTP 更好的效能，並
 
 老闆有個好消息要告訴大家，有兩個辦法:
 
-- **到每個座位上挨個兒告訴每個人**。什麼？張三去上廁所了？那張三就只能錯過好消息了！
-- **老闆把消息寫到黑板上，誰想知道就來看一下**。什麼？張三請假了？沒關係，我一周之後才擦掉，總會看見的！什麼？張三請假兩週？那就算了，我反正只保留一周，不然其他好消息沒地方寫了。
+1. **到每個座位上挨個兒告訴每個人**。什麼？張三去上廁所了？那張三就只能錯過好消息了！
+2. **老闆把消息寫到黑板上，誰想知道就來看一下**。什麼？張三請假了？沒關係，我一周之後才擦掉，總會看見的！什麼？張三請假兩週？那就算了，我反正只保留一周，不然其他好消息沒地方寫了。
 
 Redis 用第一種辦法，Kafka 用第二種辦法。
 
 - Redis 是記憶體資料庫，它提供的 Pub/Sub 是將消息儲存於記憶體中，如果消息不用長久保存，並且消費速度快，那 Redis 很好用。
 - Kafka 將資料儲存於硬碟上，為消息提供了持久化的服務，這樣的設定對消費者來說很好，他可以按造順序消費，也可以重新消費過去的消息（不過硬碟容量有限，還是會使用「空間 or 時間」作為淘汰策略）。
 
-Redis 也能將資料持久化，但並不是那麼的可靠。
+> Redis 也能將資料持久化，但並不是那麼的可靠。
 
 希望這篇文章的內容有讓讀者初步了解 Kafka 的應用，[下一篇文章](https://deanlin.net/blog/202211/nodejs-kafka-hands-on/)筆者會帶大家建立 Node.js 專案 ＆ Kafka 環境，透過[具體的實踐](https://deanlin.net/blog/202211/nodejs-kafka-hands-on/)來了解 Kafka 的運行邏輯。
 
 參考文件：
 
-- [再过半小时，你就能明白Kafka的工作原理了](https://zhuanlan.zhihu.com/p/68052232)
-- [Kafka KRaft模式探索](https://www.cnblogs.com/smartloli/p/16430041.html)
-- [Kafka解决了什么问题?(CSDN)](https://blog.csdn.net/liuzhenghui666666/article/details/106467057)
-- [Kafka解决了什么问题?(知乎)](https://www.zhihu.com/question/53331259)
-- [KafkaJS](https://kafka.js.org/)
+1. [再过半小时，你就能明白Kafka的工作原理了](https://zhuanlan.zhihu.com/p/68052232)
+2. [Kafka KRaft模式探索](https://www.cnblogs.com/smartloli/p/16430041.html)
+3. [Kafka解决了什么问题?(CSDN)](https://blog.csdn.net/liuzhenghui666666/article/details/106467057)
+4. [Kafka解决了什么问题?(知乎)](https://www.zhihu.com/question/53331259)
+5. [KafkaJS](https://kafka.js.org/)
 
 ---
 

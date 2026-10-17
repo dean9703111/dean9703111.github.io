@@ -2,8 +2,8 @@
 <html lang="zh-tw" class="no-js"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</title>
-  <meta name="description" content="在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：為什麼選爬蟲作為主題? 在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：爬蟲道德觀：有些網路文章道德觀崩壞…">
+  <title>selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</title>
+  <meta name="description" content="在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：爬蟲道德觀：有些網路文章道德觀崩壞，把一個好的技術變成智慧財產的盜賊、中文資源缺乏，技術過時：中文的教學文章較少，許多範例的技術到今天已經無法使用了…">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -14,15 +14,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
-  <meta property="og:title" content="【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具">
-  <meta property="og:description" content="在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：為什麼選爬蟲作為主題? 在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：爬蟲道德觀：有些網路文章道德觀崩壞…">
+  <meta property="og:title" content="selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具">
+  <meta property="og:description" content="在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：爬蟲道德觀：有些網路文章道德觀崩壞，把一個好的技術變成智慧財產的盜賊、中文資源缺乏，技術過時：中文的教學文章較少，許多範例的技術到今天已經無法使用了…">
   <meta property="og:url" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/">
   <meta property="og:locale" content="zh_TW">
   <meta property="og:type" content="article">
@@ -30,20 +32,20 @@
   <meta property="article:modified_time" content="2020-09-23T13:45:10&#43;08:00">
   <meta property="article:author" content="https://deanlin.net/about/">
   <meta property="article:section" content="技術教學">
-  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="iT 邦幫忙鐵人賽">
   <meta property="article:tag" content="Node.js">
   <meta property="article:tag" content="Crawler">
   <meta property="article:tag" content="網頁爬蟲">
   <meta property="article:tag" content="Selenium">
-  <meta property="og:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-og_hu_4f36ba988aa5f60a.jpg">
+  <meta property="og:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/cover_hu_6f8c90d25b74c841.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="675">
   <meta property="og:image:alt" content="【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-og_hu_4f36ba988aa5f60a.jpg">
-  <meta name="twitter:title" content="【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具">
-  <meta name="twitter:description" content="在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：為什麼選爬蟲作為主題? 在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：爬蟲道德觀：有些網路文章道德觀崩壞…">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-09-23T13:45:10+08:00","datePublished":"2020-09-23T13:45:10+08:00","description":"在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：為什麼選爬蟲作為主題? 在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：爬蟲道德觀：有些網路文章道德觀崩壞…","headline":"【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-og_hu_4f36ba988aa5f60a.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-og_hu_50459fbd887676f7.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-og_hu_a73a47e343ccad8a.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Node.js, Crawler, 網頁爬蟲, Selenium","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-og_hu_4f36ba988aa5f60a.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10241791"],"thumbnailUrl":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-og_hu_4f36ba988aa5f60a.jpg","timeRequired":"PT7M","url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/","wordCount":3420},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/","name":"【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具","position":3}]}]}</script>
+  <meta name="twitter:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/cover_hu_6f8c90d25b74c841.jpg">
+  <meta name="twitter:title" content="selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具">
+  <meta name="twitter:description" content="在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：爬蟲道德觀：有些網路文章道德觀崩壞，把一個好的技術變成智慧財產的盜賊、中文資源缺乏，技術過時：中文的教學文章較少，許多範例的技術到今天已經無法使用了…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-09-23T13:45:10+08:00","datePublished":"2020-09-23T13:45:10+08:00","description":"在決定以爬蟲作為主題時有朋友勸我不要寫這類有爭議的主題，但因為以下幾點我還是選了這個主題：爬蟲道德觀：有些網路文章道德觀崩壞，把一個好的技術變成智慧財產的盜賊、中文資源缺乏，技術過時：中文的教學文章較少，許多範例的技術到今天已經無法使用了…","headline":"【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/cover_hu_6f8c90d25b74c841.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/cover_hu_c3b5629331f7fa75.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/cover_hu_744ef795ebac4176.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Node.js, Crawler, 網頁爬蟲, Selenium","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/cover_hu_6f8c90d25b74c841.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10241791"],"thumbnailUrl":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/images/cover_hu_6f8c90d25b74c841.jpg","timeRequired":"PT7M","url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/","wordCount":3420},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202009/fb-ig-crawler-day-08/","name":"【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -113,12 +115,12 @@
         <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
         <a href="/categories/tech/">技術教學</a>
       </nav>
-      <h1 class="article-title">【Day8】selenium-webdriver：爬蟲起手式，帶你認識所見即所得的爬蟲工具</h1>
+      <h1 class="article-title"><span class="nobr">【D</span>ay<span class="nobr">8】</span>selenium-webdrive<span class="nobr">r：</span>爬蟲起手<span class="nobr">式，</span>帶你認識所見即所得的爬蟲工具</h1>
       <div class="article-meta">
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2020-09-23">2020.09.23</time>
               <span>閱讀約 7 分鐘</span>
@@ -127,6 +129,7 @@
         </div>
         <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>8</b>/ 30</a>
       </div>
+      <p class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg><span>這篇文章寫於 2020 年，文中的工具與版本可能已經更新，實作時請以官方文件為準。</span></p>
     </header>
 
     <div class="article-main">
@@ -149,16 +152,16 @@
 <ul>
 <li><strong>如果你是工程師</strong>
 <ol>
-<li>最直接的好處就是讓你在<code>未來職涯上有更多的選擇</code></li>
-<li>可以大量<code>訓練你對網頁架構的認知</code></li>
-<li>當你學會爬蟲時，你就能寫出相對來說<code>反爬蟲的網頁</code>了</li>
+<li>最直接的好處就是讓你在<mark>未來職涯上有更多的選擇</mark></li>
+<li>可以大量<mark>訓練你對網頁架構的認知</mark></li>
+<li>當你學會爬蟲時，你就能寫出相對來說<mark>反爬蟲的網頁</mark>了</li>
 </ol>
 </li>
 <li><strong>如果你是行銷廣告、電商小編</strong>
 <ol>
-<li>你可以透過爬蟲來<code>了解網路世界在資料這塊的邏輯</code></li>
-<li>就算你看完文章後還是無法完全掌握，但當你請工程師來撰寫爬蟲時，你能很具體地<code>說出你的需求並與工程師溝通順暢</code></li>
-<li>我認為掌握<code>分析資料能力</code>的人才最有機會做出能說服公司的策略</li>
+<li>你可以透過爬蟲來<mark>了解網路世界在資料這塊的邏輯</mark></li>
+<li>就算你看完文章後還是無法完全掌握，但當你請工程師來撰寫爬蟲時，你能很具體地<mark>說出你的需求並與工程師溝通順暢</mark></li>
+<li>我認為掌握<mark>分析資料能力</mark>的人才最有機會做出能說服公司的策略</li>
 </ol>
 </li>
 </ul>
@@ -185,12 +188,12 @@
 </li>
 <li><strong>網路資源</strong>
 <ul>
-<li>透過下關鍵字我們可以看到很多人分享爬蟲的經驗，我們把這些經驗中看起來<code>能用的套件記錄下來</code></li>
+<li>透過下關鍵字我們可以看到很多人分享爬蟲的經驗，我們把這些經驗中看起來<mark>能用的套件記錄下來</mark></li>
 </ul>
 </li>
 <li><strong>npm 套件</strong>
 <ul>
-<li>先在 <a href="https://www.npmjs.com/">npm 官網</a> 確認這些套件健康程度，<strong>太少人用或太久沒更新的就淘汰掉</strong>，接著進入<code>實際測試</code>確認是否符合專案需求，以下是我當時找到的資源並附上實測後的分析:
+<li>先在 <a href="https://www.npmjs.com/">npm 官網</a> 確認這些套件健康程度，<strong>太少人用或太久沒更新的就淘汰掉</strong>，接著進入<mark>實際測試</mark>確認是否符合專案需求，以下是我當時找到的資源並附上實測後的分析:
 <ol>
 <li><strong>request &amp; cheerio</strong>
 <ul>
@@ -202,7 +205,7 @@
 <ul>
 <li>基本上他是一個無論是什麼網頁都能夠爬蟲的工具了，我認為非常適合新手使用</li>
 <li>工具運行時會開啟一個瀏覽器，這個瀏覽器會依據撰寫的腳本來模擬人類操作的每個步驟</li>
-<li><code>所見即所得，看得到的資訊都能夠抓下來，學習起來非常容易且直覺，所以這是本專案最後選擇的工具</code></li>
+<li><mark>所見即所得，看得到的資訊都能夠抓下來，學習起來非常容易且直覺，所以這是本專案最後選擇的工具</mark></li>
 </ul>
 </li>
 <li><strong>Puppeteer</strong>
@@ -244,11 +247,11 @@
 <li>
 <p><strong>先確認自己 chrome 版本</strong>：將<code>chrome://settings/help</code>貼到你的網址列</p>
 <blockquote>
-<p><img src="/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-01.webp" srcset="/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-01_hu_ec819054c08a03de.webp 720w, /blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="537" alt="2. 使用 selenium-webdriver 套件開啟瀏覽器：openCrawlerWeb（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-01.webp" srcset="/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-01_hu_ec819054c08a03de.webp 720w, /blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="537" alt="2. 使用 selenium-webdriver 套件開啟瀏覽器：openCrawlerWeb（圖 1）" fetchpriority="high" decoding="async"></p>
 </blockquote>
 </li>
 <li>
-<p>下載<code>與你 chrome 版本相同</code>的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a></p>
+<p>下載<mark>與你 chrome 版本相同</mark>的<a href="http://chromedriver.storage.googleapis.com/index.html">chrome driver</a></p>
 <blockquote>
 <p><img src="/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-02.webp" srcset="/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-02_hu_2d34844ec1713e43.webp 720w, /blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-02.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="614" alt="2. 使用 selenium-webdriver 套件開啟瀏覽器：openCrawlerWeb（圖 2）" loading="lazy" decoding="async"></p>
 <p><img src="/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-03.webp" srcset="/blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-03_hu_9cbd2495e69a44aa.webp 720w, /blog/202009/fb-ig-crawler-day-08/images/fb-ig-crawler-day-08-03.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="335" alt="2. 使用 selenium-webdriver 套件開啟瀏覽器：openCrawlerWeb（圖 3）" loading="lazy" decoding="async"></p>
@@ -438,7 +441,8 @@ chromedriver.exe
 </ul>
 </li>
 </ul>
-<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong></p>
+<p><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
 </blockquote>
 
       </div>
@@ -447,7 +451,7 @@ chromedriver.exe
         <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.09.23），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10241791" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
         <div class="foot-row">
           <div class="post-tags">
-            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">iT 邦幫忙鐵人賽</a>
             <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
             <a class="chip chip-hash" href="/tags/crawler/">Crawler</a>
             <a class="chip chip-hash" href="/tags/%E7%B6%B2%E9%A0%81%E7%88%AC%E8%9F%B2/">網頁爬蟲</a>
@@ -621,12 +625,12 @@ chromedriver.exe
   <div class="card-grid">
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAADQBACdASoYAAUAPw1qqkgmIyIYBABjEMT2AE6ZQjADK/wIxHnrPlLWEDNOf6wWAAD7pYQPMo/K2Cq1BxZ8S8x5VcCVk7b68ye/Zg5LQviKvDGLBf/wiQL&#43;S2JId9YkklLADWcBI6v5SX&#43;TJoP/lJf5FqAAAA==" alt="" width="24" height="5"><img src="/blog/202009/fb-ig-crawler-day-01/images/fb-ig-crawler-day-01-01_hu_2a9411b5f1e96321.webp" srcset="/blog/202009/fb-ig-crawler-day-01/images/fb-ig-crawler-day-01-01_hu_bcf1b19ffcc9f5d3.webp 240w, /blog/202009/fb-ig-crawler-day-01/images/fb-ig-crawler-day-01-01_hu_dc47fba67c5bc281.webp 480w, /blog/202009/fb-ig-crawler-day-01/images/fb-ig-crawler-day-01-01_hu_c24bcadcc0e5889b.webp 800w, /blog/202009/fb-ig-crawler-day-01/images/fb-ig-crawler-day-01-01_hu_2a9411b5f1e96321.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="233" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202009/fb-ig-crawler-day-01/images/cover_hu_bc344647e55842ec.webp" srcset="/blog/202009/fb-ig-crawler-day-01/images/cover_hu_495829e533745aa.webp 240w, /blog/202009/fb-ig-crawler-day-01/images/cover_hu_b44c13e569de1625.webp 480w, /blog/202009/fb-ig-crawler-day-01/images/cover_hu_c503b03d185bc655.webp 800w, /blog/202009/fb-ig-crawler-day-01/images/cover_hu_bc344647e55842ec.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-01/">【Day1】技術只能陪你一陣子，學會解決問題才能過一輩子</a></h3>
+    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-01/"><span class="nobr">【D</span>ay<span class="nobr">1】</span>技術只能陪你一陣<span class="nobr">子，</span>學會解決問題才能過一輩子</a></h3>
     <p class="card-desc">因朋友職業需求需要搜集與公司同類型品牌FB及IG粉專的資料，用每日追蹤人數的變化及貼文數量來做數據分析，像是：</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-09-16">2020.09.16</time>
@@ -637,12 +641,12 @@ chromedriver.exe
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRo4AAABXRUJQVlA4WAoAAAAQAAAAFwAACQAAQUxQSB4AAAABH6AgbQPGenXv2oiIuAIIs432m7/wDuAEIvqfTX5WUDggSgAAAPADAJ0BKhgACgA/DWqnR6YjIZgEAGMQxPSAADWmoI4fqv/gXBffL4AA/roBrN7AE6PN0IMqkana6trVdxUw&#43;tx/4Ze/uZQ6ZaAA" alt="" width="24" height="10"><img src="/blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01_hu_b94c8641f179364a.webp" srcset="/blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01_hu_c19e95683d6842cc.webp 240w, /blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01_hu_b6240cf12f788019.webp 480w, /blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01_hu_10f4674639db11a6.webp 800w, /blog/202009/fb-ig-crawler-day-15/images/fb-ig-crawler-day-15-01_hu_b94c8641f179364a.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="422" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202009/fb-ig-crawler-day-15/images/cover_hu_5a09d529e7fae348.webp" srcset="/blog/202009/fb-ig-crawler-day-15/images/cover_hu_3a85aa377a61b811.webp 240w, /blog/202009/fb-ig-crawler-day-15/images/cover_hu_4432bc304b7890d7.webp 480w, /blog/202009/fb-ig-crawler-day-15/images/cover_hu_d214dba955959564.webp 800w, /blog/202009/fb-ig-crawler-day-15/images/cover_hu_5a09d529e7fae348.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-15/">【Day15】json x 爬蟲 = 瑣事自動化，生命應該浪費在美好的事情上</a></h3>
+    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-15/"><span class="nobr">【D</span>ay1<span class="nobr">5】</span>json x 爬蟲 = 瑣事自動<span class="nobr">化，</span>生命應該浪費在美好的事情上</a></h3>
     <p class="card-desc">專案在需求規格中有一條是在自己的電腦執行，在分析完各種檔案格式的優缺點後我決定使用json格式：</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-09-30">2020.09.30</time>
@@ -653,12 +657,12 @@ chromedriver.exe
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAACQBQCdASoYABEAPw1yp0umIyGUBqhjEMT2AEEm1/wEao1WhEUmBFlm5vL5aVeO&#43;UjL2EjmkADJXiCf1EXriovD2gU8JfHaGtDlLRUDQ24SpZZGs8&#43;GJgV3GQO2rPJ85VdOgNrJsG1NR2nShOqACAV&#43;ozfJZzkREmSWig4&#43;eLtvYFzhHYJxbkBx1gDt9dBgQ6wAAA==" alt="" width="24" height="17"><img src="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-01_hu_aa4b8db74b13b7ab.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-01_hu_3eb4288fceaec816.webp 240w, /blog/202009/fb-ig-crawler-day-09/images/fb-ig-crawler-day-09-01_hu_aa4b8db74b13b7ab.webp 300w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="300" height="212" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202009/fb-ig-crawler-day-09/images/cover_hu_be6f7cabef03fc62.webp" srcset="/blog/202009/fb-ig-crawler-day-09/images/cover_hu_a1766970aee18279.webp 240w, /blog/202009/fb-ig-crawler-day-09/images/cover_hu_ef3b6a0ac6f809e7.webp 480w, /blog/202009/fb-ig-crawler-day-09/images/cover_hu_62fa482f4708fac1.webp 800w, /blog/202009/fb-ig-crawler-day-09/images/cover_hu_be6f7cabef03fc62.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-09/">【Day9】爬蟲第一步，FB先登入</a></h3>
+    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-09/"><span class="nobr">【D</span>ay<span class="nobr">9】</span>爬蟲第一<span class="nobr">步，</span>FB先登入</a></h3>
     <p class="card-desc">一定要自己實作過一遍! 一定要自己實作過一遍! 一定要自己實作過一遍! 因為很重要所以要說三遍，前面幾篇文章比較偏向概念，但今後的文章概念實作並重；因為FB 與 IG 改版的速度極快，我現在提供的方法在他們改版後可能就會失效，所以文章的每個步驟要自己去實作才能理解為什麼這樣做，同…</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-09-24">2020.09.24</time>
@@ -793,7 +797,7 @@ chromedriver.exe
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

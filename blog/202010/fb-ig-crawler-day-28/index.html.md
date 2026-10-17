@@ -8,24 +8,25 @@
 - 標籤：iT 邦幫忙鐵人賽、LINE Notify、Line、Node.js、axios
 - 摘要：雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：
 
-成功要選人少的路走，套件要選人多的來用
+> 成功要選人少的路走，套件要選人多的來用
 
 ## 如何選擇 Node.js 中發出 Request 的套件？
 
 雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：
 
-- **古老且沒再更新的套件**：[https](https://www.npmjs.com/package/https)、[xmlhttprequest](https://www.npmjs.com/package/xmlhttprequest)、[request](https://github.com/request/request)(這個套件在今年二月宣告廢棄)
-- **使用人數眾多且持續更新的套件**：[superagent](https://www.npmjs.com/package/superagent)、[node-fetch](https://www.npmjs.com/package/node-fetch)、[got](https://www.npmjs.com/package/got)、[axios](https://www.npmjs.com/package/axios)
+1. **古老且沒再更新的套件**：[https](https://www.npmjs.com/package/https)、[xmlhttprequest](https://www.npmjs.com/package/xmlhttprequest)、[request](https://github.com/request/request)(這個套件在今年二月宣告廢棄)
+2. **使用人數眾多且持續更新的套件**：[superagent](https://www.npmjs.com/package/superagent)、[node-fetch](https://www.npmjs.com/package/node-fetch)、[got](https://www.npmjs.com/package/got)、[axios](https://www.npmjs.com/package/axios)
 
-原則上選擇`使用人數眾多且持續更新的套件最安全`，因為古老的套件通常文件不齊全且無人維護，如果某一天宣告廢棄你的專案就要大量改寫了
+原則上選擇使用人數眾多且持續更新的套件最安全，因為古老的套件通常文件不齊全且無人維護，如果某一天宣告廢棄你的專案就要大量改寫了
 
-本專案採用 `axios` 來實現這個需求，如果你有興趣你也能嘗試不同的套件來完成今天的功能
+> 本專案採用 `axios` 來實現這個需求，如果你有興趣你也能嘗試不同的套件來完成今天的功能
 
 ## 今日目標
 
 ### 1. axios 基礎介紹
 
 1.1 安裝 / GET / POST 基礎用法
+
 1.2 請求配置說明
 
 ### 2. 用 axios 發出 LINE 通知
@@ -131,7 +132,7 @@ axios.(config 物件)
 
 ```
 
-這裡只列出常用的配置選項，如果你有興趣深入研究請參考[官方文件](https://www.npmjs.com/package/axios#request-config)
+> 這裡只列出常用的配置選項，如果你有興趣深入研究請參考[官方文件](https://www.npmjs.com/package/axios#request-config)
 
 - **下面列出使用 then 時常用的回應參數**
 
@@ -196,16 +197,19 @@ lineNotify()
 
 ### 執行程式
 
-- 在專案資料夾的終端機(Terminal)執行指令
+1.
+在專案資料夾的終端機(Terminal)執行指令
 
 ```
 node tools/lineNotify.js
 
 ```
 
-- 確認印出的 HTTP狀態碼 & 回傳的資料與 POSTMAN 測試結果一致
+2.
+確認印出的 HTTP狀態碼 & 回傳的資料與 POSTMAN 測試結果一致
 
-- 如果你的 LINE 收到發出的通知就代表你成功嚕！
+3.
+如果你的 LINE 收到發出的通知就代表你成功嚕！
 
 ### ℹ️ 專案原始碼
 
@@ -230,22 +234,19 @@ node tools/lineNotify.js
 
 ### 參考資源
 
-- [由前端request 的幾種方法](https://medium.com/dot-js/%E7%94%B1%E5%89%8D%E7%AB%AFrequest-%E7%9A%84%E5%B9%BE%E7%A8%AE%E6%96%B9%E6%B3%95-fbf8a0b4023a)
-- [5 Ways to Make HTTP Requests in Node.js](https://www.twilio.com/blog/2017/08/http-requests-in-node-js.html)
-- [axios 基本使用 & Config](https://ithelp.ithome.com.tw/articles/10212120)
+1. [由前端request 的幾種方法](https://medium.com/dot-js/%E7%94%B1%E5%89%8D%E7%AB%AFrequest-%E7%9A%84%E5%B9%BE%E7%A8%AE%E6%96%B9%E6%B3%95-fbf8a0b4023a)
+2. [5 Ways to Make HTTP Requests in Node.js](https://www.twilio.com/blog/2017/08/http-requests-in-node-js.html)
+3. [axios 基本使用 & Config](https://ithelp.ithome.com.tw/articles/10212120)
 
-**在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：**
-
-- 加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項
-- 將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門
-- 調整專案架構
-
-- 優化爬蟲程式，以更廣的視角來擷取網頁資訊
-- 增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者
-- 排程部分改用 node-schedule & pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊
-
-**有興趣的朋友可以到天瓏書局選購，感謝大家的支持。**
-**購書連結**：[https://www.tenlong.com.tw/products/9789864348008](https://www.tenlong.com.tw/products/9789864348008)
+> **在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：**
+> 加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項
+> 將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門
+> 調整專案架構
+> 優化爬蟲程式，以更廣的視角來擷取網頁資訊
+> 增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者
+> 排程部分改用 node-schedule & pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊
+> **有興趣的朋友可以到天瓏書局選購，感謝大家的支持。**
+> **購書連結**：[https://www.tenlong.com.tw/products/9789864348008](https://www.tenlong.com.tw/products/9789864348008)
 
 ---
 

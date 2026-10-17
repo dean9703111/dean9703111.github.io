@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202108/covering-index-explained/
-- 發布：2021-08-20（更新：2023-05-05）
+- 發布：2021-08-20
 - 主題：技術教學
 - 標籤：Index、Database、Coverage Index、Table、覆蓋索引
 - 摘要：我們會在 Table 中建立 Index 以增加搜尋的效率，但建立 Index 的同時也會影響到資料 insert、update、delete 的效率；所以我們在建立 Index 時需要抱持謹慎的態度，這篇文章將帶大家了解 Coverage Index (覆蓋索引)的意義。
@@ -11,8 +11,8 @@
 
 ## SETP 1：建立測試用的 tmp_user Table
 
-- id 為 primary key
-- name 為 index
+1. id 為 primary key
+2. name 為 index
 
 ```
 create table tmp_user (
@@ -32,7 +32,7 @@ insert into tmp_user (name, password) values ("寶寶不說","123");
 
 ## SETP 2：下 SQL 指令了解是否使用 Index
 
-觀察最後「Extra」欄位的資訊
+> 觀察最後「Extra」欄位的資訊
 
 ➤ SQL A：
 
@@ -109,9 +109,9 @@ explain select password from tmp_user where name = '寶寶不說';
 
 ## 總結
 
-- Index 需要根據實際情境建立
-- 如果查詢會用到多個欄位，建立 Coverage Index 來優化查詢效率
-- 如果資料高達百萬筆，你的 Index 是否有效是非常重要的事情
+1. Index 需要根據實際情境建立
+2. 如果查詢會用到多個欄位，建立 Coverage Index 來優化查詢效率
+3. 如果資料高達百萬筆，你的 Index 是否有效是非常重要的事情
 
 ---
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202201/medium-total-stats/
-- 發布：2022-01-03（更新：2023-05-05）
+- 發布：2022-01-03
 - 主題：技術教學
 - 標籤：Medium Views、總瀏覽數、Stats、Statistics、Total Views
 - 摘要：我想大部分 Medium 平台的創作者，都應該非常關心自己文章的瀏覽數量；但 Medium 提給供創作者的後台並沒有統計出「總數」這塊的資訊，如果要自己土法煉鋼用計算機加總也會讓人崩潰，今天筆者就帶你們用聰明且快速的方法來取得這份資訊吧！
@@ -11,7 +11,7 @@
 
   上面的是[ DL 技術世界](https://medium.com/dean-lin) 這個 Publications 的數據喔～
 
-建議使用 Chrome 或是 Firefox 來操作下面的步驟
+> 建議使用 Chrome 或是 Firefox 來操作下面的步驟
 
 ## SETP 1/3：進入自己 Medium STATS 頁面
 
@@ -69,7 +69,7 @@ console.log({
 
   這個數據還是好可憐ＱＱ，請讀者多多拍手跟分享；讓筆者寫文章的時候能更有溫暖🙏
 
-希望今天這篇文章有幫助到 Medium 的創作者取得相關數據，讓自己更有競爭力 💪
+> 希望今天這篇文章有幫助到 Medium 的創作者取得相關數據，讓自己更有競爭力 💪
 
 參考資源：[How to get total views and reads statistics on Medium](https://www.kevinpeters.net/how-to-get-total-views-and-reads-statistics-on-medium)
 

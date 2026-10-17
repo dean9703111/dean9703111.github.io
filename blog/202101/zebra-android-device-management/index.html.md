@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202101/zebra-android-device-management/
-- 發布：2021-01-28（更新：2023-05-05）
+- 發布：2021-01-28
 - 主題：技術教學
 - 標籤：Android Device Owner、管理大量裝置、NFC、Barcode、MDM
 - 摘要：近年來無論是物流、警衛、超商店員，他們身上都配有一個平板電腦，用來協助進銷庫存盤點、巡邏地點定位；而許多知名的連鎖餐飲業者也將點餐的方式改為讓客人使用平板來選擇，這樣不但能呈現更多的菜色，也能減少許多營運上的人力成本。
@@ -42,11 +42,11 @@
 
 根據 [android 官方文件](https://developers.google.com/android/management/provision-device#provisioning_methods)所說，有以下方式可以使用：
 
-- **Sign-in URL**：我猜測 Zebra 就是在掃描 barcode 的時候會跑出一個已經設定好給某個企業使用的登入連結來做綁定
-- **QR code**：要 Android 7.0+ 以上才能使用，基本上掃描 QR code 做好註冊就可以了。
-- **NFC**：要 Android 6.0+才能使用，基本上製作好 NFC 標籤碰一下就能完成註冊。
-- **DPC identifier**：看官方文件說這個方法是在沒辦法透過 QR code、NFC 方式註冊時才使用，需要 IT 人員依照步驟操作，看起來並不是一個好方法。
-- **Zero-touch enrollment**：要Android 8.0+ (Pixel 7.1+)才能使用，顧名思義，就是機器購買時就已經安裝好這個 App 了。
+1. **Sign-in URL**：我猜測 Zebra 就是在掃描 barcode 的時候會跑出一個已經設定好給某個企業使用的登入連結來做綁定
+2. **QR code**：要 Android 7.0+ 以上才能使用，基本上掃描 QR code 做好註冊就可以了。
+3. **NFC**：要 Android 6.0+才能使用，基本上製作好 NFC 標籤碰一下就能完成註冊。
+4. **DPC identifier**：看官方文件說這個方法是在沒辦法透過 QR code、NFC 方式註冊時才使用，需要 IT 人員依照步驟操作，看起來並不是一個好方法。
+5. **Zero-touch enrollment**：要Android 8.0+ (Pixel 7.1+)才能使用，顧名思義，就是機器購買時就已經安裝好這個 App 了。
 
 ## 五、 結語
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/vue-test-utils-examples/
-- 發布：2023-01-19（更新：2023-05-05）
+- 發布：2023-01-19
 - 主題：技術教學
 - 系列：前端單元測試
 - 標籤：Vuetify、Unit Testing、Vue Test Utils、TypeScript、Example
@@ -41,7 +41,7 @@
 
 ```
 
-讀者可以直接到[筆者的 Github](https://github.com/dean9703111/-vuetify-vite-ts-test-exmaples)，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。
+> 讀者可以直接到[筆者的 Github](https://github.com/dean9703111/-vuetify-vite-ts-test-exmaples)，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。
 
 ## ㄧ、從測試的角度來設計頁面規格
 
@@ -76,7 +76,7 @@
 - 輸入錯誤的帳號密碼，會彈出警視窗
 - 確認 Router 可以順利導向
 
-上面訂的規格，就是我們後續要測試的情境。
+> 上面訂的規格，就是我們後續要測試的情境。
 
 ## 二、撰寫登入頁程式
 
@@ -170,7 +170,7 @@ const login = () => {
 
 完成後在終端機輸入 `yarn dev`，然後進入網址：[http://localhost:3000](http://localhost:3000/)
 
-我這邊有調整「src/router/index.ts」，將 Login 的 path 設定為「/」，讀者可以[參考 Github](https://github.com/dean9703111/vuetify-vite-ts-test-exmaples/blob/master/src/router/index.ts)。
+> 我這邊有調整「src/router/index.ts」，將 Login 的 path 設定為「/」，讀者可以[參考 Github](https://github.com/dean9703111/vuetify-vite-ts-test-exmaples/blob/master/src/router/index.ts)。
 
 ## 三、從測試案例了解 @vue/test-utils 常用的功能
 
@@ -203,7 +203,7 @@ beforeEach(async () => {
 
 ### 用 get 找出元素（element），並確認是有顯示在畫面上的（isVisible）
 
-find 也可以達到一樣的效果，但沒找到時並不會回傳錯誤訊息。
+> find 也可以達到一樣的效果，但沒找到時並不會回傳錯誤訊息。
 
 ```
 it("確認 Email、Password、LoginBtn 元素存在", () => {
@@ -216,7 +216,7 @@ it("確認 Email、Password、LoginBtn 元素存在", () => {
 
 ### 透過 getComponent 取出元件，並指定「input」來 setValue
 
-因為 Vuetify 的 v-text-field 是 div 層，所以需要再透過 get 往下找到 input 這個元素。
+> 因為 Vuetify 的 v-text-field 是 div 層，所以需要再透過 get 往下找到 input 這個元素。
 
 ```
 it("確認 Email 輸入框可以填資料", async () => {

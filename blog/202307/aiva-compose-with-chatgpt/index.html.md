@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202307/aiva-compose-with-chatgpt/
-- 發布：2023-07-14（更新：2024-10-24）
+- 發布：2023-07-14
 - 主題：AI 實戰
 - 系列：AIVA AI 作曲
 - 標籤：AIVA、AI、ChatGPT、Music、AI Music Generator
@@ -43,7 +43,7 @@
 
 接著我就依照 ChatGPT 的建議來做設定：
 
-大家可以看到我在「OF COMPOSITIONS」的參數填寫 5，這樣 AIVA 就可以一次生成 5 首，大量創作有更高機率獲得期待的音樂（類似手遊 10 連抽的概念）。
+> 大家可以看到我在「OF COMPOSITIONS」的參數填寫 5，這樣 AIVA 就可以一次生成 5 首，大量創作有更高機率獲得期待的音樂（類似手遊 10 連抽的概念）。
 
   在上圖看到有紅點的就是新產出但尚未聆聽的樂曲喔！
 

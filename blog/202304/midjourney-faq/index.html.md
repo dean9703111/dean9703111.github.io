@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202304/midjourney-faq/
-- 發布：2023-04-12（更新：2024-10-24）
+- 發布：2023-04-12
 - 主題：AI 實戰
 - 標籤：Midjourney、AI、Technology、Questions、Summary
 - 摘要：在這篇文章中，筆者收錄了幾個最常被問的 Midjourney 操作問題（圖片合成、排除物件、透明背景、以圖生圖），希望能給剛入門的新手一些幫助與使用指引。

@@ -28,7 +28,7 @@ n8n 是一款功能強大的自動化工具，透過視覺化的操作介面，�
 
 ```
 
-n8n 有[雲端](https://n8n.io/)與本地（local）的開源版本，基於資訊安全與使用限制，筆者強烈建立在本地（local）建立環境，[詳細的操作步驟可以參考這篇文章](https://deanlin.net/blog/202501/n8n-docker-local-setup/)。
+> n8n 有[雲端](https://n8n.io/)與本地（local）的開源版本，基於資訊安全與使用限制，筆者強烈建立在本地（local）建立環境，[詳細的操作步驟可以參考這篇文章](https://deanlin.net/blog/202501/n8n-docker-local-setup/)。
 
 ## Set Node: 設定 Workflow 共用的變數
 
@@ -38,7 +38,7 @@ Set Node 的主要功能是定義工作流中共用的變數，這樣當參數�
 
 這樣後續要使用 Google Sheet URL 時，只要讀取這個 Set Node 的資訊即可，不需要在每個 Google Sheet 的節點重新設定。
 
-**小提醒**: 在這邊設定的變數是「固定值」，如果想要設定可以更改的變數，請參考後面的「$getWorkflowStaticData」方案。
+> **小提醒**: 在這邊設定的變數是「固定值」，如果想要設定可以更改的變數，請參考後面的「$getWorkflowStaticData」方案。
 
 ## Loop Over Items Node: 執行重複任務
 
@@ -49,7 +49,7 @@ Loop Over Items Node 可以針對獲得的每一筆資料（item）執行相同�
 - **loop**: 放上你要執行的重複任務。
 - **done**: 重複任務執行完畢後，會得到的累計結果。
 
-**小提醒**: Loop 迴圈是不會自動重置的，需要搭配 If Node 進行條件判斷，才能避免資料重複處理。
+> **小提醒**: Loop 迴圈是不會自動重置的，需要搭配 If Node 進行條件判斷，才能避免資料重複處理。
 
 ## HTTP Request Node: 呼叫 API
 

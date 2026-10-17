@@ -2,7 +2,7 @@
 <html lang="zh-tw" class="no-js"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！</title>
+  <title>排程 - 用forever套件來控管排程，背景執行才是王道！</title>
   <meta name="description" content="我想很多人跟我一樣不小心順手把終端機(Terminal)給關了 (或是很乾脆地把 VScode 關了)，但視窗關閉後排程其實還在背景持續運行，下面提供一個快速的解決方案：">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/">
@@ -14,14 +14,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
-  <meta property="og:title" content="【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！">
+  <meta property="og:title" content="排程 - 用forever套件來控管排程，背景執行才是王道！">
   <meta property="og:description" content="我想很多人跟我一樣不小心順手把終端機(Terminal)給關了 (或是很乾脆地把 VScode 關了)，但視窗關閉後排程其實還在背景持續運行，下面提供一個快速的解決方案：">
   <meta property="og:url" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/">
   <meta property="og:locale" content="zh_TW">
@@ -30,20 +32,20 @@
   <meta property="article:modified_time" content="2020-10-10T10:44:44&#43;08:00">
   <meta property="article:author" content="https://deanlin.net/about/">
   <meta property="article:section" content="技術教學">
-  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
-  <meta property="article:tag" content="Forever Npm">
+  <meta property="article:tag" content="iT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="Forever npm">
   <meta property="article:tag" content="背景執行">
   <meta property="article:tag" content="控制排程">
   <meta property="article:tag" content="Node.js">
-  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-og_hu_ba086503eb4ab915.jpg">
+  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/cover_hu_ebb4f020004b0c68.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="675">
   <meta property="og:image:alt" content="【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-og_hu_ba086503eb4ab915.jpg">
-  <meta name="twitter:title" content="【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/cover_hu_ebb4f020004b0c68.jpg">
+  <meta name="twitter:title" content="排程 - 用forever套件來控管排程，背景執行才是王道！">
   <meta name="twitter:description" content="我想很多人跟我一樣不小心順手把終端機(Terminal)給關了 (或是很乾脆地把 VScode 關了)，但視窗關閉後排程其實還在背景持續運行，下面提供一個快速的解決方案：">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-10T10:44:44+08:00","datePublished":"2020-10-10T10:44:44+08:00","description":"我想很多人跟我一樣不小心順手把終端機(Terminal)給關了 (或是很乾脆地把 VScode 關了)，但視窗關閉後排程其實還在背景持續運行，下面提供一個快速的解決方案：","headline":"【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-og_hu_ba086503eb4ab915.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-og_hu_f97cee1052842b3a.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-og_hu_8d8eb96c2da930e.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Forever npm, 背景執行, 控制排程, Node.js","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-og_hu_ba086503eb4ab915.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10250083"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-og_hu_ba086503eb4ab915.jpg","timeRequired":"PT4M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/","wordCount":1855},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/","name":"【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！","position":3}]}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-10T10:44:44+08:00","datePublished":"2020-10-10T10:44:44+08:00","description":"我想很多人跟我一樣不小心順手把終端機(Terminal)給關了 (或是很乾脆地把 VScode 關了)，但視窗關閉後排程其實還在背景持續運行，下面提供一個快速的解決方案：","headline":"【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/cover_hu_ebb4f020004b0c68.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/cover_hu_9836306d28e7abfc.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/cover_hu_cc9ca216642ae70c.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Forever npm, 背景執行, 控制排程, Node.js","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/cover_hu_ebb4f020004b0c68.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10250083"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/images/cover_hu_ebb4f020004b0c68.jpg","timeRequired":"PT4M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/","wordCount":1855},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-25/","name":"【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -113,12 +115,12 @@
         <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
         <a href="/categories/tech/">技術教學</a>
       </nav>
-      <h1 class="article-title">【Day25】排程 - 用forever套件來控管排程，背景執行才是王道！</h1>
+      <h1 class="article-title"><span class="nobr">【D</span>ay2<span class="nobr">5】</span>排程 - 用forever套件來控管排<span class="nobr">程，</span>背景執行才是王<span class="nobr">道！</span></h1>
       <div class="article-meta">
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2020-10-10">2020.10.10</time>
               <span>閱讀約 4 分鐘</span>
@@ -127,6 +129,7 @@
         </div>
         <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>25</b>/ 30</a>
       </div>
+      <p class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg><span>這篇文章寫於 2020 年，文中的工具與版本可能已經更新，實作時請以官方文件為準。</span></p>
     </header>
 
     <div class="article-main">
@@ -143,11 +146,11 @@
 <h2 id="思考一下昨天的排程有什麼缺點">思考一下昨天的排程有什麼缺點<a class="h-anchor" href="#%e6%80%9d%e8%80%83%e4%b8%80%e4%b8%8b%e6%98%a8%e5%a4%a9%e7%9a%84%e6%8e%92%e7%a8%8b%e6%9c%89%e4%bb%80%e9%ba%bc%e7%bc%ba%e9%bb%9e" aria-label="這個段落的連結"></a></h2>
 <p><strong>昨天完成的排程其實有幾個缺點：</strong></p>
 <ol>
-<li>在終端機(Terminal)執行排程後你<code>必須保持開啟</code>的狀態你才知道他有沒有正確執行</li>
-<li>如果不小心把執行排程的終端機(Terminal)關掉你會很困擾，因為你關掉的是終端機不是排程，<code>你想關掉排程還要另外下幾個指令</code></li>
-<li>管理困難，<code>啟動、停止、重啟你都要在專案資料夾</code>下處理</li>
-<li>如果運行過程中程式<code>意外關閉需要手動重開</code></li>
-<li><code>在排程運行中你修改爬蟲json裡面的粉專列表是無效的</code>，實驗看看就會發現觸發爬蟲時跑的是舊版的粉專列表</li>
+<li>在終端機(Terminal)執行排程後你<mark>必須保持開啟</mark>的狀態你才知道他有沒有正確執行</li>
+<li>如果不小心把執行排程的終端機(Terminal)關掉你會很困擾，因為你關掉的是終端機不是排程，<mark>你想關掉排程還要另外下幾個指令</mark></li>
+<li>管理困難，<mark>啟動、停止、重啟你都要在專案資料夾</mark>下處理</li>
+<li>如果運行過程中程式<mark>意外關閉需要手動重開</mark></li>
+<li><mark>在排程運行中你修改爬蟲json裡面的粉專列表是無效的</mark>，實驗看看就會發現觸發爬蟲時跑的是舊版的粉專列表</li>
 </ol>
 <hr>
 <h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
@@ -158,7 +161,7 @@
 </ol>
 <hr>
 <h2 class="h-nomark" id="1-砍掉執行中的排程">1. 砍掉執行中的排程<a class="h-anchor" href="#1-%e7%a0%8d%e6%8e%89%e5%9f%b7%e8%a1%8c%e4%b8%ad%e7%9a%84%e6%8e%92%e7%a8%8b" aria-label="這個段落的連結"></a></h2>
-<p>我想很多人跟我一樣不小心順手把終端機(Terminal)給關了 (或是很乾脆地把 VScode 關了)，但<code>視窗關閉後排程其實還在背景持續運行</code>，下面提供一個快速的解決方案：</p>
+<p>我想很多人跟我一樣不小心順手把終端機(Terminal)給關了 (或是很乾脆地把 VScode 關了)，但<mark>視窗關閉後排程其實還在背景持續運行</mark>，下面提供一個快速的解決方案：</p>
 <pre tabindex="0"><code>ps aux | grep [搜尋關鍵字]
 kill [程式的PID]
 </code></pre><h3 id="ps-process-status---顯示進程狀態的指令">ps (process status) - 顯示進程狀態的指令<a class="h-anchor" href="#ps-process-status---%e9%a1%af%e7%a4%ba%e9%80%b2%e7%a8%8b%e7%8b%80%e6%85%8b%e7%9a%84%e6%8c%87%e4%bb%a4" aria-label="這個段落的連結"></a></h3>
@@ -180,7 +183,7 @@ kill [程式的PID]
 <p>找出正在運行的排程</p>
 <pre tabindex="0"><code>ps aux | grep cron.js
 </code></pre><blockquote>
-<p><img src="/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-01.webp" srcset="/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-01_hu_8cb9e151bfa792c1.webp 720w, /blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="112" alt="實際操作範例（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-01.webp" srcset="/blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-01_hu_8cb9e151bfa792c1.webp 720w, /blog/202010/fb-ig-crawler-day-25/images/fb-ig-crawler-day-25-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="112" alt="實際操作範例（圖 1）" fetchpriority="high" decoding="async"></p>
 </blockquote>
 </li>
 <li>
@@ -198,7 +201,7 @@ kill [程式的PID]
 <p>單純使用 cron 套件會讓你遇到開頭所說的各種問題，所以遇到過這個問題的高手們也寫了一個<code>讓 Node.js 程式運行永不停止的套件：forever</code>，這個套件操作極其簡單，不僅能讓排程在背景穩定執行，還能在終端機的任何位置做管理</p>
 <ul>
 <li>
-<p>首先要請你<code>全域安裝</code>這個套件，這樣才能在任何一個位置執行它</p>
+<p>首先要請你<mark>全域安裝</mark>這個套件，這樣才能在任何一個位置執行它</p>
 <pre tabindex="0"><code>[sudo] npm install forever -g
 </code></pre></li>
 <li>
@@ -218,10 +221,10 @@ kill [程式的PID]
 </code></pre><blockquote>
 <ul>
 <li>
-<p>這個指令可以<code>監控檔案的變更</code>，解決過去爬蟲json資料變更但是執行時跑舊資料的問題</p>
+<p>這個指令可以<mark>監控檔案的變更</mark>，解決過去爬蟲json資料變更但是執行時跑舊資料的問題</p>
 </li>
 <li>
-<p>要在專案資料夾下<code>新增 .foreverignore 的檔案</code>，被列入的檔案/資料夾在偵測變更時會被忽略</p>
+<p>要在專案資料夾下<mark>新增 .foreverignore 的檔案</mark>，被列入的檔案/資料夾在偵測變更時會被忽略</p>
 <h3 id="foreverignore">.foreverignore<a class="h-anchor" href="#foreverignore" aria-label="這個段落的連結"></a></h3>
 <pre tabindex="0"><code>node_modules
 .env
@@ -253,7 +256,7 @@ debug.log
 <pre tabindex="0"><code>forever restart tools/cron.js
 </code></pre><blockquote>
 <ul>
-<li>請注意如果你 <code>修改了 .env 裡面的資料，則必須要重啟才會生效</code></li>
+<li>請注意如果你 <mark>修改了 .env 裡面的資料，則必須要重啟才會生效</mark></li>
 </ul>
 </blockquote>
 </li>
@@ -263,7 +266,7 @@ debug.log
 <p>執行 forever 時你可能會遇到警告如下</p>
 <pre tabindex="0"><code>(node:30512) Warning: Accessing non-existent property &#39;padLevels&#39; of module exports inside circular dependency
 </code></pre><ul>
-<li>這個警告是因為 forever 有相依套件在 node v14 之後不再支援，<code>但這些警告不影響套件運行</code></li>
+<li>這個警告是因為 forever 有相依套件在 node v14 之後不再支援，<mark>但這些警告不影響套件運行</mark></li>
 <li>Node.js 的版本更新的非常快速，許多套件都可能在更新後不支援，<strong>所以更新版本後請切記要運行一次確保正常</strong></li>
 <li>目前 <code>Node.js 的 LTS 版本為 12.19.0，如果你使用這個穩定的版本就能避免這個問題</code></li>
 </ul>
@@ -273,7 +276,7 @@ debug.log
 <h2 class="h-nomark" id="3-在-packagejson-中加入驅動-forever-的-scripts">3. 在 package.json 中加入驅動 forever 的 scripts<a class="h-anchor" href="#3-%e5%9c%a8-packagejson-%e4%b8%ad%e5%8a%a0%e5%85%a5%e9%a9%85%e5%8b%95-forever-%e7%9a%84-scripts" aria-label="這個段落的連結"></a></h2>
 <p>將昨天 cron 的 scripts 改為 forever 的版本</p>
 <ul>
-<li>為了避免重複啟動，這個 scipts 的執行邏輯為：<code>先暫停所有運行的 forever 程式，然後再啟動程式</code></li>
+<li>為了避免重複啟動，這個 scipts 的執行邏輯為：<mark>先暫停所有運行的 forever 程式，然後再啟動程式</mark></li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#a5d6ff">&#34;forever&#34;</span><span style="color:#f85149">:</span><span style="color:#a5d6ff">&#34;forever stopall &amp;&amp; forever --minUptime=1000 --spinSleepTime=1000 -w start tools/cron.js&#34;</span>
 </span></span></code></pre></div><hr>
@@ -335,7 +338,8 @@ debug.log
 </ul>
 </li>
 </ul>
-<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong></p>
+<p><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
 </blockquote>
 
       </div>
@@ -344,8 +348,8 @@ debug.log
         <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.10.10），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10250083" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
         <div class="foot-row">
           <div class="post-tags">
-            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
-            <a class="chip chip-hash" href="/tags/forever-npm/">Forever Npm</a>
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">iT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/forever-npm/">Forever npm</a>
             <a class="chip chip-hash" href="/tags/%E8%83%8C%E6%99%AF%E5%9F%B7%E8%A1%8C/">背景執行</a>
             <a class="chip chip-hash" href="/tags/%E6%8E%A7%E5%88%B6%E6%8E%92%E7%A8%8B/">控制排程</a>
             <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
@@ -518,12 +522,12 @@ debug.log
   <div class="card-grid">
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRoIAAABXRUJQVlA4WAoAAAAQAAAAFwAAAQAAQUxQSBwAAAABHyAUQGMsrUQyKiLiBGIaYpNM/1I&#43;GSL6n9gAVlA4IEAAAACwAwCdASoYAAIAPw1srUkmIyIYBABjEMTyAFR6E54sX7q371tJAAD&#43;ud2s336cLo8VV4Pyj8hR85dquBfFmYAA" alt="" width="24" height="2"><img src="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp" srcset="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_76e2413246fac6d2.webp 240w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_d635d6ed8622900a.webp 480w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_5f9e74b22b8e0483.webp 800w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="70" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-28/images/cover_hu_49ccc0aee4ccb399.webp" srcset="/blog/202010/fb-ig-crawler-day-28/images/cover_hu_95bae80656c125ce.webp 240w, /blog/202010/fb-ig-crawler-day-28/images/cover_hu_8d8dd934fef70ed5.webp 480w, /blog/202010/fb-ig-crawler-day-28/images/cover_hu_68fef8e27186a100.webp 800w, /blog/202010/fb-ig-crawler-day-28/images/cover_hu_49ccc0aee4ccb399.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-28/">【Day28】為爬蟲加上通知 - 用 axios 發出 LINE 通知</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-28/"><span class="nobr">【D</span>ay2<span class="nobr">8】</span>為爬蟲加上通知 - 用 axios 發出 LINE 通知</a></h3>
     <p class="card-desc">雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-13">2020.10.13</time>
@@ -534,12 +538,12 @@ debug.log
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAwCdASoYAAgAPw1qqEgmIyIYBABjEMT0gAAzJ2saN4rJoO7aklgAAP7nRTeRvDXMGLYdurH0ED2A&#43;ytOVyWchKk&#43;qEAA" alt="" width="24" height="8"><img src="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_beb305e19e69cce0.webp" srcset="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_8adc63c2f8014883.webp 240w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_38e303ebf5808d1d.webp 480w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_9356f4c793d26fc.webp 800w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_beb305e19e69cce0.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="351" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-20/images/cover_hu_fc0c701e75fdfe66.webp" srcset="/blog/202010/fb-ig-crawler-day-20/images/cover_hu_743fb29e463e131a.webp 240w, /blog/202010/fb-ig-crawler-day-20/images/cover_hu_8a86e668a60d85ee.webp 480w, /blog/202010/fb-ig-crawler-day-20/images/cover_hu_7439da9d098ad5c5.webp 800w, /blog/202010/fb-ig-crawler-day-20/images/cover_hu_fc0c701e75fdfe66.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-20/">【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-20/"><span class="nobr">【D</span>ay2<span class="nobr">0】</span>Google Sheets - 寫入爬蟲資<span class="nobr">料，</span>跟 Copy &amp; Paste 的日子說掰掰</a></h3>
     <p class="card-desc">1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-05">2020.10.05</time>
@@ -550,12 +554,12 @@ debug.log
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAAAwBACdASoYAAsAPw1sqUimIyIYBABjEMTygAAzKxdDNQghpLZMBQ&#43;RvEAA/rIoevpD14MoFgpH&#43;Tr1yJqgokNDN1/J9C27j97XZ6RJqTn/PYyf/nH9wZU8QP2fs00Uw/KC4d3r4spazyS&#43;DXAiSPRFrjOQgAAA" alt="" width="24" height="11"><img src="/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-01_hu_6c748ebbbd85176c.webp" srcset="/blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-01_hu_226573917dd269eb.webp 240w, /blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-01_hu_a6a8957829303963.webp 480w, /blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-01_hu_dbc5ed6b3ad1e4c0.webp 800w, /blog/202010/fb-ig-crawler-day-19/images/fb-ig-crawler-day-19-01_hu_6c748ebbbd85176c.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="474" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-19/images/cover_hu_7466362d0b37f4bb.webp" srcset="/blog/202010/fb-ig-crawler-day-19/images/cover_hu_f33ad4ebda922f13.webp 240w, /blog/202010/fb-ig-crawler-day-19/images/cover_hu_915fdbe4b822ae45.webp 480w, /blog/202010/fb-ig-crawler-day-19/images/cover_hu_afb7961b55fd7311.webp 800w, /blog/202010/fb-ig-crawler-day-19/images/cover_hu_7466362d0b37f4bb.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-19/">【Day19】Google Sheets - 你在文件迷路了嗎？用兩個處理Sheet的範例帶你攻略官方文件</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-19/"><span class="nobr">【D</span>ay1<span class="nobr">9】</span>Google Sheets - 你在文件迷路了<span class="nobr">嗎？</span>用兩個處理Sheet的範例帶你攻略官方文件</a></h3>
     <p class="card-desc">接下來幾天的目標是將之前的爬蟲資料放入 Google Sheets，實踐上會分成幾個步驟：</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-04">2020.10.04</time>
@@ -690,7 +694,7 @@ debug.log
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

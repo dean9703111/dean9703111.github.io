@@ -2,14 +2,14 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/midjourney-settings/
-- 發布：2023-01-21（更新：2024-10-24）
+- 發布：2023-01-21
 - 主題：AI 實戰
 - 標籤：Midjourney、Settings、Midjourney Settings、AI、AI Painting
 - 摘要：這篇文章筆者將會舉出實際案例，讓你知道 Midjourney 的 Settings 裡面有哪些參數，以及他們會對產出的圖造成什麼影響。
 
 這篇文章筆者將會舉出實際案例，讓你知道 Midjourney 的 Settings 裡面有哪些參數，以及他們會對產出的圖造成什麼影響。
 
-尚未接觸過 Midjourney 的朋友，可以先閱讀上一篇文章：「[如何使用 Midjourney，讓 AI 產生絕美圖片](https://deanlin.net/blog/202301/midjourney-getting-started/)」
+> 尚未接觸過 Midjourney 的朋友，可以先閱讀上一篇文章：「[如何使用 Midjourney，讓 AI 產生絕美圖片](https://deanlin.net/blog/202301/midjourney-getting-started/)」
 
 ```
 大綱
@@ -29,7 +29,7 @@
 
 在下方的訊息輸入「/settings」，就會顯示我們可以調整的參數，以及現在的設定；在設定完成後，接下來產生的圖片都會比照先前的設定。
 
-如果你看上去覺得眼花撩亂實屬正常，後續將說明幾個會影響產圖的設定。
+> 如果你看上去覺得眼花撩亂實屬正常，後續將說明幾個會影響產圖的設定。
 
 ## MJ version 1、2、3、4、Niji Mode … 版本間的差異
 
@@ -59,7 +59,7 @@ Style low 所產出的圖片風格相對一致，而 Style high 的變化度更�
 
 在 Public mode 所產生的圖都是公開的，而 Private mode 的圖則是只有你自己才看得到的。
 
-不過選擇 Private mode 會需要額外付費，如果你真的在創造一些超秘密的圖片，就可以考慮一下。
+> 不過選擇 Private mode 會需要額外付費，如果你真的在創造一些超秘密的圖片，就可以考慮一下。
 
 ## Fast mode、Relax mode 的差異
 
@@ -78,7 +78,7 @@ Fast 就是不用排隊，下完 prompt 後就會開始產圖；而 Relax 則需
 
 預設產出正方形的圖片，如果想改成長方形，你可以在結尾增加「 — ar 3:2」或「 — ar 2:3」。
 
-目前 MJ version 4支援 2:1 以內的長寬比例，常用的比例有： 「16:9、9:16、 2:1、1:2、3:2、2:3」
+> 目前 MJ version 4支援 2:1 以內的長寬比例，常用的比例有： 「16:9、9:16、 2:1、1:2、3:2、2:3」
 
 這邊就舉一個有多個 suffix（後綴詞）的範例吧：「In the dark wine cellar, a ring imbued with magic is placed on top of an ancient and thick book, with a beam of moonlight shining upon it. — ar 3:2 — s 750 — q 0.5」
 
@@ -90,7 +90,7 @@ Fast 就是不用排隊，下完 prompt 後就會開始產圖；而 Relax 則需
 
 筆者對右下的圖片最為滿意，就讓他來擔任這篇文章的封面圖吧（雖然跟標題關聯性不大XD）
 
-對於 Midjourney 的各項設定，筆者也還在持續實驗與學習中，如果有任何錯誤，還請讀者不吝指教，讓彼此共同成長。
+> 對於 Midjourney 的各項設定，筆者也還在持續實驗與學習中，如果有任何錯誤，還請讀者不吝指教，讓彼此共同成長。
 
 未來筆者會出一系列使用 ChatGPT、openAI 的文章，大家敬請期待！
 

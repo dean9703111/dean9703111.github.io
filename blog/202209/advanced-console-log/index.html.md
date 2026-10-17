@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202209/advanced-console-log/
-- 發布：2022-09-09（更新：2023-05-05）
+- 發布：2022-09-09
 - 主題：技術教學
 - 標籤：Console Log、Console、Console Time、Front End Development、JavaScript Development
 - 摘要：相信 console.log 是 Frontend 開發人員的好朋友，我們用它印出各種輔助資訊來解決問題。這邊文章會跟你分享 6 種 console.log 的進階應用，並說明各自的使用情境，讓你在開發路上更加順利。
@@ -11,7 +11,7 @@
 
 這邊文章會跟你分享 6 種 console.log 的進階應用，並說明各自的使用情境，讓你在開發的路上更加順利。
 
-大家可以在瀏覽器按下「F12」，於 Console 的分頁貼上文中的程式碼來驗證喔！
+> 大家可以在瀏覽器按下「F12」，於 Console 的分頁貼上文中的程式碼來驗證喔！
 
 ```
 大鋼
@@ -206,7 +206,7 @@ console.table(users);
 
 在上圖中，我們可以看到如果想要知道個別 user 的詳細資訊，需要自己手動展開 object，不過如果我們將最後的 `console.log(users);` 改寫成 `console.table(users);`，資料就會像下圖一樣變成表格很好閱讀嚕！
 
-希望這篇文章對 Frontend 開發人員有所幫助，透過 console.log 的靈活使用，資料就會更清晰、準確地呈現！
+> 希望這篇文章對 Frontend 開發人員有所幫助，透過 console.log 的靈活使用，資料就會更清晰、準確地呈現！
 
 參考資源：[It’s 2022, Please Don’t Just Use “console.log” Anymore](https://javascript.plainenglish.io/its-2022-please-don-t-just-use-console-log-anymore-217638337c7d)
 

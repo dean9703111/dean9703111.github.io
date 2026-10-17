@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202211/trace-kafka-with-jaeger/
-- 發布：2022-11-23（更新：2023-05-05）
+- 發布：2022-11-23
 - 主題：技術教學
 - 系列：Kafka 與分散式追蹤
 - 標籤：Jaeger、OpenTelemetry、Kafka、Node.js、Propagator
@@ -12,7 +12,7 @@
 
 而且會用到 Kafka 的系統，大多以微服務（Microservices）為主；若沒有搭配合適的追蹤系統，我們很難排查 Consumer 收到消息後發生的錯誤。
 
-這篇文章以實作和邏輯講解為主，如果想了解 Jaeger 這個分布式追蹤系統，請參考[連結](https://deanlin.net/blog/202211/distributed-tracing-jaeger-opentelemetry/)；想了解 Kafka 這個分布式消息串流平台，請參考[連結1](https://deanlin.net/blog/202211/what-is-kafka/)、[連結2](https://deanlin.net/blog/202211/nodejs-kafka-hands-on/)
+> 這篇文章以實作和邏輯講解為主，如果想了解 Jaeger 這個分布式追蹤系統，請參考[連結](https://deanlin.net/blog/202211/distributed-tracing-jaeger-opentelemetry/)；想了解 Kafka 這個分布式消息串流平台，請參考[連結1](https://deanlin.net/blog/202211/what-is-kafka/)、[連結2](https://deanlin.net/blog/202211/nodejs-kafka-hands-on/)
 
 建議讀者直接到[筆者的 Github](https://github.com/dean9703111/kafka-jaeger-demo) Clone 一份下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。
 
@@ -36,7 +36,7 @@
 
 透過上面的套件可以自動產生追蹤紀錄，但有時我們只需要追蹤特定路徑，而使用上面的套件會產生許多不需要的資訊，還容易產生效能瓶頸。
 
-比如使用「instrumentation-http」這款套件時，它會把所有 http 相關的操作都記錄下來，但我們實際上只關心其中的幾個路徑。
+> 比如使用「instrumentation-http」這款套件時，它會把所有 http 相關的操作都記錄下來，但我們實際上只關心其中的幾個路徑。
 
 因此在某些情況下，自定義追蹤的 Parent & Child 關聯是有必要的；下面筆者擷取關鍵的程式碼來做說明：
 
@@ -88,7 +88,7 @@ span.end()
 - 呼叫相關服務產出報表，如果其中一個服務發生錯誤，就將 Status 設定為「fail」。
 - 如果報表順利產出，就將 Status 設定為「done」。
 
-對 Status 的任何變動，都會透過 Producer 將資訊傳遞到 **reports/{id} **這個 Topic，讓前端監聽的的 Consumer 可以作出對應的變動。
+> 對 Status 的任何變動，都會透過 Producer 將資訊傳遞到 **reports/{id} **這個 Topic，讓前端監聽的的 Consumer 可以作出對應的變動。
 
 上面是比較完整的業務邏輯，建議讀者可以自行實做看看，下面筆者就單純示範透過 Kafka 傳遞 carrier 資訊的部分：
 
@@ -383,7 +383,7 @@ signalTraps.forEach(type => {
 
 ## 四、啟動專案，透過 Jaeger UI 確認 Trace 路徑是否符合預期
 
-建議使用有分頁功能的終端機（如 iTerm2），這樣比較好觀察與操作。
+> 建議使用有分頁功能的終端機（如 iTerm2），這樣比較好觀察與操作。
 
 **STEP 1**：在專案根目錄下輸入 `node service.js` 啟動 Service。
 
@@ -399,7 +399,7 @@ signalTraps.forEach(type => {
 
   我們可以看到 trace 中每個 span 執行的狀況（這邊能看到錯誤是出現在 dowork5 的 span 上）
 
-範例到這裡告一段落，希望文中 Jaeger 與 Kafka 的組合應用，有幫讀者打開不一樣的思路。
+> 範例到這裡告一段落，希望文中 Jaeger 與 Kafka 的組合應用，有幫讀者打開不一樣的思路。
 
 ---
 

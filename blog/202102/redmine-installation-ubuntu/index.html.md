@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202102/redmine-installation-ubuntu/
-- 發布：2021-02-18（更新：2023-05-05）
+- 發布：2021-02-18
 - 主題：團隊合作
 - 系列：Redmine 專案管理
 - 標籤：Redmine、Project Management Tool、安裝教學、Ubuntu Server、專案管理
@@ -44,11 +44,11 @@
 
 ## 二、安裝順序
 
-操作時請注意角色權限(root、redmine)，否則安裝到一半會卡住
+> 操作時請注意角色權限(root、redmine)，否則安裝到一半會卡住
 
 ## STEP 1：安裝 MySQL
 
-角色： root
+> 角色： root
 
 ```
 1. 安裝 MySQL 套件
@@ -68,7 +68,7 @@
 
 ## STEP 2：建立 Redmine 使用者帳號
 
-角色： root
+> 角色： root
 
 ```
 1. 建立 Redmine 使用者，資料放在 `/data/redmine`
@@ -105,7 +105,7 @@
 
 ## STEP 3：安裝 RVM
 
-角色： redmine
+> 角色： redmine
 
 ```
 1. 安裝gnupg2
@@ -137,7 +137,7 @@
 
 ## STEP 4：安裝 Ruby
 
-角色： redmine
+> 角色： redmine
 
 作者的 **RUBY_VERSION 為 2.3.8**，這裡安裝的版本請[參考 Redmine 的官方建議](https://www.redmine.org/projects/redmine/wiki/redmineinstall#Ruby-interpreter)，如果安裝其他的版本後續安裝 Redmine 時會發生錯誤
 
@@ -167,7 +167,7 @@
 
 ## STEP 5：安裝 Passenger and Nginx
 
-角色： root
+> 角色： root
 
 ```
 1. 安裝 Passenger PGP key 和 HTTPS support for package manager
@@ -198,7 +198,7 @@
 
 ## STEP 6：設定 Nginx
 
-角色： root
+> 角色： root
 
 ```
 1. 編輯 Nginx 設定檔案
@@ -246,15 +246,15 @@
 
 完成上述步驟後再做以下驗證：
 
-- 更改目錄權限： `chown -R www-data /var/www`
-- 重啟 Nginx： `systemctl restart nginx`
-- 驗證 Passenger and NGINX: `/usr/bin/passenger-config validate-install`
+1. 更改目錄權限： `chown -R www-data /var/www`
+2. 重啟 Nginx： `systemctl restart nginx`
+3. 驗證 Passenger and NGINX: `/usr/bin/passenger-config validate-install`
 
 4. 檢查 Ngninx 狀態與 Passenger process: `/usr/sbin/passenger-memory-stats`
 
 ## STEP 7：在 MySQL 增加 redmine 的使用者
 
-角色： root
+> 角色： root
 
 ```
 
@@ -289,7 +289,7 @@
 
 ## STEP 8：安裝 Redmine
 
-角色： redmine
+> 角色： redmine
 
 ### 下載官方 image
 
@@ -402,7 +402,7 @@
 
 ## STEP 9：安裝 Redmine 外掛
 
-角色： redmine
+> 角色： redmine
 
 Plugin 安裝方式雷同，下面以 `Redmine Dashboard 2`為範例安裝
 
@@ -448,7 +448,7 @@ Plugin 安裝方式雷同，下面以 `Redmine Dashboard 2`為範例安裝
 
 ## STEP 10：設定 Redmine 寄信功能
 
-角色： redmine
+> 角色： redmine
 
 如果沒做這個步驟是寄不出信的，需要做下面的調整即可
 
@@ -495,8 +495,8 @@ Plugin 安裝方式雷同，下面以 `Redmine Dashboard 2`為範例安裝
 
 ## 三、備註
 
-- 如果進入網頁時畫面沒有顯示應該是因為防火牆問題，可以用下面指令嘗試：`sudo ufw allow http` 、`sudo ufw allow https`
-- 參考資源：[Redmine 安裝篇：Redmine 4.0.x on Ubuntu 16.04](https://rickhw.github.io/2019/05/11/Redmine/Install-Redmine40x-on-Ubuntu1604/)、[Redmine Plugins and Themes](https://rickhw.github.io/2017/03/18/Redmine/Redmine-Plugins/)、[HowTo Install Redmine on Ubuntu step by step](https://www.redmine.org/projects/redmine/wiki/HowTo_Install_Redmine_on_Ubuntu_step_by_step)
+1. 如果進入網頁時畫面沒有顯示應該是因為防火牆問題，可以用下面指令嘗試：`sudo ufw allow http` 、`sudo ufw allow https`
+2. 參考資源：[Redmine 安裝篇：Redmine 4.0.x on Ubuntu 16.04](https://rickhw.github.io/2019/05/11/Redmine/Install-Redmine40x-on-Ubuntu1604/)、[Redmine Plugins and Themes](https://rickhw.github.io/2017/03/18/Redmine/Redmine-Plugins/)、[HowTo Install Redmine on Ubuntu step by step](https://www.redmine.org/projects/redmine/wiki/HowTo_Install_Redmine_on_Ubuntu_step_by_step)
 
 ```
 安裝完後如果想進一步了解如何使用 Redmine，可以參考以下文章：

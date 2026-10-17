@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202201/sql-left-join-last-record/
-- 發布：2022-01-12（更新：2023-05-05）
+- 發布：2022-01-12
 - 主題：技術教學
 - 標籤：SQL、LEFT JOIN、Last Record、Right Table、Solutions
 - 摘要：最近工作時剛好遇到了一個需求：「需要取得每位使用者最後的工作記錄。」使用者是一張 table，工作記錄又是ㄧ張 table；原本以為這個簡單的需求用個 leftJoin 就能瞬間搞定，結果卻搞了自己快一個晚上…因此決定把解決方案放上來，給有遇到相同問題朋友們。
@@ -107,7 +107,7 @@ ORDER BY users.id
 
   使用[SQL fiddle](http://sqlfiddle.com/) 線上編譯的結果
 
-**特別提醒**：上述方案在同個 user 的 user_logs 有[年月日時分秒]完全相同的「updated_at」時，會跳出複數筆資料；但此情境在正常環境中不會發生，若想避免此狀況，可以使用 distinct 函式來將 user 過濾。
+> **特別提醒**：上述方案在同個 user 的 user_logs 有[年月日時分秒]完全相同的「updated_at」時，會跳出複數筆資料；但此情境在正常環境中不會發生，若想避免此狀況，可以使用 distinct 函式來將 user 過濾。
 
 ## 四、撰寫找出 right table「最後 updated_at」的 SQL
 
@@ -147,7 +147,7 @@ $users = DB::table('users')
 
 原始碼：[last_record_method4.php](https://gist.github.com/dean9703111/c3f98ae4141dd457ae25e9c2feeaf0d3)（GitHub Gist）
 
-希望今天這篇文章有幫助讀者解決工作或是專案上的需求喔～
+> 希望今天這篇文章有幫助讀者解決工作或是專案上的需求喔～
 
 ---
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/laravel-experience-notes/
-- 發布：2020-06-17（更新：2023-05-05）
+- 發布：2020-06-17
 - 主題：技術教學
 - 標籤：Laravel、PHP Developers、Laravel Framework、Laravel Issue、Laravel Expert
 - 摘要：希望這篇文章可以幫助你快速通過我在開發Laravel時所遇到的各種坑(如果有遇到新的我會持續更新)

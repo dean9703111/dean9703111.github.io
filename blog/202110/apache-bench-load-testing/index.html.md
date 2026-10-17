@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202110/apache-bench-load-testing/
-- 發布：2021-10-27（更新：2023-05-05）
+- 發布：2021-10-27
 - 主題：技術教學
 - 標籤：Apache Bench、壓力測試、macOS、實用指令、重要參數
 - 摘要：最近在測試 K8s 在大流量時 pod 的 auto scaling 機制，使用的工具是 Mac 本身內建 Apache Bench，這篇文章就來介紹它的基礎使用方式。
@@ -29,7 +29,7 @@ ab -n 10 -c 2 https://www.google.com/
 
 需要特別注意的是 request 數量不得低於連線數，否則會直接噴如下的錯誤：
 
-通常來說，requests 數量會是連線數量的 100 倍。
+> 通常來說，requests 數量會是連線數量的 100 倍。
 
 ## 二、理解重要回傳資訊
 

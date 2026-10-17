@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202108/nodejs-mongodb-atlas/
-- 發布：2021-08-26（更新：2023-05-05）
+- 發布：2021-08-26
 - 主題：技術教學
 - 標籤：MongoDB、MongoDB Tutorial、Node.js
 - 摘要：你知道有免費的 Cloud MongoDB 資源可以使用嗎？雖然跟著官方教學走就能順利使用，但有些小細節我還是補充一下避免新手擔心，希望大家可以無障礙的使用這些資源～
@@ -34,7 +34,7 @@
 
 **SETP 2**：建立組織(Organization)
 
-左下角的「Get Started」是官方教學，但如果在這個階段「Build your first cluster」會失敗 QQ，所以建議按照文章操作順序比較穩定
+> 左下角的「Get Started」是官方教學，但如果在這個階段「Build your first cluster」會失敗 QQ，所以建議按照文章操作順序比較穩定
 
 點擊「Create an Organization」
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/
-- 發布：2022-01-21（更新：2023-05-05）
+- 發布：2022-01-21
 - 主題：技術教學
 - 標籤：Node.js、Docker、Kubernetes、教學範例
 - 摘要：公司很早就導入了 Kubernetes（K8s），主要是為了自動化部署以及管理、監測多台機器上的 Container，在遇到高併發情境時可以自動擴展。過去我都是以輔助者的角色跟 DevOps 說我希望有哪些功能，所以便藉著寫這篇文章的機會來初探這個已經成為業界潮流的技術。
@@ -36,7 +36,7 @@
 
 ```
 
-本篇文章是在 Mac 的作業系統下操作的
+> 本篇文章是在 Mac 的作業系統下操作的
 
 ## 一、安裝 Docker、kubectl、minikube 等工具
 
@@ -78,7 +78,7 @@ minikube ip
 
 ## 二、建立 Node.js Web App
 
-你也可以直接去[筆者的 github](https://github.com/dean9703111/nodejs-docker-k8s-auto-scaling-example)，直接將專案 Clone 到本機來做測試。
+> 你也可以直接去[筆者的 github](https://github.com/dean9703111/nodejs-docker-k8s-auto-scaling-example)，直接將專案 Clone 到本機來做測試。
 
 ### 建立「package.json」
 
@@ -318,9 +318,9 @@ minikube delete
 
 ```
 
-以上就是 Node.js X Docker X Kubernetes 超簡單範例啦！希望讀者可以透過這篇文章對這些技術有基礎認識～
+> 以上就是 Node.js X Docker X Kubernetes 超簡單範例啦！希望讀者可以透過這篇文章對這些技術有基礎認識～
 
-如果想更近一步了解 K8s Auto Scaling 的技術，歡迎閱讀筆者寫的這篇文章：「[模擬 K8s Auto Scaling（可在 Local 端測試）](https://deanlin.net/blog/202201/kubernetes-autoscaling-local/)」
+> 如果想更近一步了解 K8s Auto Scaling 的技術，歡迎閱讀筆者寫的這篇文章：「[模擬 K8s Auto Scaling（可在 Local 端測試）](https://deanlin.net/blog/202201/kubernetes-autoscaling-local/)」
 
 ---
 

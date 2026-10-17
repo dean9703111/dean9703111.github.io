@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202406/warp-ai-terminal/
-- 發布：2024-06-19（更新：2024-10-24）
+- 發布：2024-06-19
 - 主題：AI 實戰
 - 標籤：Warp、AI、AI Coding Assistant、Terminal、Commands
 - 摘要：Warp AI 將顛覆你使用終端機（Terminal）體驗，過去我們忘記指令要去 Google，但現在有了 Warp AI，這些問題在 Terminal 就能搞定。 不管是 git、docker 指令，還是想要寫一小段 Shell Script，Warp AI 都能助你一臂之力

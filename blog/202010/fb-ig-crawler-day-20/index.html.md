@@ -8,62 +8,68 @@
 - 標籤：iT 邦幫忙鐵人賽、Google Sheets、Node.js、爬蟲、Google Sheet API
 - 摘要：1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例
 
-爬蟲是一個技術，他將網頁的數據收集下來
-Google Sheets 是一個容器，他可以儲存資料並將資料以不同面向做展示
-`爬蟲 Ｘ Google Sheets ＝ 你要學習的技術整合`
+> 爬蟲是一個技術，他將網頁的數據收集下來
+> Google Sheets 是一個容器，他可以儲存資料並將資料以不同面向做展示
+> 爬蟲 Ｘ Google Sheets ＝ 你要學習的技術整合
 
 ## 今日目標
 
 ### 1. 改寫`crawlerIG、crawler`這兩隻函式，讓他們依照我們想要格式回傳爬蟲資料
 
 1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題
+
 1.2 組合回傳的資訊：以 `crawlerFB` 為範例
 
 ### 2. 以主程式當橋樑，將爬蟲資料傳遞到`updateGoogleSheets`
 
 2.1 用`主程式`傳遞爬蟲資料
+
 2.2 改寫 `updateGoogleSheets` 函式來接收並處理爬蟲資料
 
 ### 3. 將 FB、IG粉專爬蟲資料寫入各自的 Sheet
 
 3.1 分析寫入 Google Sheets 的步驟：`writeSheet`
+
 3.2 在官方文件尋找 **寫入Sheet** 的範例
+
 3.3 第一欄寫入 title(粉專名稱)：`writeTitle`
+
 3.4 取得 Sheet 最後一欄的空白欄位：`getLastCol`
+
 3.5 將 trace(追蹤人數)資訊寫入最後一欄：`writeTrace`
 
 ## 1. 改寫`crawlerIG、crawler`這兩隻函式，讓他們依照我們想要格式回傳爬蟲資料
 
-過去我們只將 FB粉專、IG粉專的資訊用 console.log 輸出，現在我們要把這些資料有結構的存入 json 物件方便後續使用
+> 過去我們只將 FB粉專、IG粉專的資訊用 console.log 輸出，現在我們要把這些資料有結構的存入 json 物件方便後續使用
 
 ### 1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題
 
 - **Google Sheets 呈現的資料**：
 
-- 粉專名稱
-- 追蹤人數
-- 追蹤日期
+1. 粉專名稱
+2. 追蹤人數
+3. 追蹤日期
 
 - **可能會遇到的問題**：
 
-- 重複名稱的粉專
+1. 重複名稱的粉專
 
-- 解決方案：粉專名稱有可能重名，但是`粉專網址是唯一值`，所以使用`粉專名稱+粉專網址作為key`就能解決這個問題，同時也方便使用者可以點擊連結直接前往粉專
+2. 解決方案：粉專名稱有可能重名，但是粉專網址是唯一值，所以使用`粉專名稱+粉專網址作為key`就能解決這個問題，同時也方便使用者可以點擊連結直接前往粉專
 
 - **總結**：
 
-- 因為追蹤的 FB、IG粉專數量很多，所以 **crawlerFB、crawlerIG** 這兩個函式回傳的最外層用陣列(array)包起來
-- 根據 Google Sheets 所需的資料，每個粉專的物件(object)需要有以下內容：
+1. 因為追蹤的 FB、IG粉專數量很多，所以 **crawlerFB、crawlerIG** 這兩個函式回傳的最外層用陣列(array)包起來
+2. 根據 Google Sheets 所需的資料，每個粉專的物件(object)需要有以下內容：
 
-- 粉專名稱(title)
-- 粉專網址(url)
-- 追蹤人數(trace)
+3. 粉專名稱(title)
+4. 粉專網址(url)
+5. 追蹤人數(trace)
 
 ### 1.2 組合回傳的資訊：以 `crawlerFB` 為範例
 
-- 在 try-catch 的後面加上 finally，在 finally 階段才把粉專物件存入 result_array 是因為`無論這個粉專爬蟲成功或是失敗我們都要記錄他的數據`
+- 在 try-catch 的後面加上 finally，在 finally 階段才把粉專物件存入 result_array 是因為無論這個粉專爬蟲成功或是失敗我們都要記錄他的數據
 
-finally 代表在 try-catch 結束後會執行的任務，忘記的可以回到[Day14 try-catch-finally 基礎語法說明](https://ithelp.ithome.com.tw/day14/README.md)複習喔
+> finally 代表在 try-catch 結束後會執行的任務，忘記的可以回到[Day14 try-catch-finally 基礎語法說明](https://ithelp.ithome.com.tw/day14/README.md)複習喔
 
 - 在 FB粉專爬蟲完成後，回傳儲存所有粉專資訊的 result_array 讓主程式做資料串接
 
@@ -160,9 +166,9 @@ async function updateGoogleSheets (ig_result_array, fb_result_array) {
 
 **我們先將想要完成的功能羅列出來，再一個個去實現：**
 
-- 第一欄為 `粉專名稱+粉專網址` 組合的 **HYPERLINK**，每次執行爬蟲時我們會用 `writeTitle` 這個函式來更新第一欄的資料
-- 因為希望新的爬蟲紀錄會寫入到下一欄，所以我們寫一個函式 `getLastCol` 來取得 Sheet 最後一欄的空白欄位
-- 取得目標寫入欄位後，我們用函式 `writeTrace` 把爬蟲下來的追蹤人數寫入就完成嚕
+1. 第一欄為 `粉專名稱+粉專網址` 組合的 **HYPERLINK**，每次執行爬蟲時我們會用 `writeTitle` 這個函式來更新第一欄的資料
+2. 因為希望新的爬蟲紀錄會寫入到下一欄，所以我們寫一個函式 `getLastCol` 來取得 Sheet 最後一欄的空白欄位
+3. 取得目標寫入欄位後，我們用函式 `writeTrace` 把爬蟲下來的追蹤人數寫入就完成嚕
 
 **實作**：將上述要完成的功能各自撰寫成函式後，由 `writeSheet` 這個函式來管理寫入 Google Sheets 的步驟
 
@@ -190,15 +196,20 @@ async function writeSheet (title, result_array, auth) {
 
 ### 3.2 在官方文件尋找 `寫入Sheet` 的範例
 
-- 有了`昨天的經驗`我們可以很容易找到今天所需的資源，在範例首頁的大標題[Basic Writing](https://developers.google.com/sheets/api/samples/writing)就符合今天的需求
+1.
+有了昨天的經驗我們可以很容易找到今天所需的資源，在範例首頁的大標題[Basic Writing](https://developers.google.com/sheets/api/samples/writing)就符合今天的需求
 
-- 在閱讀 **Basic Writing** 描述時有兩個標題吸引我的注意
+2.
+在閱讀 **Basic Writing** 描述時有兩個標題吸引我的注意
 
-- [Append Values](https://developers.google.com/sheets/api/samples/writing#append_values)：在閱讀標題時我原本覺得是最好的選擇，但發現他只能插入列(row)，與我們插入欄(col)的需求不符
+3.
+[Append Values](https://developers.google.com/sheets/api/samples/writing#append_values)：在閱讀標題時我原本覺得是最好的選擇，但發現他只能插入列(row)，與我們插入欄(col)的需求不符
 
-- [Write a single range](https://developers.google.com/sheets/api/samples/writing#write_a_single_range)：在開頭便提供了一個連結，並說`這個方法能寫入指定 Sheet 範圍內的資料`
+4.
+[Write a single range](https://developers.google.com/sheets/api/samples/writing#write_a_single_range)：在開頭便提供了一個連結，並說這個方法能寫入指定 Sheet 範圍內的資料
 
-- 接著你可以用`Try this API`來確認 [Method: spreadsheets.values.update](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update) 是否能正確更新 Sheet 的內容，相關操作方式[昨天的文章](https://deanlin.net/blog/202010/fb-ig-crawler-day-19/)有示範，這裡就不再贅述了，下面我把官方範例翻譯了一下，讓大家更清楚使用的方法
+5.
+接著你可以用`Try this API`來確認 [Method: spreadsheets.values.update](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update) 是否能正確更新 Sheet 的內容，相關操作方式[昨天的文章](https://deanlin.net/blog/202010/fb-ig-crawler-day-19/)有示範，這裡就不再贅述了，下面我把官方範例翻譯了一下，讓大家更清楚使用的方法
 
 ```
 let title = '你的sheet title'
@@ -311,16 +322,19 @@ async function writeTrace (title, trace_array, lastCol, auth) {
 
 ### 執行程式
 
-- 在專案資料夾的終端機(Terminal)執行指令
+1.
+在專案資料夾的終端機(Terminal)執行指令
 
 ```
 yarn start
 
 ```
 
-- 確認執行過程中爬蟲資料抓取正常且更新 Google sheets 時沒有錯誤
+2.
+確認執行過程中爬蟲資料抓取正常且更新 Google sheets 時沒有錯誤
 
-- 點進去連結看看線上的 Google Sheets 是不是也被成功寫入惹～
+3.
+點進去連結看看線上的 Google Sheets 是不是也被成功寫入惹～
 
 目前為止將爬蟲寫入 Google Sheets 的動作已經完成了，大家可以思考一下還有什麼東西是我們忽略的呢？有什麼狀況會造成錯誤？希望大家在下方提供自己的想法喔～
 
@@ -340,18 +354,15 @@ yarn start
 - 填上IG登入資訊
 - 填上SPREADSHEET_ID
 
-**在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：**
-
-- 加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項
-- 將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門
-- 調整專案架構
-
-- 優化爬蟲程式，以更廣的視角來擷取網頁資訊
-- 增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者
-- 排程部分改用 node-schedule & pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊
-
-**有興趣的朋友可以到天瓏書局選購，感謝大家的支持。**
-**購書連結**：[https://www.tenlong.com.tw/products/9789864348008](https://www.tenlong.com.tw/products/9789864348008)
+> **在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：**
+> 加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項
+> 將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門
+> 調整專案架構
+> 優化爬蟲程式，以更廣的視角來擷取網頁資訊
+> 增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者
+> 排程部分改用 node-schedule & pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊
+> **有興趣的朋友可以到天瓏書局選購，感謝大家的支持。**
+> **購書連結**：[https://www.tenlong.com.tw/products/9789864348008](https://www.tenlong.com.tw/products/9789864348008)
 
 ---
 

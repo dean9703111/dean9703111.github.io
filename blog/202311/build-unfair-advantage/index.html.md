@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202311/build-unfair-advantage/
-- 發布：2023-11-17（更新：2025-06-15）
+- 發布：2023-11-17
 - 主題：職涯成長
 - 系列：工程師下班有約
 - 標籤：Unfair Advantage、Life Stories、Life Lessons、Mindset、Growth Mindset

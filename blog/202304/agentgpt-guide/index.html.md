@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202304/agentgpt-guide/
-- 發布：2023-04-18（更新：2024-10-24）
+- 發布：2023-04-18
 - 主題：AI 實戰
 - 標籤：AgentGPT、Auto-GPT、ChatGPT、OpenAI、AI
 - 摘要：Auto-GPT 的安裝＆使用相對繁瑣，可能會導致許多想用工具的人卡在環境的設定上。 所以筆者再介紹另一款無需安裝，可直接使用的工具「AgentGPT」；他的操作超級簡單，只要設定好目標（Goal），一鍵發送即可！
@@ -66,7 +66,7 @@ Autogpt has been used in translation services to automate the translation of tex
 
 In conclusion, Autogpt has been successfully implemented in various industries, including writing and content creation, customer support, data analysis, and translation services. Its ability to process large amounts of data, analyze complex datasets, and generate high-quality content has made it a valuable tool for businesses looking to increase productivity and efficiency.
 
-**小提醒**： AgentGPT 的答案未必正確，因為他的本質還是使用 OpenAI 的 GPT-3.5、GPT-4，這兩個模型會犯的錯誤，AgentGPT 還是會犯。
+> **小提醒**： AgentGPT 的答案未必正確，因為他的本質還是使用 OpenAI 的 GPT-3.5、GPT-4，這兩個模型會犯的錯誤，AgentGPT 還是會犯。
 
 ## 儲存 AgentGPT 的紀錄
 

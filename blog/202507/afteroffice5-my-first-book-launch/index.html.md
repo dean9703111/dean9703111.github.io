@@ -40,11 +40,11 @@
 - 💰 **費用**: 免費參加（名額有限，請儘早報名）
 - 🔗 **報名連結**: [https://reurl.cc/1KnDN8](https://reurl.cc/1KnDN8)
 
-如果你正在卡關、也在找路，我很想把這段路怎麼走過來的故事，親口說給你聽。到時現場見吧，我會在那邊等你。
+> 如果你正在卡關、也在找路，我很想把這段路怎麼走過來的故事，親口說給你聽。到時現場見吧，我會在那邊等你。
 
-《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
+> 《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

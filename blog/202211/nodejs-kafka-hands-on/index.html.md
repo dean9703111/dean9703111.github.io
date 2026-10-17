@@ -28,8 +28,8 @@
 
 [上一篇文章](https://deanlin.net/blog/202211/what-is-kafka/)講了這麼多理論，下面就建立一個 Node.js 專案，來實際了解 Kafka 的運作邏輯吧！
 
-如果懶得按照步驟執行，可以直接到[筆者的 Github](https://github.com/dean9703111/kafka-demo) Clone 一份下來。
-筆者 local 的 Node.js 版本為 v18.12.0。
+> 如果懶得按照步驟執行，可以直接到[筆者的 Github](https://github.com/dean9703111/kafka-demo) Clone 一份下來。
+> 筆者 local 的 Node.js 版本為 v18.12.0。
 
 **SETP 1**：建立專案、安裝 kafkajs 套件。
 
@@ -48,7 +48,7 @@ mkdir -p deploy/kafkaCluster/kraft
 
 **SETP 3**：新增「docker-compose.yml」貼上如下程式。
 
-這裡筆者選用不依賴 zookeeper 的 Kafka 版本（KRaft），過去主流會使用 zookeeper 來保存消息，但 Kafka 官方表示在不久後就不再支援 zookeeper，故筆者做此選擇，至於 KRaft 本身有哪些優勢，感興趣的朋友可以參考[連結](https://www.cnblogs.com/smartloli/p/16430041.html)。
+> 這裡筆者選用不依賴 zookeeper 的 Kafka 版本（KRaft），過去主流會使用 zookeeper 來保存消息，但 Kafka 官方表示在不久後就不再支援 zookeeper，故筆者做此選擇，至於 KRaft 本身有哪些優勢，感興趣的朋友可以參考[連結](https://www.cnblogs.com/smartloli/p/16430041.html)。
 
 ```
 version: "3"
@@ -226,7 +226,7 @@ signalTraps.forEach(type => {
 
 ## 二、啟動專案，了解 Kafka 的運行邏輯
 
-建議使用有分頁功能的終端機（如 iTerm2），這樣比較好觀察與操作。
+> 建議使用有分頁功能的終端機（如 iTerm2），這樣比較好觀察與操作。
 
 ### 1 個 Producer VS 1 個 Consumer
 
@@ -234,7 +234,7 @@ signalTraps.forEach(type => {
 
 透過下面的 Gif 大家可以看到消息傳送＆消費的過程。
 
-確認消息可以順利生產與消費後，記得透過「Crontrol + C」將程式關閉。
+> 確認消息可以順利生產與消費後，記得透過「Crontrol + C」將程式關閉。
 
 ### Kafka 持久化驗證
 

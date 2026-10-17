@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202410/ai-assisted-development-course/
-- 發布：2024-10-02（更新：2024-10-24）
+- 發布：2024-10-02
 - 主題：AI 實戰
 - 標籤：ChatGPT、Cursor、Codeium、Qodo、AI
 - 摘要：有寫程式的人都知道，Live coding 是一件很有壓力的事情。 而使用生成式 AI 做 Live coding，更是充滿各種隨機性。 而我挑戰的，是用生成式 AI 在近 80 位觀眾面前，針對 8 個不同的主題做 Live coding（甚至涵蓋多個程式語言）。
@@ -66,7 +66,7 @@
 
 在此鼓勵看到這篇文章的人，勇敢跨出自己的舒適圈，嘗試過去沒碰過的工具吧！
 
-PS. 不過大家在使用 AI 開發公司的專案前，請遵守公司的資安規範，否則可能會有嚴重的後果。
+> PS. 不過大家在使用 AI 開發公司的專案前，請遵守公司的資安規範，否則可能會有嚴重的後果。
 
 延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
 

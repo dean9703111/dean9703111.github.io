@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202303/python-youtube-transcript-whisper/
-- 發布：2023-03-31（更新：2024-10-24）
+- 發布：2023-03-31
 - 主題：AI 實戰
 - 系列：YouTube 影片轉逐字稿
 - 標籤：ChatGPT、OpenAI、Whisper、YouTube、Python
@@ -10,9 +10,9 @@
 
 [上一篇文章中](https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/)，筆者靠 ChatGPT 成功將 Youtube 影片轉換成音檔（mp3），在這篇文章中，我會分享如何用 OpenAI 提供的 whisper api 將 音檔轉成逐字稿。
 
-如果沒有程式基礎的朋友，建議先從[上一篇文章](https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/)開始閱讀。
+> 如果沒有程式基礎的朋友，建議先從[上一篇文章](https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/)開始閱讀。
 
-提醒大家，不要未經授權下載有版權保護的影片喔！
+> 提醒大家，不要未經授權下載有版權保護的影片喔！
 
 目前的 ChatGPT 資料截止於 2021 年 9 月，如果用到最近才新增的技術，我們還是要先到官網查看文件。
 
@@ -62,7 +62,7 @@ transcript = openai.Audio.transcribe("whisper-1", audio_file)
 
 **SETP 1**：安裝新套件：`pip3 install openai`。
 
-如果上一篇文章沒有安裝到，請記得順便安裝不然會有錯誤訊息喔：`pip install pydub pytube`
+> 如果上一篇文章沒有安裝到，請記得順便安裝不然會有錯誤訊息喔：`pip install pydub pytube`
 
 **SETP 2**：建立一個檔案`youtube-to-text.py`，然後貼上 ChatGPT 提供的程式。
 
@@ -99,11 +99,11 @@ print(transcript)
 
 ```
 
-我們原本是將 Youtube 轉換成 mp3 檔，而這次 ChatGPT 改寫的過程中，把它轉換成了 wav 檔；並且對我們提供的範例程式做了一定程度的改寫（ex：告訴我們要自己填入”YOUR_API_KEY”）。
+> 我們原本是將 Youtube 轉換成 mp3 檔，而這次 ChatGPT 改寫的過程中，把它轉換成了 wav 檔；並且對我們提供的範例程式做了一定程度的改寫（ex：告訴我們要自己填入”YOUR_API_KEY”）。
 
 **SETP 3**：請先去 [https://platform.openai.com/account/api-keys](https://platform.openai.com/account/api-keys) 申請自己的 API Key，將 YOUR_API_KEY 替換成自己的。
 
-**小提醒：**將 API Key 放入環境變數的作法更好，不過這篇文章以 Demo 目的為主，讀者切記不要把自己的 API Key 洩露出去了。
+> **小提醒：**將 API Key 放入環境變數的作法更好，不過這篇文章以 Demo 目的為主，讀者切記不要把自己的 API Key 洩露出去了。
 
 **SETP 4**：輸入 `python youtube-to-text.py` 執行程式，結果遇到了錯誤如下：
 
@@ -156,9 +156,9 @@ print(transcript)
 
 相比於上一篇，這篇文章的門檻比較高，像是多了：
 
-- 前往 OpenAI 官網，取得所需技術文件
-- 需要一定的英文閱讀能力（雖然你也可以請 ChatGPT 幫你翻譯）
-- 讓原有程式基礎上，疊加新應用的提問技巧
+1. 前往 OpenAI 官網，取得所需技術文件
+2. 需要一定的英文閱讀能力（雖然你也可以請 ChatGPT 幫你翻譯）
+3. 讓原有程式基礎上，疊加新應用的提問技巧
 
 不過儘管我們取得了逐字稿，但這份逐字稿真的有點醜，閱讀起來有點困難。
 
@@ -170,7 +170,7 @@ print(transcript)
 
 😀：「幫我擷取 300 字摘要：`[逐字稿]`」
 
-摘要的內容有點赤裸 😅，不過當年筆者參加比賽的確就是為了出書。
+> 摘要的內容有點赤裸 😅，不過當年筆者參加比賽的確就是為了出書。
 
 不過手動貼到 ChatGPT 還是有點麻煩，[下一篇筆者就來分享如何透過 OpenAI 的 GPT-3.5 模型](https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/)，幫我們整理逐字稿內容吧！
 

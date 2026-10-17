@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202308/capcut-basics/
-- 發布：2023-08-02（更新：2024-10-24）
+- 發布：2023-08-02
 - 主題：AI 實戰
 - 標籤：剪映、CapCut、CapCut Video Editor、AI、教學
 - 摘要：今天跟大家分享一款免費、好用、功能強大，還有 AI 輔助的影片剪輯軟體「剪映」。這篇文章會按造導入影片 → 套用濾鏡 → 自動上字幕 → 增加視覺特效 → 片頭片尾動畫 → 導出影片的順序介紹給大家！
@@ -13,7 +13,7 @@
 
 剪映官網：[https://www.capcut.cn/](https://www.capcut.cn/)
 
-想知道 ChatGPT 如何與剪映結合應用，可以參考[這篇文章](https://deanlin.net/blog/202307/chatgpt-capcut-video-legal-risks/)。
+> 想知道 ChatGPT 如何與剪映結合應用，可以參考[這篇文章](https://deanlin.net/blog/202307/chatgpt-capcut-video-legal-risks/)。
 
 ## STEP 1：導入影片
 

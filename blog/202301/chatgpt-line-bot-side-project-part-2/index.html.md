@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/chatgpt-line-bot-side-project-part-2/
-- 發布：2023-01-25（更新：2024-10-24）
+- 發布：2023-01-25
 - 主題：AI 實戰
 - 系列：ChatGPT LINE Bot 實作
 - 標籤：ChatGPT、OpenAI、OpenAI ChatGPT、LINE Bot、ngrok
@@ -34,7 +34,7 @@
 
 **SETP 1**：先到 ngrok 的官網下載 ngrok 的 Mac 版本： [https://ngrok.com/download](https://ngrok.com/download) 。
 
-提醒讀者，要先確認自己 mac 的處理器是 Intel 還是 Apple Silicon 喔！
+> 提醒讀者，要先確認自己 mac 的處理器是 Intel 還是 Apple Silicon 喔！
 
 **SETP 2**：解壓縮下載的檔案，並將 ngrok 放入您的 PATH 中 (例如: /usr/local/bin)
 
@@ -46,7 +46,7 @@
 
 **SETP 4**：ngrok 將會顯示一個可供外部訪問的 URL（上圖紅框處 `[https://xxxx.ngrok.io](https://xxxx.ngrok.io)`），您可以在 LINE 的 Developer Console 中設定 webhook 的 URL。
 
-**小提醒**：Session 2 小時後會過期，到時再重新執行一次 `ngrok http 3000` 就好了，然後別忘記把新的 URL 設定到 Line 的 webhook。
+> **小提醒**：Session 2 小時後會過期，到時再重新執行一次 `ngrok http 3000` 就好了，然後別忘記把新的 URL 設定到 Line 的 webhook。
 
 ## 設定 Line 的 webhook
 
@@ -66,7 +66,7 @@
 
 **SETP 4**：在 Messaging API 關閉自動回覆（Auto-reply messages）與打招呼（Greeting messages）。
 
-因為自動回覆（Auto-reply messages）會干擾 Debug 所以建議關閉，至於打招呼（Greeting messages）要不要關閉就看你自己。
+> 因為自動回覆（Auto-reply messages）會干擾 Debug 所以建議關閉，至於打招呼（Greeting messages）要不要關閉就看你自己。
 
 ## 測試功能＆痛苦的 Debug 之路
 
@@ -227,23 +227,23 @@ console.log('Linebot is running on 3000 port');
 
 看到成功溝通的畫面時，筆者真的感動到快哭了，這是個能與你溝通的 AI 機器人喔！
 
-不過操作下來我覺得回答穩定度沒有比 ChatGPT 高，有時會出現一些奇怪的程式碼，讀者有興趣可以再做優化，本篇文章僅為參考範例。
+> 不過操作下來我覺得回答穩定度沒有比 ChatGPT 高，有時會出現一些奇怪的程式碼，讀者有興趣可以再做優化，本篇文章僅為參考範例。
 
 ## 結論：給想用 ChatGPT 寫程式、學程式的朋友一些建議
 
 可能是我運氣比較好，剛好測試到 ChatGPT 的許多 Bug，下面筆者彙整了一些遇到的「坑」給讀者參考：
 
-- **ChatGPT 沒有最新資料**：筆者在使用 ChatGPT 時，他的資料是在 2021 年截止的，也就是說他不認識新推出的套件，當套件有更新時他也無法第一時間知道。
-- **有些問題 ChatGPT 真的回答不出來**：如果是程式邏輯問題，ChatGPT 有機會給出解答，但如果是套件相關問題，可能真的給不出解答；你一直問他也只是鬼打牆。
-- **似是而非的答案最可怕**：ChatGPT 在上一篇（中文）跟這一篇（英文）給的答案，如果只看「邏輯」，那是正確的；但實際跑起來卻有一堆問題，不去看官方網站查證真的無法解決。
+1. **ChatGPT 沒有最新資料**：筆者在使用 ChatGPT 時，他的資料是在 2021 年截止的，也就是說他不認識新推出的套件，當套件有更新時他也無法第一時間知道。
+2. **有些問題 ChatGPT 真的回答不出來**：如果是程式邏輯問題，ChatGPT 有機會給出解答，但如果是套件相關問題，可能真的給不出解答；你一直問他也只是鬼打牆。
+3. **似是而非的答案最可怕**：ChatGPT 在上一篇（中文）跟這一篇（英文）給的答案，如果只看「邏輯」，那是正確的；但實際跑起來卻有一堆問題，不去看官方網站查證真的無法解決。
 
 會有上述問題，我覺得是因為 ChatGPT 還在學習、以及資料不夠即時；相信在未來推出新版時，能給出更正確的解答。
 
 至於如何透過 ChatGPT 學程式，我的建議如下：
 
-- 要學習的**程式語言、工具要有一定的年紀**。
-- 使用套件遇到錯誤時，**先去官網看說明文件**。
-- 如果完全沒基礎，**強烈建議先從書籍、課程開始學習**。
+1. 要學習的**程式語言、工具要有一定的年紀**。
+2. 使用套件遇到錯誤時，**先去官網看說明文件**。
+3. 如果完全沒基礎，**強烈建議先從書籍、課程開始學習**。
 
 目前筆者把 ChatGPT 的定位放在「輔助」，適合給你方向、關鍵字、優化的建議；像是這次使用下來，雖然程式有些許錯誤，但是在「步驟、關鍵字、指令」方面的建議都是很不錯的。
 
@@ -257,8 +257,8 @@ console.log('Linebot is running on 3000 port');
 
 **參考資料**：
 
-- 用英文溝通 ChatGPT 得到的回覆：[Github](https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/bug2-index.js)
-- 筆者自己優化得到的解答：[Github](https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/index.js)
+1. 用英文溝通 ChatGPT 得到的回覆：[Github](https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/bug2-index.js)
+2. 筆者自己優化得到的解答：[Github](https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/index.js)
 
 ---
 

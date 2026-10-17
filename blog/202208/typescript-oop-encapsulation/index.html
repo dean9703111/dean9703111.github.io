@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向</title>
-  <meta name="description" content="市面上很多文章、影片分享了物件導向要如何應用。 卻很少人分享這些概念是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。 因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做…">
+  <meta name="description" content="市面上很多文章、影片分享了物件導向要如何應用。卻很少人分享這些概念是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做…">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202208/typescript-oop-encapsulation/">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -14,20 +14,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202208/typescript-oop-encapsulation/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
   <meta property="og:title" content="封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向">
-  <meta property="og:description" content="市面上很多文章、影片分享了物件導向要如何應用。 卻很少人分享這些概念是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。 因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做…">
+  <meta property="og:description" content="市面上很多文章、影片分享了物件導向要如何應用。卻很少人分享這些概念是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做…">
   <meta property="og:url" content="https://deanlin.net/blog/202208/typescript-oop-encapsulation/">
   <meta property="og:locale" content="zh_TW">
   <meta property="og:type" content="article">
   <meta property="article:published_time" content="2022-08-23T08:36:53&#43;08:00">
-  <meta property="article:modified_time" content="2023-05-05T18:45:31&#43;08:00">
+  <meta property="article:modified_time" content="2022-08-23T08:36:53&#43;08:00">
   <meta property="article:author" content="https://deanlin.net/about/">
   <meta property="article:section" content="技術教學">
   <meta property="article:tag" content="封裝">
@@ -42,8 +44,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_fba9646e3aca9d1c.jpg">
   <meta name="twitter:title" content="封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向">
-  <meta name="twitter:description" content="市面上很多文章、影片分享了物件導向要如何應用。 卻很少人分享這些概念是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。 因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做…">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2023-05-05T18:45:31+08:00","datePublished":"2022-08-23T08:36:53+08:00","description":"市面上很多文章、影片分享了物件導向要如何應用。 卻很少人分享這些概念是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。 因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做…","headline":"封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_fba9646e3aca9d1c.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_cf490bc09748a6b7.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_eeff372c60a143ff.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"TypeScript 物件導向","url":"https://deanlin.net/series/typescript-oop/"}],"keywords":"封裝, Encapsulation, 物件導向, OOP, Object Oriented","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_fba9646e3aca9d1c.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E5%B0%81%E8%A3%9D-encapsulation-%E8%83%BD%E8%A7%A3%E6%B1%BA%E4%BB%80%E9%BA%BC%E5%95%8F%E9%A1%8C-%E7%94%A8-typescript-%E5%AD%B8%E7%89%A9%E4%BB%B6%E5%B0%8E%E5%90%91-e4543d793174"],"thumbnailUrl":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_fba9646e3aca9d1c.jpg","timeRequired":"PT5M","url":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/","wordCount":2017},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/","name":"封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向","position":3}]}]}</script>
+  <meta name="twitter:description" content="市面上很多文章、影片分享了物件導向要如何應用。卻很少人分享這些概念是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做…">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2022-08-23T08:36:53+08:00","datePublished":"2022-08-23T08:36:53+08:00","description":"市面上很多文章、影片分享了物件導向要如何應用。卻很少人分享這些概念是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做…","headline":"封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_fba9646e3aca9d1c.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_cf490bc09748a6b7.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_eeff372c60a143ff.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"TypeScript 物件導向","url":"https://deanlin.net/series/typescript-oop/"}],"keywords":"封裝, Encapsulation, 物件導向, OOP, Object Oriented","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_fba9646e3aca9d1c.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/%E5%B0%81%E8%A3%9D-encapsulation-%E8%83%BD%E8%A7%A3%E6%B1%BA%E4%BB%80%E9%BA%BC%E5%95%8F%E9%A1%8C-%E7%94%A8-typescript-%E5%AD%B8%E7%89%A9%E4%BB%B6%E5%B0%8E%E5%90%91-e4543d793174"],"thumbnailUrl":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-og_hu_fba9646e3aca9d1c.jpg","timeRequired":"PT5M","url":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/","wordCount":2017},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202208/typescript-oop-encapsulation/","name":"封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -113,22 +115,22 @@
         <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
         <a href="/categories/tech/">技術教學</a>
       </nav>
-      <h1 class="article-title">封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向</h1>
+      <h1 class="article-title">封裝(Encapsulation)能解決什麼問<span class="nobr">題？</span> — 用 TypeScript 學物件導向</h1>
       <p class="article-lede">市面上很多文章、影片分享了物件導向要如何應用。 卻很少人分享這些概念是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。 因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做…</p>
       <div class="article-meta">
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2022-08-23">2022.08.23</time>
-              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
               <span>閱讀約 5 分鐘</span>
             </div>
           </div>
         </div>
         <a class="series-pill" href="#series-box">系列・TypeScript 物件導向 <b>1</b>/ 2</a>
       </div>
+      <p class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg><span>這篇文章寫於 2022 年，文中的工具與版本可能已經更新，實作時請以官方文件為準。</span></p>
     </header>
 
     <div class="article-main">
@@ -142,7 +144,7 @@
         <p>市面上很多文章、影片分享了物件導向要如何應用。</p>
 <p>卻很少人分享<strong>這些概念是為了解決什麼問題</strong>，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。</p>
 <p>因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式；接著再來討論如何應用物件導向的概念對程式做 Refactoring，提升程式未來的擴充性、維護性。</p>
-<p><img src="/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-01.webp" srcset="/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-01_hu_950b1155c79f1f82.webp 720w, /blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="731" alt="封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-01.webp" srcset="/blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-01_hu_950b1155c79f1f82.webp 720w, /blog/202208/typescript-oop-encapsulation/images/typescript-oop-encapsulation-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="731" alt="封裝(Encapsulation)能解決什麼問題？ — 用 TypeScript 學物件導向（圖 1）" fetchpriority="high" decoding="async"></p>
 <pre tabindex="0"><code>大綱
 一、設計考卷
 二、如果考卷的 Class 也被其他工程師使用
@@ -381,7 +383,7 @@
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/typescript-oop/">TypeScript 物件導向</a></div>
 
-    <h3 class="card-title"><a href="/blog/202208/typescript-oop-polymorphism-inheritance/">多型(Polymorphism)＆繼承(Inheritance)能解決什麼問題？ — 用 TypeScript 學物件導向</a></h3>
+    <h3 class="card-title"><a href="/blog/202208/typescript-oop-polymorphism-inheritance/">多型(Polymorphism)＆繼承(Inheritance)能解決什麼問<span class="nobr">題？</span> — 用 TypeScript 學物件導向</a></h3>
     <p class="card-desc">市面上很多文章、影片分享了物件導向要如何應用。 卻很少人分享這些概念最初是為了解決什麼問題，所以很多人就算學完了物件導向的概念，卻依舊沒有把它應用在手上的專案。 因此這個系列文中，筆者會先分享「直線思考下」我們會設計出怎樣糟糕的程式…</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2022-08-25">2022.08.25</time>
@@ -397,7 +399,7 @@
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/hugo/">Hugo 自架站</a></div>
 
-    <h3 class="card-title"><a href="/blog/202501/hugo6-set-up-google-search-console/">[Hugo自架站-6]設定 Google Search Console，讓自己的網站可以被搜尋</a></h3>
+    <h3 class="card-title"><a href="/blog/202501/hugo6-set-up-google-search-console/">[Hugo自架站-6]設定 Google Search Consol<span class="nobr">e，</span>讓自己的網站可以被搜尋</a></h3>
     <p class="card-desc">這篇文章要教大家如何設定 Google Search Console，以及上傳網站的 Sitemap（網站地圖），讓自己的網站可以被搜尋。</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2025-01-21">2025.01.21</time>
@@ -548,7 +550,7 @@
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

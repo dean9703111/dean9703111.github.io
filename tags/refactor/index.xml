@@ -4,7 +4,7 @@
     <title>Refactor｜林鼎淵 Dean Lin</title>
     <link>https://deanlin.net/tags/refactor/</link>
     <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Refactor｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/refactor/</link><width>144</width><height>144</height></image>
-    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。360 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
     <generator>Hugo</generator>
     <language>zh-tw</language>
     <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
@@ -18,12 +18,17 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>昨天我們完成了一個跑得動的程式，但很明顯這不是一個好的程式 大家應該有感受到隨著程式越來越長，我們對他的掌握力逐步下降 根據 Clean Code 的原則而言就是說這程式寫得很爛XD 很多人為了盡快完成功能而埋頭狂寫，但這樣容易導致你日後維護以及交接的困難性，你所負責的專案越大這…</description>
-      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-og_hu_7a50fc401da4e856.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202009/fb-ig-crawler-day-13/images/cover_hu_5d125fe20b2659b6.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<blockquote>
 <p>數據顯示，工程師完成最後 20% 的工作時間跟之前的 80% 一樣多</p>
 </blockquote>
 <h2 id="完成功能後重構是另一個開始">完成功能後，重構是另一個開始<a class="h-anchor" href="#%e5%ae%8c%e6%88%90%e5%8a%9f%e8%83%bd%e5%be%8c%e9%87%8d%e6%a7%8b%e6%98%af%e5%8f%a6%e4%b8%80%e5%80%8b%e9%96%8b%e5%a7%8b" aria-label="這個段落的連結"></a></h2>
-<p>昨天我們完成了一個<code>跑得動的程式</code>，但很明顯這<code>不是一個好的程式</code><br>大家應該有感受到隨著程式越來越長，我們對他的掌握力逐步下降<br>根據 Clean Code 的原則而言就是說這<strong>程式寫得很爛XD</strong><br>很多人為了盡快完成功能而埋頭狂寫，但這樣容易導致你日後維護以及交接的困難性，你所負責的專案越大這個感受會更明顯<br>所以在完成功能後<code>重構是必要的任務，他能提升你日後解決 bug、需求變更的工作效率</code><br>接下來就以昨天程式為範例來重構吧！</p>
+<p>昨天我們完成了一個<mark>跑得動的程式</mark>，但很明顯這<mark>不是一個好的程式</mark></p>
+<p>大家應該有感受到隨著程式越來越長，我們對他的掌握力逐步下降</p>
+<p>根據 Clean Code 的原則而言就是說這<strong>程式寫得很爛XD</strong></p>
+<p>很多人為了盡快完成功能而埋頭狂寫，但這樣容易導致你日後維護以及交接的困難性，你所負責的專案越大這個感受會更明顯</p>
+<p>所以在完成功能後<mark>重構是必要的任務，他能提升你日後解決 bug、需求變更的工作效率</mark></p>
+<p>接下來就以昨天程式為範例來重構吧！</p>
 <hr>
 <h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
 <p>了解 &amp; 修正目前專案所犯下的錯誤</p>
@@ -65,7 +70,7 @@
 </span></span><span style="display:flex;"><span>crawler()
 </span></span></code></pre></div><hr>
 <h2 class="h-nomark" id="2-一個函式做了太多事情">2. 一個函式做了太多事情<a class="h-anchor" href="#2-%e4%b8%80%e5%80%8b%e5%87%bd%e5%bc%8f%e5%81%9a%e4%ba%86%e5%a4%aa%e5%a4%9a%e4%ba%8b%e6%83%85" aria-label="這個段落的連結"></a></h2>
-<p><code>記住一個大原則：一個函式只需要做一件事情！</code></p>
+<p><mark>記住一個大原則：一個函式只需要做一件事情！</mark></p>
 <p>現在我們把 FB 登入並取得追蹤人數寫在同一隻函式，這樣會增加你日後維護的困難度，因為<code>函式越長，你越難除錯(debug)</code>；以 <code>loginFacebookGetTrace</code> 這隻函式舉例，它實際上可以解構成好幾個功能：</p>
 <ol>
 <li>取得 Facebook(經典版/新版) 的爬蟲路徑 - <strong>getCrawlerPath</strong></li>
@@ -147,7 +152,7 @@
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><hr>
 <h2 class="h-nomark" id="3-物件宣告的方式太複雜且多次被使用">3. 物件宣告的方式太複雜且多次被使用<a class="h-anchor" href="#3-%e7%89%a9%e4%bb%b6%e5%ae%a3%e5%91%8a%e7%9a%84%e6%96%b9%e5%bc%8f%e5%a4%aa%e8%a4%87%e9%9b%9c%e4%b8%94%e5%a4%9a%e6%ac%a1%e8%a2%ab%e4%bd%bf%e7%94%a8" aria-label="這個段落的連結"></a></h2>
-<p>我們要將<code>建立瀏覽器的部分獨立成一隻js</code>，原因如下</p>
+<p>我們要將<mark>建立瀏覽器的部分獨立成一隻js</mark>，原因如下</p>
 <ul>
 <li>建立瀏覽器前需要做事前確認及複雜的設定</li>
 <li>這個瀏覽器作為物件會被多次使用</li>
@@ -218,7 +223,7 @@
 </li>
 <li>
 <p>確定與程式重構後能順利取得FB &amp; IG的追蹤人數</p>
-<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01.webp" width="1024" height="159" alt="執行程式（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01.webp" width="1024" height="159" alt="執行程式（圖 1）" fetchpriority="high" decoding="async"></p>
 </li>
 </ol>
 <p>如果你還有什麼問題或是覺得有可以改善的地方歡迎在下方留言討論</p>
@@ -264,7 +269,8 @@
 </ul>
 </li>
 </ul>
-<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong></p>
+<p><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
 </blockquote>
 ]]></content:encoded>
     </item>

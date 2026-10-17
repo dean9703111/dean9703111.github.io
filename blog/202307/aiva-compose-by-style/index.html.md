@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202307/aiva-compose-by-style/
-- 發布：2023-07-13（更新：2024-10-24）
+- 發布：2023-07-13
 - 主題：AI 實戰
 - 系列：AIVA AI 作曲
 - 標籤：AIVA、AI、ChatGPT、Music、AI Music Generator
@@ -53,7 +53,7 @@
 - **Ambient (環境音樂)**: 創造舒適氛圍，注重聲音紋理的音樂，ex：《[Music for Airports](https://www.youtube.com/watch?v=vNwYtllyt3Q&ab_channel=MethadoneMethadone)》。
 - **Hip Hop (嘻哈音樂)**：美國黑人街頭文化的音樂風格，包含饒舌，ex：《[Changes](https://www.youtube.com/watch?v=eXvBjCO19QY&ab_channel=2PacVEVO)》。
 
-上面舉例是用 ChatGPT 產生的，儘管筆者自己有聽過一輪，但如果有錯誤的部分再請大神們指教了，謝謝。
+> 上面舉例是用 ChatGPT 產生的，儘管筆者自己有聽過一輪，但如果有錯誤的部分再請大神們指教了，謝謝。
 
 這邊我用「**Fantasy (奇幻音樂)**」來做示範，點進去後有一些參數供大家調整；但如果你跟筆者一樣沒有任何音樂背景，點擊「Create your track(s)」讓 AI 自由發揮就好。
 
@@ -89,7 +89,7 @@
 
 看完文章心動了嗎？趕快動手用 AI 來生成音樂吧！
 
-如果想了解更多 AIVA 的細部操作，[請參考這篇文章](https://deanlin.net/blog/202307/aiva-compose-with-chatgpt/)。
+> 如果想了解更多 AIVA 的細部操作，[請參考這篇文章](https://deanlin.net/blog/202307/aiva-compose-with-chatgpt/)。
 
 延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
 

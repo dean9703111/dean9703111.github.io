@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202208/google-forms-auto-email/
-- 發布：2022-08-10（更新：2023-05-05）
+- 發布：2022-08-10
 - 主題：技術教學
 - 標籤：Google Forms、Google Sheets、Apps Script、Email Marketing、Email Notifications
 - 摘要：有時我們希望使用者提交 Google 表單後，可以提供給他更多資訊（ex：活動詳細內容、宣傳廣告、友站連結…）；但 Google 表單只有在「設定 → 簡報 → 確認訊息」給你用純文字的方式表達，除了傳送內容受限制外，許多使用者在提交表單後會下意識的關閉網頁…
@@ -15,7 +15,7 @@
 
 而我這次有給填寫表單的讀者「30 分鐘免費諮詢」的回饋，但因為把諮詢的報名連結放在 Google 表單「確認訊息」的位置，導致有些讀者根本沒注意到它的存在，因此便想透過自動寄送 email，來解決這個囧境。
 
-你也可以先[體驗看看筆者完成的 Demo](https://forms.gle/ADvarze9bKrwyUGV6)，只要填寫電子郵件，並在「是否願意收到電子報」的欄位選擇「是」，提交後便會收到自動發送的郵件嚕！
+> 你也可以先[體驗看看筆者完成的 Demo](https://forms.gle/ADvarze9bKrwyUGV6)，只要填寫電子郵件，並在「是否願意收到電子報」的欄位選擇「是」，提交後便會收到自動發送的郵件嚕！
 
 ## STEP 1 ：產生 HTML email
 
@@ -29,11 +29,9 @@
 
 在完成 HTML email 後，點擊右上角的 Download 會獲得一個壓縮檔，解壓縮後你會看到裡面的「beefree-xxx.html」檔，筆者建議重新命名成「email-content.html」方便辨識（這個 HTML 在後面的步驟會用到，請妥善保存）。
 
-**備註：**
-
-1. 免費版在最下面會有 Beefree 的 Logo，它可以在下載後透過編輯 HTML 來刪除。
-
-2. 如果有使用到圖片，建議先上傳到 Imgur，再把產生連結貼回來（ex：https://i.imgur.com/Oonq5Gy.jpg），詳細流程這邊不再贅述。
+> **備註：**
+> 1. 免費版在最下面會有 Beefree 的 Logo，它可以在下載後透過編輯 HTML 來刪除。
+> 2. 如果有使用到圖片，建議先上傳到 Imgur，再把產生連結貼回來（ex：https://i.imgur.com/Oonq5Gy.jpg），詳細流程這邊不再贅述。
 
 ## SETP 2：建立 Google 表單
 

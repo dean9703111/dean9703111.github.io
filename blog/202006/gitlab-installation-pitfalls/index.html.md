@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/gitlab-installation-pitfalls/
-- 發布：2020-06-09（更新：2023-05-05）
+- 發布：2020-06-09
 - 主題：技術教學
 - 標籤：GitLab、Email、Nginx、NAS
 - 摘要：Gitlab被各大企業廣泛地用於專案管理上，他可以追蹤每個project的進度設定milestone開sprint、分配不同team相互的權限，甚至在同一個project裡面也能有不同角色的權限區分，CI/CD等功能也能很方便地去實現。
@@ -13,14 +13,14 @@ Gitlab被各大企業廣泛地用於專案管理上，他可以追蹤每個proje
 
 此Gitlab安裝時的ubuntu版本為16.4，指令如有不同，請自行google，如果你願意，也非常歡迎回覆在下方分享您的經驗。
 
-建議硬體需求
+> 建議硬體需求
 
 RAM至少4GB，以百人公司規模來說建議8GB以上大家使用上會順暢很多(如果你用官方建議2GB可能會連安裝都卡住，這部分有親自體驗過)
 
 ## 安裝前置作業
 
-- 因為git在連線時需要使用ssh連線進行安全性驗證 所以需要openssh-server ca-certificates
-- gitlab支援寄信通知或是驗證功能所以需要信箱伺服器支援需要postfix
+1. 因為git在連線時需要使用ssh連線進行安全性驗證 所以需要openssh-server ca-certificates
+2. gitlab支援寄信通知或是驗證功能所以需要信箱伺服器支援需要postfix
 
 ```
 curl openssh-server ca-certificates postfix
@@ -30,7 +30,7 @@ sudo apt-get install curl openssh-server ca-certificates postfix
 
 ## 安裝gitlab
 
-- gitlab下載目前運行版本指令
+1. gitlab下載目前運行版本指令
 
 ```
 curl -s https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
@@ -45,7 +45,7 @@ wget — content-disposition https://packages.gitlab.com/gitlab/gitlab-ce/packag
 
 ```
 
-建議要備份下載的deb檔案到自己的硬碟，如果日後災難復原時會用上，像我是備份到公司的NAS Server上面
+> 建議要備份下載的deb檔案到自己的硬碟，如果日後災難復原時會用上，像我是備份到公司的NAS Server上面
 
 ## gitlab環境配置
 
@@ -56,7 +56,7 @@ sudo gitlab-ctl reconfigure
 
 如果環境沒問題，上面這個指令會順順的過去；**但如果做了版本升級或是降級，所有的環境都可能會產生或大或小的bug**，官方並沒有提供一個很健全的解決方案，建議未來的使用者除非很有把握不然建議不要隨意升級。
 
-筆者在之後新版的gitlab有更新成功，但是舊版直接升級會遇到許多問題整理部份如下
+> 筆者在之後新版的gitlab有更新成功，但是舊版直接升級會遇到許多問題整理部份如下
 
 Gitlab 500 Error: PG::ConnectionBad:
 
@@ -66,7 +66,7 @@ Gitlab 500 Error: PG::ConnectionBad:
 
 [https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3185](https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3185)
 
-輸入以下指令可獲得版本資訊:
+> 輸入以下指令可獲得版本資訊:
 
 ```
 sudo gitlab-rake gitlab:env:info
@@ -97,7 +97,7 @@ nginx['ssl_certificate_key'] = "/etc/your_path/ssl/gitlab.xxxxx.com.key"
 
 原始碼：[gitlab.rb](https://gist.github.com/dean9703111/8cfb4e440691d49a32f37be832d27329)（GitHub Gist）
 
-每次修改過這個檔記得要重新配置才會生效
+> 每次修改過這個檔記得要重新配置才會生效
 
 ```
 sudo gitlab-ctl reconfigure
@@ -185,7 +185,7 @@ nginx['ssl_certificate_key'] = "/etc/your_path/ssl/gitlab.xxxxx.com.key"
 
 在gitlab分配兩張網卡後需要完成以下步驟
 
-先看新增的網卡名稱
+> 先看新增的網卡名稱
 
 ```
 cd /proc/sys/net/ipv4/conf
@@ -210,15 +210,15 @@ sudo /etc/init.d/networking restart
 
 用ifconfig查看是不是抓到
 
-設定路由可以透過閘道連通
+> 設定路由可以透過閘道連通
 
 sudo /sbin/route add 10.1.1.1(目標內網ip) gw 10.1.1.254(內網閘道) dev ens192(網卡)
 
-設定NAS上此共享資料夾必須符合NFS設定可參閱這篇文章
+> 設定NAS上此共享資料夾必須符合NFS設定可參閱這篇文章
 
 [http://blog.xuite.net/tolarku/blog/495291815-Qnap+%E8%A8%AD%E5%AE%9A+NFS+%E5%88%86%E4%BA%AB%E8%A8%AD%E5%AE%9A+-+nfs+export](http://blog.xuite.net/tolarku/blog/495291815-Qnap+%E8%A8%AD%E5%AE%9A+NFS+%E5%88%86%E4%BA%AB%E8%A8%AD%E5%AE%9A+-+nfs+export)
 
-確認是否可連通，並觀看有哪些資料夾
+> 確認是否可連通，並觀看有哪些資料夾
 
 ```
 sudo apt install nfs-common
@@ -226,14 +226,14 @@ showmount -e 10.1.1.1(目標內網ip)
 
 ```
 
-將NAS上的共享資料夾掛載到ubuntu上面
+> 將NAS上的共享資料夾掛載到ubuntu上面
 
 ```
 sudo mount -t nfs 10.1.1.1(目標內網ip):ServerGit /home/your_path/gitlab_backup
 
 ```
 
-確認是否掛載
+> 確認是否掛載
 
 ```
 df -h
@@ -278,7 +278,7 @@ sudo crontab -e
 
 ```
 
-Gitlab 的學問博大精深，希望這篇文章讓初學者上手時更加輕鬆。
+> Gitlab 的學問博大精深，希望這篇文章讓初學者上手時更加輕鬆。
 
 ---
 

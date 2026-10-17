@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/chatgpt-code-review-refactoring/
-- 發布：2023-01-25（更新：2024-10-24）
+- 發布：2023-01-25
 - 主題：AI 實戰
 - 標籤：ChatGPT、Code Review、Code Refactoring、Code Comments、AI
 - 摘要：ChatGPT 的 Code Review 能力如何？能幫我們解釋（Explain）、重構（Refactoring）、加註解（Comments）嗎？ 這邊我們就使用上一篇 Side Project 完成的 Code，來看看 ChatGPT 的表現。
@@ -157,18 +157,17 @@ console.log('Linebot is running on 3000 port');
 
 於結尾 ChatGPT 有說明自己的重構理念：
 
-- 使用 async/await 處理 promise 鏈，使程式碼更具可讀性。
-- 把 client 和 openai 的實例化移到最上層，使程式碼更整潔。
-- 使用解構賦值提取 openai 回應中的 choices，使程式碼更簡潔。
-- 把 handleEvent 函式移到最上層，使其更易於測試。
-- 使用箭頭函式語法使程式碼更一致。
-- 使用縮寫屬性名稱使程式碼更簡潔。
+1. 使用 async/await 處理 promise 鏈，使程式碼更具可讀性。
+2. 把 client 和 openai 的實例化移到最上層，使程式碼更整潔。
+3. 使用解構賦值提取 openai 回應中的 choices，使程式碼更簡潔。
+4. 把 handleEvent 函式移到最上層，使其更易於測試。
+5. 使用箭頭函式語法使程式碼更一致。
+6. 使用縮寫屬性名稱使程式碼更簡潔。
 
 這邊我得給他拍拍手，就算筆者認真重構都很難考慮的這麼完善。
 
-**這次 ChatGPT 重構完的程式是可以正常運行的，這點超重要！**
-
-因為實務上最怕重構後功能就壞掉，不過還是建議讀者將 ChatGPT 重構完的程式測試一遍，不要百分百相信。
+> **這次 ChatGPT 重構完的程式是可以正常運行的，這點超重要！**
+> 因為實務上最怕重構後功能就壞掉，不過還是建議讀者將 ChatGPT 重構完的程式測試一遍，不要百分百相信。
 
 如果你對他的說明不理解，也可以再進一步詢問他（像是我對第 6 點就看不太懂）。
 
@@ -263,7 +262,7 @@ console.log('Linebot is running on 3000 port');
 
 以筆者的角度來看，有些註解顯得多餘，但我覺得這些註解對新手理解程式很有幫助；實務上要保留、調整、移除，就看讀者的個人需求了。
 
-如果想要移除所有註解，輸入 `remove code comments` 即可。
+> 如果想要移除所有註解，輸入 `remove code comments` 即可。
 
 ## 結論：用對地方就是好幫手！
 
@@ -271,7 +270,7 @@ console.log('Linebot is running on 3000 port');
 
 因為目前 ChatGPT 的資料截止於 2021 年，所以面對較新的技術、工具時，他的表現有點差強人意；但在面對「已知」的事物時，他所展現的功力並不輸一名訓練有素的資深工程師，確實能增加工作效率。
 
-其實我還有請他幫我將 JavaScript 重構成 TypeScript，但他最終只轉出一份很像可以跑的程式；but…實際上跑不動，還需要自己去微調許多細節，這邊我就不放上來了，期待日後會推出更完善的版本。
+> 其實我還有請他幫我將 JavaScript 重構成 TypeScript，但他最終只轉出一份很像可以跑的程式；but…實際上跑不動，還需要自己去微調許多細節，這邊我就不放上來了，期待日後會推出更完善的版本。
 
 未來筆者會出一系列使用 ChatGPT、openAI 的文章，如果你對這個議題感興趣，可以持續關注我的文章！
 
@@ -283,8 +282,8 @@ console.log('Linebot is running on 3000 port');
 
 **參考資料**：
 
-- ChatGPT Refactor 後的程式：[Github](https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/refactor-index.js)
-- ChatGPT Refactor 並加上註解的程式：[Github](https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/commets-index.js)
+1. ChatGPT Refactor 後的程式：[Github](https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/refactor-index.js)
+2. ChatGPT Refactor 並加上註解的程式：[Github](https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/commets-index.js)
 
 ---
 

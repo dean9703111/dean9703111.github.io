@@ -18,17 +18,15 @@
 
 在最後會分析整個專案架構，帶大家了解 **AI Agent 到底幫我們做了哪些事；**並透過 **GitHub Pages 發布專案**，讓你完成的網頁可以直接分享給朋友。
 
-建議搭配影片觀看實際的操作步驟。
+> 建議搭配影片觀看實際的操作步驟。
 
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=wOnjdSDt-8A)
+[YouTube 影片：【Cursor 教學】Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程 #spec #git #nodejs #deploy #ai #sdd](https://www.youtube.com/watch?v=wOnjdSDt-8A)
 
   [https://youtu.be/wOnjdSDt-8A](https://youtu.be/wOnjdSDt-8A)
 
-第一次接觸 Cursor 與 Vibe Coding 的朋友，可以先參考下面的文章：
-
-➤ [Cursor 教學：入門到實戰，用 AI Agent 自動化你的工作流！](https://deanlin.net/blog/202509/cursor-getting-started/)
-
-➤ [Cursor 教學：安裝 3 款讓 Vibe Coding 效率翻倍的工具！用「個人形象網站」實戰演練](https://deanlin.net/blog/202509/cursor-productivity-extensions/)
+> 第一次接觸 Cursor 與 Vibe Coding 的朋友，可以先參考下面的文章：
+> ➤ [Cursor 教學：入門到實戰，用 AI Agent 自動化你的工作流！](https://deanlin.net/blog/202509/cursor-getting-started/)
+> ➤ [Cursor 教學：安裝 3 款讓 Vibe Coding 效率翻倍的工具！用「個人形象網站」實戰演練](https://deanlin.net/blog/202509/cursor-productivity-extensions/)
 
 ## ① 釐清需求，生成專案規格
 
@@ -118,7 +116,7 @@
 
 儘管相關訊息可以從過去的對話找到，但相信我，你幾乎不會翻過去的對話內容。
 
-儘管我們可以使用 AI Agent 模式，讓 AI 直接寫程式；但我更建議大家先討論出具體、明確的專案框架後，再請 AI 做事。
+> 儘管我們可以使用 AI Agent 模式，讓 AI 直接寫程式；但我更建議大家先討論出具體、明確的專案框架後，再請 AI 做事。
 
 近幾年流行一個名詞，叫做 SDD（Specification-Driven Development），也就是規格驅動開發
 
@@ -126,7 +124,7 @@
 
 如果你在想這些步驟會不會花太多時間。
 
-我可以用十多年的開發經驗跟你保證，如果初期沒寫好文件，日後要花好幾倍的時間去反覆修改。
+> 我可以用十多年的開發經驗跟你保證，如果初期沒寫好文件，日後要花好幾倍的時間去反覆修改。
 
 ## ② 設計規則，讓 AI 知道做事邏輯
 
@@ -217,11 +215,11 @@
 
   可以按下 F12 查看主控台是否有錯誤訊息
 
-**別忘記，生成式 AI 的結果本來就是充滿隨機性的。**
+> **別忘記，生成式 AI 的結果本來就是充滿隨機性的。**
 
 這些是我為何建議先完成最小可行性產品，因為範圍小，所以釐清錯誤、調整內容相對方便。
 
-**一但範圍大了，你連怎麼調整都會沒有頭緒。**
+> **一但範圍大了，你連怎麼調整都會沒有頭緒。**
 
 所以千萬別想著靠一個指令就生成一套系統，因為光生成一個簡單的網頁都會遇到很多問題了。
 
@@ -283,7 +281,7 @@
 
   [https://deanlin.net/teleprompter-app](https://deanlin.net/teleprompter-app)
 
-我覺得 Vibe Coding 的魅力不是一鍵搞定，而是你可以根據實際需求快速迭代產品，但前提是你知道自己要的是什麼。
+> 我覺得 Vibe Coding 的魅力不是一鍵搞定，而是你可以根據實際需求快速迭代產品，但前提是你知道自己要的是什麼。
 
 ## ⑤ 了解 AI 生成的專案架構
 
@@ -381,7 +379,7 @@ Push 後我們回到 GitHub 網頁，刷新一下頁面，如果能看到專案�
 
 跟大家分享用 AI 撰寫測試程式的概念與技巧～
 
-之所以製作一系列 Vibe Coding 影片，是為了避免大家踩到我遇過的「坑」。
+> 之所以製作一系列 Vibe Coding 影片，是為了避免大家踩到我遇過的「坑」。
 
 如果你對 AI 工具、自我成長、職涯發展感興趣，[歡迎追蹤我](https://dean-lin.medium.com/subscribe)！我會我會持續分享新的觀點 💡
 

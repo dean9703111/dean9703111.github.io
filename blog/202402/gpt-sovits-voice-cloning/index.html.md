@@ -7,7 +7,7 @@
 - 標籤：GPT SoVITS、AI、AI Voice Generator、AI Voice Cloning、Colab
 - 摘要：用過 GPT-SoVITS 後，我感覺到善良真的是一種選擇。 在這之前，筆者嘗試過 clone-voice、MockingBird 等複製聲音的 AI 工具。但他們英文的表現尚可，中文的結果真的慘不忍睹。儘管 GPT-SoVITS 在中文領域尚有進步空間，但已經足夠驚艷了。
 
-**注意：本專案因這兩年相依套件改版太多，故無法順利啟用，有興趣與時間的朋友們，建議[參考官方文件](https://github.com/RVC-Boss/GPT-SoVITS)，目前 Colab 執行會遇到許多特殊狀況，如果有順利解決的朋友，歡迎留言分享您的經驗，相信會給更多人帶來幫助，感謝大家。**
+> **注意：本專案因這兩年相依套件改版太多，故無法順利啟用，有興趣與時間的朋友們，建議[參考官方文件](https://github.com/RVC-Boss/GPT-SoVITS)，目前 Colab 執行會遇到許多特殊狀況，如果有順利解決的朋友，歡迎留言分享您的經驗，相信會給更多人帶來幫助，感謝大家。**
 
 用過 GPT-SoVITS 後，我感覺到善良真的是一種選擇。
 
@@ -17,7 +17,7 @@
 
 **【免責聲明】：教學只是示範一種思路，沒有任何不良引導，請勿未經許可使用他人音訊資源用於個人學習外其他目的，使用軟體需遵守軟體相關條款協議。**
 
-小提醒：本篇文章的操作時間約 30 分鐘，若對這個主題感興趣，建議先保存下來，或 [Follow](https://dean-lin.medium.com/subscribe) 我的部落格。
+> 小提醒：本篇文章的操作時間約 30 分鐘，若對這個主題感興趣，建議先保存下來，或 [Follow](https://dean-lin.medium.com/subscribe) 我的部落格。
 
 ```
 文章大綱
@@ -43,9 +43,8 @@ STEP 6: 推理，輸入文字讓 AI 生成聲音
 
 下面連結是筆者調整後，實測可直接運行的版本： [https://colab.research.google.com/drive/1Yff7mRQgKeqXJ4oB8DyT_onigVIBo48l?usp=sharing](https://colab.research.google.com/drive/1Yff7mRQgKeqXJ4oB8DyT_onigVIBo48l?usp=sharing)
 
-2025.01.09 更新：
-
-筆者 Github 的 GPT-SoVITS 部分套件已經被 Python 視為過舊，因此有附上官方最新版本的 Github 連結：git clone [https://github.com/RVC-Boss/GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS) ，但他們更新頻率高，實際能否跑需要一些運氣（囧）
+> 2025.01.09 更新：
+> 筆者 Github 的 GPT-SoVITS 部分套件已經被 Python 視為過舊，因此有附上官方最新版本的 Github 連結：git clone [https://github.com/RVC-Boss/GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS) ，但他們更新頻率高，實際能否跑需要一些運氣（囧）
 
   小提醒：Colab 需要有 Google 帳號才能使用，並且每天有用量限制，如果用量到極限的話，可以考慮付費升級（或換一個 Google 帳號操作）。
 
@@ -61,15 +60,15 @@ STEP 6: 推理，輸入文字讓 AI 生成聲音
 
 我們需要準備一段聲音素材給 AI 訓練，建議符合以下規格：
 
-- 1~2 分鐘的聲音素材（多一些更好）
-- 目前僅支援「中文」訓練
-- 僅接受「.wav」檔
-- 盡可能提供無背景噪音的聲音
+1. 1~2 分鐘的聲音素材（多一些更好）
+2. 目前僅支援「中文」訓練
+3. 僅接受「.wav」檔
+4. 盡可能提供無背景噪音的聲音
 
 準備好對應的素材後，我們把視角拉回 Colab，在左側的工作區點擊「drive → MyDrive」，在自己的雲端硬碟新增一個「voice_files」的資料夾，並在下面建立兩個資料夾：
 
-- raw: 原始聲音
-- slicer: 分割後的聲音
+1. raw: 原始聲音
+2. slicer: 分割後的聲音
 
 然後我們就可以把準備好的聲音檔拖拉到「raw」這個資料夾底下。
 

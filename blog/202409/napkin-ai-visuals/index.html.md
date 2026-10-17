@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202409/napkin-ai-visuals/
-- 發布：2024-09-10（更新：2024-10-24）
+- 發布：2024-09-10
 - 主題：AI 實戰
 - 標籤：視覺化、Napkin、AI、Visualization、Writing
 - 摘要：身為一個自媒體創作者＆講師，過去視覺化圖表一直是我的痛點，但在 Napkin AI 的幫助下，我寫文章、備課的速度再次翻倍。

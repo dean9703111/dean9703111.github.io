@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202304/local-whisper-youtube-transcript/
-- 發布：2023-04-01（更新：2024-10-24）
+- 發布：2023-04-01
 - 主題：AI 實戰
 - 系列：YouTube 影片轉逐字稿
 - 標籤：ChatGPT、Whisper、OpenAI、YouTube、Python
@@ -12,9 +12,9 @@
 
 所以這篇文章筆者要向大家介紹如何在 Local 環境導入 Whisper 套件的方案，免費將 Youtube 影片轉換成逐字稿！
 
-提醒大家，不要未經授權下載有版權保護的影片喔！
+> 提醒大家，不要未經授權下載有版權保護的影片喔！
 
-**小提醒**：雖然原則上按照步驟就能順利完成，但每個人的電腦環境會有些許差異，遇到特殊狀況時，請自行排除（或是問 ChatGPT）。
+> **小提醒**：雖然原則上按照步驟就能順利完成，但每個人的電腦環境會有些許差異，遇到特殊狀況時，請自行排除（或是問 ChatGPT）。
 
 ## 觀看 Whisper 官方文件
 
@@ -50,7 +50,7 @@ pip install setuptools-rust
 
 ```
 
-如果想了解每個套件負責的任務是什麼，可以參考官網：[https://github.com/openai/whisper#setup](https://github.com/openai/whisper#setup)
+> 如果想了解每個套件負責的任務是什麼，可以參考官網：[https://github.com/openai/whisper#setup](https://github.com/openai/whisper#setup)
 
 **STEP 4**：確認是否安裝成功。
 
@@ -60,7 +60,7 @@ pip install setuptools-rust
 
 筆者在[前面的文章](https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/)，已經完成將 Youtube 影片轉換成音檔的程式，接下來我們可以請 ChatGPT 幫我們做程式組合的任務。
 
-請自行安裝 pytube、pydub 的套件。
+> 請自行安裝 pytube、pydub 的套件。
 
 😀：「下面是我用 Python 寫的 Youtube 影片轉成音檔的程式，我想要在這個基礎上擴充功能，我在後續的對話中會提出自己的需求，請問你可以幫忙嗎？
 
@@ -151,7 +151,7 @@ print(result["text"])
 
 除了 model 的選擇外，另一個是「語言」，如果一開始有設定好也能提升辨識的準確度（ex：中文是「zh」）。
 
-有興趣的朋友可以看一下套件目前提供的語言列表：[https://github.com/openai/whisper/blob/main/whisper/tokenizer.py](https://github.com/openai/whisper/blob/main/whisper/tokenizer.py)
+> 有興趣的朋友可以看一下套件目前提供的語言列表：[https://github.com/openai/whisper/blob/main/whisper/tokenizer.py](https://github.com/openai/whisper/blob/main/whisper/tokenizer.py)
 
 下面是筆者將語言調整成「zh」，並選擇「medium」這個 Model 優化的程式（除非你電腦性能超級優秀，否則選擇 large 會等到天荒地老）：
 

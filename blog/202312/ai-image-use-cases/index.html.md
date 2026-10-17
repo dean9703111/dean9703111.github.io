@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202312/ai-image-use-cases/
-- 發布：2023-12-26（更新：2024-10-24）
+- 發布：2023-12-26
 - 主題：AI 實戰
 - 標籤：DALL-E 3、Midjourney、AI、Demo、Skills
 - 摘要：今年過節時，筆者收到的賀圖有 60% 都是 AI 繪製的 🤖 所以開始統整 AI 繪圖常見的應用面向「產品概念圖、創意梗圖、諧音梗圖、文件配圖、節日賀圖」與 Prompt 技巧。 這篇文章會用 DALL·E 3 及 Midjourney 產出，讓大家感受兩者的差差異。

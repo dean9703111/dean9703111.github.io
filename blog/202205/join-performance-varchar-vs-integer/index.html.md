@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/
-- 發布：2022-05-13（更新：2023-05-05）
+- 發布：2022-05-13
 - 主題：技術教學
 - 標籤：Table Join、Varchar、Integer、Node.js、Sequelize
 - 摘要：因為剛好朋友在專案的搜尋上遇到效能瓶頸，在看過程式碼後，發現他在 Table 做 Join 時都是挑選文字欄位，因此研判這應該就是導致效率低下的主要原因；為了實驗文字欄位（VARCHAR）與數值欄位（INTEGER）在 Join…
@@ -20,7 +20,7 @@
 
 ```
 
-大家也可以[直接 Clone 筆者 GitHub 上的專案](https://github.com/dean9703111/table-join-varchar-int-performance)來了解喔。（如果順便按個 Star更好😀）
+> 大家也可以[直接 Clone 筆者 GitHub 上的專案](https://github.com/dean9703111/table-join-varchar-int-performance)來了解喔。（如果順便按個 Star更好😀）
 
 ## 一、模擬情境說明
 
@@ -69,13 +69,13 @@ DB 我選擇的是 MySQL，而 Table 的設計如下：
 - 建立 DB：`sequelize db:create`
 - 執行 migration 建立 Tables：`sequelize db:migrate`
 
-資料都是使用 Node.js 搭配 sequelize 這款套件來建立的，如果想了解詳細使用方式，可以參考我先前的的[文章](https://deanlin.net/blog/202205/sequelize-migration-seeder/)。
+> 資料都是使用 Node.js 搭配 sequelize 這款套件來建立的，如果想了解詳細使用方式，可以參考我先前的的[文章](https://deanlin.net/blog/202205/sequelize-migration-seeder/)。
 
   建立測試 DB
 
   建立測試各種情境的 Table
 
-在沒設計 Index 的 Table（users/orders） 對照組中，會新增 user_id/order_id 的欄位，此欄位內容與 id 欄位相同，單純用來測試效能用的。
+> 在沒設計 Index 的 Table（users/orders） 對照組中，會新增 user_id/order_id 的欄位，此欄位內容與 id 欄位相同，單純用來測試效能用的。
 
 ## 三、設計＆建立模擬資料
 
@@ -92,15 +92,15 @@ sequelize db:seed:all
 
 ```
 
-因為沒建立 Index 的 Table 搜尋效能比想像的更加悲劇，所以在這個情境下將 User 的數量減為 1/10，也就是說購買商品(item)的數量只有 10W 筆。
+> 因為沒建立 Index 的 Table 搜尋效能比想像的更加悲劇，所以在這個情境下將 User 的數量減為 1/10，也就是說購買商品(item)的數量只有 10W 筆。
 
 ## 四、設計測試程式
 
 我們需要設計一個可以根據上面 3 種情境測試的程式，同時用 3 種常見的查詢來比較各自的效能：
 
-- 單筆查詢：`findOne`
-- 多筆查詢：`findMutiple`
-- 設定條件的批量查詢 ：`searchRange` (大約會找出 1/5 的資料，用來測試匯出大量報表功能)
+1. 單筆查詢：`findOne`
+2. 多筆查詢：`findMutiple`
+3. 設定條件的批量查詢 ：`searchRange` (大約會找出 1/5 的資料，用來測試匯出大量報表功能)
 
 程式放在下面，有興趣再看就好，這不是本文的重點，我知道還有很多細節可以優化 😇
 
@@ -199,7 +199,7 @@ test()//什麼都沒有設定的
 
   以 foreign 為開頭的 Table
 
-小知識 : 如果 Foreign Key關聯的欄位為 Primary Key，它會自動建立 Index。
+> 小知識 : 如果 Foreign Key關聯的欄位為 Primary Key，它會自動建立 Index。
 
 - 執行程式
 
@@ -262,7 +262,7 @@ test()//什麼都沒有設定的
 
 老實說，這個實驗結果反而把我弄得有點迷糊，也許還要從更多面向做測試，追尋知識的道路真的任重道遠🤕
 
-本篇是從「搜尋花費時間」的角度來實驗，歡迎高手從硬體消耗資源的角度來實驗。
+> 本篇是從「搜尋花費時間」的角度來實驗，歡迎高手從硬體消耗資源的角度來實驗。
 
 ---
 

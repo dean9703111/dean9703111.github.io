@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202404/haiper-ai-product-video/
-- 發布：2024-04-09（更新：2024-10-24）
+- 發布：2024-04-09
 - 主題：AI 實戰
 - 標籤：Haiper、AI、AI Video Generator、AIGC、AI Video
 - 摘要：你只需要輸入簡單的提示詞，或是上傳圖片，Haiper AI 就能生成漂亮流暢的影片。 這篇文章會分享如何生成營造「奢華香水、高級酒款」的視覺影片。 僅管筆者過去用過 Runway、Pika Labs 等 AI 生成影片的工具，但 Haiper AI 的成果依舊讓我感到驚艷。
@@ -60,7 +60,7 @@ The purple liquid under the bottle flows slowly
 
 感謝 AI，讓我這個完全不懂繪圖、製片的普通人，能體驗到不同領域的樂趣。
 
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=7WwC3Xiz7_w)
+[YouTube 影片：用 Haiper AI 生成華麗的產品宣傳影片](https://www.youtube.com/watch?v=7WwC3Xiz7_w)
 
 延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202303/python-youtube-to-mp3-with-chatgpt/
-- 發布：2023-03-29（更新：2024-10-24）
+- 發布：2023-03-29
 - 主題：AI 實戰
 - 系列：YouTube 影片轉逐字稿
 - 標籤：ChatGPT、Python、YouTube、MP3、Tutorial
@@ -12,11 +12,11 @@
 
 在這篇文章中，我附上與 ChatGPT 的完整對話，大家只要複製貼上就可以嘗試看看嚕！
 
-Python 環境安裝的部分我就不贅述了，筆者使用的是 Python3；不過有設定 alias name，讓 python3/pip3 的指令對應 python/pip。
+> Python 環境安裝的部分我就不贅述了，筆者使用的是 Python3；不過有設定 alias name，讓 python3/pip3 的指令對應 python/pip。
 
 😀：「我使用的程式語言是 Python，他有辦法抓取 Youtube 影片的音擋嗎？」
 
-ChatGPT 這邊也有提醒大家，不要未經授權下載有版權保護的影片喔！
+> ChatGPT 這邊也有提醒大家，不要未經授權下載有版權保護的影片喔！
 
 ```
 from pytube import YouTube
@@ -41,13 +41,13 @@ audio_stream.download(output_path="path/to/save/directory", filename="audio")
 
 **SETP 3**：將 url 替換成自己的：[https://www.youtube.com/watch?v=IvOdTbIYZs4](https://www.youtube.com/watch?v=IvOdTbIYZs4%22%EF%BC%88%E9%80%99%E6%98%AF%E7%AD%86%E8%80%85%E5%88%86%E4%BA%AB%E5%87%BA%E6%9B%B8%E5%BF%83%E5%BE%97%E7%9A%84%E5%BD%B1%E7%89%87%EF%BC%89%E3%80%82)
 
-這是筆者分享出書心得的影片。
+> 這是筆者分享出書心得的影片。
 
 **SETP 4**：在終端機輸入`python youtube-test.py`執行它，你會發現他自動建立了資料夾路徑，裡面存放著「audio」的檔案。
 
 😀：「有順利在「path/to/save/directory」這個路徑下產生「audio」的檔案了，但他無法打開，這個真的是音擋嗎？」
 
-請安裝套件：`pip install pydub`
+> 請安裝套件：`pip install pydub`
 
 😀：「如何與上一段程式結合呢？」
 
@@ -80,7 +80,7 @@ print(audio_file)
 
 把錯誤的結果貼到 ChatGPT，他是會幫你解答的。
 
-若未安裝 homebrew 的朋友也可以詢問 ChatGPT 如何安裝。
+> 若未安裝 homebrew 的朋友也可以詢問 ChatGPT 如何安裝。
 
 在終端機輸入`brew install ffmpeg`，之後等他安裝完成（頗久的…）
 
@@ -127,9 +127,8 @@ mp3_file = audio_file.export("path/to/save/directory/audio.mp3", format="mp3")
 
 而 ChatGPT 的出現，很大程度地減緩了這塊的痛苦，讓我們更容易上手程式。
 
-不過這對程式教育產業來說，可說是巨大的衝擊，因為人們多了一個全新的選擇（而且還不賴）。
-
-下一篇就來分享[如何搭配 OpenAI 的 whisper api 將音檔（mp3）轉換成文字吧](https://deanlin.net/blog/202303/python-youtube-transcript-whisper/)！
+> 不過這對程式教育產業來說，可說是巨大的衝擊，因為人們多了一個全新的選擇（而且還不賴）。
+> 下一篇就來分享[如何搭配 OpenAI 的 whisper api 將音檔（mp3）轉換成文字吧](https://deanlin.net/blog/202303/python-youtube-transcript-whisper/)！
 
 延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
 

@@ -2,14 +2,14 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202304/chatgpt-plugins-preview/
-- 發布：2023-04-25（更新：2024-10-24）
+- 發布：2023-04-25
 - 主題：AI 實戰
 - 標籤：ChatGPT、ChatGPT Plugins、OpenAI、OpenAI ChatGPT、ChatGPT Plus
 - 摘要：OpenAI 聯合創辦人Greg Brockman 在 4 月 TED 演講時，向大家分享 ChatGPT 將推出的新功能（Browsing、Code Interpreter、Plugins）。這篇文章將會向大家展示用ChatGPT產圖、線上購物、發送twitter貼文…
 
 [OpenAI 聯合創辦人Greg Brockman 在 4 月 TED 演講時](https://www.youtube.com/watch?v=C_78DM8fG6E)，向大家分享了 ChatGPT 即將推出的新功能。
 
-筆者撰文時，這些功能尚未完全開放；目前預計開放時會先讓付費用戶體驗（ChatGPT PLUS），在文末有附上加入等候清單的官網連結。
+> 筆者撰文時，這些功能尚未完全開放；目前預計開放時會先讓付費用戶體驗（ChatGPT PLUS），在文末有附上加入等候清單的官網連結。
 
   ChatGPT付費版新功能
 

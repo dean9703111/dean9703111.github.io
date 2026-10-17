@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202104/validate-json-with-jsonschema/
-- 發布：2021-04-22（更新：2023-05-05）
+- 發布：2021-04-22
 - 主題：技術教學
 - 標籤：JSON Schema、JSON Schema Validator、後端資料驗證、JSON 格式驗證、前端密技
 - 摘要：開發網頁前端時，會需要用到後端回傳的 api 數據來渲染頁面，如果雙方依照需求規格書好好實作會天下太平；但在現實生活中總是會有例外發生，如果後端傳給前端時的資料格式不夠穩定，前端在渲染的時候就可能會出錯。遇到這種狀況時，「jsonschema」套件就是你的救星！
@@ -35,11 +35,11 @@ npm i jsonschema
 
 ## 二、「jsonschema」有哪些優點？
 
-- 可以詳細定義要驗證的 json 格式，包含內部所有參數的型態（string/number/array/object）
-- 驗證結果會用 true/false 回傳
-- 發生 error 時，會很明確的指出是在哪個位置出錯
-- 可以客製化回傳錯誤的訊息
-- 學習及使用非常直覺
+1. 可以詳細定義要驗證的 json 格式，包含內部所有參數的型態（string/number/array/object）
+2. 驗證結果會用 true/false 回傳
+3. 發生 error 時，會很明確的指出是在哪個位置出錯
+4. 可以客製化回傳錯誤的訊息
+5. 學習及使用非常直覺
 
 ## 三、「jsonschema」驗證範例
 
@@ -82,10 +82,10 @@ ValidatorResult {
 
 ### 複雜點的範例：
 
-- 建立「驗證地址格式」的「addressSchema」
-- 建立「驗證個人格式」的「schema」，並且讓個人格式的「address」關聯到「addressSchema」
-- 建立一個人的物件（p），填入個人訊息
-- 使用「jsonschem」提供的「Validator」 function 來驗證物件(p)是否符合個人格式(addressSchema)
+1. 建立「驗證地址格式」的「addressSchema」
+2. 建立「驗證個人格式」的「schema」，並且讓個人格式的「address」關聯到「addressSchema」
+3. 建立一個人的物件（p），填入個人訊息
+4. 使用「jsonschem」提供的「Validator」 function 來驗證物件(p)是否符合個人格式(addressSchema)
 
 ```
 var Validator = require('jsonschema').Validator;

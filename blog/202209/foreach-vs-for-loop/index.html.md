@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202209/foreach-vs-for-loop/
-- 發布：2022-09-23（更新：2023-05-05）
+- 發布：2022-09-23
 - 主題：技術教學
 - 標籤：Foreach Loop、For Loop、高階函數、迴圈、非同步
 - 摘要：在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。 但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。
@@ -37,7 +37,7 @@ test();
 
 儘管在 forEach 裡面用了 await，但實際執行的結果卻不是直覺想的那樣；從下圖可以看到，**在 forEcah 的 await 跑完前，「End 🔚」就先印出來了**：
 
-會出現這樣的結果，`是因為 forEach 本身不是 Promise`，forEach 只是將陣列的內容抽出來放入 callback function；假如你把 forEach 改成 map 也會遇到相同的問題。
+> 會出現這樣的結果，`是因為 forEach 本身不是 Promise`，forEach 只是將陣列的內容抽出來放入 callback function；假如你把 forEach 改成 map 也會遇到相同的問題。
 
 了解問題的成因後，我們可以採取最簡單暴力的方案，那就是改用 for 迴圈處理：
 
@@ -66,7 +66,7 @@ test();
 
 從下圖可以看到，程式依照我們期待步驟的執行了：
 
-**備註**：有些人會自己寫一個函式（ex：asyncForEach），用 forEach 的寫法來跑 await，但兩者運行的觀念要搞清楚避免混淆，[參考連結](https://israynotarray.com/javascript/20211029/2739130728/)。
+> **備註**：有些人會自己寫一個函式（ex：asyncForEach），用 forEach 的寫法來跑 await，但兩者運行的觀念要搞清楚避免混淆，[參考連結](https://israynotarray.com/javascript/20211029/2739130728/)。
 
 ## 疑！原來無法中斷 forEach 迴圈！
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/chatgpt-limitations/
-- 發布：2023-01-26（更新：2024-10-24）
+- 發布：2023-01-26
 - 主題：AI 實戰
 - 標籤：ChatGPT、ChatGPT Chatbot、Bugs、Issues、Limits
 - 摘要：筆者最近高頻率的使用 ChatGPT，在享受便利的同時也碰到了不少坑（bugs & issues & limits）；因此將這些問題彙整起來與大家分享。
@@ -24,7 +24,7 @@
 
 ## 回答未必是正確的
 
-May occasionally generate incorrect information（可能偶爾會產生不正確的信息）
+> May occasionally generate incorrect information（可能偶爾會產生不正確的信息）
 
 ChatGPT 知道很多知識，但有時會給出一些看似正確，但實際上是錯誤的回應。
 
@@ -45,17 +45,17 @@ ChatGPT 知道很多知識，但有時會給出一些看似正確，但實際上
 
 ## 回答的資料有限
 
-Limited knowledge of world and events after 2021.（對 2021 年後的世界和事件了解有限）
+> Limited knowledge of world and events after 2021.（對 2021 年後的世界和事件了解有限）
 
 因為他的資料截止於 2021 年，所以較新的資訊都無法提供，這也進階導致了部分回答的準確率；不過未來如果與搜尋引擎結合，那能力肯定大幅提升。
 
 ## 拒絕回答敏感問題（ex：股票、虛擬貨幣漲跌、暴力、犯罪…）
 
-Trained to decline inappropriate requests.（受過拒絕不當請求的訓練）
+> Trained to decline inappropriate requests.（受過拒絕不當請求的訓練）
 
 如果詢問他股票漲跌、虛擬貨幣未來走勢，或是些暴力犯罪的問題，他會拒絕回答。
 
-筆者在網路上看過有人用「寫劇本」的方式來繞過這個限制，但個人並不推薦這種操作。
+> 筆者在網路上看過有人用「寫劇本」的方式來繞過這個限制，但個人並不推薦這種操作。
 
 ## 回答到一半斷掉
 

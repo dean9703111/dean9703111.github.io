@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202206/mysql-server-down-after-holiday/
-- 發布：2022-06-21（更新：2023-05-05）
+- 發布：2022-06-21
 - 主題：技術教學
 - 標籤：MySQL Server、Ubuntu Server、APT、Version Control、MySQL
 - 摘要：如果你用上圖的錯誤訊息去 Google 搜尋，相信會得到很多解答；但這篇文章遇到的問題，如果用關鍵字搜尋是找不到真正解答的；也因為這次的經驗讓我對 Ubuntu Server、MySQL、apt-mark 有更深一層的認識。
@@ -37,10 +37,10 @@ ERROR 2002 (HY000): Can’t connect to local MySQL server through socket '/var/r
 
 解決的方法五花八門，我這邊統整一下大致的方向：
 
-- 重啟 MySQL 服務
-- 調整 MySQL 資料夾權限，補齊遺漏的檔案
-- 重啟整台 Server
-- 把 MySQL 砍掉重裝
+1. 重啟 MySQL 服務
+2. 調整 MySQL 資料夾權限，補齊遺漏的檔案
+3. 重啟整台 Server
+4. 把 MySQL 砍掉重裝
 
 但很遺憾的，1~3 我都嘗試過了，MySQL 依舊頑強的吐一樣的錯誤，看來不能依靠網路的的解法了。
 

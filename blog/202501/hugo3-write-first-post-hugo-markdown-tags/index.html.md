@@ -57,7 +57,7 @@ console.log('程式碼區塊');
 
 用 `![img](/images/path)` 的結構，則可插入圖片。
 
-讀者可以到「content/blog」底下新增一個「test.md」的文章，測試不同符號對排版的影響。
+> 讀者可以到「content/blog」底下新增一個「test.md」的文章，測試不同符號對排版的影響。
 
 ### 掌握分類、標籤文章的技巧
 
@@ -102,15 +102,13 @@ type: "post" # 原則上維持不變，因為目前都是要貼部落格文章
 
 - Youtube 原始 URL: `https://www.youtube.com/watch?v=yVfafM70bzY`
 
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=yVfafM70bzY)
+[YouTube 影片：用 n8n 在 Google Sheet 自動建立 SEO 關鍵字矩陣](https://www.youtube.com/watch?v=yVfafM70bzY)
 
 - IG 原始 URL: `https://www.instagram.com/p/Cu9zfv0vMoR/`
 
-      [
-
-            View this post on Instagram
-
-](https://www.instagram.com/p/Cu9zfv0vMoR)
+> [
+> View this post on Instagram
+> ](https://www.instagram.com/p/Cu9zfv0vMoR)
 
 ### 用 ChatGPT 生成建議的英文檔名，使用「年月」作為資料夾結構
 
@@ -138,7 +136,7 @@ Hugo 會使用 Markdown 文件的檔名作為網址，如果使用中文命名�
 
 這邊先恭喜大家完成部落格網站的雛形，下一篇文章會帶大家[將網站部署到 GitHub Pages](https://deanlin.net/blog/202501/hugo4-deploy-hugo-github-pages-add-google-analytics/)，完成這個步驟後，就可以把漂亮的網站分享給朋友了！
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

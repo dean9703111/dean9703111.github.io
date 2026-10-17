@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202208/typescript-oop-polymorphism-inheritance/
-- 發布：2022-08-25（更新：2023-05-05）
+- 發布：2022-08-25
 - 主題：技術教學
 - 系列：TypeScript 物件導向
 - 標籤：Polymorphism、Inheritance、多型、繼承、物件導向
@@ -350,9 +350,9 @@ export class Worker {
 
 我們現在才 5 個職業、3 個功能就把 Worker 這個 Class 搞的這麼冗長了，現在先來分析這個程式日後會遭遇的問題：
 
-- **維護性**：日後增加新的職業，需要在每個 switch 設計對應的 case；如果職業繁多，那產生 Bug 是完全可以預期的事情。
-- **可讀性**：如果這個平台由多位工程師共同開發，那其他工程師使用到 Worker 這個 Class 時可能會很抖，因為無論閱讀理解還是改寫都很困難。
-- **擴充性**：如果未來需要根據特定職業設計獨有的 Function（比如只允許工程師使用 Programing），那可能就要動到 Class 的結構了。
+1. **維護性**：日後增加新的職業，需要在每個 switch 設計對應的 case；如果職業繁多，那產生 Bug 是完全可以預期的事情。
+2. **可讀性**：如果這個平台由多位工程師共同開發，那其他工程師使用到 Worker 這個 Class 時可能會很抖，因為無論閱讀理解還是改寫都很困難。
+3. **擴充性**：如果未來需要根據特定職業設計獨有的 Function（比如只允許工程師使用 Programing），那可能就要動到 Class 的結構了。
 
 ## 五、[Refactoring]老闆…我改不動了，打算用繼承進行重構
 
@@ -436,8 +436,8 @@ workers.forEach((worker: Worker) => {
 
 這邊筆者就分享自己使用下來最直觀的感受：
 
-- 繼承的概念讓我們的程式可以被重複使用。
-- 多形的概念幫我們把功能抽象化，根據實際的需求去執行。
+1. 繼承的概念讓我們的程式可以被重複使用。
+2. 多形的概念幫我們把功能抽象化，根據實際的需求去執行。
 
 **參考資源**：[Java物件導向 重觀念迅速教學 3 Polymorphism 什麼是繼承? 什麼是多型？為何多型以及如何設計多型？](https://www.youtube.com/watch?v=FkgLc5gFPAU&list=PLicQRHHL75d7RG_kfnEFAEnBouLncvwQp&ab_channel=%E6%B0%B4%E7%90%83%E6%BD%98)
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202405/senior-interview-what-managers-want/
-- 發布：2024-05-17（更新：2025-06-15）
+- 發布：2024-05-17
 - 主題：職涯成長
 - 系列：工程師下班有約
 - 標籤：面試、Interview、Issues、Critical Issue、Production Issue

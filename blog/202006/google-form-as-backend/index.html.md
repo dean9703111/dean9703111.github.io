@@ -2,12 +2,12 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/google-form-as-backend/
-- 發布：2020-06-05（更新：2023-05-05）
+- 發布：2020-06-05
 - 主題：技術教學
 - 標籤：Google Forms Tutorial、Google Sheets、HTML5 Development、GitHub、jQuery
 - 摘要：Google Form & Google sheet & HTML & github 結合應用
 
-為什麼撰寫這篇文章
+> 為什麼撰寫這篇文章
 
 常常使用Google Form當問卷的你是否覺得Google Form有點太過制式化，或者說讓人覺得用Google Form有點誠意不足
 
@@ -17,19 +17,19 @@
 
 為什麼不要讓Google Form乖乖當後台就好，我放一個靜態網頁到Github上面就能省去過去在Server上面的花費
 
-文章目標
+> 文章目標
 
-- 如何把Google Form的功能抽出來在一般靜態網頁使用
-- 可全客製化自己心目中漂亮的表單(內文使用Bootstrap 4為範例)
-- 讓你了解撰寫網頁會遇到的問題(謹以本範例為說明)
+1. 如何把Google Form的功能抽出來在一般靜態網頁使用
+2. 可全客製化自己心目中漂亮的表單(內文使用Bootstrap 4為範例)
+3. 讓你了解撰寫網頁會遇到的問題(謹以本範例為說明)
 
-**本文章使用到的技術：**
+> **本文章使用到的技術：**
 
-- 前端:static web(Bootstrap 4)
-- 後端:Google Form
-- 資料庫:Google Sheets
+1. 前端:static web(Bootstrap 4)
+2. 後端:Google Form
+3. 資料庫:Google Sheets
 
-Demo區讓你搶先體驗
+> Demo區讓你搶先體驗
 
 [DEMO網頁](https://dean9703111.github.io/customer_feedback_form/index.html) (看完文章後你可以自己客製化一個)
 
@@ -37,7 +37,7 @@ Demo區讓你搶先體驗
 
 [Google Sheets](https://docs.google.com/spreadsheets/d/1aZyvHnajaVjdNBaUT1Md-Y9nYW8O_rdPnMmN5WFrdO4/edit?usp=sharing) (資料最終儲存的地方)
 
-專案原始碼
+> 專案原始碼
 
 [Github Source code](https://github.com/dean9703111/customer_feedback_form) (如果實作上遇到問題可以參考)
 
@@ -53,7 +53,7 @@ Demo區讓你搶先體驗
 
 接下來進入網頁的開發者模式(按下F12)，選擇Elements檢視網頁元素，然後搜尋”entry”，這些name的標籤是之後會使用的參數欄位，請把他們複製起來
 
-2021/2/26 更新，朋友提醒新版的 ”entry” 已經轉移到了 <input type=”hidden” name=”entry.xxx" value=””> 的位置，大家操作時注意一下
+> 2021/2/26 更新，朋友提醒新版的 ”entry” 已經轉移到了 <input type=”hidden” name=”entry.xxx" value=””> 的位置，大家操作時注意一下
 
   位置轉移惹
 
@@ -119,7 +119,7 @@ Demo區讓你搶先體驗
 
 Google Form建立好了，網頁元素也都建立完成後就是將兩者bind在一起，以下是用jquery抓取html元素，並使用ajax將這個訊息送出，程式細節情看註解
 
-記得在要 把 jquery 引入<script>裡面，我朋友卡在這個問題很久 XD
+> 記得在要 把 jquery 引入<script>裡面，我朋友卡在這個問題很久 XD
 
 ```
 <script>

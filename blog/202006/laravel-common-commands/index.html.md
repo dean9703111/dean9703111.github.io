@@ -2,12 +2,12 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/laravel-common-commands/
-- 發布：2020-06-16（更新：2023-05-05）
+- 發布：2020-06-16
 - 主題：技術教學
 - 標籤：Laravel、PHP、Artisan、Commands、Ini
 - 摘要：laravel有很多常用的指令，但有時候會忘記或是不想自己全部打完，那這篇文章就是你專門用來複製貼上的大補帖
 
-這篇文章會列出我在使用Laraval框架時常用到的指令(部分是套件指令)
+> 這篇文章會列出我在使用Laraval框架時常用到的指令(部分是套件指令)
 
 ## 1. 資料庫相關指令
 
@@ -175,7 +175,7 @@ vi project_path/storage/logs/laravel-xxx-xx.log
 
 ```
 
-從 log 就能推斷出大部分的問題，並取得查詢的關鍵字
+> 從 log 就能推斷出大部分的問題，並取得查詢的關鍵字
 
 ---
 

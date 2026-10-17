@@ -2,14 +2,14 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202308/runway-video-editing-tools/
-- 發布：2023-08-14（更新：2024-10-24）
+- 發布：2023-08-14
 - 主題：AI 實戰
 - 標籤：Runway、Green Screen、Blur Face、Inpainting、Video To Video
 - 摘要：影音製作是一門專業的技術，從去除不需要的背景、生成影片素材，到模糊人臉保護隱私，每一個步驟都是專業和時間的象徵。但今天，我要向大家介紹一款顛覆我過去認知的 AI 工具：「Runway」。
 
 影音製作是一門專業的技術，從去除不需要的背景、生成影片素材，到模糊人臉保護隱私，每一個步驟都是專業和時間的象徵。但今天，我要向大家介紹一款顛覆我過去認知的 AI 工具：「Runway」。
 
-筆者過去有分享過兩篇 Runway 的文章，有興趣的朋友可以參考看看：[Midjourney + Gen-2 聯手將圖片轉成唯美動畫](https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/)、[用文字產生影片的 AI 黑科技](https://deanlin.net/blog/202307/runway-gen2-text-to-video/)
+> 筆者過去有分享過兩篇 Runway 的文章，有興趣的朋友可以參考看看：[Midjourney + Gen-2 聯手將圖片轉成唯美動畫](https://deanlin.net/blog/202307/midjourney-runway-gen2-animation/)、[用文字產生影片的 AI 黑科技](https://deanlin.net/blog/202307/runway-gen2-text-to-video/)
 
 今天這篇文章以「實測」的方式帶讀者了解 Runway 的強大（門外漢可以輕鬆操作），先給大家看一下筆者實測用的原始影片（秀一波已經生鏽的魔術技巧）。
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202103/mysql-master-slave-replication/
-- 發布：2021-03-25（更新：2023-05-05）
+- 發布：2021-03-25
 - 主題：技術教學
 - 系列：MySQL 主從架構
 - 標籤：MySQL、Replication、Master Slave Replication、Database、DB Replication
@@ -36,9 +36,9 @@ Master Slave Replication 是一個 Web 工程師需要具備的基礎概念，�
 
 ### Master Slave Replication 的架構
 
-- 在 master 的 server 執行的 SQL command 會被記錄在 Binary Log 裡面
-- master 將 Binary Log 傳送到 slave 的 Relay Log
-- slave 依據 Relay Log 做資料的變更
+1. 在 master 的 server 執行的 SQL command 會被記錄在 Binary Log 裡面
+2. master 將 Binary Log 傳送到 slave 的 Relay Log
+3. slave 依據 Relay Log 做資料的變更
 
   Relay Log 與 Binary Log檔案格式、內容都一樣，不同在於 slave 在執行完 Relay Log 的 SQL 之後，會自己刪除當前的 Relay Log
 
@@ -48,7 +48,7 @@ Master Slave Replication 是一個 Web 工程師需要具備的基礎概念，�
 
 ### 準備兩台 ubuntu server (自己實驗建議使用 VMWARE)，筆者環境配置如下
 
-硬體配置一定會影響到效能，筆者只是建置一個提供實驗的環境而已
+> 硬體配置一定會影響到效能，筆者只是建置一個提供實驗的環境而已
 
 - OS version：ubuntu 16.04
 - RAM：1G
@@ -129,7 +129,7 @@ mysql> FLUSH PRIVILEGES;
 
 **STEP 3**：備份 Master server 的 DB
 
-執行此步驟時如果系統已經上線，一定要發出公告說明系統維護時間
+> 執行此步驟時如果系統已經上線，一定要發出公告說明系統維護時間
 
 在完成 DB Replication 前，為了保證 Master 與 Slave 的資料相同，你需要先把 DB Lock 成 read only：
 

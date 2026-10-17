@@ -2,7 +2,7 @@
 <html lang="zh-tw" class="no-js"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</title>
+  <title>為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</title>
   <meta name="description" content="在通知這個部分我選擇使用 LINE Notify 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager... 等通訊軟體來通知喔">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/">
@@ -14,14 +14,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
-  <meta property="og:title" content="【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用">
+  <meta property="og:title" content="為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用">
   <meta property="og:description" content="在通知這個部分我選擇使用 LINE Notify 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager... 等通訊軟體來通知喔">
   <meta property="og:url" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/">
   <meta property="og:locale" content="zh_TW">
@@ -30,20 +32,20 @@
   <meta property="article:modified_time" content="2020-10-12T08:33:53&#43;08:00">
   <meta property="article:author" content="https://deanlin.net/about/">
   <meta property="article:section" content="技術教學">
-  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="iT 邦幫忙鐵人賽">
   <meta property="article:tag" content="Postman">
   <meta property="article:tag" content="LINE Notify">
   <meta property="article:tag" content="Http 狀態碼">
   <meta property="article:tag" content="爬蟲通知">
-  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-og_hu_f8605744d95f3eff.jpg">
+  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/cover_hu_50d30f9d953f2c0.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="675">
   <meta property="og:image:alt" content="【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-og_hu_f8605744d95f3eff.jpg">
-  <meta name="twitter:title" content="【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/cover_hu_50d30f9d953f2c0.jpg">
+  <meta name="twitter:title" content="為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用">
   <meta name="twitter:description" content="在通知這個部分我選擇使用 LINE Notify 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager... 等通訊軟體來通知喔">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-12T08:33:53+08:00","datePublished":"2020-10-12T08:33:53+08:00","description":"在通知這個部分我選擇使用 LINE Notify 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager... 等通訊軟體來通知喔","headline":"【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-og_hu_f8605744d95f3eff.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-og_hu_52830cfcd0d39d75.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-og_hu_507f9357417fc6ba.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Postman, LINE Notify, Http 狀態碼, 爬蟲通知","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-og_hu_f8605744d95f3eff.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10251217"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-og_hu_f8605744d95f3eff.jpg","timeRequired":"PT4M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/","wordCount":1849},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/","name":"【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用","position":3}]}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-12T08:33:53+08:00","datePublished":"2020-10-12T08:33:53+08:00","description":"在通知這個部分我選擇使用 LINE Notify 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager... 等通訊軟體來通知喔","headline":"【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/cover_hu_50d30f9d953f2c0.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/cover_hu_e60194c6f5c8f3c2.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/cover_hu_fdcc1c09f0336c1e.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Postman, LINE Notify, Http 狀態碼, 爬蟲通知","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/cover_hu_50d30f9d953f2c0.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10251217"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/images/cover_hu_50d30f9d953f2c0.jpg","timeRequired":"PT4M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/","wordCount":1849},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-27/","name":"【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -113,12 +115,12 @@
         <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
         <a href="/categories/tech/">技術教學</a>
       </nav>
-      <h1 class="article-title">【Day27】為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</h1>
+      <h1 class="article-title"><span class="nobr">【D</span>ay2<span class="nobr">7】</span>為爬蟲加上通知 - 透過 POSTMAN 了解 LINE Notify 如何使用</h1>
       <div class="article-meta">
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2020-10-12">2020.10.12</time>
               <span>閱讀約 4 分鐘</span>
@@ -127,6 +129,7 @@
         </div>
         <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>27</b>/ 30</a>
       </div>
+      <p class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg><span>這篇文章寫於 2020 年，文中的工具與版本可能已經更新，實作時請以官方文件為準。</span></p>
     </header>
 
     <div class="article-main">
@@ -142,28 +145,30 @@
 </blockquote>
 <h2 id="為什麼通知很重要">為什麼通知很重要？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e9%80%9a%e7%9f%a5%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
 <ol>
-<li>在爬蟲的運作完全自動化的狀態下你需要<code>透過接收通知，知道爬蟲執行完畢</code></li>
-<li>通知的內容要簡述這次爬蟲的狀況，因為實際上使用者只有在要報告或是寫文章的時候才會去 Google Sheets 看爬蟲的詳細數據，平常他只需要<code>知道爬蟲有沒有穩定執行</code>就好</li>
+<li>在爬蟲的運作完全自動化的狀態下你需要<mark>透過接收通知，知道爬蟲執行完畢</mark></li>
+<li>通知的內容要簡述這次爬蟲的狀況，因為實際上使用者只有在要報告或是寫文章的時候才會去 Google Sheets 看爬蟲的詳細數據，平常他只需要<mark>知道爬蟲有沒有穩定執行</mark>就好</li>
 </ol>
-<p>在通知這個部分我<code>選擇使用 LINE Notify</code> 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager&hellip; 等通訊軟體來通知喔</p>
+<p>在通知這個部分我<mark>選擇使用 LINE Notify</mark> 作為範例，你在了解邏輯後也可以自己改為用 Slack、Wechat、Messager&hellip; 等通訊軟體來通知喔</p>
 <hr>
 <h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="1-取得-line-notify-權杖">1. 取得 LINE Notify 權杖<a class="h-anchor" href="#1-%e5%8f%96%e5%be%97-line-notify-%e6%ac%8a%e6%9d%96" aria-label="這個段落的連結"></a></h3>
 <h3 class="h-nomark" id="2-使用-postman-測試-line-notify">2. 使用 POSTMAN 測試 LINE Notify<a class="h-anchor" href="#2-%e4%bd%bf%e7%94%a8-postman-%e6%b8%ac%e8%a9%a6-line-notify" aria-label="這個段落的連結"></a></h3>
-<p>2.1 為什麼要先用 POSTMAN 測試 LINE Notify 呢？<br>2.2 用 POSTMAN 發出 LINE 的訊息<br>2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思</p>
+<p>2.1 為什麼要先用 POSTMAN 測試 LINE Notify 呢？</p>
+<p>2.2 用 POSTMAN 發出 LINE 的訊息</p>
+<p>2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思</p>
 <hr>
 <h2 class="h-nomark" id="1-取得-line-notify-權杖-1">1. 取得 LINE Notify 權杖<a class="h-anchor" href="#1-%e5%8f%96%e5%be%97-line-notify-%e6%ac%8a%e6%9d%96-1" aria-label="這個段落的連結"></a></h2>
 <ol>
 <li>
-<p>請以 LINE 帳號<a href="https://notify-bot.line.me/zh_TW/">登入 LINE Notify</a>，登入後選擇 <code>個人頁面</code></p>
-<p><img src="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01.webp" srcset="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_d713c374afda7a6b.webp 720w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="425" alt="1. 取得 LINE Notify 權杖（圖 1）" loading="lazy" decoding="async"></p>
+<p>請以 LINE 帳號<a href="https://notify-bot.line.me/zh_TW/">登入 LINE Notify</a>，登入後選擇 <mark>個人頁面</mark></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01.webp" srcset="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01_hu_d713c374afda7a6b.webp 720w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="425" alt="1. 取得 LINE Notify 權杖（圖 1）" fetchpriority="high" decoding="async"></p>
 </li>
 <li>
-<p>為了要獲得控制 LINE Notify 發訊息的權限，我們要 <code>發行權杖</code></p>
+<p>為了要獲得控制 LINE Notify 發訊息的權限，我們要 <mark>發行權杖</mark></p>
 <p><img src="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-02.webp" srcset="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-02_hu_eac46f149525abb1.webp 720w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-02.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="729" alt="1. 取得 LINE Notify 權杖（圖 2）" loading="lazy" decoding="async"></p>
 </li>
 <li>
-<p>在發行權杖的彈窗中，<strong>權杖名稱</strong>請<code>填寫與功能相關的名稱</code>，<strong>接收通知的聊天室</strong>可選擇 <code>1對1、任意聊天室</code> 這兩種，確認無誤後按 <code>發行</code></p>
+<p>在發行權杖的彈窗中，<strong>權杖名稱</strong>請<mark>填寫與功能相關的名稱</mark>，<strong>接收通知的聊天室</strong>可選擇 <mark>1對1、任意聊天室</mark> 這兩種，確認無誤後按 <code>發行</code></p>
 <p><img src="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-03.webp" srcset="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-03_hu_25770694d9f1a663.webp 720w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-03.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="728" alt="1. 取得 LINE Notify 權杖（圖 3）" loading="lazy" decoding="async"></p>
 </li>
 <li>
@@ -192,19 +197,19 @@ LINE_TOKEN=&#39;XXXXXX&#39;
 <ol>
 <li>對 <strong>後端工程師</strong> 而言，可以向合作夥伴證明自己寫的 api 沒有在唬爛，真的可以 work</li>
 <li>對 <strong>前端工程師、App工程師、有使用 api 需求的人</strong> 來說，能在串接 api 前先用 POSTMAN 確認這些 api 真的可以 work</li>
-<li>有了這個工具作輔助，我們就能<code>將前後端責任歸屬的很清楚</code>。ex：如果 POSTMAN 上面可以正常 work，那前端就要去思考自己 api 哪裡沒串好</li>
-<li><code>工具操作難度極低</code>，只需要對網路的世界有基礎的認知就能快速上手</li>
+<li>有了這個工具作輔助，我們就能<mark>將前後端責任歸屬的很清楚</mark>。ex：如果 POSTMAN 上面可以正常 work，那前端就要去思考自己 api 哪裡沒串好</li>
+<li><mark>工具操作難度極低</mark>，只需要對網路的世界有基礎的認知就能快速上手</li>
 </ol>
 <p>所以我們先用 POSTMAN 測試 LINE Notify 的理由是：</p>
 <ol>
-<li>確保 LINE Notify api <code>執行所需的 Request 參數、Respone 的結果與說明書一致</code>（這點非常重要，因為我看過很多 api 回傳的結構跟說明書完全不一樣）</li>
-<li><code>在一行程式都不用寫</code>的狀態下測試所有的可能性</li>
-<li>在 POSTMAN 驗證後就能專心寫程式，因為<code>如果程式無法發出 LINE 的通知一定是自己的問題</code></li>
+<li>確保 LINE Notify api <mark>執行所需的 Request 參數、Respone 的結果與說明書一致</mark>（這點非常重要，因為我看過很多 api 回傳的結構跟說明書完全不一樣）</li>
+<li><mark>在一行程式都不用寫</mark>的狀態下測試所有的可能性</li>
+<li>在 POSTMAN 驗證後就能專心寫程式，因為<mark>如果程式無法發出 LINE 的通知一定是自己的問題</mark></li>
 </ol>
 <blockquote>
 <h4 id="補充">補充：<a class="h-anchor" href="#%e8%a3%9c%e5%85%85" aria-label="這個段落的連結"></a></h4>
 <ul>
-<li><strong>POSTMAN</strong> 在工程師的世界中素有 <code>API測試神器</code>之稱，如果你對 POSTMAN 一無所知的話你可以先透過<a href="https://tw.alphacamp.co/blog/postman-api-tutorial-for-beginners">這篇文章</a>了解一下他是做什麼的</li>
+<li><strong>POSTMAN</strong> 在工程師的世界中素有 <mark>API測試神器</mark>之稱，如果你對 POSTMAN 一無所知的話你可以先透過<a href="https://tw.alphacamp.co/blog/postman-api-tutorial-for-beginners">這篇文章</a>了解一下他是做什麼的</li>
 <li>他可以直接用 Gmail帳號登入在<a href="https://www.postman.com/">網頁使用</a>，也能<a href="https://www.postman.com/downloads/">下載桌面版 App</a>，相同帳號的操作記錄在兩邊都會同步</li>
 </ul>
 </blockquote>
@@ -290,7 +295,7 @@ LINE_TOKEN=&#39;XXXXXX&#39;
 <h3 class="h-nomark" id="23-透過-postman-傳送錯誤參數來了解-http狀態碼的意思">2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思<a class="h-anchor" href="#23-%e9%80%8f%e9%81%8e-postman-%e5%82%b3%e9%80%81%e9%8c%af%e8%aa%a4%e5%8f%83%e6%95%b8%e4%be%86%e4%ba%86%e8%a7%a3-http%e7%8b%80%e6%85%8b%e7%a2%bc%e7%9a%84%e6%84%8f%e6%80%9d" aria-label="這個段落的連結"></a></h3>
 <p>我們剛剛在 POSTMAN 的 Response 看到 HTTP狀態碼為 200，接下來我們故意做一些錯誤測試來看看會有什麼樣的 Response</p>
 <blockquote>
-<p><code>請注意並不是每隻 api Response data 中的 status 都等於 HTTP狀態碼</code>，只是 LINE Notify 剛好是依照這個邏輯顯示，我們可以用它來幫助我們對 HTTP狀態碼的了解</p>
+<p><mark>請注意並不是每隻 api Response data 中的 status 都等於 HTTP狀態碼</mark>，只是 LINE Notify 剛好是依照這個邏輯顯示，我們可以用它來幫助我們對 HTTP狀態碼的了解</p>
 <p><img src="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-11.webp" srcset="/blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-11_hu_6cdf63cf37bd0315.webp 720w, /blog/202010/fb-ig-crawler-day-27/images/fb-ig-crawler-day-27-11.webp 829w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="829" height="189" alt="2.3 透過 POSTMAN 傳送錯誤參數來了解 HTTP狀態碼的意思（圖 11）" loading="lazy" decoding="async"></p>
 </blockquote>
 <ol>
@@ -311,7 +316,7 @@ LINE_TOKEN=&#39;XXXXXX&#39;
 </ul>
 </li>
 </ol>
-<p>透過上面的範例回傳的資訊，我們可以了解到不同 HTTP狀態碼的意思：<code>200 代表成功、400可能是參數錯誤、401是沒有授權</code>，當然 HTTP狀態碼不只這些，如果你想更深入的了解可以參考<a href="https://blog.poychang.net/http-status-code/">這篇文章</a></p>
+<p>透過上面的範例回傳的資訊，我們可以了解到不同 HTTP狀態碼的意思：<mark>200 代表成功、400可能是參數錯誤、401是沒有授權</mark>，當然 HTTP狀態碼不只這些，如果你想更深入的了解可以參考<a href="https://blog.poychang.net/http-status-code/">這篇文章</a></p>
 <hr>
 <h3 id="參考資源">參考資源<a class="h-anchor" href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%ba%90" aria-label="這個段落的連結"></a></h3>
 <ol>
@@ -335,7 +340,8 @@ LINE_TOKEN=&#39;XXXXXX&#39;
 </ul>
 </li>
 </ul>
-<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong></p>
+<p><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
 </blockquote>
 
       </div>
@@ -344,7 +350,7 @@ LINE_TOKEN=&#39;XXXXXX&#39;
         <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.10.12），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10251217" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
         <div class="foot-row">
           <div class="post-tags">
-            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">iT 邦幫忙鐵人賽</a>
             <a class="chip chip-hash" href="/tags/postman/">Postman</a>
             <a class="chip chip-hash" href="/tags/line-notify/">LINE Notify</a>
             <a class="chip chip-hash" href="/tags/http-%E7%8B%80%E6%85%8B%E7%A2%BC/">Http 狀態碼</a>
@@ -518,12 +524,12 @@ LINE_TOKEN=&#39;XXXXXX&#39;
   <div class="card-grid">
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADQAwCdASoYAAcAPw1oqEemIqIYBABjEMT0gGUAEtyV5KhK/R9OjcAA/udFLXYAQK7ApOJIDWBV1gzCDeAW9BuWi8yUewFtsYEIXBQbVgAAAA==" alt="" width="24" height="7"><img src="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_e91da7b1b31343a9.webp" srcset="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_aa3fcdc79115e628.webp 240w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_ca94eec5a967a9cb.webp 480w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_7241a37a4f2a51f5.webp 800w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_e91da7b1b31343a9.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="301" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-29/images/cover_hu_ac38138ae7b8335b.webp" srcset="/blog/202010/fb-ig-crawler-day-29/images/cover_hu_e621918dac9080d0.webp 240w, /blog/202010/fb-ig-crawler-day-29/images/cover_hu_81d9cdbf3040576.webp 480w, /blog/202010/fb-ig-crawler-day-29/images/cover_hu_a9875a0a72e198ce.webp 800w, /blog/202010/fb-ig-crawler-day-29/images/cover_hu_ac38138ae7b8335b.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-29/">【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-29/"><span class="nobr">【D</span>ay2<span class="nobr">9】</span>為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊<span class="nobr">息，</span>專案大功告<span class="nobr">成！</span></a></h3>
     <p class="card-desc">這份專案所用到的各種技術都不難，難的是將這些技術整合成一個能讓客戶買單的專案；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此低成本的方式完成，而且真的能幫客戶解決問題</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-14">2020.10.14</time>
@@ -534,12 +540,12 @@ LINE_TOKEN=&#39;XXXXXX&#39;
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRoIAAABXRUJQVlA4WAoAAAAQAAAAFwAAAQAAQUxQSBwAAAABHyAUQGMsrUQyKiLiBGIaYpNM/1I&#43;GSL6n9gAVlA4IEAAAACwAwCdASoYAAIAPw1srUkmIyIYBABjEMTyAFR6E54sX7q371tJAAD&#43;ud2s336cLo8VV4Pyj8hR85dquBfFmYAA" alt="" width="24" height="2"><img src="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp" srcset="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_76e2413246fac6d2.webp 240w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_d635d6ed8622900a.webp 480w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_5f9e74b22b8e0483.webp 800w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="70" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-28/images/cover_hu_49ccc0aee4ccb399.webp" srcset="/blog/202010/fb-ig-crawler-day-28/images/cover_hu_95bae80656c125ce.webp 240w, /blog/202010/fb-ig-crawler-day-28/images/cover_hu_8d8dd934fef70ed5.webp 480w, /blog/202010/fb-ig-crawler-day-28/images/cover_hu_68fef8e27186a100.webp 800w, /blog/202010/fb-ig-crawler-day-28/images/cover_hu_49ccc0aee4ccb399.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-28/">【Day28】為爬蟲加上通知 - 用 axios 發出 LINE 通知</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-28/"><span class="nobr">【D</span>ay2<span class="nobr">8】</span>為爬蟲加上通知 - 用 axios 發出 LINE 通知</a></h3>
     <p class="card-desc">雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-13">2020.10.13</time>
@@ -550,12 +556,12 @@ LINE_TOKEN=&#39;XXXXXX&#39;
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAADQBACdASoYABIAPw1yrE0mIyIhKAqoxiGJ7ACw7BPeE2oIaCaN3Lgg019HxL1AAAD&#43;6VqvbWQQV3wPCI3hTf0XS8IzmMLg&#43;MqkR4ZJFWTV/OL&#43;YLOYZT2HUVlk4MVYT0HOwjqHcWiAqX7zmkxQd8l1nKdu/cjhCBrhUPDHH7rQtx1aW9kmHLGdMOozoq/9V1a6acAA" alt="" width="24" height="18"><img src="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01_hu_9f6e10b40195d9c4.webp" srcset="/blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01_hu_c25dd74d5fdb075f.webp 240w, /blog/202010/fb-ig-crawler-day-30/images/fb-ig-crawler-day-30-01_hu_9f6e10b40195d9c4.webp 480w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="480" height="360" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-30/images/cover_hu_51982fce48d8fb38.webp" srcset="/blog/202010/fb-ig-crawler-day-30/images/cover_hu_5b776da2f4b59d20.webp 240w, /blog/202010/fb-ig-crawler-day-30/images/cover_hu_485c9e0af774a4ae.webp 480w, /blog/202010/fb-ig-crawler-day-30/images/cover_hu_8cb16d822c9d4148.webp 800w, /blog/202010/fb-ig-crawler-day-30/images/cover_hu_51982fce48d8fb38.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-30/">【Day30】時間只是考驗，心中信念絲毫未減</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-30/"><span class="nobr">【D</span>ay3<span class="nobr">0】</span>時間只是考<span class="nobr">驗，</span>心中信念絲毫未減</a></h3>
     <p class="card-desc">因為在過去的鐵人賽中很少看到從專案角度來分享技術的文章，所以我選擇從這個角度出發，因為我認為了解專案中每個技術選擇的動機，與學習一個新的技術一樣重要；技術可能被淘汰，但經驗會留下來，希望大家會喜歡我這個系列的文章。</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-15">2020.10.15</time>
@@ -690,7 +696,7 @@ LINE_TOKEN=&#39;XXXXXX&#39;
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

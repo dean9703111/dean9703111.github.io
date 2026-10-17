@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202101/what-is-open-graph/
-- 發布：2021-01-22（更新：2023-05-05）
+- 發布：2021-01-22
 - 主題：技術教學
 - 標籤：Open Graph、分享連結縮圖、連結縮圖規範、善用縮圖
 - 摘要：大家在滑 FB 時常常會看到一些縮圖詭異的分享連結，或著是沒有縮圖跟介紹長得像是詐欺網頁的連結，今天我們就從技術的角度來了解這些連結到底發生了什麼事，同時檢視自己的網頁有沒有犯一樣的錯誤。
@@ -25,9 +25,9 @@ OG 全名 Open Graph Protocol，由 Facebook 提出，目的在於透過定義�
 
 ## 一、看看 OG 從沒設定到完整設定給人的感覺吧
 
-讀者可以把連結貼上 FB 建立貼文的地方來看看結果喔
+> 讀者可以把連結貼上 FB 建立貼文的地方來看看結果喔
 
-- 如果完全沒設定 OG，你分享的連結根本沒人知道內容是什麼
+1. 如果完全沒設定 OG，你分享的連結根本沒人知道內容是什麼
 
   [https://dean9703111.github.io/open_graph_sample/none_open_graph.html](https://dean9703111.github.io/open_graph_sample/none_open_graph.html)
 
@@ -88,12 +88,12 @@ OG 全名 Open Graph Protocol，由 Facebook 提出，目的在於透過定義�
 
 原始碼：[og_complete.html](https://gist.github.com/dean9703111/147652b9c82fdae08457c890ea5c4a63)（GitHub Gist）
 
-如果你想要更深入的了解FB對這塊的定義請參考他們[給網站管理員的分享功能指南](https://developers.facebook.com/docs/sharing/webmasters?locale=zh_TW)
+> 如果你想要更深入的了解FB對這塊的定義請參考他們[給網站管理員的分享功能指南](https://developers.facebook.com/docs/sharing/webmasters?locale=zh_TW)
 
 ## 三、使用官方工具預覽連結畫面
 
-- 網頁設定完成後，使用 [FB 提供的工具](https://developers.facebook.com/tools/debug/) 來做檢查
-- 貼上自己的網址按下偵錯就能看到預覽嚕
+1. 網頁設定完成後，使用 [FB 提供的工具](https://developers.facebook.com/tools/debug/) 來做檢查
+2. 貼上自己的網址按下偵錯就能看到預覽嚕
 
 3. 如果發現顯示結果跟預期的不一樣，請觀看`應處理的警告`
 

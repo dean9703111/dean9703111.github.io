@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/chatgpt-chinese-vs-english/
-- 發布：2023-01-23（更新：2024-10-24）
+- 發布：2023-01-23
 - 主題：AI 實戰
 - 標籤：ChatGPT、AI、ChatGPT Chatbot、Compare、Interview
 - 摘要：相信大部分的讀者都已經玩過 ChatGPT 了，不知道大家是用「英文」還是「中文」與他溝通呢？ 我想應該有不少人好奇「ChatGPT 的中文跟英文能力一樣好嗎？」
@@ -30,7 +30,7 @@
 
 ```
 
-因本篇文章涉及大量對話，考慮到閱讀體驗性，故用文字取代截圖。
+> 因本篇文章涉及大量對話，考慮到閱讀體驗性，故用文字取代截圖。
 
 ## ChatGPT 能給我們期待的書籍摘要嗎？
 
@@ -57,8 +57,8 @@
 
 這本書適合那些對心理學和社會學感興趣的人閱讀,尤其是對正面思考和其對個人和社會的影響有興趣的人。」
 
-一開始 ChatGPT 是無法回答我問題的，但當我給他英文的書名時，他就能夠給予回應。
-書籍的內容大體上是正確的，不過作者的名字是「Barbara Ehrenreich」而且是個專欄作家…
+> 一開始 ChatGPT 是無法回答我問題的，但當我給他英文的書名時，他就能夠給予回應。
+> 書籍的內容大體上是正確的，不過作者的名字是「Barbara Ehrenreich」而且是個專欄作家…
 
 ### 用英文詢問 ChatGPT 「失控的正向思考」摘要
 
@@ -66,7 +66,7 @@
 
 **ChatGPT**：「“How Positive Thinking is Undermining America” is a book by Barbara Ehrenreich that critiques the belief in the power of positive thinking as a solution to problems, and argues that this belief has become a cultural norm in the United States. The book suggests that this mindset has led to a lack of accountability and critical thinking in individuals and society as a whole. The author argues that the book is meant for a general audience, particularly those interested in the cultural and societal implications of the self-help industry and the power of positive thinking.」
 
-從書摘與作者訊息的角度來說，英文的回應都是正確的。
+> 從書摘與作者訊息的角度來說，英文的回應都是正確的。
 
 ### 用中文詢問 ChatGPT 「天龍八部」摘要
 
@@ -78,7 +78,7 @@
 
 小說適合對中國古代文化和武俠小說感興趣的人閱讀，尤其是對東方不敗和他的朋友們的故事感興趣的人。」
 
-看完 ChatGPT 的解釋後，我馬上 Google 了一下天龍八部，這劇情跟我記憶中的不太一樣啊？東方不敗怎麼變成了主角？ChatGPT 是讀到哪本被魔改的小說了！？
+> 看完 ChatGPT 的解釋後，我馬上 Google 了一下天龍八部，這劇情跟我記憶中的不太一樣啊？東方不敗怎麼變成了主角？ChatGPT 是讀到哪本被魔改的小說了！？
 
 ### 用英文詢問 ChatGPT 「天龍八部」摘要
 
@@ -86,7 +86,7 @@
 
 **ChatGPT**：「“Demi-Gods and Semi-Devils” is a novel written by Jin Yong, a Chinese martial arts novelist and wuxia author. The novel is set in a fictional world of martial arts and chivalry, and follows the adventures of several characters, including a young warrior, a powerful monk, and a princess, as they navigate through a complex and dangerous landscape of rival martial arts sects and political intrigue. The novel is considered a classic of Chinese literature and is known for its intricate plot, vivid characters, and intricate world-building. The book is suitable for readers interested in martial arts fiction, fantasy, and Chinese literature.（“天龍八部"是中國武俠小說家和武俠小說作者金庸的小說。小說以一個虛構的武術和俠義世界為背景，講述了幾個人物的冒險故事，包括一個年輕的戰士、一個強大的和尚和一個公主，他們在一個由敵對的武術門派和政治陰謀組成的複雜而危險的環境中航行。這部小說被認為是中國文學的經典，並以其複雜的情節、生動的人物和復雜的世界構建而聞名。該書適合對武俠小說、奇幻小說和中國文學感興趣的讀者。）」
 
-痾…筆者都不知道怎麼說了，明明是中文的著作，為什麼英文的摘要還比較正確啊（公主改成王子就完全正確了）。
+> 痾…筆者都不知道怎麼說了，明明是中文的著作，為什麼英文的摘要還比較正確啊（公主改成王子就完全正確了）。
 
 ## 都是擔任「 Node.js Backend Developer 面試官」，中文與英文的差異在哪？
 
@@ -158,7 +158,7 @@
 
 如果你有模擬面試的需求，我覺得中文、英文面試官都算合格，但英文面試官問得更加深入，如果要面試外商，筆者覺得先從 ChatGPT 開始練習是一個很棒的方案！
 
-比較可惜的是，目前實驗下來他們比較沒辦法根據你的回答，再去延伸其他問題。
+> 比較可惜的是，目前實驗下來他們比較沒辦法根據你的回答，再去延伸其他問題。
 
 ## 如果英文不好，有什麼曲線救國的方案？
 
@@ -180,7 +180,7 @@ ChatGPT：「Please give me a summary of the key points and the appropriate audi
 
 ChatGPT：「“Bright-Sided: How Positive Thinking is Undermining America” 是一本批判積極思考是解決生活問題的全部解決方案的書。作者認為，過度關注積極思考導致了缺乏責任感、無法面對困難現實，並導致有害後果。這本書的適宜讀者是對心理學、自助文化或美國文化和社會有興趣的人。關鍵要點是，積極思考可以解決所有問題的觀念是有害的，它可能導致缺乏責任感、無法面對困難現實，促進了自我幻想並可能導致有害後果。」
 
-雖然步驟麻煩了點，但當缺乏中文資料時，這也不失為一個解決方案。
+> 雖然步驟麻煩了點，但當缺乏中文資料時，這也不失為一個解決方案。
 
 ## 結論：英文還是很重要的，然後不要完全相信 ChatGPT 給的答案
 
@@ -190,7 +190,7 @@ ChatGPT：「“Bright-Sided: How Positive Thinking is Undermining America” �
 
 不過筆者相信在不久的將來，隨著越來越多人跟他聊天，ChatGPT 會越來越強大，回饋的訊息也會更為完善。
 
-本篇文章 ChatGPT 的 Prompts 來源於 [Github](https://github.com/f/awesome-chatgpt-prompts) 大神。
+> 本篇文章 ChatGPT 的 Prompts 來源於 [Github](https://github.com/f/awesome-chatgpt-prompts) 大神。
 
 未來筆者會出一系列使用 ChatGPT、openAI 的文章，如果你對這個議題感興趣，可以持續關注我的文章！
 

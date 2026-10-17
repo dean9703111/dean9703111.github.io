@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202205/sequelize-migration-seeder/
-- 發布：2022-05-13（更新：2023-05-05）
+- 發布：2022-05-13
 - 主題：技術教學
 - 標籤：Sequelize、Node.js、Migration、Seeder、MySQL
 - 摘要：最近在尋找 Node.js 裡面方便操作 Migration、Seeder 的套件，逛著逛著發現 sequelize 在 GitHub 上擁有超高人氣；抱著踩雷的心態來嘗試，於是便寫了這篇 sequelize 的筆記，希望可以幫助到第一次使用 sequelize 的朋友們。
@@ -23,7 +23,7 @@
 
 ```
 
-大家也可以[直接 Clone 筆者 GitHub 上的專案](https://github.com/dean9703111/sequelize-mysql-migration-seeder)來了解喔。（如果順便按個 Star更好😀）
+> 大家也可以[直接 Clone 筆者 GitHub 上的專案](https://github.com/dean9703111/sequelize-mysql-migration-seeder)來了解喔。（如果順便按個 Star更好😀）
 
 ## ㄧ、初始化專案
 
@@ -85,7 +85,7 @@ sequelize db:create
 
 ```
 
-如果想要移除該 DB，可透過指令： `sequelize db:drop`
+> 如果想要移除該 DB，可透過指令： `sequelize db:drop`
 
 ## 三、用 Migration 建立 Table
 
@@ -100,7 +100,7 @@ sequelize model:generate --name item --attributes order_id:integer,price:integer
 
 ```
 
-如果沒有填寫「attributes」的參數會無法建立 Table。
+> 如果沒有填寫「attributes」的參數會無法建立 Table。
 
 **STEP 2**：前往 migrations 的資料夾，設計 Table 間的關聯性
 
@@ -254,7 +254,7 @@ rawQueries();
 
 下圖即可看到看到搜尋結果、程式執行時間。
 
-如果你想要知道 Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能（performance）上的差異，[可以參考這篇文章](https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/)。
+> 如果你想要知道 Table Join 時，選擇文字欄位（VARCHAR）與數值欄位（INTEGER）在效能（performance）上的差異，[可以參考這篇文章](https://deanlin.net/blog/202205/join-performance-varchar-vs-integer/)。
 
 ---
 

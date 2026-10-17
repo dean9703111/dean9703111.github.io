@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202304/new-bing-web-summary/
-- 發布：2023-04-11（更新：2024-10-24）
+- 發布：2023-04-11
 - 主題：AI 實戰
 - 標籤：Bing、ChatGPT、Summary、摘要、URL
 - 摘要：目前 ChatGPT 並沒有連網功能，訓練的資料也截止於 2021 年，儘管有 WebChatGPT 之類外掛讓他達成「偽」上網，但說真的功能限制很多。 幸好 New Bing 的出現補足了這塊的缺口，就讓我們透過 New Bing 來取得網頁摘要吧！

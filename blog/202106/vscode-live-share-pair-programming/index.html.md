@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202106/vscode-live-share-pair-programming/
-- 發布：2021-06-21（更新：2023-05-05）
+- 發布：2021-06-21
 - 主題：團隊合作
 - 標籤：VS Code、VS Code Extension、Visual Studio Live Share、Pair Programming、Coworking
 - 摘要：在遠端工作後，我們使用 Teams、Skype、Google meet…
@@ -35,7 +35,7 @@
 
 ## 三、安裝套件＆登入使用者
 
-下面的步驟及操作可能會隨著 VScode 改版而有所不同，僅供參考
+> 下面的步驟及操作可能會隨著 VScode 改版而有所不同，僅供參考
 
 **SETP 1**：在 VScode 的 EXTENSION 分頁搜尋「Live Share」，點擊「install」即可完成安裝
 
@@ -49,7 +49,7 @@
 
 ## 四、使用方式
 
-完成安裝＆登入的步驟後，下面提供本機模擬的操作方式
+> 完成安裝＆登入的步驟後，下面提供本機模擬的操作方式
 
 ### 自己跟自己的連線，模擬操作
 
@@ -71,7 +71,7 @@
 
 Join的人可以直接在終端機下指令，了解程式執行狀況
 
-本篇文章只是很簡略地讓大家了解如何使用「Live Share」這款套件，更多的功能就讓大家[直接去官網](https://visualstudio.microsoft.com/zh-hant/services/live-share/?fbclid=IwAR3B2oFFd4kuofFKVm5qh7r5T-QCdOXSSta87b87jBhGGTdob4Ztl3Gp6-U)了解吧！
+> 本篇文章只是很簡略地讓大家了解如何使用「Live Share」這款套件，更多的功能就讓大家[直接去官網](https://visualstudio.microsoft.com/zh-hant/services/live-share/?fbclid=IwAR3B2oFFd4kuofFKVm5qh7r5T-QCdOXSSta87b87jBhGGTdob4Ztl3Gp6-U)了解吧！
 
 ---
 

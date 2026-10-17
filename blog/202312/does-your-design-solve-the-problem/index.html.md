@@ -64,7 +64,7 @@
 
 目前工程師這個身份，是我的核心價值與主要收入來源。但除了持續提升專業能力外，我還會持續接觸新事物，並將其與原本的知識結合運用。
 
-以上就是「設計思考全方位」第五單元的心得筆記，如果覺得我的分享對你有幫助，歡迎 [Follow](https://dean-lin.medium.com/subscribe) 我吸收更多知識。
+> 以上就是「設計思考全方位」第五單元的心得筆記，如果覺得我的分享對你有幫助，歡迎 [Follow](https://dean-lin.medium.com/subscribe) 我吸收更多知識。
 
 延伸閱讀：[設計實戰全方位](https://dean-lin.medium.com/list/6c6883c6a3f2)
 

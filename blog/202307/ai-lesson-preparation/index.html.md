@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202307/ai-lesson-preparation/
-- 發布：2023-07-29（更新：2024-10-24）
+- 發布：2023-07-29
 - 主題：AI 實戰
 - 標籤：AI、Presentations、Presentation Design、ChatGPT、Gamma
 - 摘要：兩週前，我在臉書分享了自己到中華黃頁講座的故事，沒想到發完文沒多久就收到中華電信的講座邀約。主辦方希望我以「用 AI 做簡報」為主題，帶來一場 2 小時的專業內訓。
@@ -25,10 +25,10 @@
 
 上面僅是對話的一部分，針對有疑惑的地方我還有再做延伸訊問，簡單彙整如下：
 
-- 在開場的時候，讓聽眾感受過去簡報製作遇到的挑戰與痛點
-- 多分享一些使用 AI 生成簡報的驚人案例
-- 說明自己為什麼推薦使用 AI 生成簡報，並透過實際操作示範
-- 分析並比較各種 AI 生成簡報的工具，並討論其優缺點
+1. 在開場的時候，讓聽眾感受過去簡報製作遇到的挑戰與痛點
+2. 多分享一些使用 AI 生成簡報的驚人案例
+3. 說明自己為什麼推薦使用 AI 生成簡報，並透過實際操作示範
+4. 分析並比較各種 AI 生成簡報的工具，並討論其優缺點
 
 下面是統整後的課程大綱：
 
@@ -62,16 +62,16 @@
 
 面對陌生的事物，如果沒有親自嘗試就直接採納 AI 的建議，那翻車幾乎是必然的事；所以在備課的過程我也在驗證、學習新的知識，並在這段時間產出了一系列跟講座主題相關的文章：
 
-- [自動生成簡報的 AI — Gamma，用過就回不去了！](https://deanlin.net/blog/202306/gamma-ai-presentations/)
-- [使用 GAMMA AI 修正 7 個常犯的簡報錯誤！](https://deanlin.net/blog/202307/fix-presentation-mistakes-with-gamma/)
-- [職場 AI 簡報工具 — SlidesAI，使用 Google Slides 的朋友有福了！](https://deanlin.net/blog/202307/slidesai-google-slides/)
-- [[Tome 教學]與 OpenAI 的 DALLE 結合！用 AI 一鍵產生圖文並茂的簡報](https://deanlin.net/blog/202307/tome-ai-presentations/)
+1. [自動生成簡報的 AI — Gamma，用過就回不去了！](https://deanlin.net/blog/202306/gamma-ai-presentations/)
+2. [使用 GAMMA AI 修正 7 個常犯的簡報錯誤！](https://deanlin.net/blog/202307/fix-presentation-mistakes-with-gamma/)
+3. [職場 AI 簡報工具 — SlidesAI，使用 Google Slides 的朋友有福了！](https://deanlin.net/blog/202307/slidesai-google-slides/)
+4. [[Tome 教學]與 OpenAI 的 DALLE 結合！用 AI 一鍵產生圖文並茂的簡報](https://deanlin.net/blog/202307/tome-ai-presentations/)
 
 這邊跟大家分享將學到的知識轉化為文章的幾個好處：
 
-- 用自己的語言來傳遞知識，能大幅減少你在講座中卡螺絲的窘境
-- 文章可以成為講座的素材以及逐字稿，減少備課難度
-- 宣傳自己，在有文章背書的狀況下，大家會潛意識認為你是這個方面的專家
+1. 用自己的語言來傳遞知識，能大幅減少你在講座中卡螺絲的窘境
+2. 文章可以成為講座的素材以及逐字稿，減少備課難度
+3. 宣傳自己，在有文章背書的狀況下，大家會潛意識認為你是這個方面的專家
 
   有些 AI 工具的免費版在使用時需要消耗 Credits，而你協助推廣就會獲得 Credits；上圖是[我在 GAMMA 這款工具](https://try.gamma.app/h0c9z09kpqu3)擁有的 Credits，基本上就是一個怎麼用都用不完的數量了。
 
@@ -81,8 +81,8 @@
 
 其實**將演講安排在 2 週後**是我主動提的，這是為了給自己創造出「目標明確的挑戰」，這麼做是為了：
 
-- 逼自己立即準備，如果時間拉太長，人就容易怠惰，拖延症發作
-- 確定有上百名觀眾，如果沒準備好，那麼等待我的將是社會性死亡
+1. 逼自己立即準備，如果時間拉太長，人就容易怠惰，拖延症發作
+2. 確定有上百名觀眾，如果沒準備好，那麼等待我的將是社會性死亡
 
 把後路斬斷，你就只能面對挑戰了；我就是用這種方法迫使自己去思考：「如何才能辦到？」
 

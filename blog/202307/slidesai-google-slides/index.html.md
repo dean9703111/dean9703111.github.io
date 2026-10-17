@@ -2,14 +2,14 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202307/slidesai-google-slides/
-- 發布：2023-07-17（更新：2024-10-24）
+- 發布：2023-07-17
 - 主題：AI 實戰
 - 標籤：SlidesAI、Google Slides、AI、ChatGPT、Presentations
 - 摘要：儘管 GAMMA 在生成簡報上已經非常強大，但許多朋友還是習慣使用 Google Slides；所以今天想跟大家分享一款只要輸入「主題 or 長文」就可以自動生成簡報的 Google AI 外掛，讓你工作效率倍增！
 
 儘管 [GAMMA](https://deanlin.net/blog/202306/gamma-ai-presentations/) 在生成簡報上已經非常強大，但許多朋友還是習慣使用 Google Slides；所以今天想跟大家分享一款只要輸入「主題 or 長文」就可以自動生成簡報的 Google AI 外掛，讓你工作效率倍增！
 
-**小提醒**：請不要將機敏資料喂給給 AI 喔！
+> **小提醒**：請不要將機敏資料喂給給 AI 喔！
 
 ## STEP 1：取得「SlidesAI」外掛
 
@@ -36,7 +36,7 @@
 
 **「From a topic」**則是輸入主題與附加資訊（可不填），就能幫你產生簡報。
 
-**小提醒**：如果你的 Chrome 有登入多個帳號，那可能會遇到下面的問題，基本上把 Chrome 的 Profile 調整成有授權「SlidesAI」的就可以運作了。
+> **小提醒**：如果你的 Chrome 有登入多個帳號，那可能會遇到下面的問題，基本上把 Chrome 的 Profile 調整成有授權「SlidesAI」的就可以運作了。
 
 ## Your Own Text — 用文案生成簡報
 
@@ -67,7 +67,7 @@
 
 但從上面的範例可以看到中文的搜尋效果比較差，因此建議輸入關鍵字做搜尋。
 
-**小提醒**：Magic Write 目前是沒有使用次數限制的。
+> **小提醒**：Magic Write 目前是沒有使用次數限制的。
 
 ## 收費方式
 

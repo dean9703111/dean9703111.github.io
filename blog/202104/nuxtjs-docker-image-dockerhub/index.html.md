@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202104/nuxtjs-docker-image-dockerhub/
-- 發布：2021-04-08（更新：2023-05-05）
+- 發布：2021-04-08
 - 主題：技術教學
 - 標籤：Nuxt.js、Docker、macOS、Docker Hub、Docker Image
 - 摘要：每次聚會朋友都在聊用 Docker 來 deploy 有多潮，感覺再不研究就要落伍了；這篇文章會分享我將過去的 Nuxt 專案成功 Build 成 Docker Image 並 push 到 dockerhub 的步驟。
@@ -24,7 +24,7 @@
 
 ### 創建 Nuxt.js 專案
 
-如果你已經有 Nuxt.js 的專案可以跳過下面的操作流程
+> 如果你已經有 Nuxt.js 的專案可以跳過下面的操作流程
 
 **STEP 1：**創建一個 Nuxt.js 專案
 
@@ -53,7 +53,7 @@ $ yarn dev
 
 **前往官網[下載 Docker 安裝檔](https://docs.docker.com/docker-for-mac/install/)**
 
-安裝過程就是狂按下一步，就不在多做介紹，下載後要把 App 打開依照步驟執行才算是完成安裝喔！
+> 安裝過程就是狂按下一步，就不在多做介紹，下載後要把 App 打開依照步驟執行才算是完成安裝喔！
 
 **STEP 2：**註冊 Docker
 
@@ -139,7 +139,7 @@ docker run -it — rm -p 80:3000 docker_example
 
 ```
 
-特別注意『80 是對外 port，3000 是 container 的 port』，**docker_example **就是剛剛建立的 image 名稱
+> 特別注意『80 是對外 port，3000 是 container 的 port』，**docker_example **就是剛剛建立的 image 名稱
 
 上圖 172.xx.xx.x:3000 的網址點開來是沒有畫面的，因為我們已經透過指令改變對外 port 到 80 了，在網址列上輸入 [http://localhost/](http://localhost/) 就能成功看到供果嚕～
 
@@ -161,7 +161,7 @@ docker images
 
 **STEP 3**：把這個 Image 丟到 dockerhub 的 repositories
 
-這個 push 的過程會根據你產生 Image 的大小決定，通常要等一段時間
+> 這個 push 的過程會根據你產生 Image 的大小決定，通常要等一段時間
 
 ```
 docker push username/xxximage

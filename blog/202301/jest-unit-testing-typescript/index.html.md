@@ -2,13 +2,13 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/jest-unit-testing-typescript/
-- 發布：2023-01-19（更新：2023-05-05）
+- 發布：2023-01-19
 - 主題：技術教學
 - 系列：前端單元測試
 - 標籤：Jest、TypeScript、Unit Test Framework、Frontend Development、Programming
 - 摘要：這篇文章會從建立專案開始，依序帶你了解需要設定的環境、單元測試的結構，接著帶你完成第一個單元測試。 在對單元測試有基礎的概念後，會透過實際的範例讓你了解不同匹配器（Matchers）的使用時機，話不多說，我們直接開始吧！
 
-如果你還在猶豫是否學習測試框架，不妨先看看筆者在[上一篇文章](https://deanlin.net/blog/202301/frontend-testing-roadmap/)的分享喔！
+> 如果你還在猶豫是否學習測試框架，不妨先看看筆者在[上一篇文章](https://deanlin.net/blog/202301/frontend-testing-roadmap/)的分享喔！
 
 這篇文章會從建立專案開始，依序帶你了解需要設定的環境、單元測試的結構，接著帶你完成第一個單元測試。
 
@@ -23,7 +23,7 @@
 
 ```
 
-讀者可以直接到[筆者的 Github](https://github.com/dean9703111/jest-typescript-starter/tree/master/jest-basic) ，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。
+> 讀者可以直接到[筆者的 Github](https://github.com/dean9703111/jest-typescript-starter/tree/master/jest-basic) ，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。
 
 ## 一、初始化專案、設定測試環境
 

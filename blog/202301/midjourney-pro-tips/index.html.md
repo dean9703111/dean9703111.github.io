@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/midjourney-pro-tips/
-- 發布：2023-01-22（更新：2024-10-24）
+- 發布：2023-01-22
 - 主題：AI 實戰
 - 標籤：Midjourney、AI、AI Painting、Tips、Professional
 - 摘要：雖然只要簡單的關鍵字、句子就能讓 Midjourney 產生絕美的圖片，但有時圖片的風格、角度、層次…跟我們要的並不相同。 就像是建築物有文藝復興、巴洛克式、中國傳統建築…等風格，但如果沒有相關背景知識，你可能就只能用「房子」一詞帶過，可以說是「知識盲區」阻礙了我們的想像力。
@@ -13,7 +13,7 @@
 
 因此這篇文章筆者整理了幾個可以讓讀者現學現賣的技巧，讓你使用 Midjourney 時像個專家！
 
-尚未接觸過 Midjourney 的朋友，可以先閱讀上一篇文章：「[如何使用 Midjourney，讓 AI 產生絕美圖片](https://deanlin.net/blog/202301/midjourney-getting-started/)」
+> 尚未接觸過 Midjourney 的朋友，可以先閱讀上一篇文章：「[如何使用 Midjourney，讓 AI 產生絕美圖片](https://deanlin.net/blog/202301/midjourney-getting-started/)」
 
   Legendary hero + lightning powers + rain + inspiring, third-person perspective — ar 3:2（傳奇英雄 + 雷霆之力 + 下雨 + 鼓舞人心，第三人稱視角，圖片 3:2 比例）
 
@@ -33,7 +33,7 @@
 
 ## TIP 1：讓創作融入大師的畫風、定義自己想要的場景
 
-看完這篇文章後，也許你會出現：「喔！原來還可以這樣做！」的想法。
+> 看完這篇文章後，也許你會出現：「喔！原來還可以這樣做！」的想法。
 
 這邊筆者先起個頭，讓大家知道有哪些玩法，有興趣的朋友可以到參考資料看更詳細的參數。
 
@@ -112,7 +112,7 @@
 
 如果你不會英文，那你可以把中文的語句交給 Google 翻譯；如果找不到好的形容詞， ChatGPT 能給你靈感；如果對藝術一無所知，那 ChatGPT 也能給你關鍵字。
 
-中文也能夠執行，但精確度較低。
+> 中文也能夠執行，但精確度較低。
 
 比如我就向 ChatGPT 詢問建築風格的知識：「我想請你充當一個精通建築藝術的專家。向我介紹知名的建築風格，並給我各個風格的中英文比對。」
 
@@ -132,7 +132,7 @@ AI 技術的發展，能讓沒有相關知識背景的人，只要透過幾個�
 
 因為「構圖、美感」的知識與經驗，並不是靠說明書就能跨越的鴻溝。
 
-筆者的感悟：「我們要對事物的本質有所理解，而不僅僅只是多學了一門技術。」
+> 筆者的感悟：「我們要對事物的本質有所理解，而不僅僅只是多學了一門技術。」
 
 未來筆者會出一系列使用 ChatGPT、openAI 的文章，大家敬請期待！
 
@@ -144,9 +144,9 @@ AI 技術的發展，能讓沒有相關知識背景的人，只要透過幾個�
 
 參考資料：
 
-- [Midjourney 技巧收集](https://docs.google.com/spreadsheets/d/1GuAeSFtICsjQEwsRP2f--IayDxW9Dl0SCLOVov56FMc/edit?fbclid=IwAR31xelZ9YrMSJT5AYra-rRz5YYQiKa3dx0mhs6EMuU-o1INIw3uVGCGuGw#gid=1629975637)
-- [Midjourney AI 台灣社群](https://www.facebook.com/groups/midjourneytw/)
-- [MidJourney-Styles-and-Keywords-Reference](https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference) 這裡有超級豐富的素材可以參考。
+1. [Midjourney 技巧收集](https://docs.google.com/spreadsheets/d/1GuAeSFtICsjQEwsRP2f--IayDxW9Dl0SCLOVov56FMc/edit?fbclid=IwAR31xelZ9YrMSJT5AYra-rRz5YYQiKa3dx0mhs6EMuU-o1INIw3uVGCGuGw#gid=1629975637)
+2. [Midjourney AI 台灣社群](https://www.facebook.com/groups/midjourneytw/)
+3. [MidJourney-Styles-and-Keywords-Reference](https://github.com/willwulfken/MidJourney-Styles-and-Keywords-Reference) 這裡有超級豐富的素材可以參考。
 
 ---
 

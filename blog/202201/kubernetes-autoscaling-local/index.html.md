@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202201/kubernetes-autoscaling-local/
-- 發布：2022-01-21（更新：2023-05-05）
+- 發布：2022-01-21
 - 主題：技術教學
 - 標籤：Kubernetes、Autoscaling、高併發、HPA
 - 摘要：K8s 最吸引人的其中一個功能應該就是用 Auto Scaling 來應付高併發(High concurrency)情境，今天就用一個水平自動擴展(HPA)的範例來讓大家了解他的實際運作模式。
@@ -27,11 +27,11 @@ K8s 最吸引人的其中一個功能應該就是用 Auto Scaling 來應付高�
 
 ```
 
-如果讀者尚未在本機安裝 K8s 環境，可以先閱讀：「[帶你將 Node.js Web App 給 Docker 化，並用 Kubernetes 部署的超簡單範例](https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/)」來設定基礎環境喔！
+> 如果讀者尚未在本機安裝 K8s 環境，可以先閱讀：「[帶你將 Node.js Web App 給 Docker 化，並用 Kubernetes 部署的超簡單範例](https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/)」來設定基礎環境喔！
 
 ## 一、撰寫 Auto Scaling 的 yaml 檔
 
-你也可以直接去[筆者的 github](https://github.com/dean9703111/nodejs-docker-k8s-auto-scaling-example)，直接將專案 Clone 到本機來做測試。
+> 你也可以直接去[筆者的 github](https://github.com/dean9703111/nodejs-docker-k8s-auto-scaling-example)，直接將專案 Clone 到本機來做測試。
 
 ### HorizontalPodAutoscaler（水平自動擴展）參數說明
 
@@ -61,9 +61,8 @@ spec:
 
 ## 二、調整 Service、Deployment 參數並加入 yaml 檔
 
-這裡的 Service、Deployment 都是從[先前這篇文章](https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/)改良過來的喔。
-
-Docker image 可以 pull 筆者的範例，或是使用自己的都可以。
+> 這裡的 Service、Deployment 都是從[先前這篇文章](https://deanlin.net/blog/202201/nodejs-docker-kubernetes-deploy/)改良過來的喔。
+> Docker image 可以 pull 筆者的範例，或是使用自己的都可以。
 
 ### 調整 Service 參數
 
@@ -140,7 +139,7 @@ kubectl get hpa
 
 ```
 
-一開始 TARGETS 會顯示 `<unknown>`，這是因為還在判斷流量，過一陣子就會顯示百分比了
+> 一開始 TARGETS 會顯示 `<unknown>`，這是因為還在判斷流量，過一陣子就會顯示百分比了
 
 ### 取得 Deployment 的外部 ip，然後瘋狂存取來測試 Auto Scaling
 
@@ -172,7 +171,7 @@ minikube delete
 
 ```
 
-以上就是模擬 K8s Auto Scaling 的測試方法啦！希望讀者可以透過文章了解這個技術的應用～
+> 以上就是模擬 K8s Auto Scaling 的測試方法啦！希望讀者可以透過文章了解這個技術的應用～
 
 ---
 

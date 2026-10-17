@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202108/nodejs-event-loop/
-- 發布：2021-08-10（更新：2023-05-05）
+- 發布：2021-08-10
 - 主題：技術教學
 - 標籤：Node.js、Event Loop、Node.js Event Loop、事件輪詢
 - 摘要：因為網路上的教學文我大部分都有看沒有懂，只好自己實作一遍來了解他的運作機制；希望我這篇文章足夠口語化，讓讀者能輕鬆理解，如果有解釋錯誤或是不夠清晰的部分再煩請告知，謝謝。
@@ -29,9 +29,9 @@
 
 有興趣的朋友可以來 GitHub 上看 libuv 的程式：
 
-- 前往 libuv 的 [GitHub](https://github.com/libuv/libuv)
-- 看運作的核心程式碼「[core.c](https://github.com/libuv/libuv/blob/v1.x/src/unix/core.c)」
-- 搜尋「uv_run」，直接看最原本的邏輯
+1. 前往 libuv 的 [GitHub](https://github.com/libuv/libuv)
+2. 看運作的核心程式碼「[core.c](https://github.com/libuv/libuv/blob/v1.x/src/unix/core.c)」
+3. 搜尋「uv_run」，直接看最原本的邏輯
 
 ## 二、Node.js 在 Event Loop 邏輯下的執行順序
 
@@ -102,15 +102,15 @@ setImmediate
 
 **Polling**：
 
-- 如果 Queue 不為空，依次取出 callback 函數執行，直到 Queue 為空或是抵達系統最大限制。
-- 如果 Queue 為空但有設置「setImmediate」就進入 check 階段。
-- 如果 Queue 為空但沒有設置「setImmediate」就會在 Polling 階段等待直到 Queue 有東西或是 Timer 時間抵達。
+1. 如果 Queue 不為空，依次取出 callback 函數執行，直到 Queue 為空或是抵達系統最大限制。
+2. 如果 Queue 為空但有設置「setImmediate」就進入 check 階段。
+3. 如果 Queue 為空但沒有設置「setImmediate」就會在 Polling 階段等待直到 Queue 有東西或是 Timer 時間抵達。
 
 **Check**：處理 setImmediate 的 callback。
 
 **Close callbacks**：處理關閉連線、檔案的 callback。
 
-Macrotask Queue 在 Evevnt Loop 優先層級較低，接下來介紹優先層級更高的兩個 Queue。
+> Macrotask Queue 在 Evevnt Loop 優先層級較低，接下來介紹優先層級更高的兩個 Queue。
 
 ### NextTick Queue 優先層級最高
 
@@ -120,14 +120,14 @@ Macrotask Queue 在 Evevnt Loop 優先層級較低，接下來介紹優先層級
 
 「Promise 」的狀態從 pending 轉變為 resolve 或 reject 時，此時執行的 callback 會進入這個 Queue。
 
-注意：Promise 在創建時是同步的，不會進入 Event Loop。
+> 注意：Promise 在創建時是同步的，不會進入 Event Loop。
 
 ## 四、解析一開始 Node.js 範例程式執行順序
 
 ### 順序執行，先把同步函式解決
 
-- 因為 Promise 在創建時是同步的，所以會先執行
-- 在 function 前面加上 async 宣告為異步函式，執行時會被轉換為 Promise
+1. 因為 Promise 在創建時是同步的，所以會先執行
+2. 在 function 前面加上 async 宣告為異步函式，執行時會被轉換為 Promise
 
 ```
 console.log('start');
@@ -159,7 +159,7 @@ end
 
 ### 進入 Event Loop
 
-- 如果執行過程中遇到 NextTick Queue 就優先執行
+1. 如果執行過程中遇到 NextTick Queue 就優先執行
 
 ```
 process.nextTick(function () {
@@ -235,8 +235,8 @@ setImmediate
 
 **參考資源：**
 
-- [完整圖解Node.js的Event Loop(事件迴圈)](https://notes.andywu.tw/2020/%E5%AE%8C%E6%95%B4%E5%9C%96%E8%A7%A3node-js%E7%9A%84event-loop%E4%BA%8B%E4%BB%B6%E8%BF%B4%E5%9C%88/)
-- [15 尚硅谷 前端面试题 nodejs事件轮询机制](https://www.youtube.com/watch?v=yHnlOAKYxQU&ab_channel=%E6%9D%8E%E7%9A%93%E8%AF%9A)
+1. [完整圖解Node.js的Event Loop(事件迴圈)](https://notes.andywu.tw/2020/%E5%AE%8C%E6%95%B4%E5%9C%96%E8%A7%A3node-js%E7%9A%84event-loop%E4%BA%8B%E4%BB%B6%E8%BF%B4%E5%9C%88/)
+2. [15 尚硅谷 前端面试题 nodejs事件轮询机制](https://www.youtube.com/watch?v=yHnlOAKYxQU&ab_channel=%E6%9D%8E%E7%9A%93%E8%AF%9A)
 
 ---
 

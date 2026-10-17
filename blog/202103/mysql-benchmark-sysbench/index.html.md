@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202103/mysql-benchmark-sysbench/
-- 發布：2021-03-29（更新：2023-05-05）
+- 發布：2021-03-29
 - 主題：技術教學
 - 系列：MySQL 主從架構
 - 標籤：Sysbench、MySQL、MySQL 效能、DB 效能測試、安裝教學
@@ -14,7 +14,7 @@ sysbench 是我目前使用上最順手的一個測試工具，安裝、使用�
 
 ### 安裝 sysbench
 
-如果還沒安裝過 brew 請[參考官網](https://brew.sh/index_zh-tw)
+> 如果還沒安裝過 brew 請[參考官網](https://brew.sh/index_zh-tw)
 
 ```
 brew install sysbench
@@ -32,7 +32,7 @@ sysbench — version
 
 ### 測試 MySQL 性能
 
-mac 的範例是本地端的測試，針對 read 這塊
+> mac 的範例是本地端的測試，針對 read 這塊
 
 **STEP 1**：先建立好測試用的 DB
 
@@ -69,7 +69,7 @@ prepare
 
 **STEP 3**：進行測試
 
-只是把指令最後面改成 run
+> 只是把指令最後面改成 run
 
 ```
 sysbench /usr/local/Cellar/sysbench/1.0.20/share/sysbench/oltp_read_only.lua \
@@ -92,7 +92,7 @@ run
 
 **STEP 4**：清除測試數據
 
-只是把指令最後面改成 cleanup
+> 只是把指令最後面改成 cleanup
 
 ```
 sysbench /usr/local/Cellar/sysbench/1.0.20/share/sysbench/oltp_read_only.lua \
@@ -131,7 +131,7 @@ sysbench — version
 
 ### 測試 MySQL 性能
 
-ubuntu 的範例是遠端的測試，針對 write這塊
+> ubuntu 的範例是遠端的測試，針對 write這塊
 
 **STEP 1**：先建立好測試用的 DB
 
@@ -172,7 +172,7 @@ prepare
 
 **STEP 3**：進行測試
 
-只是把指令最後面改成 run
+> 只是把指令最後面改成 run
 
 ```
 sysbench /usr/share/sysbench/oltp_write_only.lua \
@@ -195,7 +195,7 @@ run
 
 **STEP 4**：清除測試數據
 
-只是把指令最後面改成 cleanup
+> 只是把指令最後面改成 cleanup
 
 ```
 sysbench /usr/share/sysbench/oltp_write_only.lua \
@@ -216,7 +216,7 @@ cleanup
 
 原始碼：[ubuntu_sysbench_cleanup.cmd](https://gist.github.com/dean9703111/957b162ca5a0bbe57a86e7c792e2a085)（GitHub Gist）
 
-以上是今天的分享，想了解更多功能請參考[官方的 github](https://github.com/akopytov/sysbench)
+> 以上是今天的分享，想了解更多功能請參考[官方的 github](https://github.com/akopytov/sysbench)
 
 **參考資源**：[Ubuntu 16.04中進行Sysbench環境搭建](https://www.itread01.com/content/1549085775.html)、[sysbench安装和使用](https://blog.51cto.com/13990437/2400940)
 

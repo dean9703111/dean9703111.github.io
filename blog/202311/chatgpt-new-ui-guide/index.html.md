@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202311/chatgpt-new-ui-guide/
-- 發布：2023-11-14（更新：2024-10-24）
+- 發布：2023-11-14
 - 主題：AI 實戰
 - 標籤：ChatGPT、OpenAI、AI、Version
 - 摘要：近期 ChatGPT 改版後對使用者介面做了不少調整，筆者發現許多人找不到新版的功能按鈕，於是將過去常用的功能按鈕統整到這篇文章跟大家分享。

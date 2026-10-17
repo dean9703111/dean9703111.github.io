@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202011/google-maps-platform-summit-notes/
-- 發布：2020-11-26（更新：2023-05-05）
+- 發布：2020-11-26
 - 主題：技術教學
 - 標籤：Google Maps Platform、AIoT、技術佈局高峰交流會、5G、心得感想
 - 摘要：這是一個主題圍繞在 5G 、Google map、AIOT 的分享，內容著重在分析 5G 在不同產業的實質應用、5G 與 wifi-6 的比較、Google map 的相關應用

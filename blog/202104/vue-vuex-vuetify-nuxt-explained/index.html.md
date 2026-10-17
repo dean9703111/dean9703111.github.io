@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202104/vue-vuex-vuetify-nuxt-explained/
-- 發布：2021-04-01（更新：2023-05-05）
+- 發布：2021-04-01
 - 主題：技術教學
 - 標籤：Vue.js、Vuex、Vuetify、Nuxt.js、前端框架
 - 摘要：有了框架後做什麼都很方便，但因為太方便導致有時連工具負責哪一塊都功能有點霧颯颯，如果你搞不太懂 Vue、Veux、Vuetify、Nuxt.js 之間的關係、具體各自負責什麼事情的話可以參考這篇文章釐清自己的觀念喔！
@@ -28,7 +28,7 @@ Nuxt.js
 
 ## Vue.js
 
-一個優秀的 Javascript 框架
+> 一個優秀的 Javascript 框架
 
 ### 過去只有 Javascript、HTML、CSS 時有什麼問題？
 
@@ -83,7 +83,7 @@ Nuxt.js
 
 因為由 server 端組成 HTML 後回傳，所以 Google 在 SEO 解析時可以很好的分析 DOM 元素，藉此提升網站的 SEO 水平
 
-Nuxt.js 也是能做 SPA(無SSR)、產生靜態網頁
+> Nuxt.js 也是能做 SPA(無SSR)、產生靜態網頁
 
 **參考資源**： [Vuex 是什麼? 怎麼用?](https://medium.com/itsems-frontend/vue-vuex1-state-mutations-364163b3acac)、[前端框架的功能與優點](https://tw.alphacamp.co/blog/why-use-front-end-framework)
 

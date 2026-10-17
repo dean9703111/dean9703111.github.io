@@ -2,7 +2,7 @@
 <html lang="zh-tw" class="no-js"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>【Day21】Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？</title>
+  <title>Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？</title>
   <meta name="description" content="其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了 但一個案子通常很難一次就通過，無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug，我大概歸類成以下幾種：">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/">
@@ -14,14 +14,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
-  <meta property="og:title" content="【Day21】Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？">
+  <meta property="og:title" content="Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？">
   <meta property="og:description" content="其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了 但一個案子通常很難一次就通過，無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug，我大概歸類成以下幾種：">
   <meta property="og:url" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/">
   <meta property="og:locale" content="zh_TW">
@@ -30,19 +32,19 @@
   <meta property="article:modified_time" content="2020-10-06T09:08:20&#43;08:00">
   <meta property="article:author" content="https://deanlin.net/about/">
   <meta property="article:section" content="技術教學">
-  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="iT 邦幫忙鐵人賽">
   <meta property="article:tag" content="Google Sheets">
   <meta property="article:tag" content="客戶溝通">
   <meta property="article:tag" content="解決bug">
-  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-og_hu_52feb4dbf29f22fa.jpg">
+  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/cover_hu_c7282654385febc2.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="675">
   <meta property="og:image:alt" content="【Day21】Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-og_hu_52feb4dbf29f22fa.jpg">
-  <meta name="twitter:title" content="【Day21】Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/cover_hu_c7282654385febc2.jpg">
+  <meta name="twitter:title" content="Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？">
   <meta name="twitter:description" content="其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了 但一個案子通常很難一次就通過，無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug，我大概歸類成以下幾種：">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-06T09:08:20+08:00","datePublished":"2020-10-06T09:08:20+08:00","description":"其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了 但一個案子通常很難一次就通過，無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug，我大概歸類成以下幾種：","headline":"【Day21】Google Sheets - BUG!爬蟲資料塞錯位置 \u0026 專案出包怎麼辦？","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-og_hu_52feb4dbf29f22fa.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-og_hu_fbbb7e3eb26b7721.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-og_hu_5f5df60f0b7f8d7.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Google Sheets, 客戶溝通, 解決bug","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-og_hu_52feb4dbf29f22fa.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10248227"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-og_hu_52feb4dbf29f22fa.jpg","timeRequired":"PT6M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/","wordCount":2696},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/","name":"【Day21】Google Sheets - BUG!爬蟲資料塞錯位置 \u0026 專案出包怎麼辦？","position":3}]}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-06T09:08:20+08:00","datePublished":"2020-10-06T09:08:20+08:00","description":"其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了 但一個案子通常很難一次就通過，無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug，我大概歸類成以下幾種：","headline":"【Day21】Google Sheets - BUG!爬蟲資料塞錯位置 \u0026 專案出包怎麼辦？","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/cover_hu_c7282654385febc2.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/cover_hu_c6ae91975f938244.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/cover_hu_31678e3d70313328.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Google Sheets, 客戶溝通, 解決bug","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/cover_hu_c7282654385febc2.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10248227"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/cover_hu_c7282654385febc2.jpg","timeRequired":"PT6M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/","wordCount":2696},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-21/","name":"【Day21】Google Sheets - BUG!爬蟲資料塞錯位置 \u0026 專案出包怎麼辦？","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -112,12 +114,12 @@
         <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
         <a href="/categories/tech/">技術教學</a>
       </nav>
-      <h1 class="article-title">【Day21】Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼辦？</h1>
+      <h1 class="article-title"><span class="nobr">【D</span>ay2<span class="nobr">1】</span>Google Sheets - BUG!爬蟲資料塞錯位置 &amp; 專案出包怎麼<span class="nobr">辦？</span></h1>
       <div class="article-meta">
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2020-10-06">2020.10.06</time>
               <span>閱讀約 6 分鐘</span>
@@ -126,6 +128,7 @@
         </div>
         <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>21</b>/ 30</a>
       </div>
+      <p class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg><span>這篇文章寫於 2020 年，文中的工具與版本可能已經更新，實作時請以官方文件為準。</span></p>
     </header>
 
     <div class="article-main">
@@ -140,7 +143,8 @@
 <p>客戶的操作跟你想的不一樣</p>
 </blockquote>
 <h2 id="為什麼寫這篇文章">為什麼寫這篇文章？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0" aria-label="這個段落的連結"></a></h2>
-<p>其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了<br>但一個案子通常很難一次就通過，<code>無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug</code>，我大概歸類成以下幾種：</p>
+<p>其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了</p>
+<p>但一個案子通常很難一次就通過，<mark>無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug</mark>，我大概歸類成以下幾種：</p>
 <ol>
 <li>作業系統不同導致的
 <ul>
@@ -157,28 +161,34 @@
 <li>網路速度、硬體規格&hellip; (ex：如果你的網路環境太差需要去調整爬蟲元件的極限等待時間)</li>
 </ul>
 </li>
-<li><code>客戶的操作跟你預想的不一樣</code></li>
+<li><mark>客戶的操作跟你預想的不一樣</mark></li>
 </ol>
-<p>第 1、2、3 點的問題我在之前文章實作碰到時有提到過，今天來講講<code>實際上你會最崩潰的第 4 點</code></p>
+<p>第 1、2、3 點的問題我在之前文章實作碰到時有提到過，今天來講講<mark>實際上你會最崩潰的第 4 點</mark></p>
 <hr>
 <h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="1-將客戶發的-bug-做基礎分類">1. 將客戶發的 bug 做基礎分類<a class="h-anchor" href="#1-%e5%b0%87%e5%ae%a2%e6%88%b6%e7%99%bc%e7%9a%84-bug-%e5%81%9a%e5%9f%ba%e7%a4%8e%e5%88%86%e9%a1%9e" aria-label="這個段落的連結"></a></h3>
 <h3 class="h-nomark" id="2-引導客戶說出-bug-發生原因及提出解決方案的小技巧">2. 引導客戶說出 bug 發生原因及提出解決方案的小技巧<a class="h-anchor" href="#2-%e5%bc%95%e5%b0%8e%e5%ae%a2%e6%88%b6%e8%aa%aa%e5%87%ba-bug-%e7%99%bc%e7%94%9f%e5%8e%9f%e5%9b%a0%e5%8f%8a%e6%8f%90%e5%87%ba%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88%e7%9a%84%e5%b0%8f%e6%8a%80%e5%b7%a7" aria-label="這個段落的連結"></a></h3>
 <h3 class="h-nomark" id="3-重現客戶發生的-bug">3. 重現客戶發生的 bug<a class="h-anchor" href="#3-%e9%87%8d%e7%8f%be%e5%ae%a2%e6%88%b6%e7%99%bc%e7%94%9f%e7%9a%84-bug" aria-label="這個段落的連結"></a></h3>
 <h3 class="h-nomark" id="4-改寫程式讓新的爬蟲資料塞入正確位置">4. 改寫程式讓新的爬蟲資料塞入正確位置<a class="h-anchor" href="#4-%e6%94%b9%e5%af%ab%e7%a8%8b%e5%bc%8f%e8%ae%93%e6%96%b0%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e5%a1%9e%e5%85%a5%e6%ad%a3%e7%a2%ba%e4%bd%8d%e7%bd%ae" aria-label="這個段落的連結"></a></h3>
-<p>4.1 取得 Google Sheets 第一欄的粉專名稱：<code>readTitle</code><br>4.2 讓新的爬蟲資料正確寫入 Google Sheets：<code>writeSheet</code></p>
+<p>4.1 取得 Google Sheets 第一欄的粉專名稱：<code>readTitle</code></p>
+<p>4.2 讓新的爬蟲資料正確寫入 Google Sheets：<code>writeSheet</code></p>
 <hr>
 <h2 class="h-nomark" id="1-將客戶發的-bug-做基礎分類-1">1. 將客戶發的 bug 做基礎分類<a class="h-anchor" href="#1-%e5%b0%87%e5%ae%a2%e6%88%b6%e7%99%bc%e7%9a%84-bug-%e5%81%9a%e5%9f%ba%e7%a4%8e%e5%88%86%e9%a1%9e-1" aria-label="這個段落的連結"></a></h2>
 <p>與你合作的客戶通常不是資工相關背景，他們所提出來的 bug 有時也會讓你啼笑皆非，我個人會將他們提出的 bug 分成 3 種</p>
 <ul>
 <li><strong>明顯的 bug</strong>：客戶一報 bug 你就知道哪個環節出問題了，就認命地解決吧 (ex：臉書的爬蟲登入後就卡住不動了)</li>
-<li><strong>需要討論的 bug</strong>：<code>客戶報 bug 時你不確定是哪個環節出了問題，需要與客戶討論發生 bug 的操作流程</code></li>
+<li><strong>需要討論的 bug</strong>：<mark>客戶報 bug 時你不確定是哪個環節出了問題，需要與客戶討論發生 bug 的操作流程</mark></li>
 <li><strong>不合理的 bug</strong>：明顯不合理的要求你可以委婉的跟他說為什麼辦不到 (ex：程式執行到一半把電腦關機問你爬蟲資料為什麼沒有寫入 Google Sheets)</li>
 </ul>
 <hr>
 <h2 class="h-nomark" id="2-引導客戶說出-bug-發生原因及提出解決方案的小技巧-1">2. 引導客戶說出 bug 發生原因及提出解決方案的小技巧<a class="h-anchor" href="#2-%e5%bc%95%e5%b0%8e%e5%ae%a2%e6%88%b6%e8%aa%aa%e5%87%ba-bug-%e7%99%bc%e7%94%9f%e5%8e%9f%e5%9b%a0%e5%8f%8a%e6%8f%90%e5%87%ba%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88%e7%9a%84%e5%b0%8f%e6%8a%80%e5%b7%a7-1" aria-label="這個段落的連結"></a></h2>
 <p>很多時候客戶對於 bug 的陳述是很模糊的，所以你<strong>需要與客戶溝通，引導他們說出自己的操作流程</strong>，以今天發出的 bug 做舉例：</p>
-<p><strong>客戶</strong>：今天爬蟲資料寫入 Google Sheets 表單時塞錯位置了！<br><strong>我</strong>：請問這個問題是今天突然發生的，還是過去幾天也發生過通樣的問題呢？ <code>(釐清 bug 發生的時間點)</code><br><strong>客戶</strong>：是今天才發生的<br><strong>我</strong>：那今天你在跑爬蟲前有做過什麼調整嗎？ <code>(確認是什麼樣的操作導致 bug)</code><br><strong>客戶</strong>：我在爬蟲的json 檔裡面新增了幾個粉專，然後把 Google Sheets 上面一些沒有在維護的粉專給砍掉<br><strong>我</strong>：了解，我這邊會先重複一遍您的操作來釐清問題，最晚會在兩天後給您答覆 <code>(自己操作一遍確認有這個bug)</code></p>
+<p><strong>客戶</strong>：今天爬蟲資料寫入 Google Sheets 表單時塞錯位置了！</p>
+<p><strong>我</strong>：請問這個問題是今天突然發生的，還是過去幾天也發生過通樣的問題呢？ <code>(釐清 bug 發生的時間點)</code></p>
+<p><strong>客戶</strong>：是今天才發生的</p>
+<p><strong>我</strong>：那今天你在跑爬蟲前有做過什麼調整嗎？ <code>(確認是什麼樣的操作導致 bug)</code></p>
+<p><strong>客戶</strong>：我在爬蟲的json 檔裡面新增了幾個粉專，然後把 Google Sheets 上面一些沒有在維護的粉專給砍掉</p>
+<p><strong>我</strong>：了解，我這邊會先重複一遍您的操作來釐清問題，最晚會在兩天後給您答覆 <code>(自己操作一遍確認有這個bug)</code></p>
 <p>===我是正在重現bug的分隔線===</p>
 <p><strong>我</strong>：我依照您的方式操作確實遇到這個問題；這邊我提出一個解決方案，這個方案會將你新增的爬蟲粉專寫入 Google Sheets 表單的最下面，不管你爬蟲json 如何調整，追蹤人數都會填入 Google Sheets 的正確位置，詳細邏輯你可以參考下方說明 <code>(自己提出解決方案，千萬別讓客戶天馬行空亂提)</code></p>
 <blockquote>
@@ -187,13 +197,14 @@
 <li>解決錯誤的方式：<br>1. 粉專名稱：寫入前將 Google Sheets 上粉專名稱的欄位與爬蟲json 比對，如果 <strong>爬蟲json 裡面有新的粉專就會新增到最下面，不改變 Google Sheets 上粉專名稱原有排列順序</strong><br>2. 追蹤人數：以 <strong>粉專名稱+粉專網址作為寫入追蹤人數欄位的判斷</strong></li>
 </ul>
 </blockquote>
-<p><strong>客戶</strong>：好的先這樣做吧，你什麼時候能改好？<br><strong>我</strong>：預計三個工作天，如果提早完成會儘早與您聯繫 <code>(說一個你絕對能完成功能的時間，並表達積極性)</code></p>
+<p><strong>客戶</strong>：好的先這樣做吧，你什麼時候能改好？</p>
+<p><strong>我</strong>：預計三個工作天，如果提早完成會儘早與您聯繫 <code>(說一個你絕對能完成功能的時間，並表達積極性)</code></p>
 <hr>
 <h2 class="h-nomark" id="3-重現客戶發生的-bug-1">3. 重現客戶發生的 bug<a class="h-anchor" href="#3-%e9%87%8d%e7%8f%be%e5%ae%a2%e6%88%b6%e7%99%bc%e7%94%9f%e7%9a%84-bug-1" aria-label="這個段落的連結"></a></h2>
 <blockquote>
-<p>這個步驟非常重要，<code>如果 bug 無法在自己的環境重現時你會超級頭大</code>，因為站在客戶的角度就是認為你沒有完成專案，這會導致你結案的日子變得遙遙無期&hellip;</p>
+<p>這個步驟非常重要，<mark>如果 bug 無法在自己的環境重現時你會超級頭大</mark>，因為站在客戶的角度就是認為你沒有完成專案，這會導致你結案的日子變得遙遙無期&hellip;</p>
 </blockquote>
-<p>今天問題重現起來非常簡單，跟著客戶的說的方式做就好：<code>調整爬蟲json 及 Google sheet</code></p>
+<p>今天問題重現起來非常簡單，跟著客戶的說的方式做就好：<mark>調整爬蟲json 及 Google sheet</mark></p>
 <ol>
 <li>
 <p>我們這裡用 fb.json 為例，將<strong>麻糬爸愛亂畫</strong>刪除，然後把<strong>寶寶不說</strong>移到第二個</p>
@@ -219,7 +230,7 @@
 </span></span></code></pre></div></li>
 <li>
 <p>執行程式 <strong>yarn start</strong> 後你就會發現excel的表格亂掉了</p>
-<p><img src="/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01.webp" srcset="/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01_hu_c286fa9cafe17f83.webp 720w, /blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="349" alt="3. 重現客戶發生的 bug（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01.webp" srcset="/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01_hu_c286fa9cafe17f83.webp 720w, /blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="349" alt="3. 重現客戶發生的 bug（圖 1）" fetchpriority="high" decoding="async"></p>
 </li>
 </ol>
 <hr>
@@ -252,9 +263,9 @@
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><hr>
 <h3 class="h-nomark" id="42-讓新的爬蟲資料正確寫入-google-sheetswritesheet">4.2 讓新的爬蟲資料正確寫入 Google Sheets：<code>writeSheet</code><a class="h-anchor" href="#42-%e8%ae%93%e6%96%b0%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e6%ad%a3%e7%a2%ba%e5%af%ab%e5%85%a5-google-sheetswritesheet" aria-label="這個段落的連結"></a></h3>
-<p>我們依照客戶接受的<code>解決方案</code>來調整這隻函式</p>
+<p>我們依照客戶接受的<mark>解決方案</mark>來調整這隻函式</p>
 <ul>
-<li>將爬蟲json 中新增的粉專<code>補到 Google Sheets 最後面</code></li>
+<li>將爬蟲json 中新增的粉專<mark>補到 Google Sheets 最後面</mark></li>
 <li>追蹤人數用<code>粉專名稱+粉專網址</code>來塞入對應的位置</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> writeSheet (title, result_array, auth) {
@@ -345,7 +356,8 @@
 </ul>
 </li>
 </ul>
-<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong></p>
+<p><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
 </blockquote>
 
       </div>
@@ -354,7 +366,7 @@
         <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.10.06），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10248227" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
         <div class="foot-row">
           <div class="post-tags">
-            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">iT 邦幫忙鐵人賽</a>
             <a class="chip chip-hash" href="/tags/google-sheets/">Google Sheets</a>
             <a class="chip chip-hash" href="/tags/%E5%AE%A2%E6%88%B6%E6%BA%9D%E9%80%9A/">客戶溝通</a>
             <a class="chip chip-hash" href="/tags/%E8%A7%A3%E6%B1%BAbug/">解決bug</a>
@@ -527,12 +539,12 @@
   <div class="card-grid">
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRpAAAABXRUJQVlA4WAoAAAAQAAAAFwAADQAAQUxQSCEAAAABH6CQbQTIH2hQ9zGcRkTEJ0AgaTPWv/J4gQeI6H82&#43;QMAVlA4IEgAAADwAwCdASoYAA4APw1mqEemIqIYBABjEMT0gAA1qL9j2m&#43;3B5t5nSBYAP66AbF86gmWON2rIaI8rhYwNBPLNwTac/OH4JNAAAA=" alt="" width="24" height="14"><img src="/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-01_hu_96187101bf94ae41.webp" srcset="/blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-01_hu_b12624704fefb703.webp 240w, /blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-01_hu_c364fd3a83837fec.webp 480w, /blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-01_hu_97dda37e8327920.webp 800w, /blog/202010/fb-ig-crawler-day-23/images/fb-ig-crawler-day-23-01_hu_96187101bf94ae41.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="604" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-23/images/cover_hu_35ad282353e32e0e.webp" srcset="/blog/202010/fb-ig-crawler-day-23/images/cover_hu_3189909ae5e6d1d9.webp 240w, /blog/202010/fb-ig-crawler-day-23/images/cover_hu_b1ccdbc200ffeaea.webp 480w, /blog/202010/fb-ig-crawler-day-23/images/cover_hu_ccfdc4c53700bb38.webp 800w, /blog/202010/fb-ig-crawler-day-23/images/cover_hu_35ad282353e32e0e.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-23/">【Day23】Google Sheets - 優化格式，滿足客戶需求 &amp; 談使用者體驗</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-23/"><span class="nobr">【D</span>ay2<span class="nobr">3】</span>Google Sheets - 優化格<span class="nobr">式，</span>滿足客戶需求 &amp; 談使用者體驗</a></h3>
     <p class="card-desc">1.1 那些不堪回首的共同回憶1.2 是什麼原因製造出這些體驗的1.3 有在使用產品的人才會給你最真實的回饋，專案還有哪些地方要改善呢？</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-08">2020.10.08</time>
@@ -543,12 +555,12 @@
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRooAAABXRUJQVlA4WAoAAAAQAAAAFwAADAAAQUxQSB4AAAABHyAUQPzN8mgGkUZExAkIJG3G&#43;lceL/AAEf3PJk9WUDggRgAAANADAJ0BKhgADQA/DWipSCYjIhgEAGMQxPSAADVz4inJF1wSczfCcAD&#43;umm4v4RY58p0Kk6RhonlAEJt12Ojm&#43;v3r&#43;rYAAA=" alt="" width="24" height="13"><img src="/blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01_hu_abbe0a137883025d.webp" srcset="/blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01_hu_53ab5f82fb2c58f.webp 240w, /blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01_hu_43ccedba1f041e96.webp 480w, /blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01_hu_9cc336b113c8dd5f.webp 800w, /blog/202010/fb-ig-crawler-day-22/images/fb-ig-crawler-day-22-01_hu_abbe0a137883025d.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="562" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-22/images/cover_hu_1ca07802861183a5.webp" srcset="/blog/202010/fb-ig-crawler-day-22/images/cover_hu_b1fdb9a78adccc2c.webp 240w, /blog/202010/fb-ig-crawler-day-22/images/cover_hu_c7c3c7fe2d5ae1af.webp 480w, /blog/202010/fb-ig-crawler-day-22/images/cover_hu_c9d1f85dd5dca2e0.webp 800w, /blog/202010/fb-ig-crawler-day-22/images/cover_hu_1ca07802861183a5.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-22/">【Day22】Google Sheets - 客戶：我希望新資料插在最前面 &amp; 談需求變更</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-22/"><span class="nobr">【D</span>ay2<span class="nobr">2】</span>Google Sheets - 客<span class="nobr">戶：</span>我希望新資料插在最前面 &amp; 談需求變更</a></h3>
     <p class="card-desc">3.1 插入一個空白欄位：insertEmptyCol3.2 把空白欄位更新成最新的追蹤人數資訊</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-07">2020.10.07</time>
@@ -559,12 +571,12 @@
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAwCdASoYAAgAPw1qqEgmIyIYBABjEMT0gAAzJ2saN4rJoO7aklgAAP7nRTeRvDXMGLYdurH0ED2A&#43;ytOVyWchKk&#43;qEAA" alt="" width="24" height="8"><img src="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_beb305e19e69cce0.webp" srcset="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_8adc63c2f8014883.webp 240w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_38e303ebf5808d1d.webp 480w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_9356f4c793d26fc.webp 800w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_beb305e19e69cce0.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="351" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-20/images/cover_hu_fc0c701e75fdfe66.webp" srcset="/blog/202010/fb-ig-crawler-day-20/images/cover_hu_743fb29e463e131a.webp 240w, /blog/202010/fb-ig-crawler-day-20/images/cover_hu_8a86e668a60d85ee.webp 480w, /blog/202010/fb-ig-crawler-day-20/images/cover_hu_7439da9d098ad5c5.webp 800w, /blog/202010/fb-ig-crawler-day-20/images/cover_hu_fc0c701e75fdfe66.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-20/">【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-20/"><span class="nobr">【D</span>ay2<span class="nobr">0】</span>Google Sheets - 寫入爬蟲資<span class="nobr">料，</span>跟 Copy &amp; Paste 的日子說掰掰</a></h3>
     <p class="card-desc">1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-05">2020.10.05</time>
@@ -699,7 +711,7 @@
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

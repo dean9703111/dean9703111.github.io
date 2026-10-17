@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202303/chatgpt-english-resume/
-- 發布：2023-03-16（更新：2024-10-24）
+- 發布：2023-03-16
 - 主題：職涯成長
 - 標籤：ChatGPT、Resume Writing、英文履歷、求職、外商
 - 摘要：在上一篇文章中，我們已經透過 ChatGPT 產出一份亮眼的中文履歷；不過如果你想挑戰高薪與外商，那英文履歷可說是基本的敲門磚。在過去我們可能會用「英文不好、沒時間」等理由作爲藉口逃避；但有了 ChatGPT 後，你所缺乏的，只剩下「Copy & Paste」的操作。
@@ -13,9 +13,8 @@
 
 你所缺乏的，只剩下「Copy & Paste」的操作（不過理解並熟記 ChatGPT 產出的履歷還是基本功喔）。
 
-**備註：**
-
-如果想挑戰外商，建議具備一定的英文能力，否則現場面試可能會悲劇。
+> **備註：**
+> 如果想挑戰外商，建議具備一定的英文能力，否則現場面試可能會悲劇。
 
 ```
 大綱
@@ -68,7 +67,7 @@ Employed at ABC Corporation as a backend engineer from 2019 to present. My accom
 
 讀者可以看到每個段落都是以「強動詞」作為開頭，如果要自己翻譯做到這個程度，那可得花上不少時間。
 
-相關量化數據請記得自行調整（最好能精確到小數點後兩位）。
+> 相關量化數據請記得自行調整（最好能精確到小數點後兩位）。
 
 ## Google VS ChatGPT 的翻譯成果
 
@@ -135,7 +134,7 @@ Overall, this version of your resume retains the key accomplishments while remov
 
 **參考資源**：
 
-- [30 Best ChatGPT Prompts for a Winning Resume](https://matchbuilt.com/blog/best-chatgpt-prompts-for-resume/)
+1. [30 Best ChatGPT Prompts for a Winning Resume](https://matchbuilt.com/blog/best-chatgpt-prompts-for-resume/)
 
 ---
 

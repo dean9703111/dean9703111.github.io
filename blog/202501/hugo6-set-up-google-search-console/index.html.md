@@ -28,7 +28,7 @@
 
 點擊「前往資源」後，選擇左側的「Sitemap」，直接貼上 `sitemap.xml` 點擊提交就好了！
 
-Hugo 專案的 Sitemap（網站地圖）通常是放在「public/sitemap.xml」這個位置，裡面會存放網站所有可點擊的路徑。
+> Hugo 專案的 Sitemap（網站地圖）通常是放在「public/sitemap.xml」這個位置，裡面會存放網站所有可點擊的路徑。
 
 剛提交的 sitemap 可能會看到如下的畫面，狀態顯示「無法擷取」。
 
@@ -48,13 +48,13 @@ Hugo 專案的 Sitemap（網站地圖）通常是放在「public/sitemap.xml」�
 
 之所以會說是 60 分，是因為還有許多可以優化的地方，下面舉幾個案例：
 
-- **網站外型優化**：目前套用的是預設模板，可能有些設計跟你的期待不符，但這塊優化就需要一些網頁前端（Frontend）的基礎能力了，ChatGPT 是你成長的好夥伴。
-- **Open Graph**：如果你把部落格文章分享給朋友，會發現連結沒有縮圖；我們需要增加 OG 標籤，才能讓網站在社群上被漂亮分享。
-- **canonical URL**：接下來筆者打算將 Medium 文章搬到自己的部落格，為了讓 Google 了解相同內容的狀況下哪篇文章才是本尊，就需要設定這個參數，否則你部落格的流量可能會被其他網站搶走。
+1. **網站外型優化**：目前套用的是預設模板，可能有些設計跟你的期待不符，但這塊優化就需要一些網頁前端（Frontend）的基礎能力了，ChatGPT 是你成長的好夥伴。
+2. **Open Graph**：如果你把部落格文章分享給朋友，會發現連結沒有縮圖；我們需要增加 OG 標籤，才能讓網站在社群上被漂亮分享。
+3. **canonical URL**：接下來筆者打算將 Medium 文章搬到自己的部落格，為了讓 Google 了解相同內容的狀況下哪篇文章才是本尊，就需要設定這個參數，否則你部落格的流量可能會被其他網站搶走。
 
 接下來會找時間繼續分享這些細節，不想錯過的朋友可以先追蹤[筆者的 FB](https://www.facebook.com/deanlinbao) 喔！
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

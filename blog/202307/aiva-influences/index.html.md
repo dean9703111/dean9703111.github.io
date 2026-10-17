@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202307/aiva-influences/
-- 發布：2023-07-23（更新：2024-10-24）
+- 發布：2023-07-23
 - 主題：AI 實戰
 - 系列：AIVA AI 作曲
 - 標籤：AIVA、Music、AI、AI Music Generator、AIGC
@@ -12,7 +12,7 @@
 
 是不是感覺超級猛？就讓我們透過這篇文章來體驗看看吧！
 
-如果你是第一次接觸 AIVA，可以先看[基礎介紹](https://deanlin.net/blog/202307/aiva-compose-by-style/)、[參數認識](https://deanlin.net/blog/202307/aiva-compose-with-chatgpt/)，對他的功能有初步的認知。
+> 如果你是第一次接觸 AIVA，可以先看[基礎介紹](https://deanlin.net/blog/202307/aiva-compose-by-style/)、[參數認識](https://deanlin.net/blog/202307/aiva-compose-with-chatgpt/)，對他的功能有初步的認知。
 
 ## STEP 1：上傳一首自己喜歡的音樂
 
@@ -20,7 +20,7 @@
 
 [YouTube 影片：Two Steps From Hell - Victory](https://www.youtube.com/watch?v=hKRUPYrAQoE)
 
-使用時請注意版權，這首音樂僅能在非商業用途上使用。
+> 使用時請注意版權，這首音樂僅能在非商業用途上使用。
 
 透過黑魔法變成 MP3 後，將它上傳到 AIVA 的 Influences。
 
@@ -32,7 +32,7 @@
 
 然後等待上傳完畢：
 
-這邊提醒一下讀者，如果上傳的音檔超過 5 分半，他會要求你裁剪使音檔使其低於 5 分半（可直接於介面操作）。
+> 這邊提醒一下讀者，如果上傳的音檔超過 5 分半，他會要求你裁剪使音檔使其低於 5 分半（可直接於介面操作）。
 
 上傳完畢後，讓我們看看 AIVA 對音樂分析的能力如何：
 
@@ -68,7 +68,7 @@
 
 如果非相關專業的人員，我們也只能做到這一步了；但如果你本身擁有音樂的專業，AIVA 能幫你大量發想、創作，相信能激發出更多靈感。
 
-很多時候過往的知識限制了我們的想像，但 AI 的創意幫我們打開了另一扇窗。
+> 很多時候過往的知識限制了我們的想像，但 AI 的創意幫我們打開了另一扇窗。
 
 延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
 

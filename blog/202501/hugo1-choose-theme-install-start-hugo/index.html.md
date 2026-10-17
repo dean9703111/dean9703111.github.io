@@ -36,7 +36,7 @@ Hugo 有提供豐富的主題供大家選擇，大家只要點擊「Themes」便
 
 因為對個人品牌來說，「文章」是最大重點，所以可以多關注「封面、文字、圖片、程式碼、目錄、標題」等資訊呈現的方式。
 
-因為挑來挑去沒找到合適的，所以筆者選擇了跟[古古課程](https://hahow.in/courses/5de8fec16117240026540b9c)相同的主題（[liva](https://github.com/gethugothemes/liva-hugo)）。
+> 因為挑來挑去沒找到合適的，所以筆者選擇了跟[古古課程](https://hahow.in/courses/5de8fec16117240026540b9c)相同的主題（[liva](https://github.com/gethugothemes/liva-hugo)）。
 
 ### 安裝 Hugo，從零開始建立自己的個人網站
 
@@ -103,7 +103,7 @@ brew install go
 
 在文章的最後，要特別感謝[古古的後端筆記](https://www.facebook.com/kucw.io)，許多操作步驟與設計邏輯，筆者都是參考她在 Hahow 開設的「[Github 免費架站術！輕鬆打造個人品牌](https://hahow.in/courses/5de8fec16117240026540b9c)」這堂課，如果想知道更詳細的操作細節，歡迎到 Hahow 上支持選購。
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>[面試][後端]請簡述 Node.js 的 Event Loop</title>
-  <meta name="description" content="這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。熟悉的起手式：「我方便問你一個 Node.js 核心的問題嗎？」這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。大綱 請…">
+  <meta name="description" content="「熟悉的起手式：「我方便問你一個 Node.js 核心的問題嗎？」」這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。請簡述 Node.js 的 Event Loop 1.1 面試官為什麼會問？">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202108/nodejs-event-loop/">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -14,15 +14,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202109/fullstack-career-notes-day-14/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
   <meta property="og:title" content="[面試][後端]請簡述 Node.js 的 Event Loop">
-  <meta property="og:description" content="這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。熟悉的起手式：「我方便問你一個 Node.js 核心的問題嗎？」這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。大綱 請…">
+  <meta property="og:description" content="「熟悉的起手式：「我方便問你一個 Node.js 核心的問題嗎？」」這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。請簡述 Node.js 的 Event Loop 1.1 面試官為什麼會問？">
   <meta property="og:url" content="https://deanlin.net/blog/202108/nodejs-event-loop/">
   <meta property="og:locale" content="zh_TW">
   <meta property="og:type" content="article">
@@ -30,20 +32,20 @@
   <meta property="article:modified_time" content="2021-09-29T08:46:22&#43;08:00">
   <meta property="article:author" content="https://deanlin.net/about/">
   <meta property="article:section" content="職涯成長">
-  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="iT 邦幫忙鐵人賽">
   <meta property="article:tag" content="後端面試">
   <meta property="article:tag" content="Node.js">
   <meta property="article:tag" content="Event Loop">
   <meta property="article:tag" content="JavaScript">
-  <meta property="og:image" content="https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-og_hu_ea527c026df80005.jpg">
+  <meta property="og:image" content="https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/cover_hu_579b7f5274d9e2b1.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="675">
   <meta property="og:image:alt" content="[面試][後端]請簡述 Node.js 的 Event Loop">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-og_hu_ea527c026df80005.jpg">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/cover_hu_579b7f5274d9e2b1.jpg">
   <meta name="twitter:title" content="[面試][後端]請簡述 Node.js 的 Event Loop">
-  <meta name="twitter:description" content="這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。熟悉的起手式：「我方便問你一個 Node.js 核心的問題嗎？」這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。大綱 請…">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"職涯成長"},"articleSection":"職涯成長","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2021-09-29T08:46:22+08:00","datePublished":"2021-09-29T08:46:22+08:00","description":"這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。熟悉的起手式：「我方便問你一個 Node.js 核心的問題嗎？」這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。大綱 請…","headline":"[面試][後端]請簡述 Node.js 的 Event Loop","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-og_hu_ea527c026df80005.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-og_hu_45fe63515eab4374.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-og_hu_2851f4b2c2375048.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"全端工程師生存筆記","url":"https://deanlin.net/series/fullstack-career-notes/"}],"keywords":"iT 邦幫忙鐵人賽, 後端面試, Node.js, Event Loop, JavaScript","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202108/nodejs-event-loop/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-og_hu_ea527c026df80005.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10267644"],"thumbnailUrl":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-og_hu_ea527c026df80005.jpg","timeRequired":"PT4M","url":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/","wordCount":1819},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/career/","name":"職涯成長","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/","name":"[面試][後端]請簡述 Node.js 的 Event Loop","position":3}]}]}</script>
+  <meta name="twitter:description" content="「熟悉的起手式：「我方便問你一個 Node.js 核心的問題嗎？」」這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。請簡述 Node.js 的 Event Loop 1.1 面試官為什麼會問？">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"職涯成長"},"articleSection":"職涯成長","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2021-09-29T08:46:22+08:00","datePublished":"2021-09-29T08:46:22+08:00","description":"「熟悉的起手式：「我方便問你一個 Node.js 核心的問題嗎？」」這是一個在了解後，無論面試還是工作，CP 值都很高的題目，建議讀者要真的融會貫通。請簡述 Node.js 的 Event Loop 1.1 面試官為什麼會問？","headline":"[面試][後端]請簡述 Node.js 的 Event Loop","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/cover_hu_579b7f5274d9e2b1.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/cover_hu_3c7f729a489558f0.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/cover_hu_340782996562d31.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"全端工程師生存筆記","url":"https://deanlin.net/series/fullstack-career-notes/"}],"keywords":"iT 邦幫忙鐵人賽, 後端面試, Node.js, Event Loop, JavaScript","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/cover_hu_579b7f5274d9e2b1.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10267644"],"thumbnailUrl":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/images/cover_hu_579b7f5274d9e2b1.jpg","timeRequired":"PT4M","url":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/","wordCount":1819},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/career/","name":"職涯成長","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202109/fullstack-career-notes-day-14/","name":"[面試][後端]請簡述 Node.js 的 Event Loop","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -118,7 +120,7 @@
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2021-09-29">2021.09.29</time>
               <span>閱讀約 4 分鐘</span>
@@ -168,7 +170,7 @@
 <hr>
 <h2 class="h-nomark" id="1-請簡述-nodejs-的-event-loop">1. 請簡述 Node.js 的 Event Loop<a class="h-anchor" href="#1-%e8%ab%8b%e7%b0%a1%e8%bf%b0-nodejs-%e7%9a%84-event-loop" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="11-面試官為什麼會問">1.1 面試官為什麼會問？<a class="h-anchor" href="#11-%e9%9d%a2%e8%a9%a6%e5%ae%98%e7%82%ba%e4%bb%80%e9%ba%bc%e6%9c%83%e5%95%8f" aria-label="這個段落的連結"></a></h3>
-<p>只要你的<code>履歷上有 Node.js</code>，10 間公司至少有 3 間會問這個<code>常見面試題</code>；而且問題的起手式出奇的一致：「我方便問你一個 Node.js 核心的問題嗎？」</p>
+<p>只要你的<code>履歷上有 Node.js</code>，10 間公司至少有 3 間會問這個<mark>常見面試題</mark>；而且問題的起手式出奇的一致：「我方便問你一個 Node.js 核心的問題嗎？」</p>
 <hr>
 <h3 class="h-nomark" id="12-面試官想從答案確認什麼">1.2 面試官想從答案確認什麼？<a class="h-anchor" href="#12-%e9%9d%a2%e8%a9%a6%e5%ae%98%e6%83%b3%e5%be%9e%e7%ad%94%e6%a1%88%e7%a2%ba%e8%aa%8d%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h3>
 <ul>
@@ -181,7 +183,7 @@
 <hr>
 <h2 class="h-nomark" id="2-回答問題所需具備的知識">2. 回答問題所需具備的知識<a class="h-anchor" href="#2-%e5%9b%9e%e7%ad%94%e5%95%8f%e9%a1%8c%e6%89%80%e9%9c%80%e5%85%b7%e5%82%99%e7%9a%84%e7%9f%a5%e8%ad%98" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="21-event-loop-執行的邏輯">2.1 Event Loop 執行的邏輯<a class="h-anchor" href="#21-event-loop-%e5%9f%b7%e8%a1%8c%e7%9a%84%e9%82%8f%e8%bc%af" aria-label="這個段落的連結"></a></h3>
-<p><img src="/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-01.webp" srcset="/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-01_hu_9c9065800b2abcd5.webp 720w, /blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="579" alt="2.1 Event Loop 執行的邏輯（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-01.webp" srcset="/blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-01_hu_9c9065800b2abcd5.webp 720w, /blog/202109/fullstack-career-notes-day-14/images/fullstack-career-notes-day-14-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="579" alt="2.1 Event Loop 執行的邏輯（圖 1）" fetchpriority="high" decoding="async"></p>
 <ul>
 <li><strong>了解 MacroTask 的 6 個階段</strong>
 <ul>
@@ -200,7 +202,7 @@
 </ul>
 </li>
 </ul>
-<p><code>Macrotask Queue 在 Evevnt Loop 優先層級較低，接下來介紹優先層級更高的兩個 Queue。</code></p>
+<p><mark>Macrotask Queue 在 Evevnt Loop 優先層級較低，接下來介紹優先層級更高的兩個 Queue。</mark></p>
 <ul>
 <li>
 <p><strong>NextTick Queue 優先層級最高</strong><br>「process.nextTick()」的 callback 可以隨意插隊；只要這個 Queue 有東西就會優先執行。</p>
@@ -208,7 +210,7 @@
 <li>
 <p><strong>MicroTask Queue 優先層級次高</strong><br>「Promise」的狀態從 pending 轉變為 resolve 或 reject 時，執行的 callback 會進入這個 Queue。</p>
 <blockquote>
-<p><strong>注意</strong>：<code>Promise 在創建時是同步的</code>，不會進入 Event Loop。</p>
+<p><strong>注意</strong>：<mark>Promise 在創建時是同步的</mark>，不會進入 Event Loop。</p>
 </blockquote>
 </li>
 </ul>
@@ -322,16 +324,16 @@
 <hr>
 <h2 class="h-nomark" id="3-衍伸問題">3. 衍伸問題<a class="h-anchor" href="#3-%e8%a1%8d%e4%bc%b8%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="31-可以簡述-nodejs-跟-javascript-的差異嗎">3.1 可以簡述 Node.js 跟 JavaScript 的差異嗎？<a class="h-anchor" href="#31-%e5%8f%af%e4%bb%a5%e7%b0%a1%e8%bf%b0-nodejs-%e8%b7%9f-javascript-%e7%9a%84%e5%b7%ae%e7%95%b0%e5%97%8e" aria-label="這個段落的連結"></a></h3>
-<p><code>考點：確認求職者是否理解自己天天使用的工具</code></p>
+<p><mark>考點：確認求職者是否理解自己天天使用的工具</mark></p>
 <p>JavaScript 是程式語言，可以在合適的瀏覽器中運行；而 Node.js 是一個能執行JavaScript 的環境，它以 Chrome V8 引擎為核心，再加上 C/C++套件，讓 Sever 端也可以執行 JavaScript。</p>
 <hr>
 <h3 class="h-nomark" id="32-readfile-和-createreadstream-函式的差異">3.2 readFile 和 createReadStream 函式的差異？<a class="h-anchor" href="#32-readfile-%e5%92%8c-createreadstream-%e5%87%bd%e5%bc%8f%e7%9a%84%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h3>
-<p><code>考點：判斷求職者過去專案中使否使用過這類函式，並理解差異</code></p>
-<p><code>readFile</code> 函式會將讀取到的完整內容<code>存在記憶體</code>後傳給使用者，而 <code>createReadStream</code> 函式則是<code>逐塊讀取</code>檔案，不是全部存在記憶體中；因此要讀取較大的檔案時，建議使用 createReadStream ，利用其逐塊讀取的特性能減少使用者等待時間。</p>
+<p><mark>考點：判斷求職者過去專案中使否使用過這類函式，並理解差異</mark></p>
+<p><code>readFile</code> 函式會將讀取到的完整內容<mark>存在記憶體</mark>後傳給使用者，而 <code>createReadStream</code> 函式則是<mark>逐塊讀取</mark>檔案，不是全部存在記憶體中；因此要讀取較大的檔案時，建議使用 createReadStream ，利用其逐塊讀取的特性能減少使用者等待時間。</p>
 <hr>
 <h3 class="h-nomark" id="33-repl-是什麼">3.3 REPL 是什麼？<a class="h-anchor" href="#33-repl-%e6%98%af%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h3>
-<p><code>考點：對專有名詞是否熟悉，能否解釋</code></p>
-<p>REPL（Read Eval Print Loop）是一個用來<code>執行程式語言的虛擬環境</code>。</p>
+<p><mark>考點：對專有名詞是否熟悉，能否解釋</mark></p>
+<p>REPL（Read Eval Print Loop）是一個用來<mark>執行程式語言的虛擬環境</mark>。</p>
 <p>就像是我們在瀏覽器的 Console 可以執行 JavaScript 程式碼；在安裝完 Node.js 後，新增一個 JavaScript 檔，在終端機輸入<code>node xxx.js</code>便可以執行它。</p>
 <hr>
 <p>感謝大家的閱讀，如果喜歡我的文章可以<code>訂閱</code>接收通知；如果有幫助到你，按<code>Like</code>可以讓我更有寫文的動力，我們明天見～</p>
@@ -355,7 +357,7 @@
         <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 13 屆 iThome 鐵人賽（2021.09.29），這個系列獲得 Software Development 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10267644" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
         <div class="foot-row">
           <div class="post-tags">
-            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">iT 邦幫忙鐵人賽</a>
             <a class="chip chip-hash" href="/tags/%E5%BE%8C%E7%AB%AF%E9%9D%A2%E8%A9%A6/">後端面試</a>
             <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
             <a class="chip chip-hash" href="/tags/event-loop/">Event Loop</a>
@@ -529,12 +531,12 @@
   <div class="card-grid">
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAACQBACdASoYAAUAPw1sqUimIyIYBABjEMT2AE6ZQNf/AhnXBTiCE40vBbS7rOAA/fuyrsreNzaD3Jx5iZAviHF501urdaQH7uNPOQFb&#43;JVqSnRNlhIgK5615vt21g&#43;gH3MjifICQPXvOYeW2bRwTdlEactfLSMAAAA=" alt="" width="24" height="5"><img src="/blog/202109/fullstack-career-notes-day-13/images/fullstack-career-notes-day-13-01_hu_f0e33da71e7794ea.webp" srcset="/blog/202109/fullstack-career-notes-day-13/images/fullstack-career-notes-day-13-01_hu_f7d4cc664c49d69c.webp 240w, /blog/202109/fullstack-career-notes-day-13/images/fullstack-career-notes-day-13-01_hu_35c610ef855c129a.webp 480w, /blog/202109/fullstack-career-notes-day-13/images/fullstack-career-notes-day-13-01_hu_2685d93e10657708.webp 800w, /blog/202109/fullstack-career-notes-day-13/images/fullstack-career-notes-day-13-01_hu_f0e33da71e7794ea.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="233" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202109/fullstack-career-notes-day-13/images/cover_hu_9b5d32d73b87ee3d.webp" srcset="/blog/202109/fullstack-career-notes-day-13/images/cover_hu_338f02f9b747c470.webp 240w, /blog/202109/fullstack-career-notes-day-13/images/cover_hu_b73c63e02273423c.webp 480w, /blog/202109/fullstack-career-notes-day-13/images/cover_hu_54dc6b6d184195ab.webp 800w, /blog/202109/fullstack-career-notes-day-13/images/cover_hu_9b5d32d73b87ee3d.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/career/">職涯成長</a><span class="sep" aria-hidden="true">/</span><a href="/series/fullstack-career-notes/">全端工程師生存筆記</a></div>
 
-    <h3 class="card-title"><a href="/blog/202109/fullstack-career-notes-day-13/">[面試][後端]你會的後端框架不只一個，可以說明一下它們之間的差異嗎？</a></h3>
+    <h3 class="card-title"><a href="/blog/202109/fullstack-career-notes-day-13/">[面試][後端]你會的後端框架不只一<span class="nobr">個，</span>可以說明一下它們之間的差異<span class="nobr">嗎？</span></a></h3>
     <p class="card-desc">工程師真的很難，會得不多會被問為什麼沒學，會得很多還要被質疑專業程度；這種比較類型的問題，除非你有事先做功課，不然就算你都會用也未必能在現場對答如流。</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2021-09-28">2021.09.28</time>
@@ -545,12 +547,12 @@
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADwAwCdASoYAA0APw1yrUemI6IYBABjEMT0gAAzYgMXO/28HiS1TiAAAOEVkpZP9orhJ83QjmV4A9Q/EztjTdGbgQlbODuBvLPlQOuCdg4gAA==" alt="" width="24" height="13"><img src="/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-01_hu_676b750d6c080337.webp" srcset="/blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-01_hu_bbb0acddbd7bd083.webp 240w, /blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-01_hu_17786f37006a1f20.webp 480w, /blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-01_hu_a369dd235dc9bc6d.webp 800w, /blog/202109/fullstack-career-notes-day-15/images/fullstack-career-notes-day-15-01_hu_676b750d6c080337.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="560" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202109/fullstack-career-notes-day-15/images/cover_hu_5f59877ac90498a.webp" srcset="/blog/202109/fullstack-career-notes-day-15/images/cover_hu_c96d78fd23b90d4e.webp 240w, /blog/202109/fullstack-career-notes-day-15/images/cover_hu_254fdca75c04731c.webp 480w, /blog/202109/fullstack-career-notes-day-15/images/cover_hu_aaf4f0bcfb2034ba.webp 800w, /blog/202109/fullstack-career-notes-day-15/images/cover_hu_5f59877ac90498a.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/career/">職涯成長</a><span class="sep" aria-hidden="true">/</span><a href="/series/fullstack-career-notes/">全端工程師生存筆記</a></div>
 
-    <h3 class="card-title"><a href="/blog/202109/fullstack-career-notes-day-15/">[面試][後端]在正式 API 完成前，如何讓要串接的工程師不要空等？</a></h3>
+    <h3 class="card-title"><a href="/blog/202109/fullstack-career-notes-day-15/">[面試][後端]在正式 API 完成<span class="nobr">前，</span>如何讓要串接的工程師不要空<span class="nobr">等？</span></a></h3>
     <p class="card-desc">建立 Mock Server 後，前端工程師就失去耍廢時間不需要等後端做好才能串接。</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2021-09-30">2021.09.30</time>
@@ -561,12 +563,12 @@
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAACQBACdASoYAAUAPw1sqUimIyIYBABjEMT2AE6ZQNf/AhnXBTiCE40vBbS7rOAA/fuyrsreNzaD3Jx5iZAviHF501urdaQH7uNPOQFb&#43;JVqSnRNlhIgK5615vt21g&#43;gH3MjifICQPXvOYeW2bRwTdlEactfLSMAAAA=" alt="" width="24" height="5"><img src="/blog/202110/fullstack-career-notes-day-30/images/fullstack-career-notes-day-30-01_hu_f0e33da71e7794ea.webp" srcset="/blog/202110/fullstack-career-notes-day-30/images/fullstack-career-notes-day-30-01_hu_f7d4cc664c49d69c.webp 240w, /blog/202110/fullstack-career-notes-day-30/images/fullstack-career-notes-day-30-01_hu_35c610ef855c129a.webp 480w, /blog/202110/fullstack-career-notes-day-30/images/fullstack-career-notes-day-30-01_hu_2685d93e10657708.webp 800w, /blog/202110/fullstack-career-notes-day-30/images/fullstack-career-notes-day-30-01_hu_f0e33da71e7794ea.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="233" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202110/fullstack-career-notes-day-30/images/cover_hu_e9b54e4251bc93a8.webp" srcset="/blog/202110/fullstack-career-notes-day-30/images/cover_hu_f62b8b564c07c8d.webp 240w, /blog/202110/fullstack-career-notes-day-30/images/cover_hu_da5d12220b88be5b.webp 480w, /blog/202110/fullstack-career-notes-day-30/images/cover_hu_b530db5d73d2b0a8.webp 800w, /blog/202110/fullstack-career-notes-day-30/images/cover_hu_e9b54e4251bc93a8.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/career/">職涯成長</a><span class="sep" aria-hidden="true">/</span><a href="/series/fullstack-career-notes/">全端工程師生存筆記</a></div>
 
-    <h3 class="card-title"><a href="/blog/202110/fullstack-career-notes-day-30/">[職場]掌握薪水談判的秘訣，取得自己應有的報酬 &amp; 完賽感言</a></h3>
+    <h3 class="card-title"><a href="/blog/202110/fullstack-career-notes-day-30/">[職場]掌握薪水談判的秘<span class="nobr">訣，</span>取得自己應有的報酬 &amp; 完賽感言</a></h3>
     <p class="card-desc">本篇文章想跟讀者探討內部加薪這個議題，如果有辦法在熟悉的環境中持續成長，應該沒有多少人想在陌生的環境中從零開始吧？</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2021-10-15">2021.10.15</time>
@@ -701,7 +703,7 @@
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

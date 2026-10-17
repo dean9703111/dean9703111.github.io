@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202410/pika-art-effects/
-- 發布：2024-10-22（更新：2024-10-24）
+- 發布：2024-10-22
 - 主題：AI 實戰
 - 標籤：Pika、Pika Art、Animation、AI、Video
 - 摘要：筆者過去介紹過 Runway、Haiper 等強大的 AI 生成影片工具；而這 Pika.art 這個 AI 工具的特色在於有許多現成的特效可以直接使用。 現在只要上傳照片，選擇你想要的特效（壓扁、碎裂、膨脹、爆炸），就可以輕鬆生成讓人眼睛一亮的炫酷影片！

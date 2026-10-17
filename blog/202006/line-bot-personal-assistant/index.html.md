@@ -2,28 +2,28 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/line-bot-personal-assistant/
-- 發布：2020-06-10（更新：2023-05-05）
+- 發布：2020-06-10
 - 主題：技術教學
 - 標籤：Google App Script、Google Sheets、Google Sheets API、LINE Bot
 - 摘要：機器人的秘書還不夠誘惑嗎ＸＤ
 
-為什麼撰寫這篇文章
+> 為什麼撰寫這篇文章
 
 在[上一篇](https://deanlin.net/blog/202006/line-bot-with-google-apps-script/)文章已經介紹了Google App Script如何串接Line Message Api的應用，在這裡我將延續之前的議題，讓Line機器人變成你的小秘書
 
-文章目標
+> 文章目標
 
-- 使用Google Sheet裡面Script的功能
-- 使用簡單的SQL語法抓出Google Sheet中你需要的資訊
+1. 使用Google Sheet裡面Script的功能
+2. 使用簡單的SQL語法抓出Google Sheet中你需要的資訊
 
-本文章使用到的技術：
+> 本文章使用到的技術：
 
-- Google App Script : 這次著重在執行SQL語法
-- Google Sheet : 會把它當成讀取/寫入的資料庫
+1. Google App Script : 這次著重在執行SQL語法
+2. Google Sheet : 會把它當成讀取/寫入的資料庫
 
 ## STEP 1: 結合Google Sheet的衍生應用
 
-Google App Script功能很多，但能做到什麼地步就看個人的想像能力，接下來我提供的只是一條思路，如果大家想到有趣的應用歡迎下方留言
+> Google App Script功能很多，但能做到什麼地步就看個人的想像能力，接下來我提供的只是一條思路，如果大家想到有趣的應用歡迎下方留言
 
 如果大家平常有使用Google sheet當成工作記錄習慣的話，你可以嘗試看看這個應用
 
@@ -110,9 +110,9 @@ Project version記得每次都要選擇New(否則不會更新)，並且要允許
 
 打開你的LINE就可以輸入下面三種文字，機器人就會做相對應的回覆喔！
 
-- 功能
-- 未完成
-- 已完成
+1. 功能
+2. 未完成
+3. 已完成
 
 希望大家喜歡這篇文章的應用～
 

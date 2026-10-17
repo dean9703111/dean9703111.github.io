@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202102/postman-mock-server-environments/
-- 發布：2021-02-25（更新：2023-05-05）
+- 發布：2021-02-25
 - 主題：技術教學
 - 標籤：Postman、Mock Server、Environment、API Documentation、Private Mock Server
 - 摘要：Postman 除了 api 的基礎驗證外，還有許多加速工作效率的功能，這篇文章你將學會建立 Mock Server，從此不再苦苦等待後端 api；如果你曾經為了測試正式機/測試機/本機而開了一大堆只有網址不同的 request，了解如何設定 Environments…
@@ -38,7 +38,7 @@ Postman 除了 api 的基礎驗證外，還有許多加速工作效率的功能�
 
 ### STEP 1：建立 Mock Server
 
-Postman 改版非常快速，你看到的畫面可能跟我有些許不同
+> Postman 改版非常快速，你看到的畫面可能跟我有些許不同
 
   New > Mock Server
 
@@ -64,7 +64,7 @@ Postman 改版非常快速，你看到的畫面可能跟我有些許不同
 
 可以透過加入 Params 讓這個 request 有不同的 response，這裡我們新增『error』、『correct』這兩個來做示範
 
-在 Params 填寫的 DESCRIPTION 日後會顯示在 api 文件上，如果可以也請盡量寫清楚
+> 在 Params 填寫的 DESCRIPTION 日後會顯示在 api 文件上，如果可以也請盡量寫清楚
 
 回到剛剛的 request ，我們將 control_res 加入『Params』，依據 VALUE 的不同按下『Send』就會看到對應的 response 嚕～
 

@@ -2,23 +2,23 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/nuxtjs-gcp-serverless/
-- 發布：2020-06-24（更新：2023-05-05）
+- 發布：2020-06-24
 - 主題：技術教學
 - 標籤：Nuxt.js、GCP、Serverless、App Engine、Front End Development
 - 摘要：因為跟著官方文件做，讓我被雷了整整一天，於是我決定紀錄操作流程，希望看到的人可以節省時間
 
 ### 事前準備
 
-- 你有GCP的帳戶(沒有就直接去開一個)
-- 你有信用卡(因為GCP serverless服務一定要綁信用卡，就算你一塊錢都沒花，你還是得綁定)
-- 你會用git(如果不會你要抄襲前人的成果都很難)
-- 如果有mac電腦會是最棒的，因為作者的操作都是在mac的環境
+1. 你有GCP的帳戶(沒有就直接去開一個)
+2. 你有信用卡(因為GCP serverless服務一定要綁信用卡，就算你一塊錢都沒花，你還是得綁定)
+3. 你會用git(如果不會你要抄襲前人的成果都很難)
+4. 如果有mac電腦會是最棒的，因為作者的操作都是在mac的環境
 
 ### 文章目標
 
-- 根據官方文件建立Nuxt專案
-- 開啟GCP App Engine
-- 將Nuxt專案deploy到GCP
+1. 根據官方文件建立Nuxt專案
+2. 開啟GCP App Engine
+3. 將Nuxt專案deploy到GCP
 
 SETP 1/5 : 建立Nuxt專案
 

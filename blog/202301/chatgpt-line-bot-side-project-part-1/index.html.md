@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/chatgpt-line-bot-side-project-part-1/
-- 發布：2023-01-25（更新：2024-10-24）
+- 發布：2023-01-25
 - 主題：AI 實戰
 - 系列：ChatGPT LINE Bot 實作
 - 標籤：ChatGPT、OpenAI、OpenAI ChatGPT、LINE Bot、Node.js
@@ -63,9 +63,9 @@
 
 **SETP 6**：在 Messaging API 取得 Channel access token。
 
-**注意**：
-Channel access token 是用來驗證和保護機器人與 LINE Platform 之間的通訊，因此請勿將它公開給任何人。
-Channel secret 則是用來驗證 Webhook 事件的簽章。
+> **注意**：
+> Channel access token 是用來驗證和保護機器人與 LINE Platform 之間的通訊，因此請勿將它公開給任何人。
+> Channel secret 則是用來驗證 Webhook 事件的簽章。
 
 ## 建立 OpenAI-Linebot 的 Node.js 專案
 
@@ -93,7 +93,7 @@ npm install openai @line/bot-sdk express
 
 ```
 
-注意！在使用上面的指令前，需要先安裝 Node.js 和 npm。
+> 注意！在使用上面的指令前，需要先安裝 Node.js 和 npm。
 
 **SETP 4**：建立一個新的檔案放程式碼。
 
@@ -167,7 +167,7 @@ function handleEvent (event) {
 喔喔喔！居然沒有報錯！！！
 之後可以請 ChatGPT 幫我完成 Side Project 了嗎？
 
-**小提醒**：程式能啟動跟能順利執行是兩件事。
+> **小提醒**：程式能啟動跟能順利執行是兩件事。
 
 ## 小結：他還在努力學習中
 
@@ -189,7 +189,7 @@ function handleEvent (event) {
 
 其實 ChatGPT 的問題並不只這些，[下一篇文章](https://deanlin.net/blog/202301/chatgpt-line-bot-side-project-part-2/)我會帶大家把後面「啟動 server 並在 Line 開發者平台設定 webhook 的網址、測試機器人是否能正確回應使用者的訊息」等步驟走完，希望筆者踩過的坑能讓讀者日後使用時少走點彎路。
 
-本次 ChatGPT 回應的完整程式請參考筆者的 [Github](https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/bug-index.js)
+> 本次 ChatGPT 回應的完整程式請參考筆者的 [Github](https://github.com/dean9703111/linebot-openai-chatgpt/blob/master/bug-index.js)
 
 未來筆者會出一系列使用 ChatGPT、openAI 的文章，如果你對這個議題感興趣，可以持續關注我的文章！
 

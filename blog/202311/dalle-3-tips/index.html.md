@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202311/dalle-3-tips/
-- 發布：2023-11-21（更新：2024-10-24）
+- 發布：2023-11-21
 - 主題：AI 實戰
 - 標籤：DALL-E 3、ChatGPT、ChatGPT Plus、GPT-4、AI
 - 摘要：我一直是 Midjourney 的忠實粉絲，但隨著 ChatGPT PLUS 引入 DALL·E 3，我的忠誠開始搖搖欲墜。因為 GPT-4 結合 DALL·E 3 的強大功能，為 AI 繪圖帶來了前所未有的便利。
@@ -25,7 +25,7 @@
 
 如果你不想付費，可以使用 Bing 的 Image Creator，他也是能使用 DALL·E 3 的喔：[https://www.bing.com/images/create](https://www.bing.com/images/create)?
 
-即使超過產圖數量的限制，也只是降速而已。
+> 即使超過產圖數量的限制，也只是降速而已。
 
 ## DALL·E 3 必學的 8 個技巧
 
@@ -49,13 +49,13 @@
 
 儘管我們可以靠對話的方式去調整圖片，但如果想創造出盡可能接近的圖片，就可以問他這張圖片的 Prompt 與 gen_id，作為日後優化使用，Prompt：「`請給我這張圖片的 Prompt 以及 gen_id。`」
 
-gen_id 是後續 referenced_image_ids 可以參考的值
+> gen_id 是後續 referenced_image_ids 可以參考的值
 
 ### 5. 搭配 referenced_image_ids 產生類似圖片
 
 接下來我們就用剛剛取得的 Prompt 與 gen_id 來建立圖片，Prompt：「`請使用下面的 Prompt 與 referenced_image_ids 建立圖片，我希望街道上的車多一點。 [貼上取得的 Prompt 與 gen_id]`」
 
-透過這種方式建立的圖片，風格、構圖都會非常相近。
+> 透過這種方式建立的圖片，風格、構圖都會非常相近。
 
 ### 6. 圖片合成
 
@@ -81,7 +81,7 @@ gen_id 是後續 referenced_image_ids 可以參考的值
 
 不過目前如果你想要針對圖片細節調整，或修正局部圖片，還是得靠 Midjourney 或 Stable Diffusion；但 ChatGPT 更新的速度這麼快，也許在不久後就能實現了！
 
-但最近 OpenAI 滿城風雨，搞得我好亂啊…
+> 但最近 OpenAI 滿城風雨，搞得我好亂啊…
 
 延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
 

@@ -51,7 +51,7 @@ Google Analytics 是一個功能強大的免費工具，可以讓你了解訪客
 
 接著回到 GA 管理的頁面，點擊「首頁」，如果看到「已啟用資料收集功能」就大功告成了！你會在下方看到活躍的使用的人數！
 
-有時 GA 的反應沒那麼快，可能會顯示「尚未收到資料」；你可以多重新整理頁面幾次，通常等個 5 分鐘就會收到資料了。
+> 有時 GA 的反應沒那麼快，可能會顯示「尚未收到資料」；你可以多重新整理頁面幾次，通常等個 5 分鐘就會收到資料了。
 
 ### 結語
 
@@ -59,7 +59,7 @@ Google Analytics 是一個功能強大的免費工具，可以讓你了解訪客
 
 但現在網站還無法在 Google 被搜尋到，所以[下一篇文章要分享如何設定 Google Search Console](https://deanlin.net/blog/202501/hugo6-set-up-google-search-console/)。
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

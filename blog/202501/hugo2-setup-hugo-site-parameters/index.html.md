@@ -122,7 +122,7 @@ mkdir static/images
 
 然後在裡面放上自己的「favicon.png」就好了，**Logo 僅能用「.png」的檔案喔**！
 
-如果發現刷新沒有反應，可能是因為 Cache 問題，[安裝 Chrome 外掛 Clear Cache 能有效解決](https://chromewebstore.google.com/detail/clear-cache/cppjkneekbjaeellbfkmgnhonkkjfpdn?hl=zh-TW&sid=h32QM2)。
+> 如果發現刷新沒有反應，可能是因為 Cache 問題，[安裝 Chrome 外掛 Clear Cache 能有效解決](https://chromewebstore.google.com/detail/clear-cache/cppjkneekbjaeellbfkmgnhonkkjfpdn?hl=zh-TW&sid=h32QM2)。
 
 ### 結語
 
@@ -130,7 +130,7 @@ mkdir static/images
 
 Hugo 是使用 Markdown 語法來撰寫文章。下一篇文章將跟大家分享如何[用 Markdown 撰寫文章，並掌握分類、標籤文章的技巧](https://deanlin.net/blog/202501/hugo3-write-first-post-hugo-markdown-tags/)。
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

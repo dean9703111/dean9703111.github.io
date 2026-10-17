@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202402/roop-face-swap-mac/
-- 發布：2024-02-09（更新：2024-10-24）
+- 發布：2024-02-09
 - 主題：AI 實戰
 - 標籤：Roop、Face Swap、macOS、Apple Silicon、AI
 - 摘要：原本我打算放上 Google Colab，但發現免費版執行的失敗率高得嚇人；因此寫了一篇 Mac AppleSilicon 的踩坑文件，讓大家可以輕鬆體驗這款 AI 換臉的工具（在自己電腦執行，無論效率還是便利性都高太多了）。
@@ -15,7 +15,7 @@
 
   把我的臉合成到葉問上
 
-**小提醒**：Windows 要安裝的東西可以[參考這篇官方文章](https://github.com/s0md3v/roop/wiki/1.3-Setup-Windows)，其實跟 Mac 差不多。
+> **小提醒**：Windows 要安裝的東西可以[參考這篇官方文章](https://github.com/s0md3v/roop/wiki/1.3-Setup-Windows)，其實跟 Mac 差不多。
 
 ## STEP1: 安裝 Miniconda
 
@@ -106,7 +106,7 @@ pip install onnxruntime-silicon==1.13.1
 
 以上就是今天 AI 換臉的教學分享，筆者的電腦為 Mac M1 Max 32GB RAM，實測下來建議選擇 15 秒內的影片來做換臉，超過的話 RAM 可能會撐不住（超過可透過分段生成處理）。
 
-最後提醒一下大家，這個工具真的很強大，門檻也很低；我們可以拿來學習、娛樂，但千萬不要拿來做犯法的事情。
+> 最後提醒一下大家，這個工具真的很強大，門檻也很低；我們可以拿來學習、娛樂，但千萬不要拿來做犯法的事情。
 
 延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
 

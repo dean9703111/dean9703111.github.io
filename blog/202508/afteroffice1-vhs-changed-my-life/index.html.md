@@ -8,7 +8,7 @@
 - 標籤：職涯、高職、YouTube、故事、影片
 - 摘要：大安高工是我夢想的起點，我就是在這裡領悟到「差異化競爭」的重要性；甚至可以這麼說，如果當年上的是普通高中，我現在可能極其平凡。我們絕大多數人都是普通人，沒有過人的天賦，無論多努力也贏不過那些天才。興趣與自信不是與生俱來，而是建立在一次次的勝利之上。選對環境，人生真的可以走捷徑！
 
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=bRu_-Uxt3y0)
+[YouTube 影片：【工程師下班有約 EP03】如何透過差異化競爭累積自信](https://www.youtube.com/watch?v=bRu_-Uxt3y0)
 
 **大安高工是我夢想的起點，我就是在這裡領悟到「差異化競爭」的重要性。**
 
@@ -146,9 +146,9 @@
 
 歡迎追蹤[我的 YouTube](https://www.youtube.com/@dlcorner)，帶你掌握時代趨勢！
 
-《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
+> 《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

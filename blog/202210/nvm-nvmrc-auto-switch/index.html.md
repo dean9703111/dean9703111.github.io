@@ -2,14 +2,14 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202210/nvm-nvmrc-auto-switch/
-- 發布：2022-10-26（更新：2023-05-05）
+- 發布：2022-10-26
 - 主題：技術教學
 - 標籤：Node.js、nvm、Version Control、Zsh、Nvmrc
 - 摘要：Node.js 版本更新速度極快，但未必所有套件都能相容於新的版本，這造成每個專案的 Node.js 版本不盡相同；所以今天要介紹如何透過 .nvmrc 搭配 zsh or bash script 讓你在專案間自動切換 Node.js 版本。
 
 Node.js 版本更新速度極快，但未必所有套件都能相容於新的版本，這造成每個專案的 Node.js 版本不盡相同；即使 nvm 可以幫我們快速切換 Node.js 版本還是不太方便，所以今天要介紹如何透過 .nvmrc 搭配 zsh or bash script 讓你在專案間自動切換 Node.js 版本。
 
-筆者原本選用「avn」這個套件，但它真的已經年久失修了無法使用[連結](https://github.com/wbyoung/avn/issues/109#issuecomment-945155272)
+> 筆者原本選用「avn」這個套件，但它真的已經年久失修了無法使用[連結](https://github.com/wbyoung/avn/issues/109#issuecomment-945155272)
 
 ## STEP 1：建立兩個 Node.js 專案
 
@@ -60,7 +60,7 @@ cd ..
 
 ```
 
-筆者為了方便 Demo 而指定大版本，「.nvmrc」檔案是能吃「x.y.z」版本號的。
+> 筆者為了方便 Demo 而指定大版本，「.nvmrc」檔案是能吃「x.y.z」版本號的。
 
 ## STEP 4：調整 zsh script
 
@@ -98,13 +98,13 @@ load-nvmrc
 
 唯一要注意的是，**記得把這段 script 放在 nvm 初始化後的位置**（或是直接放在最後面也可以）。
 
-上面的 script 參考自 nvm 官網，如果讀者使用的是 bash script 請參考[連結](https://github.com/nvm-sh/nvm#bash)。
+> 上面的 script 參考自 nvm 官網，如果讀者使用的是 bash script 請參考[連結](https://github.com/nvm-sh/nvm#bash)。
 
 ## STEP 5：實測是否有效
 
 筆者在開頭故意切換到 Node.js 18 的版本，然後再依序切換到「project-a」以及「project-b」的資料夾，從下圖大家可以看到 Node.js 的版本都順利切換嚕！
 
-希望這篇文章，有幫大家解決不同專案的 Node.js 版本切換之苦～
+> 希望這篇文章，有幫大家解決不同專案的 Node.js 版本切換之苦～
 
 ---
 

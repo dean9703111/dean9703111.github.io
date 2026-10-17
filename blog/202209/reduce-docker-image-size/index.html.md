@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202209/reduce-docker-image-size/
-- 發布：2022-09-01（更新：2023-05-05）
+- 發布：2022-09-01
 - 主題：技術教學
 - 標籤：Docker、Docker Image、Distroless、Alpine、Optimization
 - 摘要：Docker Image 體積越大，那部署要花的時間就越長；假如每個版本都有好幾 GB，那並不是一個理想的狀態；因此筆者開始動手實作，想看看到底能將 Docker Image 的體積縮小多少！
@@ -217,7 +217,7 @@ CMD ["index.js"]
 
 如果單純從結果來看，它在體積上(162MB)並沒有什麼優勢，但如果你嘗試用 Shell 打開它，會發現 Shell 根本不存在！換而言之，它的安全性相對更高，可以考慮使用它來做正式環境的部署。
 
-以上就是筆者優化 Docker Image 體積的步驟啦！如果文中有表達不清晰、錯誤的部分再煩請告知，感謝您的閱讀。
+> 以上就是筆者優化 Docker Image 體積的步驟啦！如果文中有表達不清晰、錯誤的部分再煩請告知，感謝您的閱讀。
 
 參考資源：[Node.js docker 鏡像體積優化實踐](https://cnodejs.org/topic/5cada94fdad66d658e40782c)、[三個技巧，將Docker鏡像體積減小90%](https://www.techug.com/post/3-simple-tricks-for-smaller-docker-images/)
 

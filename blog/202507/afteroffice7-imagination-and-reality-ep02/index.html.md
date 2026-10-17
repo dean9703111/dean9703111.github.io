@@ -8,7 +8,7 @@
 - 標籤：職涯、YouTube、故事、影片
 - 摘要：通常鼓勵你勇敢追夢的人，都是那些已經實現夢想的人，這本身就是一種倖存者偏差。你的人生只有自己能負責，千萬不要盲目追隨。如果你沒有興趣只是一昧地模仿，最終反而會失去自己的風格。
 
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=yceR8Wy43No)
+[YouTube 影片：【工程師下班有約 EP02】過度美化未來，容易讓人做出衝動的選擇](https://www.youtube.com/watch?v=yceR8Wy43No)
 
 在 2022 年出版《[給全端工程師的職涯生存筆記](https://www.books.com.tw/products/0010955655)》後，收到母校的邀請，讓我與學弟妹分享自己的故事。
 
@@ -90,9 +90,9 @@
 
 如果你聽膩了毒雞湯，看膩了公式化的影片，[歡迎訂閱我的 YouTube](https://www.youtube.com/@dlcorner)，帶你用不同的視角看世界。
 
-《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
+> 《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

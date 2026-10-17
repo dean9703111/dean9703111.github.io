@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202011/salary-negotiation/
-- 發布：2020-11-26（更新：2023-05-05）
+- 發布：2020-11-26
 - 主題：職涯成長
 - 標籤：Salary Negotiations、談薪水、Dan Lok、談判技巧、加薪
 - 摘要：如果你是一個有野心且不安於現狀的人，薪水談判是你一定要去做的事情。
@@ -13,7 +13,7 @@
 
 [YouTube 影片：Salary Negotiation: 7 Tips On How To Negotiate A Higher Salary](https://www.youtube.com/watch?v=_PtKv7IXrBI)
 
-以下內容為對於 DanLok影片的心得筆記，並於文末會放影片中的生字給各位參考
+> 以下內容為對於 DanLok影片的心得筆記，並於文末會放影片中的生字給各位參考
 
 ## 7 個讓你提升薪水的談判技巧
 

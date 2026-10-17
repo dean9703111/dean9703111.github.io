@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202404/pika-labs-ai-video/
-- 發布：2024-04-03（更新：2024-10-24）
+- 發布：2024-04-03
 - 主題：AI 實戰
 - 標籤：Pika、Pika Labs、AI Video Generator、AIGC、AI Video Creator
 - 摘要：你可以讓自己的名字在雲朵上出現，也能讓森林以你的輪廓刻畫。 有了這款 AI 工具，想像力就是你的超能力！ 目前 Pika Labs 不但可以「免費」無限生成，而且每分鐘最多可以生成 10 次。 如果你對 AI 生成影片感興趣，Pika Labs 是你絕對不能錯過的好工具。

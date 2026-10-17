@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202404/capcut-ai-digital-human/
-- 發布：2024-04-05（更新：2024-10-24）
+- 發布：2024-04-05
 - 主題：AI 實戰
 - 標籤：CapCut、剪映、免費、Digital Human、AI
 - 摘要：目前市面上已經有多款數字人產品（ex: Elai、Heygen），但對大多數的創作者來說，還沒賺錢就要先花錢真的會讓人猶豫再三。 如果你跟我有一樣的想法，那不妨嘗試看看剪映最新推出的數字人功能，他能讓你達成不露臉、不錄音、不寫稿的製片夢想！
@@ -15,7 +15,7 @@
 
   [https://youtu.be/oKcwrpxdaWg](https://youtu.be/oKcwrpxdaWg)
 
-PS.文中影片、音樂素材皆來源於網路，僅作為教育及研究使用。
+> PS.文中影片、音樂素材皆來源於網路，僅作為教育及研究使用。
 
 ```
 文章大綱
@@ -33,7 +33,7 @@ STEP 6：匯出影片，大功告成！！！
 
 剪映官網：[https://www.capcut.cn/](https://www.capcut.cn/)
 
-筆者的剪映版本: 5.7.0
+> 筆者的剪映版本: 5.7.0
 
 ## STEP 2：用 AI 生成文案
 
@@ -55,7 +55,7 @@ STEP 6：匯出影片，大功告成！！！
 
 等渲染完成後，我們就可以把文字移除；如果你對數字人預設的聲音不滿意，此時你可以點擊「換音色」，看看哪個是你喜歡的。
 
-如果選擇「解說小帥」，你會發現這個聲音超熟悉，一堆 Youtube 影片都是這個聲音。
+> 如果選擇「解說小帥」，你會發現這個聲音超熟悉，一堆 Youtube 影片都是這個聲音。
 
 ## STEP 4：增加影片背景、音樂
 
@@ -93,7 +93,7 @@ STEP 6：匯出影片，大功告成！！！
 
 最後給大家看一下成品～
 
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=oKcwrpxdaWg)
+[YouTube 影片：[Capcut 剪映] 不露臉、不錄音！結合 AI 文案與虛擬主播的範例影片](https://www.youtube.com/watch?v=oKcwrpxdaWg)
 
 延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
 

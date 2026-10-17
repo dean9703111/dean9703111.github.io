@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202406/learn-to-negotiate/
-- 發布：2024-06-27（更新：2025-06-15）
+- 發布：2024-06-27
 - 主題：職涯成長
 - 系列：工程師下班有約
 - 標籤：下班有約、選擇、談判、Requirements、Opportunity

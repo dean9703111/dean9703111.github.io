@@ -16,7 +16,7 @@
 
 以筆者來說，就是用 `dean9703111.github.io`，這將會是你日後個人品牌的部落格網址；另外記得要選擇「Public」才能讓大家看得到。
 
-小提醒：如果你帳號建立時跟筆者一樣沒想太多，導致字數超長，這在日後也是可以更新成自己的網域喔！
+> 小提醒：如果你帳號建立時跟筆者一樣沒想太多，導致字數超長，這在日後也是可以更新成自己的網域喔！
 
 ### 把 Hugo Public 下的資料夾搬到剛剛建立的 Repository 下
 
@@ -40,13 +40,13 @@
 
 儘管看起來很美好，但其實還有如下細節需要設定:
 
-- [**Google Analytics**: 用來追蹤網站流量成效](https://deanlin.net/blog/202501/hugo5-install-google-analytics-to-track-website-traffic/)
-- [**Google Search Console**: 讓自己的網站在 Google 可以被搜尋到](https://deanlin.net/blog/202501/hugo6-set-up-google-search-console/)
-- **個人網域**: 購買個人網域可以讓品牌看起來更專業，且轉換平台時 SEO 不會被綁架
+1. [**Google Analytics**: 用來追蹤網站流量成效](https://deanlin.net/blog/202501/hugo5-install-google-analytics-to-track-website-traffic/)
+2. [**Google Search Console**: 讓自己的網站在 Google 可以被搜尋到](https://deanlin.net/blog/202501/hugo6-set-up-google-search-console/)
+3. **個人網域**: 購買個人網域可以讓品牌看起來更專業，且轉換平台時 SEO 不會被綁架
 
 這些細節，筆者也會在[後續的文章](https://deanlin.net/blog/202501/hugo5-install-google-analytics-to-track-website-traffic/)與大家分享。
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

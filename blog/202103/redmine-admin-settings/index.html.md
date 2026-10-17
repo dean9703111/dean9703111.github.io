@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202103/redmine-admin-settings/
-- 發布：2021-03-03（更新：2023-05-05）
+- 發布：2021-03-03
 - 主題：團隊合作
 - 系列：Redmine 專案管理
 - 標籤：Redmine、專案管理、網站管理、設定、不可不知的設定
@@ -10,7 +10,7 @@
 
 Redmine 的功能非常多，尤其是管理者在專案創建初期需要做非常多細節的設定；對於專案成員來說他們只需依造管理員制訂的規範操作即可。
 
-注：本篇文章[新增外掛如文章](https://deanlin.net/blog/202103/redmine-plugins-and-themes/)
+> 注：本篇文章[新增外掛如文章](https://deanlin.net/blog/202103/redmine-plugins-and-themes/)
 
   image from:[https://sites.google.com/site/quanqiufengline/home/line](https://sites.google.com/site/quanqiufengline/home/line)
 

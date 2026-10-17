@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202103/redmine-plugins-and-themes/
-- 發布：2021-03-02（更新：2023-05-05）
+- 發布：2021-03-02
 - 主題：團隊合作
 - 系列：Redmine 專案管理
 - 標籤：Redmine、Plugins、Themes、啟用模板方式、安裝套件
@@ -27,19 +27,15 @@ Redmine 的擴充性相當強，但是擴充性強是一回事，你能不能成
 
 ### 提供安裝套件時的參數給大家參考：
 
-rvm version：1.29.12
-
-ruby version：2.6.6
-
-Redmine version：4.1.1
-
-這篇文章是介紹套件為主，如果你想知道怎麼安裝可以[參考『Redmine 超詳細安裝教學』的 STEP 9](https://deanlin.net/blog/202102/redmine-installation-ubuntu/)
+> rvm version：1.29.12
+> ruby version：2.6.6
+> Redmine version：4.1.1
+> 這篇文章是介紹套件為主，如果你想知道怎麼安裝可以[參考『Redmine 超詳細安裝教學』的 STEP 9](https://deanlin.net/blog/202102/redmine-installation-ubuntu/)
 
 ## 一、Redmine Dashboard plugin
 
-Resource：[https://github.com/jgraichen/redmine_dashboard](https://github.com/jgraichen/redmine_dashboard)
-
-推薦程度：⭐⭐⭐⭐⭐
+> Resource：[https://github.com/jgraichen/redmine_dashboard](https://github.com/jgraichen/redmine_dashboard)
+> 推薦程度：⭐⭐⭐⭐⭐
 
 這是一款必須安裝的套件！透過 **看板的呈現 讓**使用者更能全盤掌握專案的進度、利用** Filter 條件**篩選出想要的議題、直覺的 **拖拉議題** 改變狀態
 
@@ -51,9 +47,8 @@ Resource：[https://github.com/jgraichen/redmine_dashboard](https://github.com/j
 
 ## 二、Redmine Checklists plugin (Light version)
 
-Resource：[https://www.redmineup.com/pages/plugins/checklists](https://www.redmineup.com/pages/plugins/checklists)
-
-推薦程度：⭐⭐⭐⭐⭐
+> Resource：[https://www.redmineup.com/pages/plugins/checklists](https://www.redmineup.com/pages/plugins/checklists)
+> 推薦程度：⭐⭐⭐⭐⭐
 
 有時一個議題內容比較複雜的時候，除了新增子議題外，你也可以用 Checklist 的方式來提醒自己有哪些任務需要完成。
 
@@ -63,9 +58,8 @@ Resource：[https://www.redmineup.com/pages/plugins/checklists](https://www.redm
 
 ## 三、Redmine Issues Tree plugin
 
-Resource：[https://github.com/Loriowar/redmine_issues_tree](https://github.com/Loriowar/redmine_issues_tree)
-
-推薦程度：⭐⭐⭐⭐
+> Resource：[https://github.com/Loriowar/redmine_issues_tree](https://github.com/Loriowar/redmine_issues_tree)
+> 推薦程度：⭐⭐⭐⭐
 
 這個套件在一個專案議題數量很多的時候幫助很大，透過樹狀圖的顯示每個議題之間的關係讓使用者找到所需資源
 
@@ -75,9 +69,8 @@ Resource：[https://github.com/Loriowar/redmine_issues_tree](https://github.com/
 
 ## 四、Redmine Issue Templates plugin
 
-Resource：[https://github.com/Loriowar/redmine_issues_tree](https://github.com/agileware-jp/redmine_issue_templates)
-
-推薦程度：⭐⭐⭐⭐⭐
+> Resource：[https://github.com/Loriowar/redmine_issues_tree](https://github.com/agileware-jp/redmine_issue_templates)
+> 推薦程度：⭐⭐⭐⭐⭐
 
 專案進行時最害怕開議題時每個人的風格都不一樣，並且對於議題的描述不夠精準忘東忘西；本套件就是為了減少這部分的溝通成本，**讓每個參與者都必須依照特定格式來新增議題/筆記**。
 
@@ -91,9 +84,8 @@ Resource：[https://github.com/Loriowar/redmine_issues_tree](https://github.com/
 
 ## 五、Redmine Issue View Columns
 
-Resource：[https://github.com/kenan3008/redmine_issue_view_columns](https://github.com/kenan3008/redmine_issue_view_columns)
-
-推薦程度：⭐⭐⭐⭐
+> Resource：[https://github.com/kenan3008/redmine_issue_view_columns](https://github.com/kenan3008/redmine_issue_view_columns)
+> 推薦程度：⭐⭐⭐⭐
 
 這個套件是設定議題下面**子議題要呈現哪些欄位**的 Plugin
 
@@ -103,17 +95,15 @@ Resource：[https://github.com/kenan3008/redmine_issue_view_columns](https://git
 
 ## 六、Redmine Lightbox 2
 
-Resource：[https://github.com/paginagmbh/redmine_lightbox2](https://github.com/paginagmbh/redmine_lightbox2)
-
-推薦程度：⭐⭐⭐
+> Resource：[https://github.com/paginagmbh/redmine_lightbox2](https://github.com/paginagmbh/redmine_lightbox2)
+> 推薦程度：⭐⭐⭐
 
 有時議題會附加一些照片、PDF 做為參考資料，原本預設這些附加檔案都需要下載或是開新分頁才能閱讀，安裝這個外掛後就能透過**預覽檢視照片、PDF**
 
 ## 七、Redmine Mentions
 
-Resource：[https://github.com/arkhitech/redmine_mentions](https://github.com/arkhitech/redmine_mentions)
-
-推薦程度：⭐⭐⭐⭐⭐
+> Resource：[https://github.com/arkhitech/redmine_mentions](https://github.com/arkhitech/redmine_mentions)
+> 推薦程度：⭐⭐⭐⭐⭐
 
 我們在**撰寫議題描述/筆記**時常常需要提到某些人(會議決策者、功能開發人員…)，讓這些人了解目前議題執行的進度，或是紀錄他們說過的話。
 
@@ -125,9 +115,8 @@ Resource：[https://github.com/arkhitech/redmine_mentions](https://github.com/ar
 
 ## 八、Redmine A1 theme
 
-Resource：[https://www.redmineup.com/pages/zh/themes](https://www.redmineup.com/pages/zh/themes)
-
-推薦程度：⭐⭐⭐⭐⭐
+> Resource：[https://www.redmineup.com/pages/zh/themes](https://www.redmineup.com/pages/zh/themes)
+> 推薦程度：⭐⭐⭐⭐⭐
 
 如果覺得系統預設的主題(Theme)太醜，可以到[這個網站](https://www.redmineup.com/pages/zh/themes)上找自己喜歡的主題
 

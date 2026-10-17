@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202306/chatgpt-self-questioning-event-planning/
-- 發布：2023-06-16（更新：2024-10-24）
+- 發布：2023-06-16
 - 主題：AI 實戰
 - 標籤：ChatGPT、GPT-4、AI、活動企劃、行銷
 - 摘要：最近收到一間行銷公司的邀約，請我以 ChatGPT ＆ AI 工具為主題規劃課程。其中特別希望多說一點活動企劃的內容，但我本職是工程師，這個領域對我來講是相當陌生的。那該怎麼辦呢？問 ChatGPT 啊！

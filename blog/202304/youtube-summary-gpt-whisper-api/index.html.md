@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202304/youtube-summary-gpt-whisper-api/
-- 發布：2023-04-03（更新：2024-10-24）
+- 發布：2023-04-03
 - 主題：AI 實戰
 - 系列：YouTube 影片轉逐字稿
 - 標籤：ChatGPT、Python、YouTube、Summary、OpenAI
@@ -20,7 +20,7 @@
 
 而在這篇文章，我將導入 OpenAI 的 GPT API，請他幫我們整理逐字稿，並取得影片摘要。
 
-提醒大家，不要未經授權下載有版權保護的影片喔！
+> 提醒大家，不要未經授權下載有版權保護的影片喔！
 
 ## 導入 OpenAI 的 GPT API，提升逐字稿可讀性
 
@@ -225,14 +225,14 @@ print(processed_transcript)
 
 在終端機輸入`python youtube-summary.py`，就會看到被分段，並加上標點符號的成果啦！
 
-關於字串分割的方式，筆者是向 ChatGPT 詢問：「我逐字稿的字數可能超過 1 萬字，而這個 api 最多只能讀 1200 字，請問我要如何改寫？」改編而來的；儘管 ChatGPT 面對新套件力有不逮，但基礎的問題還是可以順利回答。
+> 關於字串分割的方式，筆者是向 ChatGPT 詢問：「我逐字稿的字數可能超過 1 萬字，而這個 api 最多只能讀 1200 字，請問我要如何改寫？」改編而來的；儘管 ChatGPT 面對新套件力有不逮，但基礎的問題還是可以順利回答。
 
 ## 取得逐字稿摘要，轉成 txt 格式
 
 基本上下面的程式就是筆者自己改造的了，我做了兩件事：
 
-- 在 `process_long_text` 函式增加了一個 `type` 的參數，裡面可以放置不同類型的 prompt（ex：整理逐字稿、摘要）。
-- 將整理好的文字寫入 txt 檔案。
+1. 在 `process_long_text` 函式增加了一個 `type` 的參數，裡面可以放置不同類型的 prompt（ex：整理逐字稿、摘要）。
+2. 將整理好的文字寫入 txt 檔案。
 
 ```
 from pytube import YouTube
@@ -313,8 +313,8 @@ with open("path/to/save/directory/text.txt", "w") as file:
 
 以這篇文章完成的功能來說，ChatGPT 的幫助如下：
 
-- 提供字串分割的函式
-- 寫入 txt 檔案的方式
+1. 提供字串分割的函式
+2. 寫入 txt 檔案的方式
 
 其他部分基本上都是筆者自己改寫的，並不是說 ChatGPT 絕對辦不到，只是想表達工具用在對的地方才會有最大效益（ex：基礎程式、簡單除錯、最小可執行程式），我也不想只呈現完美的路徑。
 
@@ -324,7 +324,7 @@ with open("path/to/save/directory/text.txt", "w") as file:
 
 如果看影片是為了娛樂，那我會享受這個過程；但有時看影片是為了吸收知識，那這樣的效率對我來說就太慢了，所以我就做了這個小工具，提升自己吸收知識的效率。
 
-我喜歡依照自己的「節奏」來吸收資訊，而閱讀滿足了這點。
+> 我喜歡依照自己的「節奏」來吸收資訊，而閱讀滿足了這點。
 
 延伸閱讀：[讓我們一起掌握 AI 帶來的紅利](https://dean-lin.medium.com/list/ddcc9c53a4ac)
 

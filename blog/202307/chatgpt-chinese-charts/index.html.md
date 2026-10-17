@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202307/chatgpt-chinese-charts/
-- 發布：2023-07-19（更新：2024-10-24）
+- 發布：2023-07-19
 - 主題：AI 實戰
 - 標籤：ChatGPT、ChatGPT Plus、Excel、Charts、Advanced Data Analysis
 - 摘要：ChatGPT 可以產生統計圖表嗎？當然可以！透過 ChatGPT PLUS 的 Advanced data analysis 功能，只要上傳 Excel，即可輕鬆產生圖表。但轉成中文圖表可能會遇到亂碼問題，不過別擔心，只要按照文章步驟就能解決您的困擾！
@@ -11,7 +11,7 @@ ChatGPT 可以產生統計圖表嗎？當然可以！
 
 透過 ChatGPT PLUS 的 Advanced data analysis 功能，只要上傳 Excel，即可輕鬆產生圖表。但轉成中文圖表可能會遇到亂碼問題，不過別擔心，只要按照文章步驟就能解決您的困擾！
 
-目前這個功能只有在 ChatGPT 付費版有提供喔！
+> 目前這個功能只有在 ChatGPT 付費版有提供喔！
 
 ## STEP 1：選擇 GPT-4 的 Advanced data analysis 模式
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202401/gpt4all-offline-ai/
-- 發布：2024-01-11（更新：2024-10-24）
+- 發布：2024-01-11
 - 主題：AI 實戰
 - 標籤：ChatGPT、GPT4All、AI、LLM、Local
 - 摘要：使用 ChatGPT 等 AI 聊天機器人時，我們會被提醒不可上傳個人、公司的隱私資料。儘管 ChatGPT、Copilot 有推出企業方案，宣稱不會將客戶的資料拿去訓練，但很多公司對此還是持保留態度。因此在本地安裝 LLM 大語言模型的 GPT4All…

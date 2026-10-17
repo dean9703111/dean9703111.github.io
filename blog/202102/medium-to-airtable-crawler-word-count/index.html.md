@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202102/medium-to-airtable-crawler-word-count/
-- 發布：2021-02-08（更新：2023-05-05）
+- 發布：2021-02-08
 - 主題：技術教學
 - 系列：Medium 文章管理工具
 - 標籤：Airtable、Medium、Medium 爬蟲、Medium 字數統計、文章字數統計
@@ -10,7 +10,7 @@
 
 目前 Medium 只有提供讀者一篇文章的大約閱讀時間資訊，但是對於作者而言他們更想知道自己這篇文章寫了多少字，這樣就能透過 Airtable 知道自己每篇文章/系列的文字產量；今天我們就來分析如何透過爬蟲計算出一篇文章的字數吧。
 
-如果你對這個專案的起源感興趣，請參考：[透過爬蟲讓 Airtable 管理你的 Medium 文章(上) — 遇到需求時的分析以及執行步驟](https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-1/)
+> 如果你對這個專案的起源感興趣，請參考：[透過爬蟲讓 Airtable 管理你的 Medium 文章(上) — 遇到需求時的分析以及執行步驟](https://deanlin.net/blog/202101/medium-to-airtable-crawler-part-1/)
 
 ```
 文章大綱：
@@ -24,7 +24,7 @@
 
 ## 一、分析 Medium 網頁元素
 
-為了提供爬蟲一個抓取文章的邏輯，我們要先了解 Medium 的網頁元素
+> 為了提供爬蟲一個抓取文章的邏輯，我們要先了解 Medium 的網頁元素
 
 **STEP 1：**按下 F12，了解文章會放在哪一個元素裡面
 
@@ -43,7 +43,7 @@
 
 ## 二、確認爬蟲能正確抓取目標文字
 
-如果你想培養完整爬蟲的程式能力，可以參考我在 [IT邦幫忙鐵人賽的文章](https://ithelp.ithome.com.tw/users/20103256/ironman/2940)，本篇文章只單純提供演算法
+> 如果你想培養完整爬蟲的程式能力，可以參考我在 [IT邦幫忙鐵人賽的文章](https://ithelp.ithome.com.tw/users/20103256/ironman/2940)，本篇文章只單純提供演算法
 
 **STEP 1：**在知道哪些網頁元素需要抓取後，我們就來嘗試看看能否抓到我們所希望的文字資訊
 
@@ -148,10 +148,10 @@ function countWords (str) {
 
 ## 五、未來展望
 
-- 目前字數統計的功能只能給尚未爬蟲過的文章使用，故未來會考慮增加 update 舊文章資訊的 function
-- 字數統計也許配合長條圖視覺話有更炫砲的效果，這塊也可以在考慮看看
+1. 目前字數統計的功能只能給尚未爬蟲過的文章使用，故未來會考慮增加 update 舊文章資訊的 function
+2. 字數統計也許配合長條圖視覺話有更炫砲的效果，這塊也可以在考慮看看
 
-完成的專案程式碼在[這裡](https://github.com/dean9703111/medium_to_airtable.git)，歡迎有興趣的朋友自己動手玩玩看～
+> 完成的專案程式碼在[這裡](https://github.com/dean9703111/medium_to_airtable.git)，歡迎有興趣的朋友自己動手玩玩看～
 
 ---
 

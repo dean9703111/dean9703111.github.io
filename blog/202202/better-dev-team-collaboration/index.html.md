@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202202/better-dev-team-collaboration/
-- 發布：2022-02-24（更新：2025-06-15）
+- 發布：2022-02-24
 - 主題：團隊合作
 - 系列：工程師下班有約
 - 標籤：Pair Programming、Teamwork、Commit、Coding Style、團隊合作
@@ -37,7 +37,7 @@
 
 這邊推薦使用 VSCode Extensions 的 [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)，他支援大部分程式語言的 Format；當然知名的 [ESLint](https://eslint.org/) 也是團隊協作時的好選擇。
 
-不同 Format 工具的斷行字數、單引號、雙引號、結尾有沒有「;」…的習慣都不一樣，如果大家不統一，你看 diff 時會覺得很崩潰並且浪費時間。
+> 不同 Format 工具的斷行字數、單引號、雙引號、結尾有沒有「;」…的習慣都不一樣，如果大家不統一，你看 diff 時會覺得很崩潰並且浪費時間。
 
 ## 沒有明確 Git Flow 機制會發生什麼事？
 
@@ -95,9 +95,9 @@
 
 ```
 
-筆者認為「簡單、易懂」為第一優先，中英文表達都可以。
+> 筆者認為「簡單、易懂」為第一優先，中英文表達都可以。
 
-相信還有很多可以讓開發團隊協作更愉快的工具與方法，期待大家的留言分享～
+> 相信還有很多可以讓開發團隊協作更愉快的工具與方法，期待大家的留言分享～
 
 **如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《[工程師下班有約](https://www.tenlong.com.tw/products/9786264142083)》這本書能為你帶來靈感與啟發：**
 

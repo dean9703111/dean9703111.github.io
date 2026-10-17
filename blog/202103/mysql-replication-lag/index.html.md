@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202103/mysql-replication-lag/
-- 發布：2021-03-29（更新：2023-05-05）
+- 發布：2021-03-29
 - 主題：技術教學
 - 系列：MySQL 主從架構
 - 標籤：MySQL、主從複製、主從複製延遲問題、Replication Lag、Sysbench
@@ -20,7 +20,7 @@
 
 ## 一、模擬主從複製延遲的情境
 
-這裡我們利用 sysbench 進行情境模擬，如果不清楚如何操作的朋友請參考這篇文章：『[用 sysbench 測試 MySQL 性能 — 在 mac & ubuntu 上的安裝與使用](https://deanlin.net/blog/202103/mysql-benchmark-sysbench/)』
+> 這裡我們利用 sysbench 進行情境模擬，如果不清楚如何操作的朋友請參考這篇文章：『[用 sysbench 測試 MySQL 性能 — 在 mac & ubuntu 上的安裝與使用](https://deanlin.net/blog/202103/mysql-benchmark-sysbench/)』
 
 下面是我在 ubuntu 的測試指令，如果你是 mac 需要自己更換 .lua 的路徑
 

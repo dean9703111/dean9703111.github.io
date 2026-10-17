@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202103/ssr-vs-csr/
-- 發布：2021-03-18（更新：2023-05-05）
+- 發布：2021-03-18
 - 主題：技術教學
 - 標籤：SSR、CSR、Server Side Rendering、Client Side Re、Framework
 - 摘要：當老闆或是主管問你為什麼選擇這個技術時，如果支支吾吾打不出來就遜掉了；理解為什麼該這樣做才是對技術的負責。
@@ -72,7 +72,7 @@ HTML 由 server 編譯出來返回 client 端，所以 client 看到的畫面就
 
 現有的框架： `Nuxt.js`（Vue）、`Next.js`（React）都有很好的解決方案
 
-以上是我個人針對 SSR、CSR 技術的理解，如果有理解錯誤的地方希望有大神給予指教，感恩不盡～
+> 以上是我個人針對 SSR、CSR 技術的理解，如果有理解錯誤的地方希望有大神給予指教，感恩不盡～
 
 ---
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202307/chatgpt-custom-instructions/
-- 發布：2023-07-21（更新：2024-10-24）
+- 發布：2023-07-21
 - 主題：AI 實戰
 - 標籤：ChatGPT、Custom Instructions、AI、OpenAI、ChatGPT Plus
 - 摘要：過去使用 ChatGPT 一直有個痛點，為了讓 ChatGPT 扮演某個角色、給予特定格式的回覆，我們每次開新對話都需要複製相同的指令貼上去做設定。 而現在 ChatGPT PLUS 推出的新功能「Custom instructions」就能解決這個困擾！

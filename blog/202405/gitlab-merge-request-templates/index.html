@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>[Gitlab] 建立 Merge Request Templates，讓團隊合作更加順利！</title>
-  <meta name="description" content="在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。 但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」 這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。">
+  <meta name="description" content="在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202405/gitlab-merge-request-templates/">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -14,15 +14,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202405/gitlab-merge-request-templates/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
   <meta property="og:title" content="[Gitlab] 建立 Merge Request Templates，讓團隊合作更加順利！">
-  <meta property="og:description" content="在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。 但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」 這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。">
+  <meta property="og:description" content="在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。">
   <meta property="og:url" content="https://deanlin.net/blog/202405/gitlab-merge-request-templates/">
   <meta property="og:locale" content="zh_TW">
   <meta property="og:type" content="article">
@@ -42,8 +44,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_d992785d9459a49.jpg">
   <meta name="twitter:title" content="[Gitlab] 建立 Merge Request Templates，讓團隊合作更加順利！">
-  <meta name="twitter:description" content="在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。 但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」 這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"團隊合作"},"articleSection":"團隊合作","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2024-05-17T10:04:12+08:00","datePublished":"2024-05-11T10:32:39+08:00","description":"在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。 但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」 這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。","headline":"[Gitlab] 建立 Merge Request Templates，讓團隊合作更加順利！","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_d992785d9459a49.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_f433903b155285f4.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_4e699712fd6f8d07.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"GitLab, Merge Request, Template, Project Management, Teamwork","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_d992785d9459a49.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/gitlab-%E5%BB%BA%E7%AB%8B-merge-request-templates-%E8%AE%93%E5%9C%98%E9%9A%8A%E5%90%88%E4%BD%9C%E6%9B%B4%E5%8A%A0%E9%A0%86%E5%88%A9-215753a5145b"],"thumbnailUrl":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_d992785d9459a49.jpg","timeRequired":"PT2M","url":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/","wordCount":818},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/teamwork/","name":"團隊合作","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/","name":"[Gitlab] 建立 Merge Request Templates，讓團隊合作更加順利！","position":3}]}]}</script>
+  <meta name="twitter:description" content="在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"團隊合作"},"articleSection":"團隊合作","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2024-05-17T10:04:12+08:00","datePublished":"2024-05-11T10:32:39+08:00","description":"在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。","headline":"[Gitlab] 建立 Merge Request Templates，讓團隊合作更加順利！","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_d992785d9459a49.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_f433903b155285f4.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_4e699712fd6f8d07.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"GitLab, Merge Request, Template, Project Management, Teamwork","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_d992785d9459a49.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/gitlab-%E5%BB%BA%E7%AB%8B-merge-request-templates-%E8%AE%93%E5%9C%98%E9%9A%8A%E5%90%88%E4%BD%9C%E6%9B%B4%E5%8A%A0%E9%A0%86%E5%88%A9-215753a5145b"],"thumbnailUrl":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_d992785d9459a49.jpg","timeRequired":"PT2M","url":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/","wordCount":818},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/teamwork/","name":"團隊合作","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202405/gitlab-merge-request-templates/","name":"[Gitlab] 建立 Merge Request Templates，讓團隊合作更加順利！","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -113,12 +115,12 @@
         <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
         <a href="/categories/teamwork/">團隊合作</a>
       </nav>
-      <h1 class="article-title">[Gitlab] 建立 Merge Request Templates，讓團隊合作更加順利！</h1>
+      <h1 class="article-title">[Gitlab] 建立 Merge Request Template<span class="nobr">s，</span>讓團隊合作更加順<span class="nobr">利！</span></h1>
       <div class="article-meta">
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2024-05-11">2024.05.11</time>
               <span>更新於 <time datetime="2024-05-17">2024.05.17</time></span>
@@ -142,7 +144,7 @@
 <p>這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上；有些交代不清楚的 Merge Request 如果被合併了，也容易在未來發現 Bug 時難以釐清問題。</p>
 <p>而解決上面問題的方式也很簡單：「建立 Template（模板）」</p>
 <p>如果大家都按照模板撰寫，就能保證每個 MR 都有一定的品質。</p>
-<p><img src="/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-01.webp" srcset="/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-01_hu_7fe78eb0a9239a79.webp 720w, /blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-01.webp 1147w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1147" height="645" alt="\[Gitlab\] 建立 Merge Request Templates，讓團隊合作更加順利！（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-01.webp" srcset="/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-01_hu_7fe78eb0a9239a79.webp 720w, /blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-01.webp 1147w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1147" height="645" alt="\[Gitlab\] 建立 Merge Request Templates，讓團隊合作更加順利！（圖 1）" fetchpriority="high" decoding="async"></p>
 <h2 id="merge-request-要有哪些資訊">Merge Request 要有哪些資訊？<a class="h-anchor" href="#merge-request-%e8%a6%81%e6%9c%89%e5%93%aa%e4%ba%9b%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
 <p>筆者個人建議一個好的 Merge Request 要包含以下元素：</p>
 <ol>
@@ -309,7 +311,7 @@ Expected Result:
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/engineer-war-stories/">工程師血淚史</a></div>
 
-    <h3 class="card-title"><a href="/blog/202207/clear-workflow-for-teams/">如果沒有明確的工作流程，團隊將會無所適從 — 工程師血淚史</a></h3>
+    <h3 class="card-title"><a href="/blog/202207/clear-workflow-for-teams/">如果沒有明確的工作流<span class="nobr">程，</span>團隊將會無所適從 — 工程師血淚史</a></h3>
     <p class="card-desc">在流程不明確的狀態下，團隊成員只能憑藉自己的直覺做事；如果彼此對一件事的認知不同就容易造成誤會，甚至爆發不必要的衝突。</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2022-07-29">2022.07.29</time>
@@ -325,7 +327,7 @@ Expected Result:
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/freelancing/">接案心法</a></div>
 
-    <h3 class="card-title"><a href="/blog/202402/freelance-pitfalls/">為什麼接案就像踩地雷？苦主幫你來掃雷 ── 設計管理系列文</a></h3>
+    <h3 class="card-title"><a href="/blog/202402/freelance-pitfalls/">為什麼接案就像踩地<span class="nobr">雷？</span>苦主幫你來掃雷 ── 設計管理系列文</a></h3>
     <p class="card-desc">很多人想透過接案來增加收入、豐富履歷，但往往踏入後，才發現這原來是一個踩地雷遊戲！</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2024-02-11">2024.02.11</time>
@@ -341,7 +343,7 @@ Expected Result:
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/teamwork/">團隊合作</a><span class="sep" aria-hidden="true">/</span><a href="/series/engineer-war-stories/">工程師血淚史</a></div>
 
-    <h3 class="card-title"><a href="/blog/202208/why-readme-matters/">你知道對專案來說，README.md 有多麼重要嗎？ ── 工程師血淚史</a></h3>
+    <h3 class="card-title"><a href="/blog/202208/why-readme-matters/">你知道對專案來<span class="nobr">說，</span>README.md 有多麼重要<span class="nobr">嗎？</span> ── 工程師血淚史</a></h3>
     <p class="card-desc">如果公司的專案很多，README.md 又沒有寫好，那後續接手的人會非常痛苦；如果公司專案的規模很大，README.md 又缺乏維護，那這個專案已經半隻腳踏進棺材。</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2022-08-05">2022.08.05</time>
@@ -476,7 +478,7 @@ Expected Result:
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

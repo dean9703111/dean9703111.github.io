@@ -2,13 +2,13 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/jest-advanced-mock-setup-teardown/
-- 發布：2023-01-19（更新：2023-05-05）
+- 發布：2023-01-19
 - 主題：技術教學
 - 系列：前端單元測試
 - 標籤：Jest、TypeScript、Programming、VS Code Extension、Unit Test Framework
 - 摘要：一個功能底下可能有很多函式，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。
 
-如果你對 Jest 這個測試框架還一無所知，建議先看[上一篇文章](https://deanlin.net/blog/202301/jest-unit-testing-typescript/)喔！
+> 如果你對 Jest 這個測試框架還一無所知，建議先看[上一篇文章](https://deanlin.net/blog/202301/jest-unit-testing-typescript/)喔！
 
 一個功能底下可能有很多函式，如果測試程式沒有適當的區分，那在遇到錯誤時會難以管理，因此我們要對它進行分組（describe）；當我們想測試特定情境時，可以在測試前增加資料（Setup）並於測試後移除（Teardown）；為了讓單元測試更存粹，可以透過模擬函式（Mock function）減少相依性。
 
@@ -22,7 +22,7 @@
 
 ```
 
-讀者可以直接到[筆者的 Github ](https://github.com/dean9703111/jest-typescript-starter/tree/master/jest-advanced)，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。
+> 讀者可以直接到[筆者的 Github ](https://github.com/dean9703111/jest-typescript-starter/tree/master/jest-advanced)，將專案 Clone 下來跑跑看，會更好理解裏面的邏輯（順手按個 ⭐ 更好 🤩）。
 
 ## 一、測試分組（describe）
 
@@ -264,7 +264,7 @@ test("測試 hideComplete 函式運作", async () => {
 
 失敗的測試會在 expect 下方出現紅色底線，滑鼠移過去就會顯示預期值（Expected）與接收值（Received）的差異。
 
-**備註**：身邊有朋友在安裝外掛後遇到了一些奇怪的 Error 無法正常使用，重開 VSCode、看官方文檔怎麼調整都無用，最後用大絕「重新開機」就正常了
+> **備註**：身邊有朋友在安裝外掛後遇到了一些奇怪的 Error 無法正常使用，重開 VSCode、看官方文檔怎麼調整都無用，最後用大絕「重新開機」就正常了
 
 常用的 Jest 應用就介紹到這邊，真的要自己動手實驗過才會理解裏面的原理喔！
 

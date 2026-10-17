@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202103/mysql-read-write-splitting-atlas/
-- 發布：2021-03-29（更新：2023-05-05）
+- 發布：2021-03-29
 - 主題：技術教學
 - 系列：MySQL 主從架構
 - 標籤：Atlas、Ubuntu、MySQL、讀寫分離、Rw Splitting
@@ -24,7 +24,7 @@
 
 ## 一、前置作業
 
-OS version、MySQL 是筆者安裝時的環境，ip 是給大家參考對應的
+> OS version、MySQL 是筆者安裝時的環境，ip 是給大家參考對應的
 
 ### 準備一台要當 MySQL Proxy 的 ubuntu server
 
@@ -40,7 +40,7 @@ OS version、MySQL 是筆者安裝時的環境，ip 是給大家參考對應的
 
 ### 準備一台以上的 Slave server 負責讀取
 
-準備兩台以上測試 load balance 才會準確，這塊有興趣的讀者可以自己嘗試
+> 準備兩台以上測試 load balance 才會準確，這塊有興趣的讀者可以自己嘗試
 
 - OS version：ubuntu 16.04
 - MySQL：5.7
@@ -72,15 +72,15 @@ CREATE DATABASE proxy_test;
 
 ## 三、Atlas 功能介紹
 
-- 讀寫分離
-- slave server 的 load balance
-- IP filter
-- DBA 可以輕鬆的上下線 DB（有指令支持）
-- 自動移除當機的 DB（但如果當機的是 master server，就只剩讀取功能）
+1. 讀寫分離
+2. slave server 的 load balance
+3. IP filter
+4. DBA 可以輕鬆的上下線 DB（有指令支持）
+5. 自動移除當機的 DB（但如果當機的是 master server，就只剩讀取功能）
 
 ## 四、在 Ubunut 安裝 Atlas
 
-筆者在安裝過程中感受到滿滿的惡意
+> 筆者在安裝過程中感受到滿滿的惡意
 
 **STEP 1**：下載 & 安裝 Atlas
 
@@ -234,7 +234,7 @@ mysql> SELECT * FROM department;
 
 ### 觀察 sql 運行的 log
 
-記得把 Atla 設定檔的 ssql-log 參數調整為 REALTIME 才會有喔！
+> 記得把 Atla 設定檔的 ssql-log 參數調整為 REALTIME 才會有喔！
 
 前往 log file
 

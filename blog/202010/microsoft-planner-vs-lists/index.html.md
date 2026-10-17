@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202010/microsoft-planner-vs-lists/
-- 發布：2020-10-06（更新：2023-05-05）
+- 發布：2020-10-06
 - 主題：團隊合作
 - 標籤：Microsoft Planner、Microsoft Lists
 - 摘要：這篇文章在討論會簡單介紹這兩個產品的功能、各自的優缺點，最後總結的部分會分享相對於 jira、notion 等產品他們缺少的功能

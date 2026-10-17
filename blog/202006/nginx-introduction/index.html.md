@@ -2,18 +2,18 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/nginx-introduction/
-- 發布：2020-06-10（更新：2023-05-05）
+- 發布：2020-06-10
 - 主題：技術教學
 - 標籤：Nginx
 - 摘要：這個好用的網頁伺服器工具最近兩年被我大量使用，因為他的設定簡單，功能強大，在這裡我會把分幾個部分做說明：
 
 這個好用的網頁伺服器工具最近兩年被我大量使用，因為他的設定簡單，功能強大，在這裡我會把分幾個部分做說明：
 
-- **安裝(ubuntu環境)**
-- **防火牆設定**
-- **常用操作**
-- **曾經遇到的坑**
-- **相關參考資源**
+1. **安裝(ubuntu環境)**
+2. **防火牆設定**
+3. **常用操作**
+4. **曾經遇到的坑**
+5. **相關參考資源**
 
 ## 安裝(ubuntu環境)
 
@@ -50,7 +50,7 @@ service php7.3-fpm restart // php的conf修改後需要重啟
 
 ## 曾經遇到的坑
 
-413 Request Entity Too Large
+> 413 Request Entity Too Large
 
 如果有用nginx當loadbalance，記得/etc/nginx/sites-enabled/default的部分也要做相對應的調整
 
@@ -60,11 +60,11 @@ sudo service nginx restart
 
 ```
 
-Git clone through Nginx proxy for Gitlab server is not working
+> Git clone through Nginx proxy for Gitlab server is not working
 
 [可參考stackoverflow](https://stackoverflow.com/questions/38920146/git-clone-through-nginx-proxy-for-gitlab-server-is-not-working)
 
-ssh_exchange_identification: Connection closed by remote host
+> ssh_exchange_identification: Connection closed by remote host
 
 因為/etc/nginx/sites-enabled/default的地方修改無效
 
@@ -82,7 +82,7 @@ sudo service nginx restart
 
 ```
 
-server關機重啟後頁面 404
+> server關機重啟後頁面 404
 
 因為安裝php的時候apache有時沒注意會被順便安裝起來
 
@@ -106,7 +106,7 @@ sudo rm -rf /etc/apache2
 
 ```
 
-nginx 502
+> nginx 502
 
 查看錯誤日誌
 
@@ -115,7 +115,7 @@ sudo vi /var/log/nginx/error.log
 
 ```
 
-connect() to unix:/var/run/php-fpm.sock failed (11: Resource temporarily unavailable)
+> connect() to unix:/var/run/php-fpm.sock failed (11: Resource temporarily unavailable)
 
 如果是以上錯誤
 
@@ -133,7 +133,7 @@ service php7.3-fpm restart
 
 ```
 
-Nginx使用limit_req_zone對同一ip訪問進行限流
+> Nginx使用limit_req_zone對同一ip訪問進行限流
 
 考慮到有可能的DDOS問題，又或是一些不正常的連線次數(在短時間大量call很多次api)，可參考這兩篇文章修改nginx默認的連線設定:[文章1](https://bbs.csdn.net/topics/390871977)、[文章2](https://blog.csdn.net/jek123456/article/details/53334095)
 
@@ -159,7 +159,7 @@ server {
 - **10m**：Server 記憶體要保存多少 ip 的 request 紀錄
 - **rate=5r/s**：每秒接受 5 個 requests
 
-設定 no-cache 機制
+> 設定 no-cache 機制
 
 有時網頁會 cache 到過去的資源，此時你可以在目標路徑下做如下設定
 

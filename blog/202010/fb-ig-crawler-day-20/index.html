@@ -2,7 +2,7 @@
 <html lang="zh-tw" class="no-js"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</title>
+  <title>Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</title>
   <meta name="description" content="1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-20/">
@@ -14,14 +14,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202010/fb-ig-crawler-day-20/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
-  <meta property="og:title" content="【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰">
+  <meta property="og:title" content="Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰">
   <meta property="og:description" content="1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例">
   <meta property="og:url" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-20/">
   <meta property="og:locale" content="zh_TW">
@@ -30,20 +32,20 @@
   <meta property="article:modified_time" content="2020-10-05T09:01:38&#43;08:00">
   <meta property="article:author" content="https://deanlin.net/about/">
   <meta property="article:section" content="技術教學">
-  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="iT 邦幫忙鐵人賽">
   <meta property="article:tag" content="Google Sheets">
   <meta property="article:tag" content="Node.js">
   <meta property="article:tag" content="爬蟲">
   <meta property="article:tag" content="Google Sheet API">
-  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-og_hu_43e66e470fcd28bc.jpg">
+  <meta property="og:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/cover_hu_7524c32e28b30d4.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="675">
   <meta property="og:image:alt" content="【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-og_hu_43e66e470fcd28bc.jpg">
-  <meta name="twitter:title" content="【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰">
+  <meta name="twitter:image" content="https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/cover_hu_7524c32e28b30d4.jpg">
+  <meta name="twitter:title" content="Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰">
   <meta name="twitter:description" content="1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-05T09:01:38+08:00","datePublished":"2020-10-05T09:01:38+08:00","description":"1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例","headline":"【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy \u0026 Paste 的日子說掰掰","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-og_hu_43e66e470fcd28bc.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-og_hu_c9bef9f6d6169522.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-og_hu_f07b52be5eb3794d.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Google Sheets, Node.js, 爬蟲, Google Sheet API","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-og_hu_43e66e470fcd28bc.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10247562"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-og_hu_43e66e470fcd28bc.jpg","timeRequired":"PT8M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/","wordCount":3648},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/","name":"【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy \u0026 Paste 的日子說掰掰","position":3}]}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-10-05T09:01:38+08:00","datePublished":"2020-10-05T09:01:38+08:00","description":"1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例","headline":"【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy \u0026 Paste 的日子說掰掰","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/cover_hu_7524c32e28b30d4.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/cover_hu_877f0f65c983575.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/cover_hu_730893ba42d0eca.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Google Sheets, Node.js, 爬蟲, Google Sheet API","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/cover_hu_7524c32e28b30d4.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10247562"],"thumbnailUrl":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/images/cover_hu_7524c32e28b30d4.jpg","timeRequired":"PT8M","url":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/","wordCount":3648},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202010/fb-ig-crawler-day-20/","name":"【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy \u0026 Paste 的日子說掰掰","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -113,12 +115,12 @@
         <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
         <a href="/categories/tech/">技術教學</a>
       </nav>
-      <h1 class="article-title">【Day20】Google Sheets - 寫入爬蟲資料，跟 Copy &amp; Paste 的日子說掰掰</h1>
+      <h1 class="article-title"><span class="nobr">【D</span>ay2<span class="nobr">0】</span>Google Sheets - 寫入爬蟲資<span class="nobr">料，</span>跟 Copy &amp; Paste 的日子說掰掰</h1>
       <div class="article-meta">
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2020-10-05">2020.10.05</time>
               <span>閱讀約 8 分鐘</span>
@@ -127,6 +129,7 @@
         </div>
         <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>20</b>/ 30</a>
       </div>
+      <p class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg><span>這篇文章寫於 2020 年，文中的工具與版本可能已經更新，實作時請以官方文件為準。</span></p>
     </header>
 
     <div class="article-main">
@@ -138,15 +141,23 @@
 
       <div class="prose" data-prose>
         <blockquote>
-<p>爬蟲是一個技術，他將網頁的數據收集下來<br>Google Sheets 是一個容器，他可以儲存資料並將資料以不同面向做展示<br><code>爬蟲 Ｘ Google Sheets ＝ 你要學習的技術整合</code></p>
+<p>爬蟲是一個技術，他將網頁的數據收集下來</p>
+<p>Google Sheets 是一個容器，他可以儲存資料並將資料以不同面向做展示</p>
+<p><mark>爬蟲 Ｘ Google Sheets ＝ 你要學習的技術整合</mark></p>
 </blockquote>
 <h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="1-改寫crawlerigcrawler這兩隻函式讓他們依照我們想要格式回傳爬蟲資料">1. 改寫<code>crawlerIG、crawler</code>這兩隻函式，讓他們依照我們想要格式回傳爬蟲資料<a class="h-anchor" href="#1-%e6%94%b9%e5%af%abcrawlerigcrawler%e9%80%99%e5%85%a9%e9%9a%bb%e5%87%bd%e5%bc%8f%e8%ae%93%e4%bb%96%e5%80%91%e4%be%9d%e7%85%a7%e6%88%91%e5%80%91%e6%83%b3%e8%a6%81%e6%a0%bc%e5%bc%8f%e5%9b%9e%e5%82%b3%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99" aria-label="這個段落的連結"></a></h3>
-<p>1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題<br>1.2 組合回傳的資訊：以 <code>crawlerFB</code> 為範例</p>
+<p>1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題</p>
+<p>1.2 組合回傳的資訊：以 <code>crawlerFB</code> 為範例</p>
 <h3 class="h-nomark" id="2-以主程式當橋樑將爬蟲資料傳遞到updategooglesheets">2. 以主程式當橋樑，將爬蟲資料傳遞到<code>updateGoogleSheets</code><a class="h-anchor" href="#2-%e4%bb%a5%e4%b8%bb%e7%a8%8b%e5%bc%8f%e7%95%b6%e6%a9%8b%e6%a8%91%e5%b0%87%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e5%82%b3%e9%81%9e%e5%88%b0updategooglesheets" aria-label="這個段落的連結"></a></h3>
-<p>2.1 用<code>主程式</code>傳遞爬蟲資料<br>2.2 改寫 <code>updateGoogleSheets</code> 函式來接收並處理爬蟲資料</p>
+<p>2.1 用<code>主程式</code>傳遞爬蟲資料</p>
+<p>2.2 改寫 <code>updateGoogleSheets</code> 函式來接收並處理爬蟲資料</p>
 <h3 class="h-nomark" id="3-將-fbig粉專爬蟲資料寫入各自的-sheet">3. 將 FB、IG粉專爬蟲資料寫入各自的 Sheet<a class="h-anchor" href="#3-%e5%b0%87-fbig%e7%b2%89%e5%b0%88%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e5%af%ab%e5%85%a5%e5%90%84%e8%87%aa%e7%9a%84-sheet" aria-label="這個段落的連結"></a></h3>
-<p>3.1 分析寫入 Google Sheets 的步驟：<code>writeSheet</code><br>3.2 在官方文件尋找 <strong>寫入Sheet</strong> 的範例<br>3.3 第一欄寫入 title(粉專名稱)：<code>writeTitle</code><br>3.4 取得 Sheet 最後一欄的空白欄位：<code>getLastCol</code><br>3.5 將 trace(追蹤人數)資訊寫入最後一欄：<code>writeTrace</code></p>
+<p>3.1 分析寫入 Google Sheets 的步驟：<code>writeSheet</code></p>
+<p>3.2 在官方文件尋找 <strong>寫入Sheet</strong> 的範例</p>
+<p>3.3 第一欄寫入 title(粉專名稱)：<code>writeTitle</code></p>
+<p>3.4 取得 Sheet 最後一欄的空白欄位：<code>getLastCol</code></p>
+<p>3.5 將 trace(追蹤人數)資訊寫入最後一欄：<code>writeTrace</code></p>
 <hr>
 <h2 class="h-nomark" id="1-改寫crawlerigcrawler這兩隻函式讓他們依照我們想要格式回傳爬蟲資料-1">1. 改寫<code>crawlerIG、crawler</code>這兩隻函式，讓他們依照我們想要格式回傳爬蟲資料<a class="h-anchor" href="#1-%e6%94%b9%e5%af%abcrawlerigcrawler%e9%80%99%e5%85%a9%e9%9a%bb%e5%87%bd%e5%bc%8f%e8%ae%93%e4%bb%96%e5%80%91%e4%be%9d%e7%85%a7%e6%88%91%e5%80%91%e6%83%b3%e8%a6%81%e6%a0%bc%e5%bc%8f%e5%9b%9e%e5%82%b3%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99-1" aria-label="這個段落的連結"></a></h2>
 <blockquote>
@@ -165,7 +176,7 @@
 <ol>
 <li>重複名稱的粉專
 <ul>
-<li>解決方案：粉專名稱有可能重名，但是<code>粉專網址是唯一值</code>，所以使用<code>粉專名稱+粉專網址作為key</code>就能解決這個問題，同時也方便使用者可以點擊連結直接前往粉專</li>
+<li>解決方案：粉專名稱有可能重名，但是<mark>粉專網址是唯一值</mark>，所以使用<code>粉專名稱+粉專網址作為key</code>就能解決這個問題，同時也方便使用者可以點擊連結直接前往粉專</li>
 </ul>
 </li>
 </ol>
@@ -187,7 +198,7 @@
 <h3 class="h-nomark" id="12-組合回傳的資訊以-crawlerfb-為範例">1.2 組合回傳的資訊：以 <code>crawlerFB</code> 為範例<a class="h-anchor" href="#12-%e7%b5%84%e5%90%88%e5%9b%9e%e5%82%b3%e7%9a%84%e8%b3%87%e8%a8%8a%e4%bb%a5-crawlerfb-%e7%82%ba%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h3>
 <ul>
 <li>
-<p>在 try-catch 的後面加上 finally，在 finally 階段才把粉專物件存入 result_array 是因為<code>無論這個粉專爬蟲成功或是失敗我們都要記錄他的數據</code></p>
+<p>在 try-catch 的後面加上 finally，在 finally 階段才把粉專物件存入 result_array 是因為<mark>無論這個粉專爬蟲成功或是失敗我們都要記錄他的數據</mark></p>
 <blockquote>
 <p>finally 代表在 try-catch 結束後會執行的任務，忘記的可以回到<a href="https://ithelp.ithome.com.tw/day14/README.md">Day14 try-catch-finally 基礎語法說明</a>複習喔</p>
 </blockquote>
@@ -272,7 +283,7 @@
 <h2 class="h-nomark" id="3-將fbig粉專爬蟲資料寫入各自的sheet">3. 將FB、IG粉專爬蟲資料寫入各自的Sheet<a class="h-anchor" href="#3-%e5%b0%87fbig%e7%b2%89%e5%b0%88%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e5%af%ab%e5%85%a5%e5%90%84%e8%87%aa%e7%9a%84sheet" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="31-分析寫入-google-sheets-的步驟writesheet">3.1 分析寫入 Google Sheets 的步驟：<code>writeSheet</code><a class="h-anchor" href="#31-%e5%88%86%e6%9e%90%e5%af%ab%e5%85%a5-google-sheets-%e7%9a%84%e6%ad%a5%e9%a9%9fwritesheet" aria-label="這個段落的連結"></a></h3>
 <p><strong>目標</strong>：希望寫入的 Google Sheets 長得像下圖：</p>
-<p><img src="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01.webp" srcset="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_5ee1ddc7cc4e3b90.webp 720w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="351" alt="3.1 分析寫入 Google Sheets 的步驟：writeSheet（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01.webp" srcset="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01_hu_5ee1ddc7cc4e3b90.webp 720w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="351" alt="3.1 分析寫入 Google Sheets 的步驟：writeSheet（圖 1）" fetchpriority="high" decoding="async"></p>
 <p><strong>我們先將想要完成的功能羅列出來，再一個個去實現：</strong></p>
 <ol>
 <li>第一欄為 <code>粉專名稱+粉專網址</code> 組合的 <strong>HYPERLINK</strong>，每次執行爬蟲時我們會用 <code>writeTitle</code> 這個函式來更新第一欄的資料</li>
@@ -303,7 +314,7 @@
 <h3 class="h-nomark" id="32-在官方文件尋找-寫入sheet-的範例">3.2 在官方文件尋找 <code>寫入Sheet</code> 的範例<a class="h-anchor" href="#32-%e5%9c%a8%e5%ae%98%e6%96%b9%e6%96%87%e4%bb%b6%e5%b0%8b%e6%89%be-%e5%af%ab%e5%85%a5sheet-%e7%9a%84%e7%af%84%e4%be%8b" aria-label="這個段落的連結"></a></h3>
 <ol>
 <li>
-<p>有了<code>昨天的經驗</code>我們可以很容易找到今天所需的資源，在範例首頁的大標題<a href="https://developers.google.com/sheets/api/samples/writing">Basic Writing</a>就符合今天的需求</p>
+<p>有了<mark>昨天的經驗</mark>我們可以很容易找到今天所需的資源，在範例首頁的大標題<a href="https://developers.google.com/sheets/api/samples/writing">Basic Writing</a>就符合今天的需求</p>
 <p><img src="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-02.webp" srcset="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-02_hu_c63269b2c40bda4f.webp 720w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-02.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="600" alt="3.2 在官方文件尋找 寫入Sheet 的範例（圖 2）" loading="lazy" decoding="async"></p>
 </li>
 <li>
@@ -313,7 +324,7 @@
 <p><a href="https://developers.google.com/sheets/api/samples/writing#append_values">Append Values</a>：在閱讀標題時我原本覺得是最好的選擇，但發現他只能插入列(row)，與我們插入欄(col)的需求不符</p>
 </li>
 <li>
-<p><a href="https://developers.google.com/sheets/api/samples/writing#write_a_single_range">Write a single range</a>：在開頭便提供了一個連結，並說<code>這個方法能寫入指定 Sheet 範圍內的資料</code></p>
+<p><a href="https://developers.google.com/sheets/api/samples/writing#write_a_single_range">Write a single range</a>：在開頭便提供了一個連結，並說<mark>這個方法能寫入指定 Sheet 範圍內的資料</mark></p>
 <p><img src="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-03.webp" srcset="/blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-03_hu_62ea4b8b86120ed2.webp 720w, /blog/202010/fb-ig-crawler-day-20/images/fb-ig-crawler-day-20-03.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="345" alt="3.2 在官方文件尋找 寫入Sheet 的範例（圖 3）" loading="lazy" decoding="async"></p>
 </li>
 </ul>
@@ -469,7 +480,8 @@
 </ul>
 </li>
 </ul>
-<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong></p>
+<p><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
 </blockquote>
 
       </div>
@@ -478,7 +490,7 @@
         <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.10.05），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10247562" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
         <div class="foot-row">
           <div class="post-tags">
-            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">iT 邦幫忙鐵人賽</a>
             <a class="chip chip-hash" href="/tags/google-sheets/">Google Sheets</a>
             <a class="chip chip-hash" href="/tags/node.js/">Node.js</a>
             <a class="chip chip-hash" href="/tags/%E7%88%AC%E8%9F%B2/">爬蟲</a>
@@ -652,12 +664,12 @@
   <div class="card-grid">
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAACwAwCdASoYAAcAPw1mp0emIqGYBABjEMT0gAAzJQFA&#43;nz8Fut8AAD&#43;6oDQZsIvIAm06u9v11m6QAAA" alt="" width="24" height="7"><img src="/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-01_hu_2ea0557352c8cf48.webp" srcset="/blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-01_hu_d901f40c341b7107.webp 240w, /blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-01_hu_b0696fadb78325dd.webp 480w, /blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-01_hu_da7fa6678b046eda.webp 800w, /blog/202010/fb-ig-crawler-day-18/images/fb-ig-crawler-day-18-01_hu_2ea0557352c8cf48.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="313" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-18/images/cover_hu_5b5978374b9aad21.webp" srcset="/blog/202010/fb-ig-crawler-day-18/images/cover_hu_75eb1977b1531ea7.webp 240w, /blog/202010/fb-ig-crawler-day-18/images/cover_hu_7af00711ae21fcd7.webp 480w, /blog/202010/fb-ig-crawler-day-18/images/cover_hu_1bac8eb58cbbd17.webp 800w, /blog/202010/fb-ig-crawler-day-18/images/cover_hu_5b5978374b9aad21.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-18/">【Day18】Google Sheets - 加入版控後被github警告了，官方範例做了什麼？</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-18/"><span class="nobr">【D</span>ay1<span class="nobr">8】</span>Google Sheets - 加入版控後被github警告<span class="nobr">了，</span>官方範例做了什<span class="nobr">麼？</span></a></h3>
     <p class="card-desc">在跟著官方步驟完成後，這些也是我們要注意的事情</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-03">2020.10.03</time>
@@ -668,12 +680,12 @@
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADQAwCdASoYAAcAPw1oqEemIqIYBABjEMT0gGUAEtyV5KhK/R9OjcAA/udFLXYAQK7ApOJIDWBV1gzCDeAW9BuWi8yUewFtsYEIXBQbVgAAAA==" alt="" width="24" height="7"><img src="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_e91da7b1b31343a9.webp" srcset="/blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_aa3fcdc79115e628.webp 240w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_ca94eec5a967a9cb.webp 480w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_7241a37a4f2a51f5.webp 800w, /blog/202010/fb-ig-crawler-day-29/images/fb-ig-crawler-day-29-01_hu_e91da7b1b31343a9.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="301" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-29/images/cover_hu_ac38138ae7b8335b.webp" srcset="/blog/202010/fb-ig-crawler-day-29/images/cover_hu_e621918dac9080d0.webp 240w, /blog/202010/fb-ig-crawler-day-29/images/cover_hu_81d9cdbf3040576.webp 480w, /blog/202010/fb-ig-crawler-day-29/images/cover_hu_a9875a0a72e198ce.webp 800w, /blog/202010/fb-ig-crawler-day-29/images/cover_hu_ac38138ae7b8335b.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-29/">【Day29】為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊息，專案大功告成！</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-29/"><span class="nobr">【D</span>ay2<span class="nobr">9】</span>為爬蟲加上通知 - 成功收到 LINE 通知爬蟲摘要訊<span class="nobr">息，</span>專案大功告<span class="nobr">成！</span></a></h3>
     <p class="card-desc">這份專案所用到的各種技術都不難，難的是將這些技術整合成一個能讓客戶買單的專案；當時在跟工程師朋友分享這個專案的技術組成時他們都覺得很是獵奇，沒想到爬蟲專案還能用如此低成本的方式完成，而且真的能幫客戶解決問題</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-14">2020.10.14</time>
@@ -684,12 +696,12 @@
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRoIAAABXRUJQVlA4WAoAAAAQAAAAFwAAAQAAQUxQSBwAAAABHyAUQGMsrUQyKiLiBGIaYpNM/1I&#43;GSL6n9gAVlA4IEAAAACwAwCdASoYAAIAPw1srUkmIyIYBABjEMTyAFR6E54sX7q371tJAAD&#43;ud2s336cLo8VV4Pyj8hR85dquBfFmYAA" alt="" width="24" height="2"><img src="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp" srcset="/blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_76e2413246fac6d2.webp 240w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_d635d6ed8622900a.webp 480w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_5f9e74b22b8e0483.webp 800w, /blog/202010/fb-ig-crawler-day-28/images/fb-ig-crawler-day-28-01_hu_aecadefb2c0e8144.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="70" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-28/images/cover_hu_49ccc0aee4ccb399.webp" srcset="/blog/202010/fb-ig-crawler-day-28/images/cover_hu_95bae80656c125ce.webp 240w, /blog/202010/fb-ig-crawler-day-28/images/cover_hu_8d8dd934fef70ed5.webp 480w, /blog/202010/fb-ig-crawler-day-28/images/cover_hu_68fef8e27186a100.webp 800w, /blog/202010/fb-ig-crawler-day-28/images/cover_hu_49ccc0aee4ccb399.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-28/">【Day28】為爬蟲加上通知 - 用 axios 發出 LINE 通知</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-28/"><span class="nobr">【D</span>ay2<span class="nobr">8】</span>為爬蟲加上通知 - 用 axios 發出 LINE 通知</a></h3>
     <p class="card-desc">雖然眾多的套件都能實現這個目標，但還是把套件做個簡單的區分：</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-13">2020.10.13</time>
@@ -824,7 +836,7 @@
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

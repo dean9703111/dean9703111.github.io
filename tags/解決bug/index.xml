@@ -4,7 +4,7 @@
     <title>解決bug｜林鼎淵 Dean Lin</title>
     <link>https://deanlin.net/tags/%E8%A7%A3%E6%B1%BAbug/</link>
     <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>解決bug｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/%E8%A7%A3%E6%B1%BAbug/</link><width>144</width><height>144</height></image>
-    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。360 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
     <generator>Hugo</generator>
     <language>zh-tw</language>
     <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
@@ -18,12 +18,13 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了 但一個案子通常很難一次就通過，無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug，我大概歸類成以下幾種：</description>
-      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-og_hu_52feb4dbf29f22fa.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/cover_hu_c7282654385febc2.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<blockquote>
 <p>客戶的操作跟你想的不一樣</p>
 </blockquote>
 <h2 id="為什麼寫這篇文章">為什麼寫這篇文章？<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0" aria-label="這個段落的連結"></a></h2>
-<p>其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了<br>但一個案子通常很難一次就通過，<code>無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug</code>，我大概歸類成以下幾種：</p>
+<p>其實這份專案完成到昨天的進度時就給業主做功能上的確認準備結案了</p>
+<p>但一個案子通常很難一次就通過，<mark>無論這隻程式在你電腦上執行的多麼穩定，放到別人的電腦上總會冒出大大小小的 bug</mark>，我大概歸類成以下幾種：</p>
 <ol>
 <li>作業系統不同導致的
 <ul>
@@ -40,28 +41,34 @@
 <li>網路速度、硬體規格&hellip; (ex：如果你的網路環境太差需要去調整爬蟲元件的極限等待時間)</li>
 </ul>
 </li>
-<li><code>客戶的操作跟你預想的不一樣</code></li>
+<li><mark>客戶的操作跟你預想的不一樣</mark></li>
 </ol>
-<p>第 1、2、3 點的問題我在之前文章實作碰到時有提到過，今天來講講<code>實際上你會最崩潰的第 4 點</code></p>
+<p>第 1、2、3 點的問題我在之前文章實作碰到時有提到過，今天來講講<mark>實際上你會最崩潰的第 4 點</mark></p>
 <hr>
 <h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="1-將客戶發的-bug-做基礎分類">1. 將客戶發的 bug 做基礎分類<a class="h-anchor" href="#1-%e5%b0%87%e5%ae%a2%e6%88%b6%e7%99%bc%e7%9a%84-bug-%e5%81%9a%e5%9f%ba%e7%a4%8e%e5%88%86%e9%a1%9e" aria-label="這個段落的連結"></a></h3>
 <h3 class="h-nomark" id="2-引導客戶說出-bug-發生原因及提出解決方案的小技巧">2. 引導客戶說出 bug 發生原因及提出解決方案的小技巧<a class="h-anchor" href="#2-%e5%bc%95%e5%b0%8e%e5%ae%a2%e6%88%b6%e8%aa%aa%e5%87%ba-bug-%e7%99%bc%e7%94%9f%e5%8e%9f%e5%9b%a0%e5%8f%8a%e6%8f%90%e5%87%ba%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88%e7%9a%84%e5%b0%8f%e6%8a%80%e5%b7%a7" aria-label="這個段落的連結"></a></h3>
 <h3 class="h-nomark" id="3-重現客戶發生的-bug">3. 重現客戶發生的 bug<a class="h-anchor" href="#3-%e9%87%8d%e7%8f%be%e5%ae%a2%e6%88%b6%e7%99%bc%e7%94%9f%e7%9a%84-bug" aria-label="這個段落的連結"></a></h3>
 <h3 class="h-nomark" id="4-改寫程式讓新的爬蟲資料塞入正確位置">4. 改寫程式讓新的爬蟲資料塞入正確位置<a class="h-anchor" href="#4-%e6%94%b9%e5%af%ab%e7%a8%8b%e5%bc%8f%e8%ae%93%e6%96%b0%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e5%a1%9e%e5%85%a5%e6%ad%a3%e7%a2%ba%e4%bd%8d%e7%bd%ae" aria-label="這個段落的連結"></a></h3>
-<p>4.1 取得 Google Sheets 第一欄的粉專名稱：<code>readTitle</code><br>4.2 讓新的爬蟲資料正確寫入 Google Sheets：<code>writeSheet</code></p>
+<p>4.1 取得 Google Sheets 第一欄的粉專名稱：<code>readTitle</code></p>
+<p>4.2 讓新的爬蟲資料正確寫入 Google Sheets：<code>writeSheet</code></p>
 <hr>
 <h2 class="h-nomark" id="1-將客戶發的-bug-做基礎分類-1">1. 將客戶發的 bug 做基礎分類<a class="h-anchor" href="#1-%e5%b0%87%e5%ae%a2%e6%88%b6%e7%99%bc%e7%9a%84-bug-%e5%81%9a%e5%9f%ba%e7%a4%8e%e5%88%86%e9%a1%9e-1" aria-label="這個段落的連結"></a></h2>
 <p>與你合作的客戶通常不是資工相關背景，他們所提出來的 bug 有時也會讓你啼笑皆非，我個人會將他們提出的 bug 分成 3 種</p>
 <ul>
 <li><strong>明顯的 bug</strong>：客戶一報 bug 你就知道哪個環節出問題了，就認命地解決吧 (ex：臉書的爬蟲登入後就卡住不動了)</li>
-<li><strong>需要討論的 bug</strong>：<code>客戶報 bug 時你不確定是哪個環節出了問題，需要與客戶討論發生 bug 的操作流程</code></li>
+<li><strong>需要討論的 bug</strong>：<mark>客戶報 bug 時你不確定是哪個環節出了問題，需要與客戶討論發生 bug 的操作流程</mark></li>
 <li><strong>不合理的 bug</strong>：明顯不合理的要求你可以委婉的跟他說為什麼辦不到 (ex：程式執行到一半把電腦關機問你爬蟲資料為什麼沒有寫入 Google Sheets)</li>
 </ul>
 <hr>
 <h2 class="h-nomark" id="2-引導客戶說出-bug-發生原因及提出解決方案的小技巧-1">2. 引導客戶說出 bug 發生原因及提出解決方案的小技巧<a class="h-anchor" href="#2-%e5%bc%95%e5%b0%8e%e5%ae%a2%e6%88%b6%e8%aa%aa%e5%87%ba-bug-%e7%99%bc%e7%94%9f%e5%8e%9f%e5%9b%a0%e5%8f%8a%e6%8f%90%e5%87%ba%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88%e7%9a%84%e5%b0%8f%e6%8a%80%e5%b7%a7-1" aria-label="這個段落的連結"></a></h2>
 <p>很多時候客戶對於 bug 的陳述是很模糊的，所以你<strong>需要與客戶溝通，引導他們說出自己的操作流程</strong>，以今天發出的 bug 做舉例：</p>
-<p><strong>客戶</strong>：今天爬蟲資料寫入 Google Sheets 表單時塞錯位置了！<br><strong>我</strong>：請問這個問題是今天突然發生的，還是過去幾天也發生過通樣的問題呢？ <code>(釐清 bug 發生的時間點)</code><br><strong>客戶</strong>：是今天才發生的<br><strong>我</strong>：那今天你在跑爬蟲前有做過什麼調整嗎？ <code>(確認是什麼樣的操作導致 bug)</code><br><strong>客戶</strong>：我在爬蟲的json 檔裡面新增了幾個粉專，然後把 Google Sheets 上面一些沒有在維護的粉專給砍掉<br><strong>我</strong>：了解，我這邊會先重複一遍您的操作來釐清問題，最晚會在兩天後給您答覆 <code>(自己操作一遍確認有這個bug)</code></p>
+<p><strong>客戶</strong>：今天爬蟲資料寫入 Google Sheets 表單時塞錯位置了！</p>
+<p><strong>我</strong>：請問這個問題是今天突然發生的，還是過去幾天也發生過通樣的問題呢？ <code>(釐清 bug 發生的時間點)</code></p>
+<p><strong>客戶</strong>：是今天才發生的</p>
+<p><strong>我</strong>：那今天你在跑爬蟲前有做過什麼調整嗎？ <code>(確認是什麼樣的操作導致 bug)</code></p>
+<p><strong>客戶</strong>：我在爬蟲的json 檔裡面新增了幾個粉專，然後把 Google Sheets 上面一些沒有在維護的粉專給砍掉</p>
+<p><strong>我</strong>：了解，我這邊會先重複一遍您的操作來釐清問題，最晚會在兩天後給您答覆 <code>(自己操作一遍確認有這個bug)</code></p>
 <p>===我是正在重現bug的分隔線===</p>
 <p><strong>我</strong>：我依照您的方式操作確實遇到這個問題；這邊我提出一個解決方案，這個方案會將你新增的爬蟲粉專寫入 Google Sheets 表單的最下面，不管你爬蟲json 如何調整，追蹤人數都會填入 Google Sheets 的正確位置，詳細邏輯你可以參考下方說明 <code>(自己提出解決方案，千萬別讓客戶天馬行空亂提)</code></p>
 <blockquote>
@@ -70,13 +77,14 @@
 <li>解決錯誤的方式：<br>1. 粉專名稱：寫入前將 Google Sheets 上粉專名稱的欄位與爬蟲json 比對，如果 <strong>爬蟲json 裡面有新的粉專就會新增到最下面，不改變 Google Sheets 上粉專名稱原有排列順序</strong><br>2. 追蹤人數：以 <strong>粉專名稱+粉專網址作為寫入追蹤人數欄位的判斷</strong></li>
 </ul>
 </blockquote>
-<p><strong>客戶</strong>：好的先這樣做吧，你什麼時候能改好？<br><strong>我</strong>：預計三個工作天，如果提早完成會儘早與您聯繫 <code>(說一個你絕對能完成功能的時間，並表達積極性)</code></p>
+<p><strong>客戶</strong>：好的先這樣做吧，你什麼時候能改好？</p>
+<p><strong>我</strong>：預計三個工作天，如果提早完成會儘早與您聯繫 <code>(說一個你絕對能完成功能的時間，並表達積極性)</code></p>
 <hr>
 <h2 class="h-nomark" id="3-重現客戶發生的-bug-1">3. 重現客戶發生的 bug<a class="h-anchor" href="#3-%e9%87%8d%e7%8f%be%e5%ae%a2%e6%88%b6%e7%99%bc%e7%94%9f%e7%9a%84-bug-1" aria-label="這個段落的連結"></a></h2>
 <blockquote>
-<p>這個步驟非常重要，<code>如果 bug 無法在自己的環境重現時你會超級頭大</code>，因為站在客戶的角度就是認為你沒有完成專案，這會導致你結案的日子變得遙遙無期&hellip;</p>
+<p>這個步驟非常重要，<mark>如果 bug 無法在自己的環境重現時你會超級頭大</mark>，因為站在客戶的角度就是認為你沒有完成專案，這會導致你結案的日子變得遙遙無期&hellip;</p>
 </blockquote>
-<p>今天問題重現起來非常簡單，跟著客戶的說的方式做就好：<code>調整爬蟲json 及 Google sheet</code></p>
+<p>今天問題重現起來非常簡單，跟著客戶的說的方式做就好：<mark>調整爬蟲json 及 Google sheet</mark></p>
 <ol>
 <li>
 <p>我們這裡用 fb.json 為例，將<strong>麻糬爸愛亂畫</strong>刪除，然後把<strong>寶寶不說</strong>移到第二個</p>
@@ -102,7 +110,7 @@
 </span></span></code></pre></div></li>
 <li>
 <p>執行程式 <strong>yarn start</strong> 後你就會發現excel的表格亂掉了</p>
-<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01.webp" width="1024" height="349" alt="3. 重現客戶發生的 bug（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-21/images/fb-ig-crawler-day-21-01.webp" width="1024" height="349" alt="3. 重現客戶發生的 bug（圖 1）" fetchpriority="high" decoding="async"></p>
 </li>
 </ol>
 <hr>
@@ -135,9 +143,9 @@
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><hr>
 <h3 class="h-nomark" id="42-讓新的爬蟲資料正確寫入-google-sheetswritesheet">4.2 讓新的爬蟲資料正確寫入 Google Sheets：<code>writeSheet</code><a class="h-anchor" href="#42-%e8%ae%93%e6%96%b0%e7%9a%84%e7%88%ac%e8%9f%b2%e8%b3%87%e6%96%99%e6%ad%a3%e7%a2%ba%e5%af%ab%e5%85%a5-google-sheetswritesheet" aria-label="這個段落的連結"></a></h3>
-<p>我們依照客戶接受的<code>解決方案</code>來調整這隻函式</p>
+<p>我們依照客戶接受的<mark>解決方案</mark>來調整這隻函式</p>
 <ul>
-<li>將爬蟲json 中新增的粉專<code>補到 Google Sheets 最後面</code></li>
+<li>將爬蟲json 中新增的粉專<mark>補到 Google Sheets 最後面</mark></li>
 <li>追蹤人數用<code>粉專名稱+粉專網址</code>來塞入對應的位置</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">async</span> <span style="color:#ff7b72">function</span> writeSheet (title, result_array, auth) {
@@ -228,7 +236,8 @@
 </ul>
 </li>
 </ul>
-<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong></p>
+<p><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
 </blockquote>
 ]]></content:encoded>
     </item>

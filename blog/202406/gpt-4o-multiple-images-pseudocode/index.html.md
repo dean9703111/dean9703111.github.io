@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202406/gpt-4o-multiple-images-pseudocode/
-- 發布：2024-06-17（更新：2024-10-24）
+- 發布：2024-06-17
 - 主題：AI 實戰
 - 標籤：ChatGPT、GPT-4o、AI、Pseudocode、AI Image Generator
 - 摘要：儘管靠 GPT-4o 的 DALL·E 生成圖片很方便，但一直有個痛點。 那就是我需要根據主題想合適的 Prompt，儘管能靠 ChatGPT 幫忙想 Prompt，但操作會多好幾個步驟。 所以今天分享的技巧，就是教大家如何透過偽代碼將任務流程化，一次生成多張不同風格的圖片！
@@ -114,7 +114,7 @@ for image_prompt in image_prompts:
 
 或者透過影片可以更直觀的感受（有開倍速）：
 
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=ErCfbqW83n4)
+[YouTube 影片：用偽代碼讓 ChatGPT 的 GPT-4o 一次生成多張圖片](https://www.youtube.com/watch?v=ErCfbqW83n4)
 
 ## 四、你可能會遇到的問題
 

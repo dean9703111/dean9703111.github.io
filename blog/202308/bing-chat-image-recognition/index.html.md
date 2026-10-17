@@ -2,14 +2,14 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202308/bing-chat-image-recognition/
-- 發布：2023-08-10（更新：2024-10-24）
+- 發布：2023-08-10
 - 主題：AI 實戰
 - 標籤：Bing、Bing Chat、AI、Image Recognition、AI Image Recognition
 - 摘要：Bing Chat 可以上傳圖片啦！讓筆者透過這篇文章向大家介紹 Bing Chat 在圖像辨識上的各種應用：「產生食譜、以圖生圖、學攝影」；一起體驗「長了眼睛」的 AI 有多麼強大！
 
 Bing Chat 可以上傳圖片啦！讓筆者透過這篇文章向大家介紹 Bing Chat 在圖像辨識上的各種應用：「產生食譜、以圖生圖、學攝影」；一起體驗「長了眼睛」的 AI 有多麼強大！
 
-**小提醒**：使用 Edge 瀏覽器，並登入微軟 Microsoft 帳號才能體驗完整的功能喔！
+> **小提醒**：使用 Edge 瀏覽器，並登入微軟 Microsoft 帳號才能體驗完整的功能喔！
 
 ## 辨識圖片產生食譜
 

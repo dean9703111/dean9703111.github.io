@@ -8,7 +8,7 @@
 - 標籤：職涯、YouTube、故事、影片
 - 摘要：今年是我經營自媒體的第五年，拍 YouTube 的第一年。沒有人可以一開始就做到完美，但都能做到自己能力範圍內的最好。如果你曾懷疑自己是否走在正確的路上，或者想靠自己的方式重新定義成功，那麼，這裡會是你值得停下腳步的地方。
 
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=KnQPPt4l2iE)
+[YouTube 影片：【工程師下班有約 EP01】挑戰，從來不需要獲得別人允許](https://www.youtube.com/watch?v=KnQPPt4l2iE)
 
 今年是我經營自媒體的第五年，拍 YouTube 的第一年。
 
@@ -101,9 +101,9 @@
 
 如果你想挑戰過去從沒做過的事情，看見不一樣的觀點，[歡迎訂閱我的 YouTube](https://www.youtube.com/@dlcorner)，跟我一起成長。
 
-《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
+> 《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

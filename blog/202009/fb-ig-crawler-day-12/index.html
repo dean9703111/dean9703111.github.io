@@ -2,8 +2,8 @@
 <html lang="zh-tw" class="no-js"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>【Day12】合體吧！用一隻程式搞定FB、IG爬蟲</title>
-  <meta name="description" content="1.1 瀏覽器關閉導致無法讀取網頁元件1.2 跨網域(CORS)錯誤 有些需求不是複製貼上就能解決的 今日目標 1. 分析實作過程中可能會遇到的問題 1.1 瀏覽器關閉導致無法讀取網頁元件 1.2 跨網域(CORS)錯誤 2. 一隻程式爬完 …">
+  <title>合體吧！用一隻程式搞定FB、IG爬蟲｜林鼎淵 Dean Lin</title>
+  <meta name="description" content="「有些需求不是複製貼上就能解決的。」1.1 瀏覽器關閉導致無法讀取網頁元件。1.2 跨網域(CORS)錯誤。2.1 分析程式結構邏輯。2.2 思考程式上有什麼地方需要改進。如果你直接把兩天文章複製貼上爬的話一定會看到這個錯誤訊息。">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202009/fb-ig-crawler-day-12/">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -14,15 +14,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202009/fb-ig-crawler-day-12/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
-  <meta property="og:title" content="【Day12】合體吧！用一隻程式搞定FB、IG爬蟲">
-  <meta property="og:description" content="1.1 瀏覽器關閉導致無法讀取網頁元件1.2 跨網域(CORS)錯誤 有些需求不是複製貼上就能解決的 今日目標 1. 分析實作過程中可能會遇到的問題 1.1 瀏覽器關閉導致無法讀取網頁元件 1.2 跨網域(CORS)錯誤 2. 一隻程式爬完 …">
+  <meta property="og:title" content="合體吧！用一隻程式搞定FB、IG爬蟲">
+  <meta property="og:description" content="「有些需求不是複製貼上就能解決的。」1.1 瀏覽器關閉導致無法讀取網頁元件。1.2 跨網域(CORS)錯誤。2.1 分析程式結構邏輯。2.2 思考程式上有什麼地方需要改進。如果你直接把兩天文章複製貼上爬的話一定會看到這個錯誤訊息。">
   <meta property="og:url" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-12/">
   <meta property="og:locale" content="zh_TW">
   <meta property="og:type" content="article">
@@ -30,20 +32,20 @@
   <meta property="article:modified_time" content="2020-09-27T07:59:57&#43;08:00">
   <meta property="article:author" content="https://deanlin.net/about/">
   <meta property="article:section" content="技術教學">
-  <meta property="article:tag" content="IT 邦幫忙鐵人賽">
+  <meta property="article:tag" content="iT 邦幫忙鐵人賽">
   <meta property="article:tag" content="Facebook">
   <meta property="article:tag" content="Instagram">
   <meta property="article:tag" content="Crawler">
   <meta property="article:tag" content="Selenium Webdriver">
-  <meta property="og:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-og_hu_c711c613b847e16f.jpg">
+  <meta property="og:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/cover_hu_f487751a291cc221.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="675">
   <meta property="og:image:alt" content="【Day12】合體吧！用一隻程式搞定FB、IG爬蟲">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-og_hu_c711c613b847e16f.jpg">
-  <meta name="twitter:title" content="【Day12】合體吧！用一隻程式搞定FB、IG爬蟲">
-  <meta name="twitter:description" content="1.1 瀏覽器關閉導致無法讀取網頁元件1.2 跨網域(CORS)錯誤 有些需求不是複製貼上就能解決的 今日目標 1. 分析實作過程中可能會遇到的問題 1.1 瀏覽器關閉導致無法讀取網頁元件 1.2 跨網域(CORS)錯誤 2. 一隻程式爬完 …">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-09-27T07:59:57+08:00","datePublished":"2020-09-27T07:59:57+08:00","description":"1.1 瀏覽器關閉導致無法讀取網頁元件1.2 跨網域(CORS)錯誤 有些需求不是複製貼上就能解決的 今日目標 1. 分析實作過程中可能會遇到的問題 1.1 瀏覽器關閉導致無法讀取網頁元件 1.2 跨網域(CORS)錯誤 2. 一隻程式爬完 …","headline":"【Day12】合體吧！用一隻程式搞定FB、IG爬蟲","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-og_hu_c711c613b847e16f.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-og_hu_387e5d0ae3607715.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-og_hu_9ad26f06e36bf3f.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Facebook, Instagram, Crawler, Selenium Webdriver","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-og_hu_c711c613b847e16f.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10243941"],"thumbnailUrl":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-og_hu_c711c613b847e16f.jpg","timeRequired":"PT7M","url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/","wordCount":3145},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/","name":"【Day12】合體吧！用一隻程式搞定FB、IG爬蟲","position":3}]}]}</script>
+  <meta name="twitter:image" content="https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/cover_hu_f487751a291cc221.jpg">
+  <meta name="twitter:title" content="合體吧！用一隻程式搞定FB、IG爬蟲">
+  <meta name="twitter:description" content="「有些需求不是複製貼上就能解決的。」1.1 瀏覽器關閉導致無法讀取網頁元件。1.2 跨網域(CORS)錯誤。2.1 分析程式結構邏輯。2.2 思考程式上有什麼地方需要改進。如果你直接把兩天文章複製貼上爬的話一定會看到這個錯誤訊息。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2020-09-27T07:59:57+08:00","datePublished":"2020-09-27T07:59:57+08:00","description":"「有些需求不是複製貼上就能解決的。」1.1 瀏覽器關閉導致無法讀取網頁元件。1.2 跨網域(CORS)錯誤。2.1 分析程式結構邏輯。2.2 思考程式上有什麼地方需要改進。如果你直接把兩天文章複製貼上爬的話一定會看到這個錯誤訊息。","headline":"【Day12】合體吧！用一隻程式搞定FB、IG爬蟲","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/cover_hu_f487751a291cc221.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/cover_hu_4dc80c41b6513164.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/cover_hu_ae4b2fef149236fc.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":[{"@id":"https://deanlin.net/#website"},{"@type":"CreativeWorkSeries","name":"FB \u0026 IG 爬蟲專案從零開始","url":"https://deanlin.net/series/fb-ig-crawler/"}],"keywords":"iT 邦幫忙鐵人賽, Facebook, Instagram, Crawler, Selenium Webdriver","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/cover_hu_f487751a291cc221.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://ithelp.ithome.com.tw/articles/10243941"],"thumbnailUrl":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/images/cover_hu_f487751a291cc221.jpg","timeRequired":"PT7M","url":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/","wordCount":3145},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202009/fb-ig-crawler-day-12/","name":"【Day12】合體吧！用一隻程式搞定FB、IG爬蟲","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -113,12 +115,12 @@
         <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
         <a href="/categories/tech/">技術教學</a>
       </nav>
-      <h1 class="article-title">【Day12】合體吧！用一隻程式搞定FB、IG爬蟲</h1>
+      <h1 class="article-title"><span class="nobr">【D</span>ay1<span class="nobr">2】</span>合體<span class="nobr">吧！</span>用一隻程式搞定F<span class="nobr">B、</span>IG爬蟲</h1>
       <div class="article-meta">
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2020-09-27">2020.09.27</time>
               <span>閱讀約 7 分鐘</span>
@@ -127,6 +129,7 @@
         </div>
         <a class="series-pill" href="#series-box">系列・FB &amp; IG 爬蟲專案從零開始 <b>12</b>/ 30</a>
       </div>
+      <p class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg><span>這篇文章寫於 2020 年，文中的工具與版本可能已經更新，實作時請以官方文件為準。</span></p>
     </header>
 
     <div class="article-main">
@@ -142,9 +145,11 @@
 </blockquote>
 <h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="1-分析實作過程中可能會遇到的問題">1. 分析實作過程中可能會遇到的問題<a class="h-anchor" href="#1-%e5%88%86%e6%9e%90%e5%af%a6%e4%bd%9c%e9%81%8e%e7%a8%8b%e4%b8%ad%e5%8f%af%e8%83%bd%e6%9c%83%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h3>
-<p>1.1 瀏覽器關閉導致無法讀取網頁元件<br>1.2 跨網域(CORS)錯誤</p>
+<p>1.1 瀏覽器關閉導致無法讀取網頁元件</p>
+<p>1.2 跨網域(CORS)錯誤</p>
 <h3 class="h-nomark" id="2-一隻程式爬完-fb--ig-粉專">2. 一隻程式爬完 FB &amp; IG 粉專<a class="h-anchor" href="#2-%e4%b8%80%e9%9a%bb%e7%a8%8b%e5%bc%8f%e7%88%ac%e5%ae%8c-fb--ig-%e7%b2%89%e5%b0%88" aria-label="這個段落的連結"></a></h3>
-<p>2.1 分析程式結構邏輯<br>2.2 思考程式上有什麼地方需要改進</p>
+<p>2.1 分析程式結構邏輯</p>
+<p>2.2 思考程式上有什麼地方需要改進</p>
 <hr>
 <h2 class="h-nomark" id="1-實作過程中可能會遇到的問題">1. 實作過程中可能會遇到的問題<a class="h-anchor" href="#1-%e5%af%a6%e4%bd%9c%e9%81%8e%e7%a8%8b%e4%b8%ad%e5%8f%af%e8%83%bd%e6%9c%83%e9%81%87%e5%88%b0%e7%9a%84%e5%95%8f%e9%a1%8c" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="11-瀏覽器關閉導致無法讀取網頁元件">1.1 瀏覽器關閉導致無法讀取網頁元件<a class="h-anchor" href="#11-%e7%80%8f%e8%a6%bd%e5%99%a8%e9%97%9c%e9%96%89%e5%b0%8e%e8%87%b4%e7%84%a1%e6%b3%95%e8%ae%80%e5%8f%96%e7%b6%b2%e9%a0%81%e5%85%83%e4%bb%b6" aria-label="這個段落的連結"></a></h3>
@@ -154,8 +159,8 @@
 <li>這是因為<strong>一次跳出兩個瀏覽器</strong>在執行，只要其中一個瀏覽器完成爬蟲任務觸發 <strong>driver.quit()</strong> 就會導致另一個還沒爬蟲完畢的<strong>瀏覽器因無法讀取元件而掛掉</strong></li>
 <li>面對這個問題，我建議<strong>開一個瀏覽器</strong>來處理：
 <ol>
-<li>因為<code>跑爬蟲會消耗電腦的記憶體以及網路流量</code>，我希望電腦跑爬蟲的時候不要影響我做其他事情的效率</li>
-<li>使用一個瀏覽器在跑<code>遇到問題時方便除錯</code></li>
+<li>因為<mark>跑爬蟲會消耗電腦的記憶體以及網路流量</mark>，我希望電腦跑爬蟲的時候不要影響我做其他事情的效率</li>
+<li>使用一個瀏覽器在跑<mark>遇到問題時方便除錯</mark></li>
 </ol>
 </li>
 </ul>
@@ -163,7 +168,7 @@
 <p>如果你把他<strong>改成一個瀏覽器</strong>執行，跑完 FB 粉專再跑 IG 粉專應該又會出現<strong>跨網域(CORS)問題</strong>的錯誤(目前只有 windows 作業系統才會遇到)</p>
 <ul>
 <li>
-<p>這是<code>網域切換時因為一些安全性的疑慮而拒絕跳轉</code>，像是從 <a href="https://www.facebook.com/">https://www.facebook.com/</a> 跳轉到 <a href="https://www.instagram.com/">https://www.instagram.com</a> 就會遇到這個問題</p>
+<p>這是<mark>網域切換時因為一些安全性的疑慮而拒絕跳轉</mark>，像是從 <a href="https://www.facebook.com/">https://www.facebook.com/</a> 跳轉到 <a href="https://www.instagram.com/">https://www.instagram.com</a> 就會遇到這個問題</p>
 </li>
 <li>
 <p>這個問題在建立瀏覽器時加上設定 <code>{ acceptSslCerts: true, acceptInsecureCerts: true }</code> 即可解決</p>
@@ -370,7 +375,8 @@
 <li>很難掌握每個函式的功能</li>
 <li>幾個月後回來看這隻程式估計一臉茫然</li>
 </ol>
-<p>如果還有更多的體會歡迎大家在下方留言(請鞭小力一點QQ)<br>明天會講<a href="/blog/202009/fb-ig-crawler-day-13/">程式碼的重構</a>，透過重構我們可以更有效率的掌握程式；後天會講<a href="/blog/202009/fb-ig-crawler-day-14/">try-catch在本專案的應用</a>，方便日後的除錯</p>
+<p>如果還有更多的體會歡迎大家在下方留言(請鞭小力一點QQ)</p>
+<p>明天會講<a href="/blog/202009/fb-ig-crawler-day-13/">程式碼的重構</a>，透過重構我們可以更有效率的掌握程式；後天會講<a href="/blog/202009/fb-ig-crawler-day-14/">try-catch在本專案的應用</a>，方便日後的除錯</p>
 <hr>
 <h3 id="執行程式">執行程式<a class="h-anchor" href="#%e5%9f%b7%e8%a1%8c%e7%a8%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h3>
 <ol>
@@ -390,7 +396,7 @@
 </li>
 <li>
 <p>順利的話就能看到FB &amp; IG的追蹤人數嚕～</p>
-<p><img src="/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-01.webp" srcset="/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-01_hu_531a3999544aa304.webp 720w, /blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="155" alt="執行程式（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-01.webp" srcset="/blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-01_hu_531a3999544aa304.webp 720w, /blog/202009/fb-ig-crawler-day-12/images/fb-ig-crawler-day-12-01.webp 1024w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1024" height="155" alt="執行程式（圖 1）" fetchpriority="high" decoding="async"></p>
 </li>
 </ol>
 <hr>
@@ -429,7 +435,8 @@
 </ul>
 </li>
 </ul>
-<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong></p>
+<p><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
 </blockquote>
 
       </div>
@@ -438,7 +445,7 @@
         <p class="origin-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.2 20.3 8 19.8 19.3 8.5a2.3 2.3 0 0 0-3.2-3.2L4.7 16.6z"/><path d="m14.9 6.7 3.2 3.2"/></svg><span>本文最初發表於 iT 邦幫忙・第 12 屆 iThome 鐵人賽（2020.09.27），這個系列獲得 AI &amp; Data 組佳作</span><a href="https://ithelp.ithome.com.tw/articles/10243941" target="_blank" rel="noopener">iT 邦幫忙原文</a></p>
         <div class="foot-row">
           <div class="post-tags">
-            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">IT 邦幫忙鐵人賽</a>
+            <a class="chip chip-hash" href="/tags/it-%E9%82%A6%E5%B9%AB%E5%BF%99%E9%90%B5%E4%BA%BA%E8%B3%BD/">iT 邦幫忙鐵人賽</a>
             <a class="chip chip-hash" href="/tags/facebook/">Facebook</a>
             <a class="chip chip-hash" href="/tags/instagram/">Instagram</a>
             <a class="chip chip-hash" href="/tags/crawler/">Crawler</a>
@@ -612,12 +619,12 @@
   <div class="card-grid">
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRsIAAABXRUJQVlA4WAoAAAAQAAAAFwAACAAAQUxQSDsAAAABR6Agkg06&#43;p4/oYwsIiJk5PRrA2oi2Wr&#43;BwMZ&#43;twiAgOYoAcVKI8KIvo/AaVu0rE27dzJ/7W&#43;qZnbRABWUDggYAAAANADAJ0BKhgACQA/DWqnR6YjIZgEAGMQxPSAADOPyrdCxFlS0xWvIADif1AJGs9xioEVYRKvSk4kug2PDqF9DMoxMcplL6Bu6X/xUB3ln87//&#43;DU/13cburahYFsbAAAAA==" alt="" width="24" height="9"><img src="/blog/202009/fb-ig-crawler-day-10/images/fb-ig-crawler-day-10-01_hu_b3ff5abe8892d7b3.webp" srcset="/blog/202009/fb-ig-crawler-day-10/images/fb-ig-crawler-day-10-01_hu_f8a3e474a13cb669.webp 240w, /blog/202009/fb-ig-crawler-day-10/images/fb-ig-crawler-day-10-01_hu_c7fafa22e2605260.webp 480w, /blog/202009/fb-ig-crawler-day-10/images/fb-ig-crawler-day-10-01_hu_198ccce324fe9e8c.webp 800w, /blog/202009/fb-ig-crawler-day-10/images/fb-ig-crawler-day-10-01_hu_b3ff5abe8892d7b3.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="386" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202009/fb-ig-crawler-day-10/images/cover_hu_eb02566e006248f8.webp" srcset="/blog/202009/fb-ig-crawler-day-10/images/cover_hu_fd52e3798ef68930.webp 240w, /blog/202009/fb-ig-crawler-day-10/images/cover_hu_ecf62b083bdf63b2.webp 480w, /blog/202009/fb-ig-crawler-day-10/images/cover_hu_e2220df5162f38b8.webp 800w, /blog/202009/fb-ig-crawler-day-10/images/cover_hu_eb02566e006248f8.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-10/">【Day10】關閉干擾爬蟲的彈窗，將FB粉專追蹤數納入囊中</a></h3>
+    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-10/"><span class="nobr">【D</span>ay1<span class="nobr">0】</span>關閉干擾爬蟲的彈<span class="nobr">窗，</span>將FB粉專追蹤數納入囊中</a></h3>
     <p class="card-desc">我的文章是以專案的角度寫作，遇到問題才會分析解決的方案，與專門介紹套件的文章風格不同，因為這個系列文撰寫的初衷並不是教一個技術而是培養你解決問題的能力</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-09-25">2020.09.25</time>
@@ -628,12 +635,12 @@
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRsIAAABXRUJQVlA4WAoAAAAQAAAAFwAADwAAQUxQSD4AAAABX6CokRQ2eIWmiDeCiIiwhxk8vhdqItmpZmIibTxERTQggQoXCEAF/R9/V1JH9H8CSoU6HkyT5D9oHYY5FFZQOCBeAAAA8AMAnQEqGAAQAD8NZqZHpiKhmAQAYxDE9IAAMyVBjAfBb9U&#43;AYgmAAD&#43;ykdqiTCW953GIFzo3Fwau0JQxernl6v71ng&#43;G/w1/kF47dvbiGdaAdnJCvJVKw9DfQAAAA==" alt="" width="24" height="16"><img src="/blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01_hu_9c557a4a36e30db0.webp" srcset="/blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01_hu_32ec8b2abf821e00.webp 240w, /blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01_hu_af71c0697c87c1f.webp 480w, /blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01_hu_30546522dda22cc1.webp 800w, /blog/202010/fb-ig-crawler-day-16/images/fb-ig-crawler-day-16-01_hu_9c557a4a36e30db0.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="671" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202010/fb-ig-crawler-day-16/images/cover_hu_71ace97a0f7b64d2.webp" srcset="/blog/202010/fb-ig-crawler-day-16/images/cover_hu_ba287debc9367f3c.webp 240w, /blog/202010/fb-ig-crawler-day-16/images/cover_hu_88fc6947019ed5c2.webp 480w, /blog/202010/fb-ig-crawler-day-16/images/cover_hu_c7a9dc81bfcdccf3.webp 800w, /blog/202010/fb-ig-crawler-day-16/images/cover_hu_71ace97a0f7b64d2.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-16/">【Day16】不藏私，加上5行程式就能優化爬蟲的小技巧 ＆ 學會爬蟲，之後呢？</a></h3>
+    <h3 class="card-title"><a href="/blog/202010/fb-ig-crawler-day-16/"><span class="nobr">【D</span>ay1<span class="nobr">6】</span>不藏<span class="nobr">私，</span>加上5行程式就能優化爬蟲的小技巧 ＆ 學會爬<span class="nobr">蟲，</span>之後<span class="nobr">呢？</span></a></h3>
     <p class="card-desc">1.1 優化分成哪些面向?1.2 優化執行效率及穩定度1.3 背景執行並減少記憶體的消耗</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-10-01">2020.10.01</time>
@@ -644,12 +651,12 @@
 
     <article class="card">
   <div class="card-media">
-    <img class="cover-bg" src="data:image/webp;base64,UklGRo4AAABXRUJQVlA4WAoAAAAQAAAAFwAAAwAAQUxQSCQAAAABJ0AmbRukAmqh7vYuImL4oJCNJGgfgV2lzfmDHUFE/9NFdp9WUDggRAAAAJADAJ0BKhgABAA/DWyoSCYjIZgEAGMQxPSAADVz3rVGzU5NUgAA/svlYSJs72se45pkRfy6ncEKVqznNFeROnE7AAAA" alt="" width="24" height="4"><img src="/blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01_hu_52fd5863a03a1d18.webp" srcset="/blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01_hu_d305c570d30980c2.webp 240w, /blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01_hu_e771a01dda9be58c.webp 480w, /blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01_hu_b8697646e7724d21.webp 800w, /blog/202009/fb-ig-crawler-day-13/images/fb-ig-crawler-day-13-01_hu_52fd5863a03a1d18.webp 1024w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1024" height="159" alt="" loading="lazy" decoding="async" class="is-contain">
+    <img src="/blog/202009/fb-ig-crawler-day-13/images/cover_hu_1770f78627f2c9c3.webp" srcset="/blog/202009/fb-ig-crawler-day-13/images/cover_hu_a53e993ca163e643.webp 240w, /blog/202009/fb-ig-crawler-day-13/images/cover_hu_83e6dab39ac8cc70.webp 480w, /blog/202009/fb-ig-crawler-day-13/images/cover_hu_70daa8bfa2566244.webp 800w, /blog/202009/fb-ig-crawler-day-13/images/cover_hu_1770f78627f2c9c3.webp 1200w" sizes="(max-width: 600px) 120px, (max-width: 960px) 46vw, 360px" width="1200" height="675" alt="" loading="lazy" decoding="async">
   </div>
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/fb-ig-crawler/">FB &amp; IG 爬蟲專案從零開始</a></div>
 
-    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-13/">【Day13】重構程式碼，減少歷史業障</a></h3>
+    <h3 class="card-title"><a href="/blog/202009/fb-ig-crawler-day-13/"><span class="nobr">【D</span>ay1<span class="nobr">3】</span>重構程式<span class="nobr">碼，</span>減少歷史業障</a></h3>
     <p class="card-desc">昨天我們完成了一個跑得動的程式，但很明顯這不是一個好的程式 大家應該有感受到隨著程式越來越長，我們對他的掌握力逐步下降 根據 Clean Code 的原則而言就是說這程式寫得很爛XD 很多人為了盡快完成功能而埋頭狂寫，但這樣容易導致你日後維護以及交接的困難性，你所負責的專案越大這…</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2020-09-28">2020.09.28</time>
@@ -784,7 +791,7 @@
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

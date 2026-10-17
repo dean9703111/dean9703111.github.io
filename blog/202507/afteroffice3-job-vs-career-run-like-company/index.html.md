@@ -44,11 +44,11 @@
 
 **直播回放**:
 
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=nFOoCM8i98k)
+[YouTube 影片：「工作」≠「職涯」把自己當一間公司在經營 | 開箱 #第一線資料科學工作者 系列活動 #40 ft. @dlcorner](https://www.youtube.com/watch?v=nFOoCM8i98k)
 
-《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
+> 《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
 
-我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
+> 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡
 
 ---
 

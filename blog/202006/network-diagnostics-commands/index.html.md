@@ -2,12 +2,12 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/network-diagnostics-commands/
-- 發布：2020-06-15（更新：2023-05-05）
+- 發布：2020-06-15
 - 主題：技術教學
 - 標籤：Nmap、Ping、Traceroute、網路
 - 摘要：在這裡會說明幾個我常使用的檢查方式
 
-以下指令皆在Terminal(終端機)操作
+> 以下指令皆在Terminal(終端機)操作
 
 ## Ping xxx.xxx.xxx.xxx 最基礎的一種
 
@@ -42,7 +42,7 @@ sudo apt-get install nmap
 
 下面介紹我常用的指令：
 
-- 掃描主機是否有開機，並且開啟哪些port
+1. 掃描主機是否有開機，並且開啟哪些port
 
 ```
 nmap www.hinet.net
@@ -89,7 +89,7 @@ traceroute -r google.com
 
 ```
 
-希望這篇文章提供的方法，可以幫助你在查找問題時更加順利～
+> 希望這篇文章提供的方法，可以幫助你在查找問題時更加順利～
 
 ---
 

@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202007/vue-basics/
-- 發布：2020-07-10（更新：2023-05-05）
+- 發布：2020-07-10
 - 主題：技術教學
 - 標籤：Vue.js、Vuex
 - 摘要：雖然用了一段時間的Vue，但自認對他的了解還不夠深刻，於是讀了一些大神文章，依照自己的理解做了整理筆記，希望大家都能吸收這些基本常識。
@@ -11,7 +11,7 @@
 
 ## SPA，single page application簡易說明
 
-他會在一開始init web page時就把html, js, css這些需要的load完，因此在換頁時只需要load新頁面所需要的元件，基本上是用router-link的方式來完成換頁功能
+> 他會在一開始init web page時就把html, js, css這些需要的load完，因此在換頁時只需要load新頁面所需要的元件，基本上是用router-link的方式來完成換頁功能
 
 ### 優點：
 
@@ -30,11 +30,11 @@
 - v-if是根據條件是否成立來決定渲染/銷毀
 - v-show是無條件渲染，他就是一個css的display的功能
 
-如果你使用場景偶爾才切換條件就使用v-if，可以減少資源浪費；但如果需要高頻率切換就使用v-show吧
+> 如果你使用場景偶爾才切換條件就使用v-if，可以減少資源浪費；但如果需要高頻率切換就使用v-show吧
 
 ## Vue parent component , child component特性
 
-Parent component可以透過props傳遞到child component，而child component如果想要傳遞變更事件及資料就需要用$emit來觸發parent的事件
+> Parent component可以透過props傳遞到child component，而child component如果想要傳遞變更事件及資料就需要用$emit來觸發parent的事件
 
 如果你想要在child 變更props，請這樣操作：
 
@@ -69,7 +69,7 @@ computed: {
 
 ## 給object array新的value，vue要如何偵測
 
-因為javascript限制，下面兩個範例是vue無法偵測的，需要進行修正：
+> 因為javascript限制，下面兩個範例是vue無法偵測的，需要進行修正：
 
 ```
 //vm.items[indexOfItem] = newValue
@@ -81,11 +81,11 @@ vm.items.splice(newLength)
 
 ## Vue的生命週期
 
-Component初始化->屬性綁定&編譯templete->掛載dom->渲染更新…->銷毀
+> Component初始化->屬性綁定&編譯templete->掛載dom->渲染更新…->銷毀
 
 ## Parent component & Child component life cycle
 
-基本原則就是父親開始動作後兒子才能動作，兒子動作完畢後，父親才會正式停下來
+> 基本原則就是父親開始動作後兒子才能動作，兒子動作完畢後，父親才會正式停下來
 
 ### Component mounted
 
@@ -105,18 +105,18 @@ Component初始化->屬性綁定&編譯templete->掛載dom->渲染更新…->銷
 
 ## Vue的生命週期中可以做異步請求
 
-created、beforeMounted、mounted都可以，因為data已經存在，可以去做相關的操作，但建議在created階段操作：
+> created、beforeMounted、mounted都可以，因為data已經存在，可以去做相關的操作，但建議在created階段操作：
 
 - 可更早取得server端數據，減少頁面loading時間
 - ssr不支援beforeMounted、mounted，放在created可保持程式邏輯一致性(如果前後端分離通常是在client端做渲染較不會有這個問題)
 
 ## 什麼階段可以對DOM操作
 
-在mounted階段可以對DOM操作，這個階段已經完成整個頁面的component了
+> 在mounted階段可以對DOM操作，這個階段已經完成整個頁面的component了
 
 ## Parent component如何監聽Child component的生命週期
 
-- 用$emit的方式
+1. 用$emit的方式
 
 ```
 // Parent.vue
@@ -143,13 +143,12 @@ console.log(‘子组件触发 mounted 钩子函数 …’);
 
 ## Keep-alive的作用
 
-keep-alive是 Vue 的原生元件，專門做為 Cache 的解決方案，避免頁面中的組件重新被渲染。[詳細可參考](https://medium.com/%E4%B8%80%E5%80%8B%E5%B0%8F%E5%B0%8F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E9%9A%A8%E6%89%8B%E7%AD%86%E8%A8%98/vue-%E8%81%B0%E6%98%8E%E4%BD%BF%E7%94%A8-keep-alive-%E9%81%94%E5%88%B0-cache-%E7%9B%AE%E7%9A%84-691cfb3c8bf0)
+> keep-alive是 Vue 的原生元件，專門做為 Cache 的解決方案，避免頁面中的組件重新被渲染。[詳細可參考](https://medium.com/%E4%B8%80%E5%80%8B%E5%B0%8F%E5%B0%8F%E5%B7%A5%E7%A8%8B%E5%B8%AB%E7%9A%84%E9%9A%A8%E6%89%8B%E7%AD%86%E8%A8%98/vue-%E8%81%B0%E6%98%8E%E4%BD%BF%E7%94%A8-keep-alive-%E9%81%94%E5%88%B0-cache-%E7%9B%AE%E7%9A%84-691cfb3c8bf0)
 
 ## 為什麼component中的data是一個函數，然後return一個object，而new Vue卻可以直接是一個object
 
-因為component是要用來重複使用的，如果data是一個object這樣component之間會資料錯亂，而當他是一個函數的時候就可以完成區隔
-
-而new Vue則不會重複使用，所以沒有被引用的問題
+> 因為component是要用來重複使用的，如果data是一個object這樣component之間會資料錯亂，而當他是一個函數的時候就可以完成區隔
+> 而new Vue則不會重複使用，所以沒有被引用的問題
 
 ```
 // data
@@ -171,7 +170,7 @@ new Vue({
 
 ## v-model原理
 
-v-model主要是在input, select, textarea這些元素中建立雙向綁定的工具，他會在不同元素中拋出不一樣的事件：
+> v-model主要是在input, select, textarea這些元素中建立雙向綁定的工具，他會在不同元素中拋出不一樣的事件：
 
 - text 和 textarea 元素使用 value 屬性和 input 事件；
 - checkbox 和 radio 使用 checked 屬性和 change 事件；
@@ -187,7 +186,7 @@ v-model主要是在input, select, textarea這些元素中建立雙向綁定的�
 
 ## Vuex 概念
 
-核心為store，用來存取state；可使用mutation提交的方式來過改變state資料
+> 核心為store，用來存取state；可使用mutation提交的方式來過改變state資料
 
 ## SSR優缺點
 
@@ -203,11 +202,11 @@ v-model主要是在input, select, textarea這些元素中建立雙向綁定的�
 
 ## vue-router種類
 
-hash, history, abstract(default)
+> hash, history, abstract(default)
 
 ## MVVM是什麼
 
-由Model-View-ViewModel組成
+> 由Model-View-ViewModel組成
 
 - Model: 由後端接口api return 回來的資料(ex: json data)
 
@@ -267,7 +266,7 @@ created(){
 
 ## Vue中Key的作用
 
-key是Vue中node節點的唯一值，透過他diff操作可更快速準確
+> key是Vue中node節點的唯一值，透過他diff操作可更快速準確
 
 ## Vue可考慮優化項目
 

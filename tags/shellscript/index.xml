@@ -4,7 +4,7 @@
     <title>Shellscript｜林鼎淵 Dean Lin</title>
     <link>https://deanlin.net/tags/shellscript/</link>
     <image><url>https://deanlin.net/images/author_hu_aa256fc934e9a932.jpg</url><title>Shellscript｜林鼎淵 Dean Lin</title><link>https://deanlin.net/tags/shellscript/</link><width>144</width><height>144</height></image>
-    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。300 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
+    <description>林鼎淵（Dean Lin）的部落格：生成式 AI 企業內訓講師、外商資安公司軟體專家、7 本書作者。360 多篇文章分享生成式 AI 實戰、Claude Code 與 Vibe Coding 教學、團隊合作與工程師職涯。</description>
     <generator>Hugo</generator>
     <language>zh-tw</language>
     <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
@@ -18,19 +18,25 @@
       <dc:creator>林鼎淵</dc:creator>
       <category>技術教學</category>
       <description>昨天的教學讓你的排程穩定的在背景執行，但是你重開機在終端機(Terminal)輸入 forever list 的指令你會發現 forever 根本沒有 forever</description>
-      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-og_hu_afce4f8c43d95129.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <media:content url="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/cover_hu_cb8cc53065be1517.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
       <content:encoded><![CDATA[<blockquote>
 <p>解決問題的方法 ≠ 最好的方法；我只是提出我的解法，了解問題發生的原因後你可以想想自己如果遇到了會怎麼解決</p>
 </blockquote>
 <h2 id="為什麼寫這篇文章">為什麼寫這篇文章<a class="h-anchor" href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e5%af%ab%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0" aria-label="這個段落的連結"></a></h2>
-<p>昨天的教學讓你的排程穩定的在背景執行，但是你重開機在終端機(Terminal)輸入 <strong>forever list</strong> 的指令你會發現 <code>forever 根本沒有 forever</code></p>
-<p>為了決這個問題，今天會教你如何在<code>電腦啟動時執行 script 讓 forever 跑起來</code>的方法，這塊我會分成 windows 跟 mac 來說明，請大家安心服用</p>
+<p>昨天的教學讓你的排程穩定的在背景執行，但是你重開機在終端機(Terminal)輸入 <strong>forever list</strong> 的指令你會發現 <mark>forever 根本沒有 forever</mark></p>
+<p>為了決這個問題，今天會教你如何在<mark>電腦啟動時執行 script 讓 forever 跑起來</mark>的方法，這塊我會分成 windows 跟 mac 來說明，請大家安心服用</p>
 <hr>
 <h2 id="今日目標">今日目標<a class="h-anchor" href="#%e4%bb%8a%e6%97%a5%e7%9b%ae%e6%a8%99" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="1-設定-mac-排程">1. 設定 mac 排程<a class="h-anchor" href="#1-%e8%a8%ad%e5%ae%9a-mac-%e6%8e%92%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
-<p>1.1 撰寫執行排程的 shell script ：<code>crawler_cron.sh</code><br>1.2 將 crawler_cron.sh 設定為可以被執行<br>1.3 設定 crawler_cron.sh 在使用者登入後自動執行<br>1.4 重新登入確認 forever 是否運行</p>
+<p>1.1 撰寫執行排程的 shell script ：<code>crawler_cron.sh</code></p>
+<p>1.2 將 crawler_cron.sh 設定為可以被執行</p>
+<p>1.3 設定 crawler_cron.sh 在使用者登入後自動執行</p>
+<p>1.4 重新登入確認 forever 是否運行</p>
 <h3 class="h-nomark" id="2-設定-windows-排程">2. 設定 windows 排程<a class="h-anchor" href="#2-%e8%a8%ad%e5%ae%9a-windows-%e6%8e%92%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
-<p>2.1 進入排程設定頁面<br>2.2 設定觸發條件<br>2.3 打開 windows 歷程紀錄<br>2.4 重開機確認 forever 是否運行</p>
+<p>2.1 進入排程設定頁面</p>
+<p>2.2 設定觸發條件</p>
+<p>2.3 打開 windows 歷程紀錄</p>
+<p>2.4 重開機確認 forever 是否運行</p>
 <hr>
 <h2 class="h-nomark" id="1-設定-mac-排程-1">1. 設定 mac 排程<a class="h-anchor" href="#1-%e8%a8%ad%e5%ae%9a-mac-%e6%8e%92%e7%a8%8b-1" aria-label="這個段落的連結"></a></h2>
 <h3 class="h-nomark" id="11-撰寫執行排程的-shell-script-crawler_cronsh">1.1 撰寫執行排程的 shell script ：<code>crawler_cron.sh</code><a class="h-anchor" href="#11-%e6%92%b0%e5%af%ab%e5%9f%b7%e8%a1%8c%e6%8e%92%e7%a8%8b%e7%9a%84-shell-script-crawler_cronsh" aria-label="這個段落的連結"></a></h3>
@@ -43,7 +49,7 @@
 </li>
 <li>
 <p><strong>專案資料夾路徑</strong>可用 <code>pwd</code> 指令取得</p>
-<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-01.webp" width="1024" height="59" alt="1.1 撰寫執行排程的 shell script ：crawler_cron.sh（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-01.webp" width="1024" height="59" alt="1.1 撰寫執行排程的 shell script ：crawler_cron.sh（圖 1）" fetchpriority="high" decoding="async"></p>
 </li>
 </ul>
 <h4 id="crawler_cronsh">crawler_cron.sh<a class="h-anchor" href="#crawler_cronsh" aria-label="這個段落的連結"></a></h4>
@@ -62,7 +68,7 @@
 </li>
 </ol>
 <h3 class="h-nomark" id="12-將-crawler_cronsh-設定為可以被執行">1.2 將 crawler_cron.sh 設定為可以被執行<a class="h-anchor" href="#12-%e5%b0%87-crawler_cronsh-%e8%a8%ad%e5%ae%9a%e7%82%ba%e5%8f%af%e4%bb%a5%e8%a2%ab%e5%9f%b7%e8%a1%8c" aria-label="這個段落的連結"></a></h3>
-<p>建立的檔案<code>一開始只有讀寫功能</code>，我們要將 crawler_cron.sh <code>設定為可以被執行</code>，才不會在自動化時因權限不足執行失敗</p>
+<p>建立的檔案<mark>一開始只有讀寫功能</mark>，我們要將 crawler_cron.sh <mark>設定為可以被執行</mark>，才不會在自動化時因權限不足執行失敗</p>
 <ol>
 <li>
 <p>我們先觀察 <strong>crawler_cron.sh</strong> 的權限</p>
@@ -103,7 +109,7 @@
 <p>將打開檔案的應用程式設定成 <strong>iTerm</strong> (如果設定成 mac 原生的 <strong>終端機</strong> 也可以)</p>
 <ul>
 <li>
-<p><code>shell script 必須在終端機相關應用程式下執行</code></p>
+<p><mark>shell script 必須在終端機相關應用程式下執行</mark></p>
 <p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-06.webp" width="364" height="640" alt="Imgur" loading="lazy" decoding="async"></p>
 </li>
 </ul>
@@ -154,7 +160,7 @@
 <p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-13.webp" width="984" height="705" alt="2.2 設定觸發條件（圖 13）" loading="lazy" decoding="async"></p>
 </li>
 <li>
-<p>選擇以<code>最高權限執行</code>，這裡我選擇 <strong>不論使用者登入與否均執行</strong> 是因為我要在開機時就觸發，而剛開機的時候使用者是還沒登入的；這塊可以依照自己的實際需求去做調整</p>
+<p>選擇以<mark>最高權限執行</mark>，這裡我選擇 <strong>不論使用者登入與否均執行</strong> 是因為我要在開機時就觸發，而剛開機的時候使用者是還沒登入的；這塊可以依照自己的實際需求去做調整</p>
 <p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-14.webp" width="788" height="639" alt="2.2 設定觸發條件（圖 14）" loading="lazy" decoding="async"></p>
 </li>
 <li>
@@ -203,7 +209,7 @@
 <p>請注意因為使用的是最高權限執行 <strong>yarn forever</strong>，所以你在 cmd 裡面用 <strong>forever list</strong> 是看不到的</p>
 <ol>
 <li>
-<p>必須要用<code>系統管理員身分執行 cmd</code></p>
+<p>必須要用<mark>系統管理員身分執行 cmd</mark></p>
 <p><img src="https://deanlin.net/blog/202010/fb-ig-crawler-day-26/images/fb-ig-crawler-day-26-20.webp" width="981" height="800" alt="2.4 重開機確認 forever 是否運行（圖 20）" loading="lazy" decoding="async"></p>
 </li>
 <li>
@@ -254,7 +260,8 @@
 </ul>
 </li>
 </ul>
-<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong><br><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
+<p><strong>有興趣的朋友可以到天瓏書局選購，感謝大家的支持。</strong></p>
+<p><strong>購書連結</strong>：<a href="https://www.tenlong.com.tw/products/9789864348008">https://www.tenlong.com.tw/products/9789864348008</a></p>
 </blockquote>
 ]]></content:encoded>
     </item>

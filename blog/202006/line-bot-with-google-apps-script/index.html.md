@@ -2,12 +2,12 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/line-bot-with-google-apps-script/
-- 發布：2020-06-10（更新：2023-05-05）
+- 發布：2020-06-10
 - 主題：技術教學
 - 標籤：Google App Script、LINE Bot、Google Sheets
 - 摘要：來打造一個回聲狗吧～
 
-為什麼撰寫這篇文章
+> 為什麼撰寫這篇文章
 
 Google App Script在以前我就非常的喜愛，也曾用他來當我專案後台登入的api來使用，搭配上Google Sheet，你簡直獲得了免費資料庫(不過他執行的速度就…反正就免費的速度XD)
 
@@ -15,15 +15,15 @@ Google App Script在以前我就非常的喜愛，也曾用他來當我專案後
 
 本文章僅僅是示範最簡單的應用層面，實際上應該有非常多的應用等待大家去發掘
 
-文章目標
+> 文章目標
 
-- 了解Google App Script，可撰寫簡單api並附帶參數
-- Google App Script串接Line機器人，讓你可以自由決定使用功能
+1. 了解Google App Script，可撰寫簡單api並附帶參數
+2. Google App Script串接Line機器人，讓你可以自由決定使用功能
 
-本文章使用到的技術：
+> 本文章使用到的技術：
 
-- Google App Script : 撰寫你想要執行的邏輯
-- LINE developers : 打造自己的lINE機器人
+1. Google App Script : 撰寫你想要執行的邏輯
+2. LINE developers : 打造自己的lINE機器人
 
 ## SETP 1: 建立 LINE Messaging API
 

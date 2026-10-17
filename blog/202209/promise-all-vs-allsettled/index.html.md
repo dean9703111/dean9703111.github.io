@@ -2,12 +2,12 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202209/promise-all-vs-allsettled/
-- 發布：2022-09-19（更新：2023-05-05）
+- 發布：2022-09-19
 - 主題：技術教學
 - 標籤：Await、Promise All、Parallel Processing、非同步函式、同步函式
 - 摘要：撰寫前端時，一個頁面往往需要 call 多支 API 才能完成渲染。為了等資料回傳，我們通常都會搭配 await，但有時 API 之間並沒有要求執行的順序；在這樣的情境下，如果還是採取順序執行的方案，當需要 call 多支 API 時就會浪費使用者許多時間。
 
-大家可以在瀏覽器按下「F12」，於 Console 的分頁貼上文中的程式碼來驗證喔！
+> 大家可以在瀏覽器按下「F12」，於 Console 的分頁貼上文中的程式碼來驗證喔！
 
 撰寫前端時，一個頁面往往需要 call 多支 API 才能完成渲染。
 
@@ -175,12 +175,12 @@ callMutiApi();
 
 從上圖我們可以看到，無論執行的結果是成功或失敗，我們都能取得那些執行成功後的訊息。
 
-**備註： **Node.js 從 v12.9.0 開始支援 Promise.allSettled 的語法，大多數的瀏覽器也在 2019 年後支援；針對少數不支援的環境，你可以透過 npm 套件自行擴充，如：[promise.allsettled](https://www.npmjs.com/package/promise.allsettled)
+> **備註： **Node.js 從 v12.9.0 開始支援 Promise.allSettled 的語法，大多數的瀏覽器也在 2019 年後支援；針對少數不支援的環境，你可以透過 npm 套件自行擴充，如：[promise.allsettled](https://www.npmjs.com/package/promise.allsettled)
 
 ## 總結
 
-- 如果 API 沒有要求執行的順序，但需要等每個 API 都執行完畢後才能進入下一步，那 Promise.all 同時執行的機制可以有效縮短執行時間。
-- 為了解決 Promise.all 失敗後，成功訊息一併消失的問題，可以改用 Promise.allSettled 來取得所有回傳結果。
+1. 如果 API 沒有要求執行的順序，但需要等每個 API 都執行完畢後才能進入下一步，那 Promise.all 同時執行的機制可以有效縮短執行時間。
+2. 為了解決 Promise.all 失敗後，成功訊息一併消失的問題，可以改用 Promise.allSettled 來取得所有回傳結果。
 
 ---
 

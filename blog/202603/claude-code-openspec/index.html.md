@@ -14,7 +14,7 @@
 
 開會過程中，有位客戶說的話讓我印象深刻，他說：
 
-「我們企業的痛點，是開發系統的人不用系統；真正用系統的人不會開發，所以我們才想學 Vibe Coding。」
+> 「我們企業的痛點，是開發系統的人不用系統；真正用系統的人不會開發，所以我們才想學 Vibe Coding。」
 
 其實這個痛點是業界常態，以人力資源系統來舉例好了，**雖然是工程師開發，但 HR 才是主要的使用者。**
 
@@ -24,7 +24,7 @@
 
 所以有些企業想導入 Vibe Coding，目標是讓熟悉業務的人：
 
-有能力設計出符合自己使用需求的產品，並希望完成的產品原型，未來能交給工程師做後續的優化與維護。
+> 有能力設計出符合自己使用需求的產品，並希望完成的產品原型，未來能交給工程師做後續的優化與維護。
 
 這個課程需求如果放在去年，我還真的不敢接；但最近 AI 成長的速度實在太快了。
 
@@ -32,13 +32,12 @@
 
 並透過與 OpenSpec 的搭配，讓 AI 幫忙撰寫專案文件，達成用規格驅動開發的目標；**同時解決過去小白不知道如何撰寫規格，以及工程師不想寫文件的痛點。**
 
-在 Claude Code 與 OpenSpec 的幫助下，我們不僅能完成專案從 0 到 1 的建置，更可以做到從 1 到 100 的迭代。
+> 在 Claude Code 與 OpenSpec 的幫助下，我們不僅能完成專案從 0 到 1 的建置，更可以做到從 1 到 100 的迭代。
 
-完整的 Demo，可以觀看 YT 喔 👉
+> 完整的 Demo，可以觀看 YT 喔 👉
+> 對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。
 
-對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。
-
-[YouTube 影片：YouTube 影片](https://www.youtube.com/watch?v=FeQv7mngg6Q)
+[YouTube 影片：【Claude Code 實戰】一次搞懂 OpenSpec，讓專案每次迭代都有依據](https://www.youtube.com/watch?v=FeQv7mngg6Q)
 
 ## ① 安裝 Claude 與 OpenSpec，初始化專案設定
 
@@ -126,7 +125,7 @@ curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del in
 
 目前 Claude 的月費是每月 20 美金，如果看完今天的影片，覺得 Claude Code 很強大的話，可以考慮付費訂閱。
 
-我認為「時間」才是最寶貴的資產；而「AI」可以幫助你奪回自己的時間。
+> 我認為「時間」才是最寶貴的資產；而「AI」可以幫助你奪回自己的時間。
 
 ### 在專案初始 OpenSpec
 
@@ -147,7 +146,7 @@ openspec init
 
 如果你在與 AI 對話的過程中，需求涉及專案的新增、修改、刪除等任務時，AI 會自動調用這些技能，不需要你特別去背指令，我覺得這才更符合 Vibe Coding 的開發流程。
 
-如果你想更深入了解 Agent Skills，我過去有拍一隻影片分享安裝、使用、製作的技巧：[https://youtu.be/xe00zJEtuMo](https://youtu.be/xe00zJEtuMo)
+> 如果你想更深入了解 Agent Skills，我過去有拍一隻影片分享安裝、使用、製作的技巧：[https://youtu.be/xe00zJEtuMo](https://youtu.be/xe00zJEtuMo)
 
 提醒一下大家，在指令不夠明確時，AI 可能不會觸發對應的 Skill，假如想強制驅動 openspec，可以在對話窗中輸入「/opsx」來操作。
 
@@ -206,7 +205,7 @@ openspec config profile
 
 但現在，前面的所有步驟，已經有機會讓沒有程式背景的 HR 自行完成。
 
-大家不要急著留言說我妖言惑眾，看完示範後，就會知道這一切並不是誇飾。
+> 大家不要急著留言說我妖言惑眾，看完示範後，就會知道這一切並不是誇飾。
 
 ### Prompt 設計
 
@@ -253,7 +252,7 @@ openspec config profile
 
 送出提示詞後，你可以看到 AI 會根據我們的需求提出問題，讓細節更加完善：
 
-同時提醒一下大家，用 Plan Mode 的規劃會非常詳盡，如果大家想要加速體驗，可以在提示詞最後加上「以最小可行性方案來規劃」，否則執行下去跑半小時也是有可能的。
+> 同時提醒一下大家，用 Plan Mode 的規劃會非常詳盡，如果大家想要加速體驗，可以在提示詞最後加上「以最小可行性方案來規劃」，否則執行下去跑半小時也是有可能的。
 
 ### OpenSpec 撰寫專案文件
 
@@ -279,9 +278,8 @@ openspec config profile
 
 ```
 
-我個人建議第一次啟動可以請 AI 幫忙，因為處理較大型的專案時
-
-AI 有很高的機率在第一版遇到一些零星錯誤，我們可以先讓他自我修正一下
+> 我個人建議第一次啟動可以請 AI 幫忙，因為處理較大型的專案時
+> AI 有很高的機率在第一版遇到一些零星錯誤，我們可以先讓他自我修正一下
 
 ### 初步驗證功能
 
@@ -293,7 +291,7 @@ AI 有很高的機率在第一版遇到一些零星錯誤，我們可以先讓�
 
 再確認網頁內容可以順利瀏覽後，接著我們可以試著打開 Postgres Admin 網頁，看一下資料庫是否是否有順利寫入。
 
-如果不知道這些資訊如何填寫，直接問 AI 就好了。
+> 如果不知道這些資訊如何填寫，直接問 AI 就好了。
 
 使用者的資訊會存放在 users 資料夾，這邊就能看到預設的 Admin 管理者帳號，以及剛剛新增的一般使用者：
 
@@ -324,7 +322,7 @@ with details about my project, tech stack, and conventions
 
 這是請 AI 幫你填寫專案使用到的技術，以及需要遵守規則，目標是讓 OpenSpec 的 Skill 觸發時，有參考的慣例。
 
-簡單來說，CLAUDE.md 是給「做事」用的，openspec/config.yaml 是給「規劃」用的。
+> 簡單來說，CLAUDE.md 是給「做事」用的，openspec/config.yaml 是給「規劃」用的。
 
 ## ③ 建立版本控制，根據需求迭代功能
 
@@ -334,9 +332,8 @@ with details about my project, tech stack, and conventions
 
 **為了把改壞的內容救回來，我會建議大家安裝 Git，這個程式碼版本控制工具，並註冊 GitHub 帳號來管理專案。**
 
-如果你是第一次接觸，我有專門錄一隻影片分享詳細的操作步驟！
-
-[https://www.youtube.com/watch?v=5DEV_K0JauQ&t=836s](https://www.youtube.com/watch?v=5DEV_K0JauQ&t=836s)
+> 如果你是第一次接觸，我有專門錄一隻影片分享詳細的操作步驟！
+> [https://www.youtube.com/watch?v=5DEV_K0JauQ&t=836s](https://www.youtube.com/watch?v=5DEV_K0JauQ&t=836s)
 
 ### 設計 .gitignore
 
@@ -415,7 +412,7 @@ with details about my project, tech stack, and conventions
 
 另外專案的 specs 也有進行對應的調整，綠色是新增，黃色是變更的意思。
 
-這邊也提醒大家，每做完一件事，記得保持 commit 的好習慣；這樣每個版本完成的功能會比較明確，而不是一堆功能全部混一起。
+> 這邊也提醒大家，每做完一件事，記得保持 commit 的好習慣；這樣每個版本完成的功能會比較明確，而不是一堆功能全部混一起。
 
 ### 模擬測試資料
 
@@ -474,11 +471,10 @@ with details about my project, tech stack, and conventions
 
 不過提醒大家，目前只是完成系統的初版，如果接下來打算在團隊內開發協作，還需要設計合適的工作流。
 
-我過去有拍一隻影片，分享如何解決版本控制與團隊協作的痛點：[https://youtu.be/1VuLTQidbPM](https://youtu.be/1VuLTQidbPM)
+> 我過去有拍一隻影片，分享如何解決版本控制與團隊協作的痛點：[https://youtu.be/1VuLTQidbPM](https://youtu.be/1VuLTQidbPM)
+> 另外如果你想要讓系統更穩定，還需要加入自動化測試，畢竟市場不會為爛產品買單：[https://youtu.be/Rb0_LutRIaw](https://youtu.be/Rb0_LutRIaw)
 
-另外如果你想要讓系統更穩定，還需要加入自動化測試，畢竟市場不會為爛產品買單：[https://youtu.be/Rb0_LutRIaw](https://youtu.be/Rb0_LutRIaw)
-
-別忘記，不管 AI 有多強大，出事還是要人類來背鍋。
+> 別忘記，不管 AI 有多強大，出事還是要人類來背鍋。
 
 ## 結語：AI 時代下每個人，正在經歷角色的轉變
 
@@ -494,7 +490,7 @@ with details about my project, tech stack, and conventions
 
 儘管中間遇到了一些小問題，目前版本也有許多細節要優化。
 
-但光是這個版本，放在過去可是要一個專業團隊才有辦法完成。
+> 但光是這個版本，放在過去可是要一個專業團隊才有辦法完成。
 
 也許這樣說會被很多人罵，但我還是想提醒大家，尤其是工程師。
 
@@ -506,9 +502,9 @@ with details about my project, tech stack, and conventions
 
 而是透過實際的範例告訴大家，在 AI 時代下的每個人，大家正在經歷角色的轉變。
 
-工程師的重點不再是寫了多少行程式，而是去評估系統架構、審查程式碼合理性。
+> 工程師的重點不再是寫了多少行程式，而是去評估系統架構、審查程式碼合理性。
 
-而 PM 與執行業務單位，也不再只是眼巴巴的等工程師開發，在 AI 的輔助下，他們已經可以嘗試加入開發。
+> 而 PM 與執行業務單位，也不再只是眼巴巴的等工程師開發，在 AI 的輔助下，他們已經可以嘗試加入開發。
 
 這中間當然還有很多細節要磨合，我自己也還在摸索。
 

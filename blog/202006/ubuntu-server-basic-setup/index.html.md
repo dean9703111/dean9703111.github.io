@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/ubuntu-server-basic-setup/
-- 發布：2020-06-15（更新：2023-05-05）
+- 發布：2020-06-15
 - 主題：技術教學
 - 標籤：Ubuntu、Ubuntu Server、Servers、SSH
 - 摘要：這篇文章是以部署網頁為導向的環境設定
@@ -183,7 +183,7 @@ network:
 
 原始碼：[00-installer-config.yaml](https://gist.github.com/dean9703111/33b1639b9d52bae158f0c0eb363f025b)（GitHub Gist）
 
-PS.如果發現改成靜態網址後無法ssh登入，請把 addresses 的遮罩改為 `/12`
+> PS.如果發現改成靜態網址後無法ssh登入，請把 addresses 的遮罩改為 `/12`
 
 ## 10、ubuntu新增使用者並設成 Sudo user
 

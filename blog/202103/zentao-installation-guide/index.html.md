@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202103/zentao-installation-guide/
-- 發布：2021-03-10（更新：2023-05-05）
+- 發布：2021-03-10
 - 主題：團隊合作
 - 標籤：ZenTao、禪道、管理系統、安裝教學、系統設定
 - 摘要：過去安裝一些內部使用的 Server ，像 Gitlab、Redmine 都讓人在安裝的過程中遇到許多的挫折；直到最近同事向我推薦一款專案管理系統 — 禪道，聽到這詭異的名字讓我對他深表懷疑，抱著嘗試的心態安裝與試用了一下，讓我頓時非常後悔當初為什麼要研究…
@@ -33,7 +33,7 @@ STEP 3：輸入網址開始暢遊～
 
 ## 二、安裝步驟
 
-建議使用英文版本的官網，中文版本的官網瀏覽速度極慢
+> 建議使用英文版本的官網，中文版本的官網瀏覽速度極慢
 
 ### STEP 1：下載官網壓縮檔
 
@@ -76,7 +76,7 @@ sudo  /opt/zbox/zbox start
 
 ## 三、自選設定
 
-稍微使用一下後覺得有些設定還是說明一下
+> 稍微使用一下後覺得有些設定還是說明一下
 
 ### HTTPS 設定
 
@@ -89,7 +89,7 @@ vi /opt/zbox/etc/apache/httpd.conf
 
 - 在裡面貼上如下資訊
 
-記得 ServerName、SSLCertificateFile、SSLCertificateKeyFile 要自己調整喔！
+> 記得 ServerName、SSLCertificateFile、SSLCertificateKeyFile 要自己調整喔！
 
 ```
 <VirtualHost *:443>
@@ -124,7 +124,7 @@ sudo /opt/zbox/zbox restart
 
 ### 系統 email 通知
 
-以下為 Gmail 信箱的設置
+> 以下為 Gmail 信箱的設置
 
 - **發送信箱**：你的 Gmail
 - **發信人**：你想要的寄件者名字
@@ -180,7 +180,7 @@ vi /opt/zbox/app/zentao/config/my.php
 
 ### 備份方式
 
-- 備份完整資料夾
+1. 備份完整資料夾
 
 ```
 sudo /opt/zbox/zbox stop    #停止zbox服务
@@ -195,7 +195,7 @@ sudo cp -prf /opt/zbox /opt/zbox_bak    #備份整个zbox目錄
 
 ```
 
-相比之前安裝遇到各種挫折的 Redmine、Gitlab，Zentao 真的是完勝，目前榮登我這輩子安裝最順暢的管理系統！
+> 相比之前安裝遇到各種挫折的 Redmine、Gitlab，Zentao 真的是完勝，目前榮登我這輩子安裝最順暢的管理系統！
 
 ---
 

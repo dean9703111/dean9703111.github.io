@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈</title>
-  <meta name="description" content="在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。 但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。">
+  <meta name="description" content="在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。">
   <meta name="author" content="林鼎淵">
   <link rel="canonical" href="https://deanlin.net/blog/202209/foreach-vs-for-loop/">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -14,20 +14,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant&#43;Garamond:ital,wght@0,600;0,700;1,500;1,600&amp;family=Noto&#43;Serif&#43;TC:wght@700;900&amp;display=swap"></noscript>
-  <link rel="stylesheet" href="/css/main.min.c2e23be7660b6d86d7ac0edcea97075ac4efa5d888268f6b7e20fc5e0d96a655.css" integrity="sha256-wuI752YLbYbXrA7c6pcHWsTvpdiIJo9rfiD8Xg2WplU=">
-  <link rel="icon" href="/images/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+  <link rel="stylesheet" href="/css/main.min.09a90c80d9801892009540d0336be0b5fba6e7bf30aab5ab8e2f5f91701f96c3.css" integrity="sha256-CakMgNmAGJIAlUDQM2vgtfum578wqrWrji9fkXAflsM=">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="alternate" type="application/rss+xml" href="https://deanlin.net/index.xml" title="林鼎淵">
   <link rel="alternate" type="text/plain" href="https://deanlin.net/llms.txt" title="llms.txt">
   <link rel="alternate" type="text/markdown" href="https://deanlin.net/blog/202209/foreach-vs-for-loop/index.html.md" title="Markdown">
   <meta property="og:site_name" content="林鼎淵 Dean Lin">
   <meta property="og:title" content="forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈">
-  <meta property="og:description" content="在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。 但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。">
+  <meta property="og:description" content="在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。">
   <meta property="og:url" content="https://deanlin.net/blog/202209/foreach-vs-for-loop/">
   <meta property="og:locale" content="zh_TW">
   <meta property="og:type" content="article">
   <meta property="article:published_time" content="2022-09-23T18:06:00&#43;08:00">
-  <meta property="article:modified_time" content="2023-05-05T21:55:31&#43;08:00">
+  <meta property="article:modified_time" content="2022-09-23T18:06:00&#43;08:00">
   <meta property="article:author" content="https://deanlin.net/about/">
   <meta property="article:section" content="技術教學">
   <meta property="article:tag" content="Foreach Loop">
@@ -42,8 +44,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_693075d7c8fe065f.jpg">
   <meta name="twitter:title" content="forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈">
-  <meta name="twitter:description" content="在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。 但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202209/foreach-vs-for-loop/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2023-05-05T21:55:31+08:00","datePublished":"2022-09-23T18:06:00+08:00","description":"在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。 但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。","headline":"forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_693075d7c8fe065f.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_cc749a93af3f7497.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_97865f31bdbf6178.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Foreach Loop, For Loop, 高階函數, 迴圈, 非同步","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202209/foreach-vs-for-loop/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_693075d7c8fe065f.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/foreach-%E8%B7%9F-for-%E6%9C%89%E4%BB%80%E9%BA%BC%E5%B7%AE%E7%95%B0-%E6%84%9F%E8%A6%BA%E5%BE%88%E5%83%8F%E5%8F%88%E4%B8%8D%E5%A4%AA%E4%B8%80%E6%A8%A3%E7%9A%84%E8%BF%B4%E5%9C%88-782aa6f966ad"],"thumbnailUrl":"https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_693075d7c8fe065f.jpg","timeRequired":"PT2M","url":"https://deanlin.net/blog/202209/foreach-vs-for-loop/","wordCount":813},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202209/foreach-vs-for-loop/","name":"forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈","position":3}]}]}</script>
+  <meta name="twitter:description" content="在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://deanlin.net/blog/202209/foreach-vs-for-loop/#article","@type":"BlogPosting","about":{"@type":"Thing","name":"技術教學"},"articleSection":"技術教學","author":{"@id":"https://deanlin.net/#person","@type":"Person","name":"林鼎淵","url":"https://deanlin.net/about/"},"dateModified":"2022-09-23T18:06:00+08:00","datePublished":"2022-09-23T18:06:00+08:00","description":"在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。","headline":"forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈","image":[{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_693075d7c8fe065f.jpg","width":1200},{"@type":"ImageObject","height":900,"url":"https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_cc749a93af3f7497.webp","width":1200},{"@type":"ImageObject","height":1200,"url":"https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_97865f31bdbf6178.webp","width":1200}],"inLanguage":"zh-Hant-TW","isPartOf":{"@id":"https://deanlin.net/#website"},"keywords":"Foreach Loop, For Loop, 高階函數, 迴圈, 非同步","mainEntityOfPage":{"@id":"https://deanlin.net/blog/202209/foreach-vs-for-loop/","@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","height":675,"url":"https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_693075d7c8fe065f.jpg","width":1200}},"publisher":{"@id":"https://deanlin.net/#person"},"sameAs":["https://medium.com/dean-lin/foreach-%E8%B7%9F-for-%E6%9C%89%E4%BB%80%E9%BA%BC%E5%B7%AE%E7%95%B0-%E6%84%9F%E8%A6%BA%E5%BE%88%E5%83%8F%E5%8F%88%E4%B8%8D%E5%A4%AA%E4%B8%80%E6%A8%A3%E7%9A%84%E8%BF%B4%E5%9C%88-782aa6f966ad"],"thumbnailUrl":"https://deanlin.net/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-og_hu_693075d7c8fe065f.jpg","timeRequired":"PT2M","url":"https://deanlin.net/blog/202209/foreach-vs-for-loop/","wordCount":813},{"@id":"https://deanlin.net/#person","@type":"Person","alternateName":"Dean Lin","award":["第 12 屆 iThome 鐵人賽 AI \u0026 Data 組佳作（2020）","第 13 屆 iThome 鐵人賽 Software Development 組佳作（2021）","天瓏書局 2023 年度銷售第三名","外商資安公司全球最佳員工獎（2025，全球僅一名）"],"description":"林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。","hasOccupation":[{"@type":"Occupation","name":"企業內訓講師"},{"@type":"Occupation","name":"軟體工程師"},{"@type":"Occupation","name":"作家"}],"image":"https://deanlin.net/images/about/portrait.webp","jobTitle":["生成式 AI 企業內訓講師","外商資安公司軟體專家","作家"],"knowsAbout":["生成式 AI","AI Agent","Vibe Coding","Claude Code","ChatGPT","提示工程","軟體工程","JavaScript","Node.js","TypeScript","Hugo","團隊合作","專案管理","工程師職涯發展","技術寫作"],"name":"林鼎淵","sameAs":["https://www.facebook.com/deanlinbao","https://github.com/dean9703111","https://www.linkedin.com/in/lindingyuan/","https://www.youtube.com/@dlcorner","https://medium.com/@dean-lin","https://ithelp.ithome.com.tw/users/20103256/profile","https://www.technice.com.tw/tag/%E6%9E%97%E9%BC%8E%E6%B7%B5/"],"url":"https://deanlin.net/about/"},{"@id":"https://deanlin.net/#website","@type":"WebSite","alternateName":["林鼎淵","Dean Lin"],"inLanguage":"zh-Hant-TW","name":"林鼎淵 Dean Lin","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term_string","target":{"@type":"EntryPoint","urlTemplate":"https://deanlin.net/search/?s={search_term_string}"}},"publisher":{"@id":"https://deanlin.net/#person"},"url":"https://deanlin.net/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://deanlin.net/","name":"首頁","position":1},{"@type":"ListItem","item":"https://deanlin.net/categories/tech/","name":"技術教學","position":2},{"@type":"ListItem","item":"https://deanlin.net/blog/202209/foreach-vs-for-loop/","name":"forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈","position":3}]}]}</script>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4NGEYYJ35"></script>
   <script>
@@ -113,20 +115,20 @@
         <a href="/">首頁</a><span class="sep" aria-hidden="true">/</span>
         <a href="/categories/tech/">技術教學</a>
       </nav>
-      <h1 class="article-title">forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈</h1>
+      <h1 class="article-title">forEach 跟 for 有什麼差<span class="nobr">異？</span> ── 感覺很像又不太一樣的迴圈</h1>
       <div class="article-meta">
         <div class="am-author">
           <img src="/images/author_hu_26b41db0578267a0.webp" srcset="/images/author_hu_26b41db0578267a0.webp 88w" sizes="44px" width="88" height="88" alt="" loading="lazy" decoding="async" class="avatar">
           <div>
-            <div class="am-name">林鼎淵</div>
+            <a class="am-name" href="/about/" rel="author">林鼎淵</a>
             <div class="am-sub">
               <time class="meta-date" datetime="2022-09-23">2022.09.23</time>
-              <span>更新於 <time datetime="2023-05-05">2023.05.05</time></span>
               <span>閱讀約 2 分鐘</span>
             </div>
           </div>
         </div>
       </div>
+      <p class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l2.9 1.9"/></svg><span>這篇文章寫於 2022 年，文中的工具與版本可能已經更新，實作時請以官方文件為準。</span></p>
     </header>
 
     <div class="article-main">
@@ -134,7 +136,7 @@
       <div class="prose" data-prose>
         <p>在認識 forEach、map 這類高階函數後，就比較少使用 for 迴圈了，畢竟前者寫起來更加簡潔。</p>
 <p>但不久前有朋友遇到 Bug 跑來問我，說他程式執行的順序怪怪的，明明有寫 await，但跑起來卻不符期待；在看過程式後，我發現問題出在「forEach」這個函數。</p>
-<p><img src="/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-01.webp" srcset="/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-01_hu_301e5b3eb448cf78.webp 720w, /blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="731" alt="forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈（圖 1）" loading="lazy" decoding="async"></p>
+<p><img src="/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-01.webp" srcset="/blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-01_hu_301e5b3eb448cf78.webp 720w, /blog/202209/foreach-vs-for-loop/images/foreach-vs-for-loop-01.webp 1400w" sizes="(max-width: 760px) calc(100vw - 36px), 720px" width="1400" height="731" alt="forEach 跟 for 有什麼差異？ ── 感覺很像又不太一樣的迴圈（圖 1）" fetchpriority="high" decoding="async"></p>
 <h2 id="-別在-foreach-裡面使用-await">別在 forEach 裡面使用 await<a class="h-anchor" href="#-%e5%88%a5%e5%9c%a8-foreach-%e8%a3%a1%e9%9d%a2%e4%bd%bf%e7%94%a8-await" aria-label="這個段落的連結"></a></h2>
 <p>朋友想透過 forEach 去遍歷陣列，並希望在遍歷完畢後去做其他事情。我將他的程式結構縮減如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#ff7b72">const</span> arr <span style="color:#ff7b72;font-weight:bold">=</span> [<span style="color:#a5d6ff">1</span>, <span style="color:#a5d6ff">2</span>, <span style="color:#a5d6ff">3</span>, <span style="color:#a5d6ff">4</span>];
@@ -271,7 +273,7 @@
   <div class="card-body">
     <div class="kicker"><a class="cat" href="/categories/tech/">技術教學</a><span class="sep" aria-hidden="true">/</span><a href="/series/hugo/">Hugo 自架站</a></div>
 
-    <h3 class="card-title"><a href="/blog/202501/hugo6-set-up-google-search-console/">[Hugo自架站-6]設定 Google Search Console，讓自己的網站可以被搜尋</a></h3>
+    <h3 class="card-title"><a href="/blog/202501/hugo6-set-up-google-search-console/">[Hugo自架站-6]設定 Google Search Consol<span class="nobr">e，</span>讓自己的網站可以被搜尋</a></h3>
     <p class="card-desc">這篇文章要教大家如何設定 Google Search Console，以及上傳網站的 Sitemap（網站地圖），讓自己的網站可以被搜尋。</p>
     <div class="card-meta">
       <time class="meta-date" datetime="2025-01-21">2025.01.21</time>
@@ -438,7 +440,7 @@
   <p>本站使用 Cookie 進行流量分析與廣告投放，繼續瀏覽即表示你同意。</p>
   <button class="btn btn-primary btn-sm" type="button" data-cookie-ok>我知道了</button>
 </div>
-<script src="/js/main.632dbca0726c9fd1ba2f1e73179c456444c7a585f8319e2be4cb21af2a004a31.js" defer integrity="sha256-Yy28oHJsn9G6Lx5zF5xFZETHpYX4MZ4r5MshryoASjE=" data-index="/index.json"></script>
+<script src="/js/main.8f058c9e8d7453a26a64afc9e7fc3214dc24e53774ed5672c265c868c7a7566f.js" defer integrity="sha256-jwWMno10U6JqZK/J5/wyFNwk5Td07VZywmXIaMenVm8=" data-index="/index.json"></script>
 
 </body>
 </html>

@@ -97,7 +97,7 @@ Hash: hash:timestamp (e.g., hash:1620000000)
 
 在這個設計中，我們將商品名稱設為 index，以提高查詢特定商品統計資料的效率。
 
-小提醒：經過實驗後，這個資料結構並不是最理想的，詳情參考這篇文章（[MongoDB 與 MySQL 建立 Index 對 Read/Write 的效能影響](https://deanlin.net/blog/202405/mongodb-vs-mysql-index-performance/)）
+> 小提醒：經過實驗後，這個資料結構並不是最理想的，詳情參考這篇文章（[MongoDB 與 MySQL 建立 Index 對 Read/Write 的效能影響](https://deanlin.net/blog/202405/mongodb-vs-mysql-index-performance/)）
 
 另外考量到時間搜尋範圍可能很大（ex: 4 個月的趨勢），面對大範圍的資料顯示，會以小時的統計資料呈現。
 

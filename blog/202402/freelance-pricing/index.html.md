@@ -58,7 +58,7 @@
 
 **報價的平衡點，就是讓客戶買單的同時，也讓自己賺到合理的利潤。**
 
-以上是「職涯必修設計管理學」的 Part 3心得筆記 ，如果覺得我的分享對你有幫助，歡迎 [Follow](https://dean-lin.medium.com/subscribe) 我吸收更多知識。
+> 以上是「職涯必修設計管理學」的 Part 3心得筆記 ，如果覺得我的分享對你有幫助，歡迎 [Follow](https://dean-lin.medium.com/subscribe) 我吸收更多知識。
 
 延伸閱讀：[設計實戰全方位](https://dean-lin.medium.com/list/6c6883c6a3f2)
 

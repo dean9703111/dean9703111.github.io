@@ -2,14 +2,14 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202202/tune-php-fpm-nginx/
-- 發布：2022-02-25（更新：2023-05-05）
+- 發布：2022-02-25
 - 主題：技術教學
 - 標籤：PHP-FPM、Nginx、Concurrency、大流量、高併發
 - 摘要：因為準備上線的系統有可能遇到大流量的情境，所以上線前先用 Apache Bench 來做測試；不測還好，一測發現在連線數 100、request 數量 10000 的條件下 Call POST API，居然有 50% 的 request…
 
 因為準備上線的系統有可能遇到大流量的情境，所以上線前先用 Apache Bench 來做測試；不測還好，一測發現在連線數 100、request 數量 10000 的條件下 Call POST API，居然有 50% 的 request fail，如果把這樣的系統上線肯定會出包，所以來研究如何調校 php-fpm & nginx 的參數，讓 Server 在硬體不升級的狀態下盡可能承受最大的流量。
 
-如果對壓力測試不熟悉的朋友，可以參考筆者先前分享的文章：「[Apache Bench — 壓力測試好夥伴](https://deanlin.net/blog/202110/apache-bench-load-testing/)」
+> 如果對壓力測試不熟悉的朋友，可以參考筆者先前分享的文章：「[Apache Bench — 壓力測試好夥伴](https://deanlin.net/blog/202110/apache-bench-load-testing/)」
 
 ```
 大綱
@@ -36,9 +36,8 @@ ab -n 10000 -c 100 -p post.txt -T application/json -H ‘Authorization: Token yo
 
 所以下面我教大家調整哪些 php-fpm & nginx 的設定，盡量讓這台 Server 發揮出他的極限。
 
-**備註 1**：通常 POST 對資源的消耗遠超 GET，如果 API 會修改資料庫內容、進行複雜計算就會消耗更多資源，這些都是要考量進去的。
-
-**備註 2**：我們的目標是**追求承受最大流量，而不是努力把 CPU 和 MEM 耗盡**；經實驗，有時把他們耗盡反而會有更多的 request fail，這部分有興趣的讀者可以自己實驗看看。
+> **備註 1**：通常 POST 對資源的消耗遠超 GET，如果 API 會修改資料庫內容、進行複雜計算就會消耗更多資源，這些都是要考量進去的。
+> **備註 2**：我們的目標是**追求承受最大流量，而不是努力把 CPU 和 MEM 耗盡**；經實驗，有時把他們耗盡反而會有更多的 request fail，這部分有興趣的讀者可以自己實驗看看。
 
 ## 二、調整 php-fpm 參數
 
@@ -55,7 +54,7 @@ sudo vi /etc/php/7.4/fpm/pool.d/www.conf
 - **pm.max_children**：設置子進程最大數值，子進程數量太少會影響處理連線的速度，太多可能會導致資源耗盡。
 - **pm.start_servers**：php-fpm 啟動起始進程數，數值需小於 pm.max_children。
 
-建議為：(pm.max_spare_servers — pm.min_spare_servers)/2
+> 建議為：(pm.max_spare_servers — pm.min_spare_servers)/2
 
 - **pm.min_spare_servers**：php-fpm 的最小空閒進程數。
 - **pm.max_spare_servers**：php-fpm 的最大空閒進程數。
@@ -117,7 +116,7 @@ worker_processes auto;
 
 - **worker_connections**：設定 worker 最大可承受連線數（最大值為 65535）。
 
-連線的總數為 worker_processes * worker_connections。
+> 連線的總數為 worker_processes * worker_connections。
 
 - **multi_accept**：收到一個 request 後，盡可能多接收其他的 request。
 - **use epoll**：利用很棒的演算法提升效能。
@@ -138,7 +137,7 @@ nginx -s reload
 
 ```
 
-希望這篇文章能讓讀者初步了解在 php-fpm & nginx 的設定中，哪些參數可以讓 Server 承受更大的流量，如果讀者有使用其他妙招也歡迎分享喔～
+> 希望這篇文章能讓讀者初步了解在 php-fpm & nginx 的設定中，哪些參數可以讓 Server 承受更大的流量，如果讀者有使用其他妙招也歡迎分享喔～
 
 ---
 

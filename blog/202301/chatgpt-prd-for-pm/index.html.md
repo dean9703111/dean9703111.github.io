@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202301/chatgpt-prd-for-pm/
-- 發布：2023-01-26（更新：2024-10-24）
+- 發布：2023-01-26
 - 主題：AI 實戰
 - 標籤：ChatGPT、PM、Product Manager、PRD、Product Requirements
 - 摘要：無論你是不知道 PRD 怎麼寫，還是 PRD 寫到厭世，ChatGPT 都能緩解你工作上的壓力！ 筆者過去兼任 PM 時，最困擾的問題是「不知道有哪些需求」以及「不知道需求怎麼開」；不過在試用 ChatGPT 後，過去困擾我的問題就這樣迎刃而解（因為他最擅長發想＆補細節）
@@ -26,7 +26,7 @@ Other：一些額外的 Bonus
 
 ```
 
-假使今天公司為了更有效率地進行面試，需要開發一套線上測驗系統，供考生進行中文、英文、邏輯的測試。
+> 假使今天公司為了更有效率地進行面試，需要開發一套線上測驗系統，供考生進行中文、英文、邏輯的測試。
 
 ## SETP 1：說明自己要做的事，並初步詢問建議
 
@@ -68,11 +68,9 @@ Other：一些額外的 Bonus
 
 接著你就會得到一份 PRD 的草稿如下：
 
-Markdown 版本：[Github](https://github.com/dean9703111/chatgpt-prd-generate)
-
-這份 PRD 草稿，大概是筆者跟 ChatGPT 對話 5 分鐘後得到的成果；也許不盡完美，但已經把系統的輪廓描繪出來了。
-
-使用者可以根據這份 PRD，再去調整細節與補充邏輯。
+> Markdown 版本：[Github](https://github.com/dean9703111/chatgpt-prd-generate)
+> 這份 PRD 草稿，大概是筆者跟 ChatGPT 對話 5 分鐘後得到的成果；也許不盡完美，但已經把系統的輪廓描繪出來了。
+> 使用者可以根據這份 PRD，再去調整細節與補充邏輯。
 
 ## Other：一些額外的 Bonus
 

@@ -2,29 +2,29 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202305/chatgpt-plugins-tips/
-- 發布：2023-05-18（更新：2024-10-24）
+- 發布：2023-05-18
 - 主題：AI 實戰
 - 標籤：ChatGPT、ChatGPT Plugins、ChatGPT Plus、OpenAI、GPT-4
 - 摘要：ChatGPT Plugins 讓 ChatGPT 打破限制，可以串接第三方服務來滿足使用者不同的需求。這篇文章將介紹使用的注意事項、如何啟用這個功能、面對陌生 Plugins 的小技巧，以及對這個新興市場（Plugin store）的期待。
 
 ChatGPT Plugins 讓 ChatGPT 打破限制，可以串接第三方服務來滿足使用者不同的需求，下面舉出幾個常見服務：
 
-- **旅行、旅遊**：KAYAK、Expedia（提供住宿、航班、租車和活動的建議）
-- **生產力工具**：Zapier（能與上千個 APP 互動，如 Google Sheets、Gmail）
-- **學習**：Speak（語言導師）、Wolfram（提供數學計算、數據分析、繪圖、數據導入和信息檢索的服務）
-- **資料搜尋**：WebPilot（瀏覽網頁生成文章）、VoxScript（搜尋 YouTube 字幕紀錄）
+1. **旅行、旅遊**：KAYAK、Expedia（提供住宿、航班、租車和活動的建議）
+2. **生產力工具**：Zapier（能與上千個 APP 互動，如 Google Sheets、Gmail）
+3. **學習**：Speak（語言導師）、Wolfram（提供數學計算、數據分析、繪圖、數據導入和信息檢索的服務）
+4. **資料搜尋**：WebPilot（瀏覽網頁生成文章）、VoxScript（搜尋 YouTube 字幕紀錄）
 
 另外在使用 ChatGPT Plugins 前，請先注意以下事項：
 
-- 這些都是第三方開發的服務，在安裝前請確保你信任它。
-- 關鍵字下對才會觸發 Plugin，比如選擇 Expedia 後，如果沒問旅遊相關資訊就不會觸發。
-- 並非所有 Plugins 都支援中文，但基本上都支援英文。
+1. 這些都是第三方開發的服務，在安裝前請確保你信任它。
+2. 關鍵字下對才會觸發 Plugin，比如選擇 Expedia 後，如果沒問旅遊相關資訊就不會觸發。
+3. 並非所有 Plugins 都支援中文，但基本上都支援英文。
 
 ## 如何啟用 ChatGPT Plugins？
 
 接下來就讓筆者帶大家一步步了解如何使用 ChatGPT Plugins。
 
-目前僅提供付費版使用者搶先體驗，如果你還沒這個選項就請再稍等幾天。
+> 目前僅提供付費版使用者搶先體驗，如果你還沒這個選項就請再稍等幾天。
 
 **STEP 1**：我們可以點擊帳號旁的「…」，選擇 Settings 來做設定，在「Beta Features」中可以看到開放測試的功能。
 

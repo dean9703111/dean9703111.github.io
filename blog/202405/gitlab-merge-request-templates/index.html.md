@@ -21,10 +21,10 @@
 
 筆者個人建議一個好的 Merge Request 要包含以下元素：
 
-- **概要 & 背景**：簡短描述這次 Merge Request 的目的，讓 Code Review 的人可以快速理解前因後果。
-- **相關資訊**：放上專案需求規格連結、關聯的 Project/branch、會議紀錄等資訊。
-- **變更內容**：說明新增/修改/移除了什麼內容，如果邏輯複雜可以簡述演算法。
-- **測試步驟**：描述如何驗證這次的變更，包括需要運行的測試和預期結果。
+1. **概要 & 背景**：簡短描述這次 Merge Request 的目的，讓 Code Review 的人可以快速理解前因後果。
+2. **相關資訊**：放上專案需求規格連結、關聯的 Project/branch、會議紀錄等資訊。
+3. **變更內容**：說明新增/修改/移除了什麼內容，如果邏輯複雜可以簡述演算法。
+4. **測試步驟**：描述如何驗證這次的變更，包括需要運行的測試和預期結果。
 
 大家可以參考我的 Merge Request Template 格式（Markdown 語法）：
 
@@ -90,7 +90,7 @@ Expected Result:
 
 我們要先在根目錄下建立 `.gitlab/merge_request_templates/` 的資料夾。
 
-**小提醒**：一定要在「default branch（ex: main、develop）」下建立，否則是沒有效的。
+> **小提醒**：一定要在「default branch（ex: main、develop）」下建立，否則是沒有效的。
 
 ### STEP 2: 在資料夾下建立「.md」的 Templates
 

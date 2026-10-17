@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202108/install-redis-on-macos/
-- 發布：2021-08-11（更新：2023-05-05）
+- 發布：2021-08-11
 - 主題：技術教學
 - 標籤：macOS、Redis、Redis GUI、Redis 安裝
 - 摘要：本篇文章除了帶你安裝 Redis，更分享一個超好用的 Redis GUI 神器；整個操作流程不超過 10 分鐘，想入門 Redis 看這篇文章就對啦！
@@ -40,7 +40,7 @@ get foo
 
 ```
 
-如果操作結果跟上圖一樣就恭喜你安裝成功嚕～
+> 如果操作結果跟上圖一樣就恭喜你安裝成功嚕～
 
 ## 二、安裝及使用 Another Redis Desktop Manager
 
@@ -65,14 +65,14 @@ brew install --cask another-redis-desktop-manager
 
 **SETP 8**：最後進入 DB 確認剛剛建立的 key-value(foo-bar) 是否存在
 
-如果 redis 沒有選擇 DB，預設都是 0
+> 如果 redis 沒有選擇 DB，預設都是 0
 
-大功告成嚕！恭喜大家踏出學習 Redis 的第一步～
+> 大功告成嚕！恭喜大家踏出學習 Redis 的第一步～
 
 **參考資源：**
 
-- [macOS 上安裝 Redis](https://www.ioa.tw/macOS/Redis.html)
-- [Another Redis Desktop Manager](https://github.com/qishibo/AnotherRedisDesktopManager)
+1. [macOS 上安裝 Redis](https://www.ioa.tw/macOS/Redis.html)
+2. [Another Redis Desktop Manager](https://github.com/qishibo/AnotherRedisDesktopManager)
 
 ---
 

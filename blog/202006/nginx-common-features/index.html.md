@@ -2,22 +2,21 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202006/nginx-common-features/
-- 發布：2020-06-22（更新：2023-05-05）
+- 發布：2020-06-22
 - 主題：技術教學
 - 標籤：Nginx、Nginx Proxy、Proxy、Load Balancing、Load Balancer
 - 摘要：我將在這裡記錄Nginx時常被問到但很難說清楚的問題及實作方式，文章參考許多前輩們的文獻，在此先感謝他們的無私貢獻
 
 ### 相關議題
 
-- 反向代理伺服器(reverse proxy)
-- 負載平衡(load balancer)
-- 虛擬主機(Virtual Host)
+1. 反向代理伺服器(reverse proxy)
+2. 負載平衡(load balancer)
+3. 虛擬主機(Virtual Host)
 
 ## 1. 反向代理伺服器(reverse proxy)
 
-正向代理伺服器：用來解決訪問限制問題
-
-反向代理伺服器：提供負載均衡、安全防護等作用
+> 正向代理伺服器：用來解決訪問限制問題
+> 反向代理伺服器：提供負載均衡、安全防護等作用
 
 你可以理解為你網頁的前端實際使用server的port是3000，但是透過Nginx可以把對方80 port的連線導向3000 port，應用如下：
 

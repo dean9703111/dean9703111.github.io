@@ -8,7 +8,7 @@
 - 標籤：iT 邦幫忙鐵人賽、google-sheets、Node.js、取得授權、範例程式
 - 摘要：一般來說爬蟲的資料都是儲存到資料庫，但是我相信絕大多數的人不太可能隨時隨地打開資料庫觀看，而且存在資料庫除非你請網頁工程師幫你完成前端視覺化，不然直接看資料庫絕對會讓你懷疑人生XD
 
-專案最基本的就是：**符合客戶預算與實際使用需求**
+> 專案最基本的就是：**符合客戶預算與實際使用需求**
 
 ## 為什麼選擇 Google Sheets 作為資料載體?
 
@@ -16,19 +16,19 @@
 
 經過多方思慮我最後採用 Google Sheets 的服務，主要理由：
 
-- 只要有網路我就能看
-- 絕大多數人都有使用 Google Sheets 的經驗
-- 使用者能輕易的將 Google Sheets 轉化成圖表
-- 你不需要一台 Server 專門來存這些資料
-- **`免費`**
+1. 只要有網路我就能看
+2. 絕大多數人都有使用 Google Sheets 的經驗
+3. 使用者能輕易的將 Google Sheets 轉化成圖表
+4. 你不需要一台 Server 專門來存這些資料
+5. **`免費`**
 
 儘管 Google Sheets 並不完美，但他真的很適合用在這個專案上面
 
 ## 今日目標
 
-- 取得 Google Sheets 憑證(credentials)
-- 在專案加入官方提供的範例程式做測試
-- 將 Google Sheets 的憑證、授權檔加入 .gitignore
+1. 取得 Google Sheets 憑證(credentials)
+2. 在專案加入官方提供的範例程式做測試
+3. 將 Google Sheets 的憑證、授權檔加入 .gitignore
 
 ## 1. 取得 Google Sheets 憑證(credentials)
 
@@ -36,32 +36,38 @@
 
 ### 憑證(credentials)取得的步驟
 
-- 請先確認`已經安裝過 Node.js & npm`(跟著教學走的人都安裝過)，`有 Goolge 帳號`
-- 進入 Google Sheet Node.js 申請憑證(credentials)的[網頁](https://developers.google.com/sheets/api/quickstart/nodejs)
+1. 請先確認`已經安裝過 Node.js & npm`(跟著教學走的人都安裝過)，`有 Goolge 帳號`
+2. 進入 Google Sheet Node.js 申請憑證(credentials)的[網頁](https://developers.google.com/sheets/api/quickstart/nodejs)
 
-- 按下紅框處按鈕 **Enable theGoogle Sheets API**
+3.
+按下紅框處按鈕 **Enable theGoogle Sheets API**
 
-- 輸入專案的名稱，建議**填寫符合專案功能的命名**
+4.
+輸入專案的名稱，建議**填寫符合專案功能的命名**
 
-- 本轉案選擇 **Desktop app** 即可
+5.
+本轉案選擇 **Desktop app** 即可
 
-- 千萬`不要忘記下載這個憑證`，下面的Client ID、Client Secret不需特別複製，都存在憑證檔裡面了
+6.
+千萬不要忘記下載這個憑證，下面的Client ID、Client Secret不需特別複製，都存在憑證檔裡面了
 
 - 在專案的`tools 資料夾下新增一個 google_sheets 資料夾`，專門存放 Google Sheets 相關檔案
 - 將`下載好的憑證(credentials.json)放進去 google_sheets 資料夾`，這樣的目錄節結構會方便我們日後管理
 
 ## 2. 在專案加入官方提供的範例程式做測試
 
-在詳細的閱讀官方文件之前，我會先`用官方的範例程式確認他能否在我的專案順利運作`，如果遇到太多環境衝突才能儘早尋求替代方案
+在詳細的閱讀官方文件之前，我會先用官方的範例程式確認他能否在我的專案順利運作，如果遇到太多環境衝突才能儘早尋求替代方案
 
-- 下載 `googleapis` 套件
+1.
+下載 `googleapis` 套件
 
 ```
 yarn add googleapis@39
 
 ```
 
-- 在 `tools/google_sheets 資料夾中新增 index.js` 檔案，並複製 Google 範例程式碼貼上
+2.
+在 `tools/google_sheets 資料夾中新增 index.js` 檔案，並複製 Google 範例程式碼貼上
 
 ```
 const fs = require('fs');
@@ -159,14 +165,16 @@ sheets.spreadsheets.values.get({
 
 ```
 
-- 在終端機(Terminal)執行指令，測試能否運行
+3.
+在終端機(Terminal)執行指令，測試能否運行
 
 ```
 node tools/google_sheets/index.js
 
 ```
 
-- 你應該會先遇到找不到 credentials.json 的錯誤
+4.
+你應該會先遇到找不到 credentials.json 的錯誤
 
 請將範例程式中`讀取 'credentials.json' 路徑修改成專案的路徑 'tools/google_sheets/credentials.json'`
 
@@ -180,13 +188,17 @@ fs.readFile('tools/google_sheets/credentials.json', (err, content) => {
 
 ```
 
-- 再執行一次 `node tools/google_sheets/index.js` 時下面會有連結請你打開
+5.
+再執行一次 `node tools/google_sheets/index.js` 時下面會有連結請你打開
 
-- 打開後的網頁會要你選擇登入的 Google 帳號，看到下面的網頁時別害怕，點擊 `進階` 然後再點擊 `前往「Quickstart」(不安全)`
+6.
+打開後的網頁會要你選擇登入的 Google 帳號，看到下面的網頁時別害怕，點擊 `進階` 然後再點擊 `前往「Quickstart」(不安全)`
 
-- 接著所有的授權都必須按 `允許` ，最後你會看到一組授權碼，把他複製下來貼回終端機(Terminal)就完成惹
+7.
+接著所有的授權都必須按 `允許` ，最後你會看到一組授權碼，把他複製下來貼回終端機(Terminal)就完成惹
 
-- 如果終端機(Terminal)有輸出類似下面的資料時就代表你成功了
+8.
+如果終端機(Terminal)有輸出類似下面的資料時就代表你成功了
 
 ```
 Name, Major:
@@ -202,11 +214,14 @@ Dorothy, Math
 
 ```
 
-- 聰明的你會發現 `專案根目錄下多了一個 token.json` 的檔案，如果說 credentials.json 是打開藏寶庫的鑰匙，token.json 就像是能夠把裡面寶藏搬進搬出的權杖，而這個權杖是有期限的(expiry_date)，期限過了就需要再申請
+9.
+聰明的你會發現 `專案根目錄下多了一個 token.json` 的檔案，如果說 credentials.json 是打開藏寶庫的鑰匙，token.json 就像是能夠把裡面寶藏搬進搬出的權杖，而這個權杖是有期限的(expiry_date)，期限過了就需要再申請
 
-- 為了方便管理我們把 `token.json 搬移到 tools/google_sheets` 的資料夾下
+10.
+為了方便管理我們把 `token.json 搬移到 tools/google_sheets` 的資料夾下
 
-- `修改範例程式中讀取 token.json 的路徑`
+11.
+`修改範例程式中讀取 token.json 的路徑`
 
 ```
 //const TOKEN_PATH = 'token.json';
@@ -228,7 +243,7 @@ token.json
 
 ```
 
-不熟悉的朋友可以參考 [【Day7】gitignore-請勿上傳敏感、主程式以外的資料](https://deanlin.net/blog/202009/fb-ig-crawler-day-07/) 的文章
+> 不熟悉的朋友可以參考 [【Day7】gitignore-請勿上傳敏感、主程式以外的資料](https://deanlin.net/blog/202009/fb-ig-crawler-day-07/) 的文章
 
 ### ℹ️ 專案原始碼
 
@@ -238,18 +253,15 @@ token.json
 - 請記得在終端機下指令 **yarn** 才會把之前的套件安裝
 - 要在tools/google_sheets資料夾放上自己的憑證，今天的程式才能執行喔
 
-**在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：**
-
-- 加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項
-- 將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門
-- 調整專案架構
-
-- 優化爬蟲程式，以更廣的視角來擷取網頁資訊
-- 增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者
-- 排程部分改用 node-schedule & pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊
-
-**有興趣的朋友可以到天瓏書局選購，感謝大家的支持。**
-**購書連結**：[https://www.tenlong.com.tw/products/9789864348008](https://www.tenlong.com.tw/products/9789864348008)
+> **在許多人的幫助下，本系列文章已出版成書，並添加了新的篇章與細節補充：**
+> 加入更多實務經驗，用完整的開發流程讓讀者了解專案每個階段要注意的事項
+> 將爬蟲的步驟與技巧做更詳細的說明，讓讀者可以輕鬆入門
+> 調整專案架構
+> 優化爬蟲程式，以更廣的視角來擷取網頁資訊
+> 增加資料驗證、錯誤通知等功能，讓爬蟲執行遇到問題時可以第一時間通知使用者
+> 排程部分改用 node-schedule & pm2 的組合，讓讀者可以輕鬆管理專案程序並獲得更精確的 log 資訊
+> **有興趣的朋友可以到天瓏書局選購，感謝大家的支持。**
+> **購書連結**：[https://www.tenlong.com.tw/products/9789864348008](https://www.tenlong.com.tw/products/9789864348008)
 
 ---
 

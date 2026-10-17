@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202103/responsively-rwd-testing-tool/
-- 發布：2021-03-19（更新：2023-05-05）
+- 發布：2021-03-19
 - 主題：技術教學
 - 標籤：Responsively、前端開發、前端工程師、RWD、RWD 工具
 - 摘要：對前端開發者來說 RWD 是一個惡夢，常常會有你修好了一個尺寸但忘記檢核不同尺寸在螢幕的適應性問題；今天跟大家分享一個超實用工具 — responsively，他的安裝極其簡單，而且還是免費的喔！
@@ -34,7 +34,7 @@
 - **螢幕截圖**：可以**一次性幫所有螢幕截圖**，當然單個螢幕也行
 - **可以擴充 Devices 的螢幕種類**：讓你可以自訂想在哪些 devices 上面瀏覽
 
-這篇文章只是把[官網的資訊](https://deanlin.net/blog/202103/responsively-rwd-testing-tool/#https://responsively.app/)稍微中文化而已，筆者心得：『這工具堪成前端神器！身為前端工程師看到這篇文還不安裝一波！』
+> 這篇文章只是把[官網的資訊](https://deanlin.net/blog/202103/responsively-rwd-testing-tool/#https://responsively.app/)稍微中文化而已，筆者心得：『這工具堪成前端神器！身為前端工程師看到這篇文還不安裝一波！』
 
 ---
 
