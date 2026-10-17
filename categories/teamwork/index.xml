@@ -1025,649 +1025,297 @@ Expected Result:
 ]]></content:encoded>
     </item>
     <item>
-      <title>你知道對專案來說，README.md 有多麼重要嗎？ ── 工程師血淚史</title>
-      <link>https://deanlin.net/blog/202208/why-readme-matters/</link>
-      <pubDate>Fri, 05 Aug 2022 11:33:37 +0800</pubDate>
-      <guid>https://deanlin.net/blog/202208/why-readme-matters/</guid>
+      <title>遇到「第一次」的問題被問何時能解決？PM 跟工程師都千萬別這樣說！</title>
+      <link>https://deanlin.net/blog/202211/estimating-first-time-issues/</link>
+      <pubDate>Mon, 14 Nov 2022 15:30:00 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202211/estimating-first-time-issues/</guid>
       <dc:creator>林鼎淵</dc:creator>
       <category>團隊合作</category>
-      <description>如果公司的專案很多，README.md 又沒有寫好，那後續接手的人會非常痛苦；如果公司專案的規模很大，README.md 又缺乏維護，那這個專案已經半隻腳踏進棺材。</description>
-      <media:content url="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-og_hu_e7a8e04e53680ef2.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
-      <content:encoded><![CDATA[<p>如果公司的專案很多，README.md 又沒有寫好，那後續接手的人會非常痛苦；如果公司專案的規模很大，README.md 又缺乏維護，那這個專案已經半隻腳踏進棺材。</p>
-<p>身為工程師，我理解大部分的人都想把精力放在寫出更好的程式，但專案能否長期發展，其實是取決於「文件」；如果文件亂七八糟，或者甚至根本沒有制式文件，那這個專案的未來發展性堪憂。</p>
-<p>從管理的角度來說，我們要去思考：「如果負責專案的工程師明天就不在了，這個專案能否進行下去？」</p>
-<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-01.webp" width="1400" height="733" alt="你知道對專案來說，README.md 有多麼重要嗎？ ── 工程師血淚史（圖 1）" fetchpriority="high" decoding="async"></p>
-<pre tabindex="0"><code>大綱
-一、為什麼 README.md 很重要？
-二、有哪些是 README.md 一定要提供的資訊？
- ➤ 專案介紹 — Description
- ➤ 運行環境需求 — Requirement
- ➤ 環境檔（.env）有哪些欄位要自己填寫 — .env Setting
- ➤ 在 Local 端的安裝＆運行步驟 — Build Setup(Local)
- ➤ 在 Server 端的安裝＆驗證步驟- Build Setup(Server)
- ➤ 可提供支援的同仁 ── Support
- ➤ 注意事項 — Warning
-三、如果 README.md 有這些資訊，會讓日後維運更加順利
- ➤ 系統架構圖 — System architecture
- ➤ 使用者操作手冊 — User Manual
- ➤ Demo 影片 — Demo Video
- ➤ UI/UX 設計稿 — UI/UX Design
- ➤ Function map
- ➤ 單元測試、整合測試 — Unit Testing、Integration Testing
-</code></pre><h2 id="一為什麼-readmemd-很重要">一、為什麼 README.md 很重要？<a class="h-anchor" href="#%e4%b8%80%e7%82%ba%e4%bb%80%e9%ba%bc-readmemd-%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
-<p>因為開發人員第一次接觸專案時，就是透過 README.md 來了解的。</p>
-<p>它就像是一張專案的地圖，如果破損、缺乏維護，那踏上旅途的人勢必會遇上迷航、陷阱。</p>
-<p>在沒有律定 README.md 該有什麼內容時，每個人都是自由發揮；除了內容可能有短缺外，每份專案的撰寫風格也不盡相同，因此想透過這篇文章律定基礎架構。</p>
+      <description>站在專案管理的角度，每個時程估的越精確越好；但從開發實務面來說，不管是第一次接觸的技術，還是第一次遇到的 Bug，這類「第一次」的事件真的很難估出一個具體時間。</description>
+      <media:content url="https://deanlin.net/blog/202211/estimating-first-time-issues/images/cover_hu_e326d60bd07bbb07.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<p>站在專案管理的角度，每個時程估的越精確越好；但從開發實務面來說，不管是第一次接觸的技術，還是第一次遇到的 Bug，這類「第一次」的事件真的很難估出一個具體時間。</p>
+<p>如果你擔任公司的 PM 或主管，在下次專案出現 Bug 時，不妨參考文章的方式來溝通；如果你是工程師，也能採用文章的建議，減少自己修 Bug 時被打擾的次數。</p>
+<h2 id="釐清問題前盡量不要強壓時間">釐清問題前，盡量不要強壓時間<a class="h-anchor" href="#%e9%87%90%e6%b8%85%e5%95%8f%e9%a1%8c%e5%89%8d%e7%9b%a1%e9%87%8f%e4%b8%8d%e8%a6%81%e5%bc%b7%e5%a3%93%e6%99%82%e9%96%93" aria-label="這個段落的連結"></a></h2>
+<p>有些主管在 Bug 出現後，根本不管問題複雜度，直接命令工程師：「給我在 15 分鐘內修復完成！」</p>
+<p>如果是問題明確的小 Bug，那壓個時間倒也還好；但如果問題複雜度高，強壓一個不合理的時間，那對解決問題並沒有幫助。</p>
+<p>說實話，遇到 Bug 的時候工程師就已經很緊張了，如果再加一個很短的時間限制；在腦袋一團亂的狀態下，就算解決了表面上的 Bug，可能背後又同時埋下了更多的 Bug。</p>
+<p>筆者比較建議的詢問方式為：「大概需要多少時間釐清問題？」</p>
 <blockquote>
-<p>這邊提醒讀者，本篇文章所建議的 README.md 內容是提供給「內部開發人員」看的；如果你的專案是對外開放，部分內容請自行斟酌。</p>
+<p>這裡想表達的是，讓有專業能力的人來估時間；而不是由搞不清楚狀況的人，隨意定一個時間。</p>
 </blockquote>
+<h2 id="工程師要主動給出回報時間">工程師要「主動」給出回報時間<a class="h-anchor" href="#%e5%b7%a5%e7%a8%8b%e5%b8%ab%e8%a6%81%e4%b8%bb%e5%8b%95%e7%b5%a6%e5%87%ba%e5%9b%9e%e5%a0%b1%e6%99%82%e9%96%93" aria-label="這個段落的連結"></a></h2>
+<p><strong>要給的是「回報時間」，而不是「解決時間」。</strong></p>
+<p>面對完全摸不著頭緒的問題，如果直接說自己可以在 xxx 時間內解決，那會給主管一個錯誤的期待。</p>
+<p>如果你真的順利在時間內解決那是皆大歡喜，但萬一還是無法解決那怎麼辦？</p>
+<blockquote>
+<p>就算之前都運氣好順利解決，但只要你失敗過一次，許多主管就只會記得失敗的那次。</p>
+</blockquote>
+<p>因此筆者建議用這種方式回覆：「這邊我們先釐清問題，<strong>半小時</strong>後向您回報 Bug 處理狀況，如果有順利提前解決也會即時回報。」</p>
+<p>這樣做有以下好處：</p>
+<ol>
+<li>主管知道什麼「時間點」會收到回報。</li>
+<li>如果提前解決，你會被認為是效率高。</li>
+<li>我們說的是「回報時間」並非「解決時間」，給自己一點緩衝空間。</li>
+</ol>
+<h2 id="工程師千萬別說自己會盡快解決">工程師千萬別說自己會「盡快」解決<a class="h-anchor" href="#%e5%b7%a5%e7%a8%8b%e5%b8%ab%e5%8d%83%e8%90%ac%e5%88%a5%e8%aa%aa%e8%87%aa%e5%b7%b1%e6%9c%83%e7%9b%a1%e5%bf%ab%e8%a7%a3%e6%b1%ba" aria-label="這個段落的連結"></a></h2>
+<p>如果說自己會盡快解決，那有高機率每 3~5 分鐘就被打擾一次。</p>
+<p>因為每個人對「盡快」的時間定義不同，人一但急了就會催促，而對工程師來說，如果在釐清邏輯時被打斷，那可能會需要再重新順一遍；所以筆者建議要說出「具體時間」，避免在解決問題的過程被頻繁打擾。</p>
+<h2 id="總結">總結<a class="h-anchor" href="#%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<p>遇到 Bug 時，無論主管、PM 還是工程師都很緊張；但有時越急犯的錯越多，下次不妨嘗試看看：</p>
+<ol>
+<li><strong>讓工程師自己定下回報時間</strong>：建議將回報時間設定在 30 ~ 60 分鐘。</li>
+<li><strong>回報時間內不要打擾工程師</strong>：大家都很急，如果耐不住性子打斷工程師的思緒，就可能導致需要更多的時間來解決 Bug。</li>
+<li><strong>要求工程師定時回報處理進度</strong>：如果判定問題無法短時間解決，工程師就需要「定時」回報處理進度（若沒有定時回報的機制，有些人就算卡住了也不會主動說）；這個「定時」會給人增加一些安全感，並減少工程師被打擾的次數。</li>
+</ol>
+<p>希望這篇文章的建議，能讓大家日後遇到 Bug 時合作更為和諧；如果您有不一樣的觀點，也歡迎留言討論。</p>
 <hr>
-<h2 id="二有哪些是-readmemd-一定要提供的資訊">二、有哪些是 README.md 一定要提供的資訊？<a class="h-anchor" href="#%e4%ba%8c%e6%9c%89%e5%93%aa%e4%ba%9b%e6%98%af-readmemd-%e4%b8%80%e5%ae%9a%e8%a6%81%e6%8f%90%e4%be%9b%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
-<p>下面列出的項目，是筆者認為對第一次接觸專案、準備維護專案的人有幫助的資訊。</p>
-<h3 id="-專案介紹--description">專案介紹 ── Description<a class="h-anchor" href="#-%e5%b0%88%e6%a1%88%e4%bb%8b%e7%b4%b9--description" aria-label="這個段落的連結"></a></h3>
-<p>簡述專案目標，讓第一次接觸的人也能在短時間初步了解專案（如果使用到少見的專有名詞，請附加說明）。</p>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>程式可以向下相容，卻很難向上兼容？主管要下屬站在他的角度思考，卻忽略了這一點</title>
+      <link>https://deanlin.net/blog/202211/backward-compatible-thinking/</link>
+      <pubDate>Wed, 09 Nov 2022 16:00:00 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202211/backward-compatible-thinking/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>市面上有很多的文章在講「向上管理、從主管的角度去思考」；不過今天筆者想從另一個角度切入，不知道大家有沒有想過：「為什麼程式通常可以向下相容，但卻很難向上兼容。」</description>
+      <media:content url="https://deanlin.net/blog/202211/backward-compatible-thinking/images/cover_hu_e380fba4b992adb5.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<p>市面上有很多的文章在講「向上管理、從主管的角度去思考」；不過今天筆者想從另一個角度切入，不知道大家有沒有想過：「為什麼程式通常可以向下相容，但卻很難向上兼容。」</p>
 <blockquote>
-<p>如果是前後端分離的專案，請附上前端/後端的專案連結。</p>
+<p>舉個簡單的例子，如果你有在玩電腦遊戲，一定會先看簡介裡的「系統需求」，避免買了跑起來卡頓，甚至開不了的遊戲。</p>
+<p>以 STEAM 遊戲舉例，在「作業系統」的部分，可能會建議電腦要有「Windows 7 64 位元 （不支援 32 位元）」以上的配備，如果你的電腦還是 Windows XP 32 位元，那基本上是無法運行的。</p>
 </blockquote>
-<h3 id="-運行環境需求--requirement">運行環境需求 ── Requirement<a class="h-anchor" href="#-%e9%81%8b%e8%a1%8c%e7%92%b0%e5%a2%83%e9%9c%80%e6%b1%82--requirement" aria-label="這個段落的連結"></a></h3>
-<p>描述這個專案運行所需要的環境，比如說：</p>
+<p><strong>當然人不會像程式一樣那麼死板，但也只能做出自己認知範圍內的決策。</strong></p>
+<h2 id="沒有相同權力就很難擁有相同視野">沒有相同權力，就很難擁有相同視野<a class="h-anchor" href="#%e6%b2%92%e6%9c%89%e7%9b%b8%e5%90%8c%e6%ac%8a%e5%8a%9b%e5%b0%b1%e5%be%88%e9%9b%a3%e6%93%81%e6%9c%89%e7%9b%b8%e5%90%8c%e8%a6%96%e9%87%8e" aria-label="這個段落的連結"></a></h2>
+<p>因為筆者曾擔任過 Developer、Project Manager、Tech Lead 等角色，所以很清楚如果沒有真的站在那個位置，就很難理解對方為何會做出這樣的決策；畢竟不同角色面對的人、事、物差異極大，彼此的情報也有很大的落差。</p>
+<p>當然市面上有非常多管理學、人際學、溝通學的書籍可以參考，業界也有很多優秀的講師分享、傳授自己的經驗；但說真的…無論讀多少本書、上多少堂課，都遠遠比不上自己實戰得到的經驗。</p>
+<p>這不是在說學習沒有用，如果你有深厚的理論知識，在未來面臨突發狀況時，你的應對進退一定會比那些完全沒有準備的人更加完善（這裡我們排除那些天賦異稟的領導者）。</p>
+<h2 id="擴增自己的認知範圍">擴增自己的認知範圍<a class="h-anchor" href="#%e6%93%b4%e5%a2%9e%e8%87%aa%e5%b7%b1%e7%9a%84%e8%aa%8d%e7%9f%a5%e7%af%84%e5%9c%8d" aria-label="這個段落的連結"></a></h2>
+<p>儘管職位不到，但我們還是有其他方法獲得實戰經驗。</p>
+<p>就如同標題所述，大部分的主管都希望下屬站在他們的角度去思考，畢竟這樣他們交代任務會更為輕鬆。</p>
+<blockquote>
+<p>向上兼容是跳出舒適圈的過程，需要勇氣與毅力。</p>
+</blockquote>
+<p>在科技業，如果只站在工程師的角度，你可能會覺得沒必要幫主管想這麼多；但如果想在職涯上更進一步（ex：資深技術職、晉升管理職），懂主管在想什麼是非常重要的。</p>
+<p>筆者建議要多與主管溝通，並適時表達自己的想法，在規劃任務時，可以看看自己與主管的想法是否一致；如果有分歧，可以與主管討論，了解他為何會做出這個決策（主管的決策也並非萬無一失，彼此的交流能讓規劃更為完整）。</p>
+<p>這些交流是非常寶貴的，因為它讓你在取得權力前，能借用對方的視野去看問題，以此擴增自己的認知範圍；當然這一切的前提是，你有優秀的主管，並且他願意與你交流。</p>
+<blockquote>
+<p><strong>警告</strong>：</p>
+<p>這邊特別提醒大家，如果主管要你幫忙做出「不符職權的重要決策」，筆者建議要裝傻推掉；因為有些主管將做決策的任務交給下屬，不是為了重用他，而是在找人背黑鍋。</p>
+</blockquote>
+<h2 id="結語">結語<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>如果一直做相同的事，在職場只會獲得年資，待在久也不會提升自己的認知範圍。</p>
+<p>而本文提出的方法，儘管無法擁有與主管相同的權力，但我們能借用主管的視野，透過一次次反饋去優化我們的思維。</p>
+<hr>
+]]></content:encoded>
+    </item>
+    <item>
+      <title>技術部門主管不熟悉技術，就跟騎兵隊長不會騎馬一樣！</title>
+      <link>https://deanlin.net/blog/202211/tech-managers-must-know-tech/</link>
+      <pubDate>Wed, 02 Nov 2022 16:00:00 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202211/tech-managers-must-know-tech/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>有些工程師在升上管理職後，因為忙於專案管理，所以會慢慢把技術放掉，都交給底下的人去學習、操作；但只要一放掉，隨著年齡的增長，技術會越來越難重拾回來。</description>
+      <media:content url="https://deanlin.net/blog/202211/tech-managers-must-know-tech/images/cover_hu_194453277b0339ae.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>最近身旁有位工程師朋友，他與筆者分享了部門主管在團隊 Tech Lead 離職後遇到的諸多問題，因為談話內容值得警惕，所以特別寫了這篇文章與大家分享。</p>
+</blockquote>
+<p>有些工程師在升上管理職後，因為忙於專案管理，所以會慢慢把技術放掉，都交給底下的人去學習、操作；但只要一放掉，隨著年齡的增長，技術會越來越難重拾回來。</p>
+<p>接下來就讓我們來看看，如果技術部門主管不熟悉技術，那在團隊的 Tech Lead 離職後，他會遇到哪些困境。</p>
+<h2 id="因為太久沒碰技術各項判斷能力大幅下降">因為太久沒碰技術，各項判斷能力大幅下降<a class="h-anchor" href="#%e5%9b%a0%e7%82%ba%e5%a4%aa%e4%b9%85%e6%b2%92%e7%a2%b0%e6%8a%80%e8%a1%93%e5%90%84%e9%a0%85%e5%88%a4%e6%96%b7%e8%83%bd%e5%8a%9b%e5%a4%a7%e5%b9%85%e4%b8%8b%e9%99%8d" aria-label="這個段落的連結"></a></h2>
+<p>如果過去都靠 Tech Lead 協助判斷、整理報告，那現在只靠自己就會遇到許多問題：</p>
 <ul>
-<li><strong>前端（Frontend）</strong>：NVM、Yarn、Node.js</li>
-<li><strong>後端（Backend）</strong>：PHP、Composer、Laravel、MySQL</li>
+<li><strong>用舊時代的技術評斷新時代的需求</strong>：科技日新月異，現在跟過去的技術也是天差地別，要一個只用過 HTML、CSS、JavaScript 的人，去判斷哪個前端框架更適合專案，說實話有點強人所難。</li>
+<li><strong>無法判斷各項功能的合理估時</strong>：因為脫離技術太久，如果別人說這個功能會用到 xxx 技術所以會花很多時間，自己也很難判斷是否所言屬實。</li>
+<li><strong>技術的可行性由別人說了算</strong>：有些 Feature 會需要用到新技術，但因為自己連開發環境都架不太起來，所以當別人說新技術不可行時也無從判斷。</li>
+<li><strong>面試只能碰運氣找人才</strong>：因為現在專案用的技術自己都不太熟悉，所以在面試時很難提出適當的技術問題，只能從對方的從業經驗來判斷。</li>
 </ul>
 <blockquote>
-<p>隨著技術進步，各項工具的版本不斷更迭；因此建議要附上能讓專案順利運行的「版本」，因為許多工具並沒有向下相容。</p>
+<p>這邊筆者補充一下，如果團隊氣氛和諧，每個人都有自己的專業，那上面所提出的問題是有機會避免的（前提是大家估時都很有良心、評估技術時都拿出專業態度，面試時主管也願意讓團隊成員一起參與）。</p>
 </blockquote>
-<h3 id="-環境檔env有哪些欄位要自己填寫--env-setting">環境檔（.env）有哪些欄位要自己填寫 ── .env Setting<a class="h-anchor" href="#-%e7%92%b0%e5%a2%83%e6%aa%94env%e6%9c%89%e5%93%aa%e4%ba%9b%e6%ac%84%e4%bd%8d%e8%a6%81%e8%87%aa%e5%b7%b1%e5%a1%ab%e5%af%ab--env-setting" aria-label="這個段落的連結"></a></h3>
-<p>以後端來說，涉及機密、隱私、個人化的參數會需要自己填寫，比如：</p>
+<h2 id="想要重拾技術但是">想要重拾技術，但是…<a class="h-anchor" href="#%e6%83%b3%e8%a6%81%e9%87%8d%e6%8b%be%e6%8a%80%e8%a1%93%e4%bd%86%e6%98%af" aria-label="這個段落的連結"></a></h2>
+<p>朋友說他的部門主管是想重拾技術的，但這個想法有點力不從心（部門主管年紀約 40 出頭，脫離技術近 8 年），主要原因為：</p>
+<ul>
+<li><strong>上班沒時間，下班沒體力</strong>：當初會放掉技術，就是因為上班忙於專案管理、談判溝通，還有一些行政上的雜事；而下班後精疲力盡，能學習的時間太少。</li>
+<li><strong>太久沒碰技術，挫折感太大</strong>：好不容易擠出時間學習了，卻發覺現在的技術都看不太懂，連跑範例程式都要搞一段時間，學習與理解能力跟年輕時相比衰退了不少。</li>
+<li><strong>快要學不動了</strong>：過去的技術相對單純，而近幾年技術則是爆炸性的成長，框架、套件、雲端服務如雨後春筍般出現，要學的東西越來越多。</li>
+</ul>
+<blockquote>
+<p>30 歲跟 40 歲的學習能力、身體素質還是有一定差別的，隨著年齡增長、職務上升，技術要跟上潮流確實有其困難性，我們只能盡可能地保持對技術的敏銳度，至少要理解現在專案用了哪些技術。</p>
+</blockquote>
+<h2 id="結語">結語<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>相信上面的案例已經充分地讓大家體會到，如果技術部門主管不熟悉技術，又沒人能給出合適的建議時，他將會面臨的種種痛點。</p>
+<p>最後再統整一下筆者與朋友聊完後的心得：</p>
 <ol>
-<li>DB 帳號密碼、IP、Port</li>
-<li>JWT 有效期限</li>
-<li>Mail 相關參數</li>
-<li>Storage 路徑</li>
-</ol>
-<h3 id="-在-local-端的安裝運行步驟--build-setup-local">在 Local 端的安裝＆運行步驟 ── Build Setup (Local)<a class="h-anchor" href="#-%e5%9c%a8-local-%e7%ab%af%e7%9a%84%e5%ae%89%e8%a3%9d%e9%81%8b%e8%a1%8c%e6%ad%a5%e9%a9%9f--build-setup-local" aria-label="這個段落的連結"></a></h3>
-<p>是那種「複製貼上」就能夠順利安裝的步驟，可以放一些參考連結，但不要讓使用者需要去閱讀官方文檔才知道怎麼安裝。</p>
-<p>以後端舉例，指令需至少包含如下內容：</p>
-<ol>
-<li>專案安裝步驟</li>
-<li>DB Migration</li>
-<li>DB Seeder</li>
-<li>運行專案</li>
+<li>不要因為當上「管理職」就完全把技術放掉。</li>
+<li>技術不要完全倚賴副手（ex：Tech Lead），你要隨時做好自己面對的準備。</li>
+<li>不要讓自己落入重拾技術的窘境，要盡可能保持對技術的敏銳度。</li>
 </ol>
 <blockquote>
-<p>如果採前後端分離，可以附上 POSTMAN 的 collection 方便前端驗證。</p>
-</blockquote>
-<h3 id="-在-server-端的安裝驗證步驟--build-setup-server">在 Server 端的安裝＆驗證步驟 ── Build Setup (Server)<a class="h-anchor" href="#-%e5%9c%a8-server-%e7%ab%af%e7%9a%84%e5%ae%89%e8%a3%9d%e9%a9%97%e8%ad%89%e6%ad%a5%e9%a9%9f--build-setup-server" aria-label="這個段落的連結"></a></h3>
-<p>如果不是採取自動部署的策略，那筆者建議紀錄如下內容：</p>
-<ol>
-<li>專案運行所需套件，及其對應的指令</li>
-<li>伺服器端參數（ex：API 最長可執行時間、可上傳檔案容量限制、單個 IP 每分鐘存取次數）</li>
-<li>不同環境對應的 Server ip</li>
-<li>相關參數調整後，重啟使其生效的指令</li>
-<li>部署完成後，可以透過什麼方式（工具）驗證功能皆如預期運行</li>
-</ol>
-<h3 id="-可提供支援的同仁--support">可提供支援的同仁 ── Support<a class="h-anchor" href="#-%e5%8f%af%e6%8f%90%e4%be%9b%e6%94%af%e6%8f%b4%e7%9a%84%e5%90%8c%e4%bb%81--support" aria-label="這個段落的連結"></a></h3>
-<p>讓初次接觸專案的人知道遇到問題可以找誰詢問，建議在這個部分放上開發人員的聯絡方式（ex：座位、email）。</p>
-<p>有時問題可能有其歷史背景，所以可以用附註形式，放上了解這份專案歷史的同仁（ex：主管、負責的 PM）。</p>
-<h3 id="-注意事項--warning">注意事項 ── Warning<a class="h-anchor" href="#-%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85--warning" aria-label="這個段落的連結"></a></h3>
-<p>每個專案或多或少都會有一些特別的設計，時間拉長難免遺忘，建議把他們記錄下來，比如：</p>
-<ol>
-<li>如果 API 文檔是用指令產生的，請記得記錄下來</li>
-<li>如果有設計排程（Schedule），把觸發的時間點列出</li>
-<li>前端在不同環境的建立指令（Script）</li>
-<li>如果用到特別的套件，建議簡單說明在什麼時機應用，並放上官方文檔連結</li>
-<li>專案的授權條款（License）</li>
-</ol>
-<hr>
-<h2 id="三如果-readmemd-有這些資訊會讓日後維運更加順利">三、如果 README.md 有這些資訊，會讓日後維運更加順利<a class="h-anchor" href="#%e4%b8%89%e5%a6%82%e6%9e%9c-readmemd-%e6%9c%89%e9%80%99%e4%ba%9b%e8%b3%87%e8%a8%8a%e6%9c%83%e8%ae%93%e6%97%a5%e5%be%8c%e7%b6%ad%e9%81%8b%e6%9b%b4%e5%8a%a0%e9%a0%86%e5%88%a9" aria-label="這個段落的連結"></a></h2>
-<h3 id="-系統架構圖--system-architecture">系統架構圖 ── System architecture<a class="h-anchor" href="#-%e7%b3%bb%e7%b5%b1%e6%9e%b6%e6%a7%8b%e5%9c%96--system-architecture" aria-label="這個段落的連結"></a></h3>
-<p>如果專案結構複雜，或是需要串接多個系統，那建議放上系統架構圖，否則接手的工程師會需要花很多時間去研究他們之間的關聯性。</p>
-<figure class="figure"><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-02.webp" width="1044" height="904" alt="IMG from：https://commons.wikimedia.org/" loading="lazy" decoding="async">
-  <figcaption>IMG from：<a href="https://commons.wikimedia.org/">https://commons.wikimedia.org/</a></figcaption>
-</figure>
-
-<h3 id="-使用者操作手冊--user-manual">使用者操作手冊 ── User Manual<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8%e8%80%85%e6%93%8d%e4%bd%9c%e6%89%8b%e5%86%8a--user-manual" aria-label="這個段落的連結"></a></h3>
-<p>每份專案都一定要製作使用者操作手冊，否則 PM、工程師會不停被重複的問題打擾；有了這份手冊後，之後負責維運的工程師也能更快上手。</p>
-<blockquote>
-<p>形式可以是 Wiki、Word…等等，讓使用者方便閱讀為第一優先。</p>
-</blockquote>
-<h3 id="-demo-影片-demo-video">Demo 影片── Demo Video<a class="h-anchor" href="#-demo-%e5%bd%b1%e7%89%87-demo-video" aria-label="這個段落的連結"></a></h3>
-<p>如果可以，建議在專案完成後錄製「簡單」的 Demo 影片；主要目的是讓工程師知曉專案「正常」的狀況下應該長什麼樣子。</p>
-<blockquote>
-<p><em>有時專案看似順利啟動了，但實際上部分功能是不完整的（ex：前端順利啟動了，但 WebSocket 異常）。</em></p>
-</blockquote>
-<h3 id="-uiux-設計稿--uiux-design">UI/UX 設計稿 ── UI/UX Design<a class="h-anchor" href="#-uiux-%e8%a8%ad%e8%a8%88%e7%a8%bf--uiux-design" aria-label="這個段落的連結"></a></h3>
-<p>放上 Wireframe、Mockup、Prototype 等設計稿連結（如果有的話）</p>
-<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-03.webp" width="1000" height="667" alt="UI/UX 設計稿 ── UI/UX Design（圖 3）" loading="lazy" decoding="async"></p>
-<h3 id="-function-map">Function map<a class="h-anchor" href="#-function-map" aria-label="這個段落的連結"></a></h3>
-<p>通常會以心智圖來呈現，PM 可以透過它讓工程師快速了解、評估初期的功能。</p>
-<p>在遇到需求要新增或變更時，有這張圖工程師能也更快回憶，並掌握重點。</p>
-<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-04.webp" width="1400" height="1566" alt="Function map（圖 4）" loading="lazy" decoding="async"></p>
-<blockquote>
-<p><a href="https://gitmind.com/">GitMind</a> 是個不錯的工具，推薦大家使用看看。</p>
-</blockquote>
-<h3 id="-單元測試整合測試--unit-testingintegration-testing">單元測試、整合測試 ── Unit Testing、Integration Testing<a class="h-anchor" href="#-%e5%96%ae%e5%85%83%e6%b8%ac%e8%a9%a6%e6%95%b4%e5%90%88%e6%b8%ac%e8%a9%a6--unit-testingintegration-testing" aria-label="這個段落的連結"></a></h3>
-<p>專案的穩定，是建立在有寫測試程式的前提下；否則系統很容易因為需求的新增、變更，而導致過去的功能毀損。</p>
-<p>在測試方面，除了「整體」的測試外，有時我們只需要測試「特定功能」；可以把常用的測試指令紀錄在這裡（ex：邏輯複雜、關聯廣泛的測試）。</p>
-<blockquote class="pullquote"><p>以上內容是筆者過去專案經驗的彙整，若有未盡之處，歡迎留言補充。</p>
+<p>只要還待在科技業，就不要輕易放棄技術；因為你很難保證自己永遠都是「管理職」，或是只需要做管理職的事。</p>
 </blockquote>
 <hr>
-<pre tabindex="0"><code>工程師血淚史
-▋ 團隊在系統開發上遇到了哪些問題
-▋ 需求不斷變更，到底哪個環節出錯了
-▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
-▋ 如果沒有明確的開發流程，團隊將會無所適從
-▋ 你知道對專案來說，README.md 有多麼重要嗎？(本篇)
-</code></pre>]]></content:encoded>
+]]></content:encoded>
     </item>
     <item>
-      <title>如果沒有明確的工作流程，團隊將會無所適從 — 工程師血淚史</title>
-      <link>https://deanlin.net/blog/202207/clear-workflow-for-teams/</link>
-      <pubDate>Fri, 29 Jul 2022 09:27:07 +0800</pubDate>
-      <guid>https://deanlin.net/blog/202207/clear-workflow-for-teams/</guid>
+      <title>同甘共苦的同事從工程師升主管，下一步我該怎麼做？</title>
+      <link>https://deanlin.net/blog/202210/colleague-promoted-to-manager/</link>
+      <pubDate>Wed, 26 Oct 2022 16:15:00 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202210/colleague-promoted-to-manager/</guid>
       <dc:creator>林鼎淵</dc:creator>
       <category>團隊合作</category>
-      <description>在流程不明確的狀態下，團隊成員只能憑藉自己的直覺做事；如果彼此對一件事的認知不同就容易造成誤會，甚至爆發不必要的衝突。</description>
-      <media:content url="https://deanlin.net/blog/202207/clear-workflow-for-teams/images/clear-workflow-for-teams-og_hu_c5f433820b22353.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
-      <content:encoded><![CDATA[<p>在流程不明確的狀態下，團隊成員只能憑藉自己的直覺做事；如果彼此對一件事的認知不同就容易造成誤會，甚至爆發不必要的衝突。</p>
-<p>由於過去許多工作流程都是口頭制定，沒有明確的文字敘述，因此想透過這篇文章來整理流程，並在日後的實踐中不斷優化與完善。</p>
-<p><img src="https://deanlin.net/blog/202207/clear-workflow-for-teams/images/clear-workflow-for-teams-01.webp" width="1400" height="730" alt="如果沒有明確的工作流程，團隊將會無所適從 — 工程師血淚史（圖 1）" fetchpriority="high" decoding="async"></p>
-<pre tabindex="0"><code>大綱
-ㄧ、專案初始
-二、初始任務
- ➤ 評估每個階段的時程
- ➤ 撰寫 Ticket 的需求規格
- ➤ 估計每個 Ticket 的時數
- ➤ 確認 Ticket 的總時數是否在專案的截止日期內
- ➤ Ticket 分配
- ➤ 專案初始環境建置
- ➤ Server 建置
-三、專案進行中
- ➤ 進度回報
- ➤ 工程師之間的合作
- ➤ 工程師與 PM 的合作
- ➤ 了解為什麼都要由 PM 來開 Ticket
-</code></pre><h2 id="ㄧ專案初始">ㄧ、專案初始<a class="h-anchor" href="#%e3%84%a7%e5%b0%88%e6%a1%88%e5%88%9d%e5%a7%8b" aria-label="這個段落的連結"></a></h2>
-<p>STEP 1：由 PM 與客戶討論具體需求。</p>
-<p>STEP 2：請 UI/UX 設計師依造需求初步完成 Wireframe。</p>
-<p>STEP 3：PM、UI/UX、Tech Lead 一起確認流程、功能的可行性，判斷是否有需要調整的部分。</p>
-<p>STEP 4：待客戶認可 Wireframe 後，請 UI/UX 設計師將其升級成 Mockup。</p>
-<p>STEP 5：由 Tech Lead 確認 Mockup 上需要注意的細節（ex：哪些欄位適合拿來搜尋、不同權限看到的畫面、有哪些元件可以設計為共用模組）。</p>
-<p>STEP 6：在 UI/UX 設計師調整為 Prototype 後，由 PM（或 UI/UX 設計師）向團隊成員說明系統的功能與流程，確保大家理解這個專案要完成的目標。</p>
-<p>STEP 7：由 Tech Lead 向工程師團隊說明各功能在設計上要注意的細節（ex：哪些欄位要設計 Auto-Complete、是否有特別的 Validation Rules、某些功能需要提前 Survey 避免卡關）。</p>
+      <description>在職場上，除非升官的人德高望重，或比自己強大太多；否則很多人的腦中都會浮現：「為什麼升官的人不是我？」</description>
+      <media:content url="https://deanlin.net/blog/202210/colleague-promoted-to-manager/images/cover_hu_6b39a763c2a24ee6.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<blockquote>
+<p>過去同甘共苦，一起熬夜加班罵主管的同事，如今搖身一變，成了自己的直屬主管。</p>
+<p>在升官後，他變得越來越陌生，不只講話的態度不一樣，還做出許多自己曾經唾棄的決策，他這樣跟之前的主管有什麼差別？</p>
+</blockquote>
+<p>在職場上，除非升官的人德高望重，或比自己強大太多；否則很多人的腦中都會浮現：「為什麼升官的人不是我？」</p>
+<p>如果你腦中出現這個想法，那日後與新主管合作時，就可能產生一些主觀意識造成的偏見；為了盡可能減少偏見帶來的衝突，今天這篇文章會與大家討論：</p>
+<ol>
+<li>心理因素造成的偏見有哪些？</li>
+<li>如何調適自己的心態？</li>
+<li>站在對方的角度去思考，爭取下次升官機會。</li>
+</ol>
 <blockquote>
-<p>良心建議：專案初始的設計盡量從 Wireframe 開始，就算專案規模較小也不要直接畫 Mockup；因為客戶的需求在前期會時常變動，就算突然加大投資，小專案突然變成大專案也是很常見的，若使用 Mockup 會要花更多的時間在調整上面。</p>
+<p><strong>備註</strong>：本文不討論同事升官後性情大變、整組壞掉的情境。</p>
+</blockquote>
+<h2 id="心理因素造成的偏見">心理因素造成的偏見<a class="h-anchor" href="#%e5%bf%83%e7%90%86%e5%9b%a0%e7%b4%a0%e9%80%a0%e6%88%90%e7%9a%84%e5%81%8f%e8%a6%8b" aria-label="這個段落的連結"></a></h2>
+<p>如果你也想升官，但最後升的不是你；那在心理不平衡的時候，容易帶著有色眼鏡去看對方的所有行動，比如：</p>
+<ul>
+<li>討論解決方案時對方講話比較大聲 ➝ 你會覺得：「有官威喔！升官後講話口氣都不一樣了。」</li>
+<li>指派只有你能解決的困難任務 ➝ 你會想：「怎麼難搞的任務都丟給我？是故意的吧！」</li>
+</ul>
+<p>也許你們的溝通方式沒有改變，而你也比較擅長解決某些問題；但在對方升官後，偏見會導致你覺得對方無論做什麼都是錯的，就算他沒這個意思也容易被曲解。</p>
+<blockquote>
+<p>升官是綜合因素考量，沒升上去不代表你比較差，只是對方的某些條件比你更為合適（ex：更懂主管的心、具備群眾基礎、過去展現過領導力）。</p>
+</blockquote>
+<h2 id="調整自己的心態">調整自己的心態<a class="h-anchor" href="#%e8%aa%bf%e6%95%b4%e8%87%aa%e5%b7%b1%e7%9a%84%e5%bf%83%e6%85%8b" aria-label="這個段落的連結"></a></h2>
+<p>很多時候我們覺得換個位置就換個腦袋，假使對方是工程師升管理職，那你可能還會對他升官後的許多決策感到不解，比如：</p>
+<ul>
+<li>這個需求一定要加班才有辦法完成，不久前你也是工程師，應該很清楚啊！？</li>
+<li>過去我們不是都在吐槽前主管亂接需求，怎麼換了你還是一樣什麼都接？</li>
+<li>這個時程估的太緊繃了，之前專案怎麼爆掉的你都忘了嗎？</li>
+</ul>
+<p>我們感到困惑的同時，可以思考一個問題：「是不是之前的主管也是這樣？」</p>
+<p>公司不會因為換一個主管就減輕部門壓力（沒增加就很好了），因此除非新主管有能力優化工作流程，或是擁有極強的職場社交能力；否則對基層來說，換誰上去都差不多。</p>
+<p>在理解對方的無奈後，如果沒有離職的打算，就要調整自己的心態，無論感性還是理性都要把對方當成自己的主管，以後說的話、做的動作也要注意界線，像是：</p>
+<ul>
+<li>以前你們一起罵主管，如果現在你還敢直接批評就可能要倒霉了。</li>
+<li>過去如果會勾肩搭背，現在建議避免這類肢體動作。</li>
+</ul>
+<blockquote>
+<p>每間公司的文化不同，請依實際狀況酌情參考。</p>
+<p>但這不是指主管說什麼都要附和，如果公司只剩下一種聲音，那也不是健康的狀況。</p>
+</blockquote>
+<h2 id="站在對方的立場成為副手">站在對方的立場，成為副手<a class="h-anchor" href="#%e7%ab%99%e5%9c%a8%e5%b0%8d%e6%96%b9%e7%9a%84%e7%ab%8b%e5%a0%b4%e6%88%90%e7%82%ba%e5%89%af%e6%89%8b" aria-label="這個段落的連結"></a></h2>
+<p>很多人在升官後是恐慌的，如果這時有人可以跟他站在同一陣線，他會特別有印象。</p>
+<p>這邊提醒一點，你要成為的是「副手」而不是「奴隸」；幫主管最好的方式並不是替他把事情做完，而是讓其他人也願意服從新主管的命令。</p>
+<p>「雪中送炭」才會被人記住，跟主管關係良好，與同事合作順利；如果之後有合適的主管缺，或主管再次升官時，你會比其他人有更高的機率升官。</p>
+<blockquote>
+<p>對工程師來說，做事的能力很重要；但如果想在一間工作待得舒服，無論你想不想升官，做人都是很重要的（至少不要跟主管起衝突，跟同事吵架）。</p>
 </blockquote>
 <hr>
-<h2 id="二初始任務">二、初始任務<a class="h-anchor" href="#%e4%ba%8c%e5%88%9d%e5%a7%8b%e4%bb%bb%e5%8b%99" aria-label="這個段落的連結"></a></h2>
-<h3 id="-評估每個階段的時程">評估每個階段的時程<a class="h-anchor" href="#-%e8%a9%95%e4%bc%b0%e6%af%8f%e5%80%8b%e9%9a%8e%e6%ae%b5%e7%9a%84%e6%99%82%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
-<p>由 PM 將專案的需求拆分成不同的 Phase，這樣工程師比較能集中注意力在特定事物上，每個 Phase 都需要把如下的任務納入考量：</p>
-<ol>
-<li>要完成的功能（ex：前端、後端）</li>
-<li>撰寫測試程式的時程（ex：單元測試、壓力測試）</li>
-<li>QA 團隊測試的時程</li>
-<li>測試、正式環境部署的時程</li>
-</ol>
-<blockquote>
-<p>規劃時要保留「緩衝時間」，因為測試一次就過基本上是不可能發生的事情，往往需要預留 15~30% 的時間來修 Bug。</p>
-</blockquote>
-<h3 id="-撰寫-ticket-的需求規格">撰寫 Ticket 的需求規格<a class="h-anchor" href="#-%e6%92%b0%e5%af%ab-ticket-%e7%9a%84%e9%9c%80%e6%b1%82%e8%a6%8f%e6%a0%bc" aria-label="這個段落的連結"></a></h3>
-<p>由 PM 在專案管理系統上為每項任務建立 Ticket，建議需求規格的內容要包含：</p>
-<ol>
-<li>Prototype 截圖：讓工程師明白功能具體的位置在哪。</li>
-<li>需求描述：說明這個功能是用來做什麼的，它跟哪些功能有相依性。</li>
-<li>相關計算規則：以計算商品總價來說，就會有「產品搭配、折價卷、信用卡優惠…」等多種排列組合。</li>
-<li>使用的邏輯：搜尋欄位可以查詢的欄位有哪些？搜尋的邏輯是 And 還是 Or？</li>
-<li>關聯需求：像是後端做完 API 後交付給前端，就需要將兩個 Ticket 關聯。</li>
-</ol>
-<h3 id="-估計每個-ticket-的時數">估計每個 Ticket 的時數<a class="h-anchor" href="#-%e4%bc%b0%e8%a8%88%e6%af%8f%e5%80%8b-ticket-%e7%9a%84%e6%99%82%e6%95%b8" aria-label="這個段落的連結"></a></h3>
-<p>不同 Ticket 的難易度不同，這邊會由 Tech Lead 分別向 Frontend、Backend 工程師確認 Ticket 的估時。</p>
-<p>此時工程師千萬不要勉強自己，估出一個很難完成的時數，不然在卡關時，會影響到後續一系列的時程規劃。（但也不要估出不合理的時數）</p>
-<blockquote>
-<p>如果某個 Task 預估的時程超過 6 小時，建議要再做細分，否則很難衡量每天實作的進度。</p>
-</blockquote>
-<h3 id="-確認-ticket-的總時數是否在專案的截止日期內">確認 Ticket 的總時數是否在專案的截止日期內<a class="h-anchor" href="#-%e7%a2%ba%e8%aa%8d-ticket-%e7%9a%84%e7%b8%bd%e6%99%82%e6%95%b8%e6%98%af%e5%90%a6%e5%9c%a8%e5%b0%88%e6%a1%88%e7%9a%84%e6%88%aa%e6%ad%a2%e6%97%a5%e6%9c%9f%e5%85%a7" aria-label="這個段落的連結"></a></h3>
-<p>只要是專案就一定有截止日期，如果將每個預估的時數加總後，發現已經超過了專案的截止日期，那勢必要做一些調整，比如：</p>
-<ol>
-<li>簡化部分功能（ex：原本要用 Auto-Complete，現在改用一般的搜尋）。</li>
-<li>規劃 MVP 先交出去讓客戶使用（ex：原本要經過一系列複雜的流程才能建立的資料，先用 Seeder 代替，以此大幅減少工程師的開發時程）。</li>
-</ol>
-<blockquote>
-<p>這邊不建議堅持原計劃完成所有功能，因為快速開發所累積的技術債，於未來要花更多的時間處理。</p>
-</blockquote>
-<h3 id="-ticket-分配">Ticket 分配<a class="h-anchor" href="#-ticket-%e5%88%86%e9%85%8d" aria-label="這個段落的連結"></a></h3>
-<p>由 PM 規劃在這個 Sprint 中要完成的 Ticket，然後在 Sprint Planning 時進行細節分工；假設一個 Sprint 為 2 週，建議每個人身上掛的 Task 時數不要超過 60 小時，因為：</p>
-<ol>
-<li>時常會有臨時的會議、需求、Bug…等意外事件，需要保留緩衝時間。</li>
-<li>在專案的初始階段，我們無法保證是否由遺漏的規劃、邏輯的錯誤，若把時間塞滿就很難有轉圜的餘地。</li>
-<li>舊的維護專案，有時會有緊急的狀況需要優先處理，這也會吃掉不少時間。</li>
-</ol>
-<h3 id="-專案初始環境建置">專案初始環境建置<a class="h-anchor" href="#-%e5%b0%88%e6%a1%88%e5%88%9d%e5%a7%8b%e7%92%b0%e5%a2%83%e5%bb%ba%e7%bd%ae" aria-label="這個段落的連結"></a></h3>
-<p>由 Tech Lead 或是 Senior Engineer 負責專案初始環境建置，初始化的專案需要在 README.md 中有以下說明：</p>
-<ol>
-<li>環境需求：Node.js 版本、PHP 版本、MySQL 版本…</li>
-<li>如何在 Local 端建立：安裝流程、環境變數…</li>
-</ol>
-<h3 id="-server-建置">Server 建置<a class="h-anchor" href="#-server-%e5%bb%ba%e7%bd%ae" aria-label="這個段落的連結"></a></h3>
-<p>由 Tech Lead 開出專案系統所需的硬體配置（正式機、測試機）、DNS、要安裝的軟體/套件（ex：Ubuntu Server、MySQL、Node.js、PHP…各自的版本），並請 PM 填寫需求單讓 MIS 依照此規格進行建置。</p>
-<hr>
-<h2 id="三專案進行中">三、專案進行中<a class="h-anchor" href="#%e4%b8%89%e5%b0%88%e6%a1%88%e9%80%b2%e8%a1%8c%e4%b8%ad" aria-label="這個段落的連結"></a></h2>
-<h3 id="-進度回報">進度回報<a class="h-anchor" href="#-%e9%80%b2%e5%ba%a6%e5%9b%9e%e5%a0%b1" aria-label="這個段落的連結"></a></h3>
-<p>如果團隊有使用專案管理系統，為了日後方便追朔與釐清狀況，建議填寫的內容如下：</p>
-<ol>
-<li>如果實作的方向是討論出來的，請紀錄「與會人員」與「決議結果」。</li>
-<li>如果使用到特別的演算法、技術、套件，請特別附註。</li>
-<li>如果該 Ticket 完成後要由其他人接手處理（ex：後端完成 API 後交付給前端），請說明要執行哪些指令（ex：DB Migration、Seeder…），並提供相關的 API 文件。</li>
-<li>如果發現該 Ticket 完成所花時間與當初的估計有所不同，請與 PM 討論並調整。</li>
-</ol>
-<h3 id="-工程師之間的合作">工程師之間的合作<a class="h-anchor" href="#-%e5%b7%a5%e7%a8%8b%e5%b8%ab%e4%b9%8b%e9%96%93%e7%9a%84%e5%90%88%e4%bd%9c" aria-label="這個段落的連結"></a></h3>
-<ol>
-<li>Ticket 執行順序：一個 Sprint 中，每個工程師都會有很多的 Ticket，但有些 Ticket 會有所謂的「前置條件」，建議在開始作業前要先彼此商議，避免出現等待的空窗期。</li>
-<li>回報 API Bug：請說明是在「哪個系統」、「哪隻 API」、「什麼參數下」會發生。</li>
-<li>回報 Web Bug：請說明是在「哪個系統」、「哪個畫面（截圖）」、「什麼操作下」會發生。</li>
-<li>遇到自己無法解決的問題：請說明是在「哪個系統」、「哪個 Ticket」、「你做過哪些嘗試」、「你認為可能的解決方案」。</li>
-</ol>
-<h3 id="-工程師與-pm-的合作">工程師與 PM 的合作<a class="h-anchor" href="#-%e5%b7%a5%e7%a8%8b%e5%b8%ab%e8%88%87-pm-%e7%9a%84%e5%90%88%e4%bd%9c" aria-label="這個段落的連結"></a></h3>
-<ol>
-<li>PM 請工程師完成 Sprint 以外的需求時，請說明「任務優先度」、「為什麼會有這個需求」、「可以先將哪個 Ticket 排後面一點」。</li>
-<li>如果工程師在開發過程中收到其他團隊的需求，請將對話窗口轉移到 PM。</li>
-<li>如果工程師要請 PM 協助開 Ticket，需描述：「哪個系統」、「要處理的任務/Bug」、「預計要做的事項」、「預計完成所需時間」。</li>
-<li>若身上的 Ticket 數量爆炸多、任務分配不均，請及時反應。</li>
-</ol>
-<blockquote>
-<p>如果是同一個專案，我們可以輕鬆的排出任務的優先順序；但如果多個專案同時發起優先度高的任務，工程師在這種狀況下會不知所措，需要由 PM 協助排出優先順序。</p>
-</blockquote>
-<h3 id="-了解為什麼都要由-pm-來開-ticket">了解為什麼都要由 PM 來開 Ticket<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3%e7%82%ba%e4%bb%80%e9%ba%bc%e9%83%bd%e8%a6%81%e7%94%b1-pm-%e4%be%86%e9%96%8b-ticket" aria-label="這個段落的連結"></a></h3>
-<ol>
-<li>如果大家都自己開 Ticket，PM 會無法掌握每個人實際在做的任務，即使有 Tag 到 PM，PM 也未必有辦法看到每一則訊息。</li>
-<li>工程師心中的任務優先順序可能與 PM 不同，這會造成最後在核對完成的任務時，因為彼此的認知落差產生爭執。</li>
-<li>每個任務完成所需的時間成本不同，可能有些任務是可以不必做，又或者是能交給其他人去做的，讓 PM 從整體的角度去看較不會出現勞逸不均的狀況。</li>
-</ol>
-<hr>
-<blockquote class="pullquote"><p>制定大家願意共同遵守的工作流程，在了解彼此的權利＆義務後，相信團隊的運作會更為順利；文章的流程未必適用於每個團隊，僅為筆者過去經驗的彙整。</p>
-</blockquote>
-<hr>
-<pre tabindex="0"><code>工程師血淚史
-▋ 團隊在系統開發上遇到了哪些問題
-▋ 需求不斷變更，到底哪個環節出錯了
-▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
-▋ 如果沒有明確的開發流程，團隊將會無所適從(本篇)
-▋ 你知道對專案來說，README.md 有多麼重要嗎？
-</code></pre>]]></content:encoded>
+]]></content:encoded>
     </item>
     <item>
-      <title>現在的 Daily Scrum 真的適合團隊嗎？── 下班有約系列文</title>
-      <link>https://deanlin.net/blog/202207/is-daily-scrum-working/</link>
-      <pubDate>Wed, 20 Jul 2022 22:13:08 +0800</pubDate>
-      <guid>https://deanlin.net/blog/202207/is-daily-scrum-working/</guid>
+      <title>明明是專案經理，卻變傳聲筒！身為 PM 你有了解大家的「專業」嗎？</title>
+      <link>https://deanlin.net/blog/202210/pm-not-a-messenger/</link>
+      <pubDate>Mon, 24 Oct 2022 17:10:32 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202210/pm-not-a-messenger/</guid>
       <dc:creator>林鼎淵</dc:creator>
       <category>團隊合作</category>
-      <description>並不是導入一個新的管理方式，專案執行就能夠順風順水。</description>
-      <media:content url="https://deanlin.net/blog/202207/is-daily-scrum-working/images/is-daily-scrum-working-og_hu_6c5862c9a9815362.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
-      <content:encoded><![CDATA[<p>並不是導入一個新的管理方式，專案執行就能夠順風順水。</p>
-<p>這幾年有越來越多的團隊導入「敏捷開發」，覺得只要跟上時代潮流，過去遇到的問題就能迎刃而解。</p>
-<p>前些日子跟朋友聚會時，發現大部分的公司都有導入「敏捷開發」；但相比於管理階層的推崇，更多工程師是抱著不情願的心態在參與。</p>
-<p>不過在這次的聚會中，有個朋友提出的 Daily Scrum 方案讓大家耳目一新，所以我就特別寫了這篇部落格來分享。</p>
-<p><img src="https://deanlin.net/blog/202207/is-daily-scrum-working/images/is-daily-scrum-working-01.webp" width="1400" height="736" alt="現在的 Daily Scrum 真的適合團隊嗎？── 下班有約系列文（圖 1）" fetchpriority="high" decoding="async"></p>
-<h2 id="一真的有-daily-scrum-的必要性嗎">一、真的有 Daily Scrum 的必要性嗎？<a class="h-anchor" href="#%e4%b8%80%e7%9c%9f%e7%9a%84%e6%9c%89-daily-scrum-%e7%9a%84%e5%bf%85%e8%a6%81%e6%80%a7%e5%97%8e" aria-label="這個段落的連結"></a></h2>
-<p>Daily Scrum 的目的，是讓團隊成員快速同步彼此的資訊。</p>
-<p>但理想很美好，現實很骨感；大部分的人只在意自己要報告的東西，換到其他人報告時，大腦往往處於待機狀態。</p>
-<p>當然也是有些人持反對意見，因為他們在 Daily Scrum 時討論的熱火朝天；但其他參與會議的人因為覺得議題跟他們無關，所以陷入休眠狀態。</p>
-<p>綜上所述，許多團隊的 Daily Scrum 實際上只是走個形式。</p>
+      <description>在文章開始前，想請大家先思考一個問題：「如果公司錄取一個沒有相關背景的人來當 PM；是 PM 的問題，還是公司的問題呢？」</description>
+      <media:content url="https://deanlin.net/blog/202210/pm-not-a-messenger/images/cover_hu_1c2733ebeb179f1c.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<p>在文章開始前，想請大家先思考一個問題：「如果公司錄取一個沒有相關背景的人來當 PM；是 PM 的問題，還是公司的問題呢？」</p>
+<p>以筆者的角度來看，錄取一個不合適的人是主管的問題，但這又牽扯到公司願意在這個職位撥多少預算；如果預算有限，主管通常會選一個「感覺」有潛力的新人，先找進公司再做培養。</p>
+<p>但被錄取的菜鳥 PM 真的很可憐；在缺乏專業能力的狀態下，他很容易變成主管、客戶、合作部門的傳聲筒，運氣差點還會成為 RD 的受氣包。</p>
 <blockquote>
-<p>雖然上面這段很殘酷，但可能更符合大多數工程師的心聲。</p>
+<p>當傳聲筒除了無法獲得成就感外，也容易厭倦工作環境待不久。</p>
 </blockquote>
-<hr>
-<h2 id="二daily-scrum-背後的時間成本與壓力">二、Daily Scrum 背後的時間成本與壓力<a class="h-anchor" href="#%e4%ba%8cdaily-scrum-%e8%83%8c%e5%be%8c%e7%9a%84%e6%99%82%e9%96%93%e6%88%90%e6%9c%ac%e8%88%87%e5%a3%93%e5%8a%9b" aria-label="這個段落的連結"></a></h2>
-<p>原則上每個人在 Daily Scrum 的報告時間都小於 3 分鐘。</p>
-<p>但為了這 3 分鐘，許多人要花 10 分鐘以上的時間整理資料，並在會議開始前順一下口條。</p>
-<p>我們期望 Daily Scrum 除了可以同步資訊外，還可以凝聚向心力；但對於個性內向的人來說，每次開會都是一場劫難。</p>
-<p>就拿筆者舉例，儘管我準備資料的時間通常都在 10 分鐘以內，但在會議開始前的 5~10 分鐘，我是無法做其他事情的，因為我害怕事情做到一半思緒中斷。</p>
+<h2 id="如何脫離傳聲筒">如何脫離傳聲筒？<a class="h-anchor" href="#%e5%a6%82%e4%bd%95%e8%84%ab%e9%9b%a2%e5%82%b3%e8%81%b2%e7%ad%92" aria-label="這個段落的連結"></a></h2>
+<p>PM 是部門對外的聯繫窗口，每天會收到來自各方的訊息。</p>
+<p>但在剛到職的時候，菜鳥 PM 會有一種無力感，因為在對專案、部門、文化都不熟悉的狀態下，他只能扮演「傳聲筒」的角色，沒有處理訊息的能力，只能單純的轉發。</p>
+<p>如果想脫離傳聲筒，首先要對收到的訊息有自己的看法，並有能力給出合適的處理方案；但想跨出這一步並不容易，因為看懂訊息本身就是一個門檻，如果看不懂訊息還亂回，只會把事情弄得更糟。</p>
+<h2 id="了解大家的專業">了解大家的專業<a class="h-anchor" href="#%e4%ba%86%e8%a7%a3%e5%a4%a7%e5%ae%b6%e7%9a%84%e5%b0%88%e6%a5%ad" aria-label="這個段落的連結"></a></h2>
+<p>傳聲筒人人能當，所以沒有人會重視傳聲筒。</p>
+<p>當然這不是說傳聲筒完全沒有意義，當 A 不想跟 B 直接聯繫時，就可以透過傳聲筒來轉達消息；又或者有些主管不想親自安排工作，就會列出清單讓傳聲筒來指派任務。</p>
 <blockquote>
-<p>也許 Daily Scrum 只花 8~15 分鐘，但對許多人而言可能要付出 30 分鐘以上的時間成本。</p>
+<p>不過比起 PM，筆者覺得上面的工作內容更像是助理在做的。</p>
 </blockquote>
-<hr>
-<h2 id="三把-daily-scrum-改為文字報告有什麼好處">三、把 Daily Scrum 改為文字報告有什麼好處？<a class="h-anchor" href="#%e4%b8%89%e6%8a%8a-daily-scrum-%e6%94%b9%e7%82%ba%e6%96%87%e5%ad%97%e5%a0%b1%e5%91%8a%e6%9c%89%e4%bb%80%e9%ba%bc%e5%a5%bd%e8%99%95" aria-label="這個段落的連結"></a></h2>
-<p>朋友表示為了改善上面的問題，團隊將 Daily Scrum 改為文字報告，幾個月下來發現大家的效率反而上升了，他說這麼做有以下優點：</p>
+<p>想讓自己從「傳聲筒」進化為溝通的「橋樑」，關鍵點在於你了解大家的「專業」；每個行業都有自己的專業術語、不同的部門對同一個名詞也會有不同的解釋；如果想協調各部門的資源，PM 就需要像個翻譯員，把資訊轉換成大家都能迅速理解與吸收的語言。</p>
+<blockquote>
+<p>資訊落差、認知不同是許多衝突的起點，如果能讓彼此都了解對方想表達的意涵，合作會更為順暢。</p>
+</blockquote>
+<h2 id="對專案有更高的掌握度">對專案有更高的掌握度<a class="h-anchor" href="#%e5%b0%8d%e5%b0%88%e6%a1%88%e6%9c%89%e6%9b%b4%e9%ab%98%e7%9a%84%e6%8e%8c%e6%8f%a1%e5%ba%a6" aria-label="這個段落的連結"></a></h2>
+<p>擁有專業後，就能理解每個「訊息、命令」背後的意義，這對專案是非常有幫助的，比如：</p>
 <ol>
-<li>文字閱讀的速度遠高於口頭報告。</li>
-<li>口頭報告可能會含糊不清，但文字報告因為要附上 Ticket，所以很難打混。</li>
-<li>想要討論的人可以私下約，不會打擾到其他人的時間。</li>
-<li>除非對專案架構很了解，不然聽別人口頭報告常常有聽沒有懂，而文字就減少了這類情況。</li>
-<li>只要在規定的時間繳交文字報告即可，有更完整的時間段可以做事。</li>
-<li>對個性內向的人來說是一個福音。</li>
+<li>能分辨對方提出的需求是否合理</li>
+<li>收到 Bug 時，有辦法初步判斷問題點與負責人</li>
+<li>遇到緊急狀況時，知道哪位 Key man 能處理</li>
+<li>對任務估時更有概念</li>
+<li>溝通較不容易被唬爛</li>
 </ol>
+<p>如果擔任 PM 時能做到以上事項，會發現專案越跑越順，原本跟你作對的人，也會認同你的工作能力。</p>
+<h2 id="結語">結語<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>PM 這個職位並不會熟能生巧，因為筆者看過有些人，一當傳聲筒就是好幾年。</p>
+<p>但我相信絕大多數人選擇 PM 這個職位，並不是為了當傳聲筒；而是想在公司與大家齊心協力，一起做出讓眾人感到驕傲的產品。</p>
+<p>筆者認為對 PM 來說，進入新領域並不算突破舒適圈，有能力在新領域彙整資源，使部門效益最大化才稱得上突破舒適圈。</p>
 <hr>
-<h2 id="四我的想法">四、我的想法<a class="h-anchor" href="#%e5%9b%9b%e6%88%91%e7%9a%84%e6%83%b3%e6%b3%95" aria-label="這個段落的連結"></a></h2>
-<p>我聽到這個方案的當下很興奮！因為真的解決了很多實務上的痛點！</p>
-<p>而且改成文字後，從管理的角度來看，的確更能了解每個人做了些什麼。</p>
-<p>但這個方案也未必適合每個團隊，畢竟文字報告跟實體會議的差異還是挺大的，多互動有助於釐清彼此的觀點；如果只把 Daily Scrum 當成進度報告，沒有後續的話就會失去原有的意義。</p>
-<p>不過如果 Daily Scrum 的成員時常處於待機模式，也許可以嘗試推行看看；適合 A 團隊的方案，未必適合 B 團隊；任何的變革的成敗，跟「人」的關係最大，也需要根據「環境」來調整，直接複製貼上容易水土不服。</p>
-<p>如果讀者有其他的想法也歡迎留言喔，你的經驗也許能幫助到更多的人。</p>
-<blockquote>
-<p><strong>2022.7.29 補充</strong></p>
-<p>有朋友看到文章後跟我分享，對他們團隊來說，早上的 Daily Scrum 更像是一種儀式，從嘴巴說出來要做的東西是一種承諾，會給人完成任務的動力。</p>
-</blockquote>
-<p><strong>如果你對目前的職涯感到迷茫，想從不同視角檢視自己的選擇，相信《<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>》這本書能為你帶來靈感與啟發：</strong></p>
-<figure class="figure"><img src="https://deanlin.net/blog/202207/is-daily-scrum-working/images/is-daily-scrum-working-02.webp" width="1400" height="319" alt="林鼎淵著作《工程師下班有約：企業內訓講師帶你認清職涯真相！》" loading="lazy" decoding="async">
-  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
-</figure>
-
-<hr>
-<pre tabindex="0"><code>下班有約系列文
-▋ [前端]新手工程師容易卡住的問題
-▋ [前端＆後端]工程師常犯的錯誤
-▋ 讓開發團隊更好協作的方式
-▋ 談談 Pair Programing
-▋ 談談工程師的話語權
-▋ 出社會後，新鮮人要及早知道的 5 件事
-▋ 面試的性向測驗竟然準到讓人心裡發寒？
-▋ 反其道而行的任務分配
-▋ 現在的 Daily Scrum 真的適合團隊嗎？(本篇)
-▋ 用低成本也能請到好員工？資深 HR 不想告訴你的秘密！
-</code></pre>]]></content:encoded>
+]]></content:encoded>
     </item>
     <item>
-      <title>當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？ — 工程師血淚史</title>
-      <link>https://deanlin.net/blog/202207/scrum-master-vs-pm/</link>
-      <pubDate>Tue, 12 Jul 2022 21:16:40 +0800</pubDate>
-      <guid>https://deanlin.net/blog/202207/scrum-master-vs-pm/</guid>
+      <title>規格改了又改，工程師除了加班還能做些什麼？</title>
+      <link>https://deanlin.net/blog/202210/handling-changing-specs/</link>
+      <pubDate>Wed, 19 Oct 2022 16:00:00 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202210/handling-changing-specs/</guid>
       <dc:creator>林鼎淵</dc:creator>
       <category>團隊合作</category>
-      <description>在過去的文章中有提到，為了提高團隊成員在 Scrum 的參與度，我們改成輪流擔任 Scrum Master 的機制，但這樣真的有效果嗎？而且 Scrum Master 跟 PM 的工作高度重疊，要如何區分兩者的權力與責任呢？</description>
-      <media:content url="https://deanlin.net/blog/202207/scrum-master-vs-pm/images/scrum-master-vs-pm-og_hu_1b3b0247b9449758.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
-      <content:encoded><![CDATA[<p>在<a href="https://deanlin.net/blog/202205/team-development-problems/">過去的文章</a>中有提到，為了提高團隊成員在 Scrum 的參與度，我們改成輪流擔任 Scrum Master 的機制，但這樣真的有效果嗎？而且 Scrum Master 跟 PM 的工作高度重疊，要如何區分兩者的權力與責任呢？</p>
-<p>這篇文章將與您分享我們是如何調整，以及調整後發生哪些改變。</p>
-<p><img src="https://deanlin.net/blog/202207/scrum-master-vs-pm/images/scrum-master-vs-pm-01.webp" width="1400" height="730" alt="當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？ — 工程師血淚史（圖 1）" fetchpriority="high" decoding="async"></p>
+      <description>工程師心想：「前幾天熬夜加班，好不容易才做出來的功能，居然今天一上班規格又要改！我加班到底是為了什麼？」</description>
+      <media:content url="https://deanlin.net/blog/202210/handling-changing-specs/images/cover_hu_163667d844d2ad32.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
+      <content:encoded><![CDATA[<p>工程師心想：「前幾天熬夜加班，好不容易才做出來的功能，居然今天一上班規格又要改！我加班到底是為了什麼？」</p>
+<p>我想上面這個情境，應該在許多公司不斷上演；規格變更的原因很多，比如：</p>
+<ol>
+<li>客戶突然想要增加／修改／刪除某個功能，而 PM 無力阻擋、談判。</li>
+<li>規格打從一開始就有問題，但開發到一半才發現。</li>
+<li>規格本身很模糊，每個人對規格的見解都不一樣，導致做出來的成品不符預期。</li>
+</ol>
+<p>問題千千萬萬，但總歸都跟「人」有關係。</p>
+<p>在文章開始前，筆者先跟大家取得一個共識：「<strong>PM 不是萬能的存在，客戶也沒那麼好溝通，規格一次到位的可能性趨近於零。</strong>」</p>
+<p>在認知到規格變更是必須要面對的狀況後，我們接著來討論：「如何減少非必要的規格變更，盡可能降低自己的 Loading。」</p>
+<h2 id="準備相關證據">準備相關證據<a class="h-anchor" href="#%e6%ba%96%e5%82%99%e7%9b%b8%e9%97%9c%e8%ad%89%e6%93%9a" aria-label="這個段落的連結"></a></h2>
+<p>因為規格變更導致工程師加班的狀況並不罕見，但有些工程師的抱怨，會被不明事理的主管認為是能力不足。</p>
+<p>為了避免上述狀況發生，我們需要準備「具體可量化」的證據，筆者建議從幾個面向來準備：</p>
+<ol>
+<li><strong>記錄每次規格變更</strong>：有些規格變更並不是在會議上提出，而是透過私訊、電話或口頭告知，這些紀錄全部都要保存；如果團隊有使用專案管理系統，就能更好的記錄這些變更是由誰提出的（別忘記 tag 提出的人）。</li>
+<li><strong>紀錄每次規格變更所增加的工時</strong>：絕大多數的規格變更，都需要花更多的時間來處理，這些時數都要記錄下來。</li>
+<li><strong>哪些規格變更是可以避免的</strong>： 有些規格變更，是因為一開始根本沒想清楚，只是單純把客戶的需求寫上規格，這類問題有機會透過內部溝通協調來改善。</li>
+</ol>
+<h2 id="與主管溝通">與主管溝通<a class="h-anchor" href="#%e8%88%87%e4%b8%bb%e7%ae%a1%e6%ba%9d%e9%80%9a" aria-label="這個段落的連結"></a></h2>
 <blockquote>
-<p>本文提及之專案、人物、事件純屬虛構，如有雷同，實屬巧合，請勿對號入座。</p>
+<p>建議一開始先跟 PM 溝通，如果溝通多次無果（請留存證據）再去找主管。</p>
 </blockquote>
-<pre tabindex="0"><code>大綱
-ㄧ、調整的目的是什麼？
-二、定義 Scrum Master 跟 PM 的權限
-  ➤ Scrum Master
-  ➤ PM
-三、調整後發生哪些改變
-  ➤ 成員對專案、團隊有更深刻的認知
-  ➤ Scrum 參與度提升
-  ➤ 回顧時發表更踴躍
-四、總結
-</code></pre><h2 id="ㄧ調整的目的是什麼">ㄧ、調整的目的是什麼？<a class="h-anchor" href="#%e3%84%a7%e8%aa%bf%e6%95%b4%e7%9a%84%e7%9b%ae%e7%9a%84%e6%98%af%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
-<p>明明跑的是 Scrum，卻沒有團隊合作的感覺。</p>
-<p>每間公司跑 Scrum 的方式與目的不同，有些 Scrum 跑起來更像是傳統的工作匯報；即使在身處在同一個會議中，卻只有主管跟 PM 關心每個人的工作內容。</p>
-<p>如果團隊成員不關心彼此的工作內容，單獨匯報或是用紙本報告其實更加省時；開 Scrum 的目的是希望大家了解彼此的任務，確認是否有需要調整的地方，避免任務的先後順序、優先度搞錯，導致專案進度延宕。</p>
-<p>但如果只是口頭上說希望大家積極參與，實際效果就跟老師要學生好好聽課一樣，因此想透過流程來進行改善。</p>
-<p>而我們選擇的方案是 — 讓團隊成員輪流擔任 Scrum Master。</p>
-<hr>
-<h2 id="二定義-scrum-master-跟-pm-的權限">二、定義 Scrum Master 跟 PM 的權限<a class="h-anchor" href="#%e4%ba%8c%e5%ae%9a%e7%be%a9-scrum-master-%e8%b7%9f-pm-%e7%9a%84%e6%ac%8a%e9%99%90" aria-label="這個段落的連結"></a></h2>
-<p><strong>我們希望在提升成員參與度的同時，盡可能不要增加負擔。</strong></p>
-<p>因為 Scrum Master 的工作內容與 PM 高度重疊，如果沒區分好彼此的界線，勢必會導致其他成員的困惑，比如：</p>
+<p>與主管溝通時記得拿出先前準備的「證據」，並強調以下幾點：</p>
 <ol>
-<li>開單要找誰？</li>
-<li>Sprint Planning 的規劃由誰負責？</li>
-<li>需求規格由誰來寫？</li>
+<li>頻繁的更動規格，會影響到專案穩定性（ex：測試程式都需要改寫）。</li>
+<li>建議先與客戶在規格上取得共識後，再進行開發（ex：先用 Wireframe 讓客戶確認流程），避免重工浪費時間。</li>
+<li>自己不是不能接受規格變更，但 A、B、C… 這幾項規格變更應該是可以避免的。</li>
+<li>現在的 Loading 實在太重（提出因規格變更導致的加班時數），假使規格變更無法避免，是否有補充人力或延長專案交期的可能性。</li>
 </ol>
-<p>所以我們做了如下區分：</p>
-<h3 id="-scrum-master">Scrum Master<a class="h-anchor" href="#-scrum-master" aria-label="這個段落的連結"></a></h3>
-<ol>
-<li><strong>主持 Daily Scrum Meeting</strong>：了解每個人工作的進度、預計要做的事、以及遇到的問題。</li>
-<li><strong>主持 Sprint Review、Retrospective 會議</strong>：讓大家報告在這個 Sprint 中做了什麼，有哪些好的可以繼續保持，有哪些壞的要進行調整。</li>
-<li><strong>參與 Sprint Planning 會議</strong>：了解下個 Sprint 要完成的事項。</li>
-</ol>
-<h3 id="-pm">PM<a class="h-anchor" href="#-pm" aria-label="這個段落的連結"></a></h3>
-<ol>
-<li><strong>專案管理</strong>：追蹤成員的進度、討論需求、協調資源…原則上工作內容不變，只是部分工作交由 Scrum Master 主持。</li>
-<li><strong>輔助 Scrum Master</strong>：儘管已經簡化許多 Scrum Master 的工作，但因為部分成員並沒有接觸過敏捷開發，因此需要幫忙拾漏補遺。</li>
-<li><strong>規劃 Sprint Planning</strong>：無論是規劃要完成的工作，還是與每位工程師確認工時，都是需要花費不少心力的任務，因此主要還是由 PM 專職處理。</li>
-</ol>
+<p>有些問題應該是主管要自己發現並去解決的，但主管日理萬機，偶有遺漏在所難免；我們能做到的就是透過「證據」把問題攤在陽光下，並說出建議的改善方向。</p>
 <blockquote>
-<p>之所以這樣設計，是希望成員在擔任 Scrum Master 的同時，儘可能不影響到他的本職工作，我們期待這樣的流程可以讓每位成員更融入專案，而不是取代 PM 的工作。</p>
+<p>筆者過去曾<a href="https://deanlin.net/blog/202208/engineers-stop-speaking-up-2/">寫過一篇文章</a>，分享主管面對問題時會考慮的點。</p>
 </blockquote>
-<hr>
-<h2 id="三調整後發生哪些改變">三、調整後發生哪些改變<a class="h-anchor" href="#%e4%b8%89%e8%aa%bf%e6%95%b4%e5%be%8c%e7%99%bc%e7%94%9f%e5%93%aa%e4%ba%9b%e6%94%b9%e8%ae%8a" aria-label="這個段落的連結"></a></h2>
-<p>目前實行了 3 個 Sprint，成員的接受度還算高（希望不是敢怒不敢言 😅）。</p>
-<h3 id="-成員對專案團隊有更深刻的認知">成員對專案、團隊有更深刻的認知<a class="h-anchor" href="#-%e6%88%90%e5%93%a1%e5%b0%8d%e5%b0%88%e6%a1%88%e5%9c%98%e9%9a%8a%e6%9c%89%e6%9b%b4%e6%b7%b1%e5%88%bb%e7%9a%84%e8%aa%8d%e7%9f%a5" aria-label="這個段落的連結"></a></h3>
-<p>不管是否願意，主持 Daily Scrum 時一定要了解每個人具體的狀況；原本專注在自己任務的人，也會因為主持 Sprint Review、Retrospective 而強迫了解整個專案，並更加認識團隊。</p>
-<h3 id="-scrum-參與度提升">Scrum 參與度提升<a class="h-anchor" href="#-scrum-%e5%8f%83%e8%88%87%e5%ba%a6%e6%8f%90%e5%8d%87" aria-label="這個段落的連結"></a></h3>
-<p>因為 Scrum Master 是輪流的，如果我今天不給你面子好好聆聽跟報告，下次換我當 Scrum Master 時可能大家會不理我；同儕間的心理因素會讓參與度變得更高（但這個情形未必適用在每個團隊身上）。</p>
-<h3 id="-回顧時發表更踴躍">回顧時發表更踴躍<a class="h-anchor" href="#-%e5%9b%9e%e9%a1%a7%e6%99%82%e7%99%bc%e8%a1%a8%e6%9b%b4%e8%b8%b4%e8%ba%8d" aria-label="這個段落的連結"></a></h3>
-<p>由成員來做 Sprint Retrospective 時，大家相對來說更敢發表意見；這就跟同學分組討論時比較熱絡，但當老師問同學有沒有問題時，台下直接靜音的道理一樣。</p>
-<hr>
-<h2 id="四總結">四、總結<a class="h-anchor" href="#%e5%9b%9b%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
-<p><strong>花的時間越多，就會越認真投入。</strong></p>
-<p>其實並不是每位成員在剛開始的時候都願意跑 Scrum 的，因為他們覺得這是在浪費時間、單純走一個形式、對專案沒有幫助…</p>
-<p>因此初期更像是每天集合匯報工作，直到要輪流當 Scrum Master 時，因為無法拒絕，所以每位成員都一定要有所了解，而這個過程促使團隊往好的方向發展（應該 🤔）。</p>
-<p>當然還要更多時間來驗證，相信每次的 Sprint Retrospective 都能讓原本的流程更加完善。</p>
-<blockquote class="pullquote"><p>如果讀者有敏捷開發的經驗，歡迎留言分享，你的留言或許可以幫助到其他人。</p>
-</blockquote>
-<hr>
-<pre tabindex="0"><code>工程師血淚史
-▋ 團隊在系統開發上遇到了哪些問題
-▋ 需求不斷變更，到底哪個環節出錯了
-▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？(本篇)
-▋ 如果沒有明確的開發流程，團隊將會無所適從
-▋ 你知道對專案來說，README.md 有多麼重要嗎？
-</code></pre>]]></content:encoded>
-    </item>
-    <item>
-      <title>需求不斷變更，到底哪個環節出錯了 ── 工程師血淚史</title>
-      <link>https://deanlin.net/blog/202207/constantly-changing-requirements/</link>
-      <pubDate>Thu, 07 Jul 2022 21:42:20 +0800</pubDate>
-      <guid>https://deanlin.net/blog/202207/constantly-changing-requirements/</guid>
-      <dc:creator>林鼎淵</dc:creator>
-      <category>團隊合作</category>
-      <description>有些 PM 覺得跟工程師溝通很痛苦，甚至大腦會不時冒出這樣的想法：「明明只是修改一個小地方，為什麼總有各式各樣的理由拒絕跟拖延，就算答應修改，做起來也是一副心不甘情不願的樣子。」</description>
-      <media:content url="https://deanlin.net/blog/202207/constantly-changing-requirements/images/constantly-changing-requirements-og_hu_3e60401d29677765.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
-      <content:encoded><![CDATA[<p>有些 PM 覺得跟工程師溝通很痛苦，甚至大腦會不時冒出這樣的想法：「明明只是修改一個小地方，為什麼總有各式各樣的理由拒絕跟拖延，就算答應修改，做起來也是一副心不甘情不願的樣子。」</p>
-<p>其實大部分的工程師都是可以理性溝通的，但我們無法接受一直做「白工」和「重工」，今天筆者想透過一個案例來跟大家分享「客戶、PM、工程師」之間思維的差異，並提出可以改善的方案。</p>
-<figure class="figure"><img src="https://deanlin.net/blog/202207/constantly-changing-requirements/images/constantly-changing-requirements-01.webp" width="1158" height="605" alt="圖片來自：123RF" fetchpriority="high" decoding="async">
-  <figcaption>圖片來自：123RF</figcaption>
-</figure>
-
+<h2 id="結語">結語<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e" aria-label="這個段落的連結"></a></h2>
+<p>如果問題是長時間累積下來的，那想在短時間，或透過一套方案解決並不現實。</p>
+<p>假使提出證據，並且充分溝通後還是沒有改善的跡象；而你也無法忍受這樣的工作環境，也許是時候考慮自己職涯了。</p>
+<p>人，不是只有在痛苦的環境中才能成長；在合適的環境中，成長才會更加快速。</p>
 <blockquote>
-<p>本文提及之專案、人物、事件純屬虛構，如有雷同，實屬巧合，請勿對號入座。</p>
-</blockquote>
-<pre tabindex="0"><code>大綱
-一、工程師說 Loading 太重，可以請你幫忙分擔嗎？
-二、需求不斷變更，緩衝時間再多也不夠用！
-三、可是客戶態度很強硬啊！東西真的不符合他們需求
-四、整理不完的例外，變更不斷的需求
-五、從源頭解決問題，不是每個問題都要靠程式解決
-六、客戶未必具備工程背景，要協助他們表達需求
-七、我們要如何調整，讓未來的合作更加順利
-</code></pre><h2 id="一工程師說-loading-太重可以請你幫忙分擔嗎">一、工程師說 Loading 太重，可以請你幫忙分擔嗎？<a class="h-anchor" href="#%e4%b8%80%e5%b7%a5%e7%a8%8b%e5%b8%ab%e8%aa%aa-loading-%e5%a4%aa%e9%87%8d%e5%8f%af%e4%bb%a5%e8%ab%8b%e4%bd%a0%e5%b9%ab%e5%bf%99%e5%88%86%e6%93%94%e5%97%8e" aria-label="這個段落的連結"></a></h2>
-<p>PM 反饋這個問題後，我打開專案管理系統，看那位抱怨 Loading 太重的工程師手上有哪些 Ticket，是否需要做適當的調整。</p>
-<p>結果仔細一看才發現，儘管那位工程師在這個 Sprint 中只剩下 2 張 Ticket 尚未完成，但有一張「匯出 Excel 報表」的 Ticket 預估時程遠遠超過之前在 Sprint Planning 的預估（4➝15）。</p>
-<p>因為剩下的 2 個 Ticket 都是這次 Sprint 的核心功能，且距離結束只剩不到 2 個工作天，因此 PM 希望我可以接手那個估時已經到達 15 小時的 Ticket，讓工程師專注處理剩下的 Ticket。</p>
-<p>跟 PM 談到這裡的時候我覺得有點奇怪，之所以將匯出 Excel 報表的 Ticket 分配給那位工程師，就是因為他之前有實作的經驗，沒道理在這個地方卡這麼久。</p>
-<hr>
-<h2 id="二需求不斷變更緩衝時間再多也不夠用">二、需求不斷變更，緩衝時間再多也不夠用！<a class="h-anchor" href="#%e4%ba%8c%e9%9c%80%e6%b1%82%e4%b8%8d%e6%96%b7%e8%ae%8a%e6%9b%b4%e7%b7%a9%e8%a1%9d%e6%99%82%e9%96%93%e5%86%8d%e5%a4%9a%e4%b9%9f%e4%b8%8d%e5%a4%a0%e7%94%a8" aria-label="這個段落的連結"></a></h2>
-<p>為了釐清這個問題，我跟 PM、工程師開了一個臨時會議，去了解是什麼原因導致一個不困難的 Ticket 花了這麼多時間。</p>
-<p>此時我才從工程師那邊了解到另一個事實，其實對他而言，匯出 Excel 報表的功能並不複雜，<strong>Loading 太重的原因是客戶不斷變更需求，導致這個 Ticket 的估時不斷增加，但預計交付的日期並沒有延長，因此時間壓力會全部壓到工程師身上</strong>。</p>
-<p>我在詢問這個需求變更的頻率有多高時，工程師表示把新版交付出去後，可能再過 3、4 個小時就會收到新的需求變更；儘管每次修改都不會花太多時間，但架不住這麼頻繁的更動啊！</p>
-<blockquote>
-<p>當需求變更導致一直做白工、重工，就可能讓工程師工作效率下降，甚至可能在完成功能後故意拖一段時間再交付；畢竟提早交付沒好事，只是讓自己的工作量變更多而已。</p>
+<p>轉職一定要經過謹慎評估，筆者僅是提出個人觀點。</p>
 </blockquote>
 <hr>
-<h2 id="三可是客戶態度很強硬啊東西真的不符合他們需求">三、可是客戶態度很強硬啊！東西真的不符合他們需求<a class="h-anchor" href="#%e4%b8%89%e5%8f%af%e6%98%af%e5%ae%a2%e6%88%b6%e6%85%8b%e5%ba%a6%e5%be%88%e5%bc%b7%e7%a1%ac%e5%95%8a%e6%9d%b1%e8%a5%bf%e7%9c%9f%e7%9a%84%e4%b8%8d%e7%ac%a6%e5%90%88%e4%bb%96%e5%80%91%e9%9c%80%e6%b1%82" aria-label="這個段落的連結"></a></h2>
-<p>客戶花錢請我們做系統，當然是希望做出符合他們實際業務需求的產品；站在客戶的立場上，他們當然會用最嚴格的標準在看待每一個功能。</p>
-<p>但站在我們的立場上，在人力資源固定的狀態下，每多一次需求變更，我們就需要花更多的時間與精力去完成，甚至導致部分同仁需要加班。</p>
-<p>為了解決這個問題，我請 PM 跟客戶約一個時間，一起了解需求不停變更的原因是什麼，不然這樣一直改下去其實是在浪費彼此的時間。</p>
-<hr>
-<h2 id="四整理不完的例外變更不斷的需求">四、整理不完的例外，變更不斷的需求<a class="h-anchor" href="#%e5%9b%9b%e6%95%b4%e7%90%86%e4%b8%8d%e5%ae%8c%e7%9a%84%e4%be%8b%e5%a4%96%e8%ae%8a%e6%9b%b4%e4%b8%8d%e6%96%b7%e7%9a%84%e9%9c%80%e6%b1%82" aria-label="這個段落的連結"></a></h2>
-<p>客戶是一個專門提供材料出貨的公司，在深入訪談後，才了解需求之所以會一直變更，是因為這個 Excel 報表始終沒有決定一個固定的版本，會這樣是因為過去客戶在填寫出貨單時沒有律定格式，同一個材料可能有 10 幾種表達方式。</p>
-<p>過去沒有遇到這個問題，是因為之前的出貨單都是 Case by Case，所以他們材料名稱儘管不統一，但依舊能夠看得懂；可是如果把好幾張出貨單放在一起看，就會因為資料很難整合而產生許多問題，這也是客戶找我們做系統化的原因。</p>
-<p>下面用手機來舉個例子，我們手機有前鏡頭，假使在出貨單上顯示：「前鏡頭、前置相機、front camera、Front Camera、frontCamera」我相信大家都看得懂這是指同一個東西；但如果管理階層想要知道公司這個月到底賣了多少個「前鏡頭」，下屬就需要畫很多時間做比對跟整合。</p>
-<p>除了相機的案例外，這邊再舉一個螢幕的例子，每個手機螢幕的尺寸大小不同，因此出貨單上有各自的命名；當管理階層想了解這個月總共賣了多少個「螢幕」，下屬會因為出貨單的材料沒有階層的概念而整理到崩潰。</p>
-<p>在了解客戶的痛點後，我們就知道這是因為過去「命名不統一、材料缺乏階層概念」導致的問題。</p>
-<p>PM 一開始也是從這個方向去處理問題的，他先請客戶將期望的命名、材料的階層整理出來，然後請工程師依照規格去統整；儘管這個方案看似沒有問題，但因為客戶當時在填寫出貨單時，命名太過狂野，因此有非常多的例外需要處理，而每發現一個例外就要請工程師調整程式。</p>
-<hr>
-<h2 id="五從源頭解決問題不是每個問題都要靠程式解決">五、從源頭解決問題，不是每個問題都要靠程式解決<a class="h-anchor" href="#%e4%ba%94%e5%be%9e%e6%ba%90%e9%a0%ad%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c%e4%b8%8d%e6%98%af%e6%af%8f%e5%80%8b%e5%95%8f%e9%a1%8c%e9%83%bd%e8%a6%81%e9%9d%a0%e7%a8%8b%e5%bc%8f%e8%a7%a3%e6%b1%ba" aria-label="這個段落的連結"></a></h2>
-<p>了解來龍去脈後，我想也許我們都把問題搞複雜了，既然我們都知道問題是在出貨單上，為什麼不要從源頭來解決這個問題呢？</p>
-<p>如果出貨單的格式沒有律定，在未來同樣的問題還是會發生；因為出貨單上每天都可能會誕生新的名詞，而新的名詞會無法自動歸類，可以料想到就算現在符合客戶的需求，在未來還是會有許多衍生問題。</p>
-<p>當然過去的歷史業障很難要求客戶調整，「統一名詞、確定階層」還是一個必要的工作；但也許我們可以先用過去的出貨單模擬客戶期望的 Excel，而不是不斷請工程師修改程式。</p>
-<blockquote>
-<p>若發現有缺少、錯誤的材料先記錄下來，累積到一定的量後再請工程師修正，不然他會改到瘋。</p>
-</blockquote>
-<p>同時為了讓錯誤的歷史在這個階段就停下，我們需要請客戶與填寫出貨單的部門溝通，律定「出貨單」填寫的格式。</p>
-<p>如果涉及到客戶公司內部，盡可能讓他們「自行協調」，我們做好「引導的角色」就夠了，如果由我們向客戶的其他部門提出需求，那破局的機率非常高。</p>
-<hr>
-<h2 id="六客戶未必具備工程背景我們要協助他們表達需求">六、客戶未必具備工程背景，我們要協助他們表達需求<a class="h-anchor" href="#%e5%85%ad%e5%ae%a2%e6%88%b6%e6%9c%aa%e5%bf%85%e5%85%b7%e5%82%99%e5%b7%a5%e7%a8%8b%e8%83%8c%e6%99%af%e6%88%91%e5%80%91%e8%a6%81%e5%8d%94%e5%8a%a9%e4%bb%96%e5%80%91%e8%a1%a8%e9%81%94%e9%9c%80%e6%b1%82" aria-label="這個段落的連結"></a></h2>
-<p>其實就算是公司內部的溝通也是不容易的，起初填寫出貨單的部門對律定格式這件事反彈極大，因為他們原本都做得好好的，現在變得要依規範行事。</p>
-<p>在了解到客戶推行的困難點後，我們製作了一張高達數百個欄位的 Excel，並請客戶向填寫出貨單的部門展示，讓他們體會到混亂的格式造成什麼後果。</p>
-<p>在這之後他們才理解為什麼格式需要律定了，也了解公司導入這個系統就是希望把流程標準化，減少報表製作的時間，不是想要刁難他們。</p>
-<hr>
-<h2 id="七我們要如何調整讓未來的合作更加順利">七、我們要如何調整，讓未來的合作更加順利<a class="h-anchor" href="#%e4%b8%83%e6%88%91%e5%80%91%e8%a6%81%e5%a6%82%e4%bd%95%e8%aa%bf%e6%95%b4%e8%ae%93%e6%9c%aa%e4%be%86%e7%9a%84%e5%90%88%e4%bd%9c%e6%9b%b4%e5%8a%a0%e9%a0%86%e5%88%a9" aria-label="這個段落的連結"></a></h2>
-<p>儘管這個問題最後在多方的協作下圓滿解決，但其實中間有許多摩擦是可以在初期避免的。</p>
-<h3 id="-tech-lead">Tech Lead<a class="h-anchor" href="#-tech-lead" aria-label="這個段落的連結"></a></h3>
-<p>若發現某個 Ticket 的估時逐漸增加，要主動向工程師詢問實際狀況，因為有些細節在 Scrum Meeting 並不會提及。</p>
-<p>若發現工程師在做重工、白工，要先釐清問題來源；不是每個問題都要靠程式解決，我們可以先嘗試跟客戶溝通。</p>
-<h3 id="-pm">PM<a class="h-anchor" href="#-pm" aria-label="這個段落的連結"></a></h3>
-<p>如果客戶提出的需求變更太過零碎、頻繁，可以先記錄下來，等累積到一定的量，或是明確需求後再交給工程師處理。</p>
-<p>如果發現需求能用模擬的就先用模擬的，盡可能不要讓工程師把時間耗在有高機率做白工的需求變更上。</p>
-<h3 id="-工程師">工程師<a class="h-anchor" href="#-%e5%b7%a5%e7%a8%8b%e5%b8%ab" aria-label="這個段落的連結"></a></h3>
-<p>如果發現需求變更的內容不合理、次數太多，可以即時與 Tech Lead 反應，而不是用加班默默把需求的吃下來。</p>
-<blockquote class="pullquote"><p>希望這個案例對讀者日後執行專案時有幫助，如果還有其他建議也歡迎留言分享喔～</p>
-</blockquote>
-<hr>
-<pre tabindex="0"><code>工程師血淚史
-▋ 團隊在系統開發上遇到了哪些問題
-▋ 需求不斷變更，到底哪個環節出錯了(本篇)
-▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
-▋ 如果沒有明確的開發流程，團隊將會無所適從
-▋ 你知道對專案來說，README.md 有多麼重要嗎？
-</code></pre>]]></content:encoded>
-    </item>
-    <item>
-      <title>團隊在系統開發上遇到了哪些問題 — 工程師血淚史</title>
-      <link>https://deanlin.net/blog/202205/team-development-problems/</link>
-      <pubDate>Fri, 27 May 2022 11:59:03 +0800</pubDate>
-      <guid>https://deanlin.net/blog/202205/team-development-problems/</guid>
-      <dc:creator>林鼎淵</dc:creator>
-      <category>團隊合作</category>
-      <description>「我們學了很多方法，但在實務上卻各種出包。」我想這應該是很多開發團隊的心裡話，儘管大家都能看見問題，也嘗試導入各種方法試圖解決；但很多時候別說進步，有時甚至還會走回頭路，筆者剛好透過這個主題整理團隊過往遇到的問題；不過解決方案是否有效、會不會衍生新的問題，就看之後的連載了😅</description>
-      <media:content url="https://deanlin.net/blog/202205/team-development-problems/images/team-development-problems-og_hu_c69c31571e29bb69.jpg" medium="image" type="image/jpeg" width="1200" height="675" />
-      <content:encoded><![CDATA[<p>「我們學了很多方法，但在實務上卻各種出包。」我想這應該是很多開發團隊的心裡話，儘管大家都能看見問題，也嘗試導入各種方法試圖解決；但很多時候別說進步，有時甚至還會走回頭路，筆者剛好透過這個主題整理團隊過往遇到的問題；不過解決方案是否有效、會不會衍生新的問題，就看之後的連載了😅</p>
-<p><img src="https://deanlin.net/blog/202205/team-development-problems/images/team-development-problems-01.webp" width="1219" height="671" alt="團隊在系統開發上遇到了哪些問題 — 工程師血淚史（圖 1）" fetchpriority="high" decoding="async"></p>
-<blockquote>
-<p>本文提及之專案、人物、事件純屬虛構，如有雷同，實屬巧合，請勿對號入座。</p>
-</blockquote>
-<pre tabindex="0"><code>大綱
-ㄧ、客戶、專案經理、開發人員，3 者沒有共同語言
-二、Scrum 淪為形式
-三、專案到最後時刻才發現一堆 Bug
-四、Tech Lead 沒辦法發揮應有的作用
-五、團隊失去成長動能
-六、不是每個成員都按照流程走
-七、血淚小結
-</code></pre><h2 id="ㄧ客戶專案經理開發人員3-者沒有共同語言">ㄧ、客戶、專案經理、開發人員，3 者沒有共同語言<a class="h-anchor" href="#%e3%84%a7%e5%ae%a2%e6%88%b6%e5%b0%88%e6%a1%88%e7%b6%93%e7%90%86%e9%96%8b%e7%99%bc%e4%ba%ba%e5%93%a13-%e8%80%85%e6%b2%92%e6%9c%89%e5%85%b1%e5%90%8c%e8%aa%9e%e8%a8%80" aria-label="這個段落的連結"></a></h2>
-<p>為了讓每個角色各司其職，在溝通需求時，都是由專案經理跟客戶溝通，得到結論後再跟開發人員說明。</p>
-<p>儘管看起來很合理，但在實務上容易遇到以下問題：</p>
-<ol>
-<li><strong>名詞定義</strong>：同一個名詞，大家的定義都不一樣；這導致 3 者在溝通上雞同鴨講，彼此以為對方懂了，但根本在說不一樣的東西。</li>
-<li><strong>專案經理與開發人員都不具備專案的背景知識</strong>：如果碰上大型專案，在開發團隊沒有相關背景知識的狀態下，光是架構的設計就很容易出問題；又因為沒有相關背景，所以根本沒有共同語言。</li>
-<li><strong>規格書不明確</strong>：開發人員按照規格書來開發，但如果規格書很模糊，工程師在開發時會浪費很多時間在額外的溝通。（最悲慘的狀況是工程師放棄溝通，選擇按照直覺來開發）</li>
-</ol>
-<p>上面的問題，想嘗試透過以下方法解決：</p>
-<ol>
-<li><strong>專案經理與開發人員以「英文」來溝通欄位</strong>：資料庫都是英文欄位，如果規格書上的欄位都以中文表達，就不能怪工程師在開發上直接選擇「感覺」意思最接近的欄位。</li>
-<li><strong>由專案經理建立一套「中英文名詞定義對照表」</strong>：內部可以用英文律定欄位，但跟客戶溝通時，大多情況還是使用中文；所以需要建立一份對照表，避免彼此的誤解。</li>
-<li><strong>需求規格參數明確</strong>：對客戶來說好像差不多，但對工程師來說，差一個欄位就好似差了一個宇宙。</li>
-</ol>
-<hr>
-<h2 id="二scrum-淪為形式">二、Scrum 淪為形式<a class="h-anchor" href="#%e4%ba%8cscrum-%e6%b7%aa%e7%82%ba%e5%bd%a2%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
-<p>我們期待導入「Agile(敏捷)」開發後，可以提升團隊的生產力、向心力，但實際上會遇到以下問題：</p>
-<ol>
-<li><strong>只在意自己要講什麼</strong>：跑 Scrum 的原意是希望大家瞭解彼此工作的進度，透過資訊透明讓專案更加順利；但很多時候我們只在意自己今天要講什麼，這種狀況在 Scrum Master 為固定人選時更為明顯。</li>
-<li><strong>規格不明確導致需求時常變更</strong>：在 Sprint Plan 時，我們會先估點來計算每個人工作需要的時間；但在開發階段若發現規格有問題，專案經理就要再跟客戶溝通，這一來一往與程式調整的時間，將會完全破壞這個 Sprint 預計要完成的項目。</li>
-<li><strong>安排額外的任務</strong>：如果臨時安排不在這個 Sprint 的任務給工程師，又沒有明確告知任務優先度，當這種狀況頻繁發生時，Scrum 就變成單純的個人報告，工作內容逐漸與 Sprint Plan 脫鉤。</li>
-</ol>
-<p>上面的問題，想嘗試透過以下方法解決：</p>
-<ol>
-<li><strong>讓每個人輪流當 Scrum Master</strong>：在這個位置上，就算不願意，你還是得知道每個人的進度、卡住的問題、要做的事。</li>
-<li><strong>指派任務前，充分確認客戶需求</strong>：如果在商談時就定下明確的需求規格，那工程師就有開發的依據，發現邏輯問題時也能第一時間提出，不至於自由發揮到一半才發現問題。</li>
-<li><strong>盡量不要讓突發狀況影響現在的 Sprint Plan</strong>：工程師也是人，臨時安排的工作勢必會影響到現在的專案，如果可以，突發的狀況盡量安排到下個 Sprint。</li>
-</ol>
-<hr>
-<h2 id="三專案到最後時刻才發現一堆-bug">三、專案到最後時刻才發現一堆 Bug<a class="h-anchor" href="#%e4%b8%89%e5%b0%88%e6%a1%88%e5%88%b0%e6%9c%80%e5%be%8c%e6%99%82%e5%88%bb%e6%89%8d%e7%99%bc%e7%8f%be%e4%b8%80%e5%a0%86-bug" aria-label="這個段落的連結"></a></h2>
-<p>我們花 20% 的時間完成 80% 的功能，卻在最後 20% 的功能上花了 80% 的時間。</p>
-<p>如果問題發生不只一次，那肯定要想辦法解決；通常會有這樣的狀況是因為：</p>
-<ol>
-<li><strong>架構規劃不良</strong>：專案啟動後，一開始大家都是摸著石頭過河，無法確定自己現在的方向是否正確；往往到後期，才發現當初的規劃有某些後遺症。</li>
-<li><strong>前期進度按照時程走很安心</strong>：因為前期每個 Check point 都很準時，所以產生接下來也會繼續準時的心理預期。</li>
-<li><strong>想要一次交卷</strong>：有時我們會想等作品完成到某個程度後再給客戶看，但…有時客戶看過後會發現許多與他們理念不合的設計。</li>
-<li><strong>新舊系統功能不吻合</strong>：就算功能都是 Copy＆Paste，但程式底層的運作邏輯往往不同，部分欄位可能也存在誤會；你以為執行得很順利，殊不知早已偏離方向。</li>
-</ol>
-<p>上面的問題，想嘗試透過以下方法解決：</p>
-<ol>
-<li><strong>別管架構，先交出 MVP</strong>：我們規劃了太多功能，卻沒有一個 MVP，在一切都不明朗的狀態下，能規劃出好架構根本是靠運氣；與其在前期完成那麼多功能，還不如先交一個勉強能動的 MVP，以此向客戶確認是否符合需求。</li>
-<li><strong>在一開始規劃時，就把容錯時程拉長</strong>：過往的經驗告訴我，意外通常在最後一刻才發生；因為在後期，我們才有辦法用整體的思維去看專案。（如果團隊有經驗非常豐富的架構師，那有機會規避這些問題，筆者目前還不具備這個實力）</li>
-<li><strong>開發階段頻繁更新系統</strong>：讓客戶隨時體驗最新的功能，如果與預想不合也可以盡快作出調整；避免工程師要砍一堆程式，做無意義的重工。</li>
-<li><strong>如果要改寫舊系統，就需要對方提供可以驗證的資訊</strong>：通常舊系統程式的參考價值不高，我們只能從操作流程來推估資料間的關聯性，但這些「都是靠想像」的，如果客戶沒有提供足夠的舊系統操作案例給工程師來驗證，就很可能開發出無法與舊系統銜接的系統。</li>
-</ol>
-<hr>
-<h2 id="四tech-lead-沒辦法發揮應有的作用">四、Tech Lead 沒辦法發揮應有的作用<a class="h-anchor" href="#%e5%9b%9btech-lead-%e6%b2%92%e8%be%a6%e6%b3%95%e7%99%bc%e6%8f%ae%e6%87%89%e6%9c%89%e7%9a%84%e4%bd%9c%e7%94%a8" aria-label="這個段落的連結"></a></h2>
-<p>我們期待 Tech Lead 可以照顧到整個團隊的技術，但如果開發時程太趕，在 Tech Lead 也投入大量時間在開發時，會衍生以下問題：</p>
-<ol>
-<li><strong>Code Review 淪為形式</strong>：連自己的任務都快做不完了，Code Review 時頂多看一下 Coding Style，沒辦法從整體的架構去判斷他的演算法、邏輯是否合適。</li>
-<li><strong>專案程式碼品質下降</strong>：因為 Code Review 不確實，很多功能只是為了解決當下的問題，這種時候很容易創造出一堆耦合性高的程式。</li>
-<li><strong>沒辦法顧及所有人的進度</strong>：如果專案經理與 Tech Lead 配合不夠默契，那很容易發生 Tech Lead 埋頭開發，沒有從整體的視角來看專案的進度。</li>
-</ol>
-<p>上面的問題，想嘗試透過以下方法解決：</p>
-<ol>
-<li><strong>分配給 Tech Lead 的開發任務，不要超過他 60% 的工作時間</strong>：如果把 Tech Lead 當單純的 Developer 來使用，那團隊程式碼的品質就無法保證；為了避免日後要花更多的時間解決後遺症，建議多給 Tech Lead 一些靈活運用的時間。</li>
-<li><strong>專案經理與 Tech Lead 訊息流暢</strong>：就算有專案管理系統輔助，但每個任務進度的細節、時程還是專案經理最清楚；如果能在發現進度 Delay 前期就做適當的調整與釐清，也許不會走到時程緊繃這一步。</li>
-<li><strong>律定專案管理系統操作方式</strong>：開發人員 Commit 的內容也需要附註在 Ticket 上面（盡量白話），這樣更方便專案經理掌握實際進度；若該 Ticket 有相依性（後端完成後交付給前端），那開發人員也要將相關的 API doc 附在上面。</li>
-</ol>
-<hr>
-<h2 id="五團隊失去成長動能">五、團隊失去成長動能<a class="h-anchor" href="#%e4%ba%94%e5%9c%98%e9%9a%8a%e5%a4%b1%e5%8e%bb%e6%88%90%e9%95%b7%e5%8b%95%e8%83%bd" aria-label="這個段落的連結"></a></h2>
-<p>我們期待團隊裡的每個人都能夠隨著專案持續成長，但在管理出現問題時，團隊會慢慢轉變為 80/20 法則的模式，也就是 20% 的人完成了 80% 的任務，下面是筆者個人推估的原因：</p>
-<ol>
-<li><strong>到 Deadline 時，總有人能幫忙解決問題</strong>：如果團隊成員發現沒做完的東西，在接近 Deadline 時就會有其他人來拯救，那很可能就會養成依賴性，喪失自己解決問題的能力。</li>
-<li><strong>獎懲機制不夠透明</strong>：如果大家發現拼死拼活的結果跟躺平耍廢一樣，那我們為什麼不躺平？</li>
-<li><strong>連坐制度</strong>：Deadline 就壓在那裡，你幫了，他無法成長；你不幫，專案就爆掉，自己也跟著倒霉，這種狀況到底要幫還是不幫？</li>
-</ol>
-<p>上面的問題，想嘗試透過以下方法解決：</p>
-<ol>
-<li><strong>幫忙時只給方向</strong>：可以提供一些關鍵字、網頁、參考資料、過去的程式碼，但不要直接解決問題。</li>
-<li><strong>如果必須親自解決問題，先確認對方已經發揮所有潛能</strong>：儘管我們都希望給方向就能解決問題，但每個人的背景知識不同，如果給方向還是無法解決；在親自解決問題前，要先請對方說出自己過去所做出的研究，確保他已經盡力，任務難度真的超過了他的能力範圍。</li>
-<li><strong>不影響健康的壓力</strong>：如果發現成員的能力有提升的空間，那或許可以提醒他，適度犧牲下班後與放假的時間持續鑽研是必須的，唯有做足功課，在上班時才能更快地趕上大家的腳步。</li>
-<li><strong>律定獎懲機制</strong>：我們希望每個人都有想成長的自覺，但如果有必要，賞罰機制還是要存在的。</li>
-</ol>
-<hr>
-<h2 id="六不是每個成員都按照流程走">六、不是每個成員都按照流程走<a class="h-anchor" href="#%e5%85%ad%e4%b8%8d%e6%98%af%e6%af%8f%e5%80%8b%e6%88%90%e5%93%a1%e9%83%bd%e6%8c%89%e7%85%a7%e6%b5%81%e7%a8%8b%e8%b5%b0" aria-label="這個段落的連結"></a></h2>
-<p>我們秉持互信的原則來合作，就算有些人沒按照流程走，只要不出包，也可以睜一隻眼閉一隻眼；但如果這些行為產出的結果不符預期，甚至導致團隊損失，那勢必要做出改善。</p>
-<p>這邊就以程式碼 Commit＆Push 舉例，原則上我們期待每位開發人員一天至少 Push 一版程式，且裡面 Commit 都有詳細紀錄更動的部分。</p>
-<p>會有這個要求是因為專案是「協作」的，如果有人憋了一個禮拜才 Push 一大包，會衍生以下問題：</p>
-<ol>
-<li><strong>Tech Lead 很難 Code Review</strong>：因為內容太多、太雜，釐清功能所需的時間反而更多。</li>
-<li><strong>如果架構有問題，改善成本太高</strong>：如果在 Code Review 時才發現程式的結構問題，那又需要浪費很多時間改寫。</li>
-<li><strong>如果把所有更新的內容塞到一個 Commit 裡面，很難對應功能與程式</strong>：因為程式往往散落在多個檔案，如果 Commit 內容太多，就很難知道彼此的對應關係。</li>
-<li><strong>萬一發生狀況，接手的人會崩潰</strong>：如果做完的功能沒有 Push 上去，接手的人等於要重寫。</li>
-</ol>
-<p>上面的問題，想嘗試透過以下方法解決：</p>
-<ol>
-<li><strong>向開發人員說明定時 Commit＆Push 的重要性</strong>：開發人員可能不知道自己這麼做會影響到其他人，需要講清楚問題嚴重性。</li>
-<li><strong>如果任務太複雜，盡量做功能上的切分</strong>：有時被分配到的任務涉及面太廣，導致遲遲不敢 Push 上去；面對這種情況，可以依據開發的進度來 Commit＆Push，反正有 Git 這種程式碼版控系統，不會影響到主分支。</li>
-</ol>
-<hr>
-<h2 id="七血淚小結">七、血淚小結<a class="h-anchor" href="#%e4%b8%83%e8%a1%80%e6%b7%9a%e5%b0%8f%e7%b5%90" aria-label="這個段落的連結"></a></h2>
-<ol>
-<li>問題是長期沒改善積累而成的，想解決肯定會遇到不少阻力。</li>
-<li>只有被攤在陽光下的問題，才有機會被解決。</li>
-<li>許多問題互為因果，如果不解決，問題會像病毒般不斷變種。</li>
-<li>每個人都在適應自己的角色，專案經理不知道需求規格怎麼寫才能讓開發人員理解，開發人員不清楚遇到問題時要如何解決，Tech Lead 不確定怎麼帶人才是最合適的。</li>
-<li>規則律定出來就要執行，如果沒有執行；那其他乖乖遵守規則的人，也遲早會學壞。</li>
-</ol>
-<hr>
-<pre tabindex="0"><code>工程師血淚史
-▋ 團隊在系統開發上遇到了哪些問題(本篇)
-▋ 需求不斷變更，到底哪個環節出錯了
-▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
-▋ 如果沒有明確的開發流程，團隊將會無所適從
-▋ 你知道對專案來說，README.md 有多麼重要嗎？
-</code></pre>]]></content:encoded>
+]]></content:encoded>
     </item>
   </channel>
 </rss>
