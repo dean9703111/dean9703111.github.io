@@ -2,7 +2,7 @@
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202307/tome-ai-presentations/
-- 發布：2023-07-26
+- 發布：2023-07-26（更新：2026-10-18）
 - 主題：AI 實戰
 - 標籤：Tome、OpenAI、AI、Brief、DALL-E 2
 - 摘要：先前介紹過 GAMMA、SlideAI 這兩款 AI 自動生成簡報的工具，儘管他們生成的簡報也是圖文搭配，但畢竟是從圖庫搜尋，彼此撞圖的可能性極高。如果想要讓自己簡報的風格獨一無二，那不妨嘗試看看 Tome 這款圖片由 DALLE 產生的 AI 簡報工具。
@@ -11,13 +11,13 @@
 
 如果想要讓自己簡報的風格獨一無二，那不妨嘗試看看 Tome 這款圖片由 DALLE 產生的 AI 簡報工具。
 
+> 2026.10.18 更新筆記：Tome 已在 2025 年 4 月 30 日停止簡報服務，文中的註冊連結也已失效；想找類似的工具，可以參考 [GAMMA](https://deanlin.net/blog/202306/gamma-ai-presentations/) 的教學。
+
 > 2024.10.23 更新筆記：目前官方更改了 AI 生成簡報的規則，需要升級到 Pro 版本才能使用。
 
 ## STEP 1：建立 Tome 帳號
 
-註冊連結：https://tome.app/invite/l-d-cliswkv8u2g533co9eltp3m8e
-
-  使用這個註冊連結可以多獲得 50 credits 喔！
+  當時用邀請連結註冊，可以多獲得 50 credits
 
 基本上使用 Google 帳號登入最方便。
 
@@ -79,11 +79,7 @@
 
 當然能直接在撰寫簡報的過程透過 DALLE 產生圖片是一個優勢，但這個功能有沒有那麼重要，就見人見智了。
 
-筆者鼓勵大家多嘗試看看各家的產品，畢竟要嘗試過才能判斷這個產品是否適合自己，用筆者提供的註冊連結可以多獲得 50 Credits 喔：
-
-    You've been gifted 50 credits
-    L D is inviting you to try Tome!
-    tome.app
+筆者鼓勵大家多嘗試看看各家的產品，畢竟要嘗試過才能判斷這個產品是否適合自己。
 
 延伸閱讀：[AI 實戰](https://deanlin.net/categories/ai/)
 

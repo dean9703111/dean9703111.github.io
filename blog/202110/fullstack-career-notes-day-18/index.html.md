@@ -1,4 +1,4 @@
-# [面試][資料庫]面對高流量的的系統，會採取哪些措施？
+# [面試][資料庫]面對高流量的系統，會採取哪些措施？
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202110/fullstack-career-notes-day-18/
