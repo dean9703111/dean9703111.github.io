@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/
 - 發布：2026-10-15
 - 主題：AI 實戰
-- 標籤：資訊安全、AI 資安、資安、去識別化、Vibe Coding
+- 標籤：資安、AI 資安、去識別化、Vibe Coding
 - 摘要：這幾年做企業內訓的時候，我會請客戶提供內部的「去識別化資料」，這樣我才能根據公司實際狀況設計課程。
 
 [https://youtu.be/Mx7d0nSF61k](https://youtu.be/Mx7d0nSF61k)

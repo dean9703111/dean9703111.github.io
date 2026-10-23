@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202407/generative-ai-security-notes/
 - 發布：2024-07-14
 - 主題：AI 實戰
-- 標籤：AI、Security、AI Security、Information Security、Prompt Engineering
+- 標籤：AI、資安、AI Security、Information Security、提示工程
 - 摘要：即使我們知道生成式 AI 的答案可能會出現幻覺和錯誤，但許多人在遇到問題時，比起 Google 找答案，開始會先試試看能否靠 AI 工具直接產生最終解答。而不要把隱私資料洩露給 AI 已經是老生常談，因此這篇文章想從「如何安全使用」的角度出發。
 
 即使我們知道生成式 AI 的答案可能會出現幻覺和錯誤，但許多人在遇到問題時，比起 Google 找答案，開始會先試試看能否靠 AI 工具直接產生最終解答。

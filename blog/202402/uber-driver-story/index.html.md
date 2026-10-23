@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202402/uber-driver-story/
 - 發布：2024-02-13（更新：2024-02-14）
 - 主題：職涯成長
-- 標籤：Uber、Driver、Management、Donate、Boss
+- 標籤：Uber、Driver、管理、Donate、Boss
 - 摘要：坐過這麼多次的 Uber 跟小黃，我還是第一次遇到這種司機。
 
 坐過這麼多次的 Uber 跟小黃，我還是第一次遇到這種司機。

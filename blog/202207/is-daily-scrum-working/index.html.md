@@ -5,7 +5,7 @@
 - 發布：2022-07-20
 - 主題：團隊合作
 - 系列：工程師下班有約
-- 標籤：Agile、Scrum、Scrum Agile、Daily Scrum、Management
+- 標籤：Agile、Scrum、Scrum Agile、Daily Scrum、管理
 - 摘要：並不是導入一個新的管理方式，專案執行就能夠順風順水。
 
 並不是導入一個新的管理方式，專案執行就能夠順風順水。

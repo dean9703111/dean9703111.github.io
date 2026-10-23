@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202301/chatgpt-chinese-vs-english/
 - 發布：2023-01-23
 - 主題：AI 實戰
-- 標籤：ChatGPT、AI、ChatGPT Chatbot、Compare、Interview
+- 標籤：ChatGPT、AI、ChatGPT Chatbot、Compare、面試
 - 摘要：相信大部分的讀者都已經玩過 ChatGPT 了，不知道大家是用「英文」還是「中文」與他溝通呢？ 我想應該有不少人好奇「ChatGPT 的中文跟英文能力一樣好嗎？」
 
 相信大部分的讀者都已經玩過 ChatGPT 了，不知道大家是用「英文」還是「中文」與他溝通呢？

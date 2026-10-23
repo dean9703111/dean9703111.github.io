@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202303/chatgpt-interview-prep/
 - 發布：2023-03-19
 - 主題：職涯成長
-- 標籤：ChatGPT、Interview、面試、推薦信、自我介紹
+- 標籤：ChatGPT、面試、推薦信、自我介紹
 - 摘要：這篇文章將向您展示如何利用 ChatGPT 快速產出一系列讓您在面試中脫穎而出的有力武器。從自我介紹到推薦信，您將學會如何將自己的面試水平提升到新的高度。
 
 前兩篇文章教你如何用 ChatGPT 產出亮眼的[中文](https://deanlin.net/blog/202303/chatgpt-resume-writing/)、[英文](https://deanlin.net/blog/202303/chatgpt-english-resume/)履歷，以期獲得更多面試機會。

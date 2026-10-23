@@ -5,7 +5,7 @@
 - 發布：2023-11-17
 - 主題：職涯成長
 - 系列：工程師下班有約
-- 標籤：Unfair Advantage、Life Stories、Life Lessons、Mindset、Growth Mindset
+- 標籤：Unfair Advantage、Life Stories、自我成長、Mindset、Growth Mindset
 - 摘要：不久前，我收到學弟的職業訪談邀約，而這場訪談剛好幫我回顧了這 10 多年來的人生。
 
 不久前，我收到學弟的職業訪談邀約，而這場訪談剛好幫我回顧了這 10 多年來的人生。

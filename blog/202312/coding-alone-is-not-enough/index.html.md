@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202312/coding-alone-is-not-enough/
 - 發布：2023-12-10
 - 主題：AI 實戰
-- 標籤：AI、ChatGPT、Engineering、AIGC、Careers
+- 標籤：AI、ChatGPT、工程師、AIGC、職涯
 - 摘要：一轉眼，2023 就到尾聲了，AI 話題的熱度也逐漸下降📉。 是因為 AI 不紅了嗎？不！是因為大家已經逐漸「習慣」AI 的存在🤖。
 
 一轉眼，2023 就到了尾聲，AI 話題的熱度也逐漸下降📉。

@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202308/gamma-refund-with-chatgpt/
 - 發布：2023-08-29
 - 主題：AI 實戰
-- 標籤：Gamma、ChatGPT、Refund、AI、Life Lessons
+- 標籤：Gamma、ChatGPT、Refund、AI、自我成長
 - 摘要：認識的人都知道我是 Gamma 這款 AI 簡報神器的傳道者，我至今已經透過部落格、課程向上萬人分享了他的強大之處；儘管擁有的 Credits 已經多到這輩子用不完，但我還是升級到付費版想給優秀的開發商一點鼓勵，沒想到標題的故事就此展開…
 
 認識的人都知道我是 Gamma 這款 AI 簡報神器的傳道者，我至今已經透過部落格、課程向上萬人分享了他的強大之處；儘管擁有的 Credits 已經多到這輩子用不完，但我還是升級到付費版想給優秀的開發商一點鼓勵，沒想到標題的故事就此展開…

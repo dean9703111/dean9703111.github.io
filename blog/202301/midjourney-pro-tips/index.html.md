@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202301/midjourney-pro-tips/
 - 發布：2023-01-22
 - 主題：AI 實戰
-- 標籤：Midjourney、AI、AI Painting、Tips、Professional
+- 標籤：Midjourney、AI、AI 繪圖、Tips、Professional
 - 摘要：雖然只要簡單的關鍵字、句子就能讓 Midjourney 產生絕美的圖片，但有時圖片的風格、角度、層次…跟我們要的並不相同。 就像是建築物有文藝復興、巴洛克式、中國傳統建築…等風格，但如果沒有相關背景知識，你可能就只能用「房子」一詞帶過，可以說是「知識盲區」阻礙了我們的想像力。
 
 雖然只要簡單的關鍵字、句子就能讓 Midjourney 產生絕美的圖片，但有時圖片的風格、角度、層次…跟我們要的並不相同。

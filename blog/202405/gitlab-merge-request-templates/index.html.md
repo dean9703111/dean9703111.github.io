@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202405/gitlab-merge-request-templates/
 - 發布：2024-05-11（更新：2024-05-17）
 - 主題：團隊合作
-- 標籤：GitLab、Merge Request、Template、Project Management、Teamwork
+- 標籤：GitLab、Merge Request、Template、專案管理、團隊合作
 - 摘要：在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。 但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」 這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。
 
 在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。

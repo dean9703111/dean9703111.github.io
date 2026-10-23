@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202307/ai-lesson-preparation/
 - 發布：2023-07-29
 - 主題：AI 實戰
-- 標籤：AI、Presentations、Presentation Design、ChatGPT、Gamma
+- 標籤：AI、簡報、Presentation Design、ChatGPT、Gamma
 - 摘要：兩週前，我在臉書分享了自己到中華黃頁講座的故事，沒想到發完文沒多久就收到中華電信的講座邀約。主辦方希望我以「用 AI 做簡報」為主題，帶來一場 2 小時的專業內訓。
 
 兩週前，我在臉書分享了自己到中華黃頁講座的故事，沒想到發完文沒多久就收到中華電信的講座邀約。主辦方希望我以「用 AI 做簡報」為主題，帶來一場 2 小時的專業內訓。

@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202301/midjourney-getting-started/
 - 發布：2023-01-21
 - 主題：AI 實戰
-- 標籤：Midjourney、Artificial Intelligence、Painting、AI Painting、AI
+- 標籤：Midjourney、Artificial Intelligence、Painting、AI 繪圖、AI
 - 摘要：這篇文章的目標，是帶領讀者透過「關鍵字」讓 Midjourney 產生絕美圖片；相信最後的完成的作品，會讓你驚嘆於 AI 的繪圖能力。
 
 這篇文章的目標，是帶領讀者透過「關鍵字」讓 Midjourney 產生絕美圖片；相信最後的完成的作品，會讓你驚嘆於 AI 的繪圖能力。

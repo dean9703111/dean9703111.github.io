@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202605/ai-speed-is-not-your-speed/
 - 發布：2026-05-23
 - 主題：AI 實戰
-- 標籤：AI、Vibe Coding、Course、Software Development、Software Engineering
+- 標籤：AI、Vibe Coding、Course、Software Development、工程師
 - 摘要：前陣子，有位朋友興奮地跟我說，他用 AI 只花 3 天就做出一個電商系統，準備要上線了。
 
 前陣子，有位朋友興奮地跟我說，他用 AI 只花 3 天就做出一個電商系統，準備要上線了。

@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202301/effective-chatgpt-prompts/
 - 發布：2023-01-20
 - 主題：AI 實戰
-- 標籤：ChatGPT、Prompt、Promptly Written、ChatGPT Prompt、ChatGPT Review
+- 標籤：ChatGPT、提示工程、Promptly Written、ChatGPT Prompt、ChatGPT Review
 - 摘要：有朋友試用 ChatGPT 後，覺得他總是給不出自己期望的回覆；這是因為 AI 距離我們的生活還太遠，還是因為沒有掌握到使用要領呢？ 今天這篇文章會先帶你了解「Prompt」是什麼，並用簡單的範例讓你了解如何善用他、避開陷阱，以此獲得更好的 ChatGPT 回覆。
 
 有朋友試用 ChatGPT 後，覺得他總是給不出自己期望的回覆；這是因為 AI 依舊距離我們的生活很遙遠，還是因為沒有掌握到使用要領呢？

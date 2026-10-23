@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202307/fix-presentation-mistakes-with-gamma/
 - 發布：2023-07-19
 - 主題：AI 實戰
-- 標籤：AI、Presentations、Presentation Tips、簡報技巧、Gamma
+- 標籤：AI、簡報、Presentation Tips、簡報技巧、Gamma
 - 摘要：簡報就是「簡單的報告」，這篇文章的目標不是帶大家做出華麗的簡報，而是在短時間透過 GAMMA AI 修正錯誤，做出能清晰表達自己觀點、有良好閱讀體驗的簡報。
 
 簡報就是「簡單的報告」，這篇文章的目標不是帶大家做出華麗的簡報，而是在短時間透過 [GAMMA AI](https://try.gamma.app/h0c9z09kpqu3) 修正錯誤，做出能清晰表達自己觀點、有良好閱讀體驗的簡報。

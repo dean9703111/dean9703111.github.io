@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202604/reusable-ai-skills/
 - 發布：2026-04-09
 - 主題：AI 實戰
-- 標籤：AI、Vibe Coding、AI Agent、Agent Skills、Problem Solving
+- 標籤：AI、Vibe Coding、AI Agent、Agent Skills、解決問題
 - 摘要：前陣子與朋友聚會時，我們交流了彼此用 AI 開發專案的心得。
 
 前陣子與朋友聚會時，我們交流了彼此用 AI 開發專案的心得。

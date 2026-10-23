@@ -5,7 +5,7 @@
 - 發布：2026-09-12
 - 主題：AI 實戰
 - 系列：Claude Code 實戰
-- 標籤：Claude Code、AI Agent、Docker、Security、Hostinger
+- 標籤：Claude Code、AI Agent、Docker、資安、Hostinger
 - 摘要：相信很多人在面對繁瑣重複的工作時，腦袋可能會冒出一句話：「如果有工具可以幫我搞定就好了！」
 
 [https://youtu.be/BPdyiaC-3Lw](https://youtu.be/BPdyiaC-3Lw)

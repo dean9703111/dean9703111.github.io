@@ -5,7 +5,7 @@
 - 發布：2022-07-12
 - 主題：團隊合作
 - 系列：工程師血淚史
-- 標籤：Scrum、Scrum Master、Project Management、Agile、Coworking
+- 標籤：Scrum、Scrum Master、專案管理、Agile、Coworking
 - 摘要：在過去的文章中有提到，為了提高團隊成員在 Scrum 的參與度，我們改成輪流擔任 Scrum Master 的機制，但這樣真的有效果嗎？而且 Scrum Master 跟 PM 的工作高度重疊，要如何區分兩者的權力與責任呢？
 
 在[過去的文章](https://deanlin.net/blog/202205/team-development-problems/)中有提到，為了提高團隊成員在 Scrum 的參與度，我們改成輪流擔任 Scrum Master 的機制，但這樣真的有效果嗎？而且 Scrum Master 跟 PM 的工作高度重疊，要如何區分兩者的權力與責任呢？

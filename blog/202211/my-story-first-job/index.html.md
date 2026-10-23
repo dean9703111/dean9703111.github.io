@@ -5,7 +5,7 @@
 - 發布：2022-11-30
 - 主題：職涯成長
 - 系列：那些我走過的路與故事
-- 標籤：Work Life Balance、Pressure、Engineer、Careers、Milestones
+- 標籤：Work Life Balance、Pressure、工程師、職涯、Milestones
 - 摘要：出社會後，更能明白努力與回報未必成正比；與其花更多的時間努力，不如先好好檢視自己的付出是否值得，也許筆者的故事能給你帶來不一樣的觀點。
 
 出社會後，更能明白努力與回報未必成正比。

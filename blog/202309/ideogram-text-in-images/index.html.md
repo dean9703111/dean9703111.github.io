@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202309/ideogram-text-in-images/
 - 發布：2023-09-19
 - 主題：AI 實戰
-- 標籤：Ideogram、AI Painting、Posters、Logo Design、Branding
+- 標籤：Ideogram、AI 繪圖、Posters、Logo Design、Branding
 - 摘要：過去的 AI 繪圖有一個痛點，就是我們無法使 AI 產出「精準文字」。但有了 Ideogram，這一切都不再是問題，你不用會後製修圖，只要為想顯示的文字加上雙引號就好，效果就像這次的部落格封面！
 
 過去的 AI 繪圖有一個痛點，就是我們無法使 AI 產出「精準文字」。但有了 Ideogram，這一切都不再是問題，你不用會後製修圖，只要為想顯示的文字加上雙引號就好，效果就像這次的部落格封面！

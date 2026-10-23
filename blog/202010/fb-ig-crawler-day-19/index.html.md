@@ -5,7 +5,7 @@
 - 發布：2020-10-04
 - 主題：技術教學
 - 系列：FB & IG 爬蟲專案從零開始
-- 標籤：iT 邦幫忙鐵人賽、Node.js、google-sheets、閱讀文件
+- 標籤：iT 邦幫忙鐵人賽、Node.js、Google Sheets、閱讀文件
 - 摘要：接下來幾天的目標是將之前的爬蟲資料放入 Google Sheets，實踐上會分成幾個步驟：
 
 > 如果說爬蟲是在鍛鍊你分析網頁的能力，那麼 Google Sheets 就是在教你閱讀官方文件的技巧

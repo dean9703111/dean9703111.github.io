@@ -5,7 +5,7 @@
 - 發布：2020-09-27
 - 主題：技術教學
 - 系列：FB & IG 爬蟲專案從零開始
-- 標籤：iT 邦幫忙鐵人賽、Facebook、Instagram、Crawler、Selenium Webdriver
+- 標籤：iT 邦幫忙鐵人賽、Facebook、Instagram、網頁爬蟲、Selenium WebDriver
 - 摘要：1.1 瀏覽器關閉導致無法讀取網頁元件1.2 跨網域(CORS)錯誤
 
 > 有些需求不是複製貼上就能解決的

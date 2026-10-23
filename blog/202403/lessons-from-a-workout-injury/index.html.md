@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202403/lessons-from-a-workout-injury/
 - 發布：2024-03-25
 - 主題：職涯成長
-- 標籤：運動傷害、Experience、Health、Knowledge、Money
+- 標籤：運動傷害、經驗分享、Health、Knowledge、Money
 - 摘要：幾週前重訓受傷後，原本去健身房的時間都改去做復健了。 在復健的過程中，我不停思考為什麼我會走到今天這一步？ 我做錯了什麼；以及，我做對了什麼。
 
 ## 無知，才是浪費生命的源頭！

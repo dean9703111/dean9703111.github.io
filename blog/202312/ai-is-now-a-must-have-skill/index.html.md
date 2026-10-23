@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202312/ai-is-now-a-must-have-skill/
 - 發布：2023-12-21
 - 主題：職涯成長
-- 標籤：AI、Work、Skills、Careers、Career Advice
+- 標籤：AI、職場、Skills、職涯
 - 摘要：你已經開始用 AI 輔助工作了嗎？如果我在 AI、科技的社團問這個問題，幾乎每個人的回答都是 Yes！但我到企業端授課時，卻發現未必如此；因此這篇文章我想從 AI 科普講師的角度，來分享自己觀察到的市場變化。
 
 你已經開始用 AI 輔助工作了嗎？

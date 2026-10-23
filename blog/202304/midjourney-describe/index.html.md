@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202304/midjourney-describe/
 - 發布：2023-04-09
 - 主題：AI 實戰
-- 標籤：Midjourney、Prompt、AI、AI Painting、AIGC
+- 標籤：Midjourney、提示工程、AI、AI 繪圖、AIGC
 - 摘要：我們經常看到前輩分享非常美麗的圖片，但很多時候只能停留在欣賞的階段，因為我們根本不知道指令（Prompt）該怎麼下；而現在 Midjourney 推出「/describe」功能，讓我們能反推用哪些指令能產出類似的圖，這是一個對新手、老手都很有幫助的功能，你一定要學起來！
 
 在 AI 社團中，我們經常看到前輩分享非常美麗的圖片，但很多時候只能停留在欣賞的階段，因為我們根本不知道指令（Prompt）該怎麼下；而現在 Midjourney 推出「/describe」功能，讓我們能反推用哪些指令能產出類似的圖，這是一個對新手、老手都很有幫助的功能，你一定要學起來！

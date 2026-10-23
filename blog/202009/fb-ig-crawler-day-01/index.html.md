@@ -5,7 +5,7 @@
 - 發布：2020-09-16
 - 主題：技術教學
 - 系列：FB & IG 爬蟲專案從零開始
-- 標籤：iT 邦幫忙鐵人賽、網頁爬蟲、Selenium、google-sheets、Node.js
+- 標籤：iT 邦幫忙鐵人賽、網頁爬蟲、Selenium WebDriver、Google Sheets、Node.js
 - 摘要：因朋友職業需求需要搜集與公司同類型品牌FB及IG粉專的資料，用每日追蹤人數的變化及貼文數量來做數據分析，像是：
 
 > 你不用很厲害才開始，你要開始了才會很厲害！

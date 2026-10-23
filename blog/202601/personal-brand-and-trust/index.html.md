@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202601/personal-brand-and-trust/
 - 發布：2026-01-03
 - 主題：職涯成長
-- 標籤：Self Branding、個人品牌、自媒體、Personal Growth、職場
+- 標籤：Self Branding、個人品牌、自媒體、自我成長、職場
 - 摘要：你以為你缺的是機會？不是！你缺的是：「當機會出現時，別人腦中想不起你的名字。 」
 
 [https://youtu.be/lkEJHLp2Ano](https://youtu.be/lkEJHLp2Ano)

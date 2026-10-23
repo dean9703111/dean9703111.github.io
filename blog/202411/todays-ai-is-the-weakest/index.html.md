@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202411/todays-ai-is-the-weakest/
 - 發布：2024-11-09
 - 主題：AI 實戰
-- 標籤：ChatGPT、AI、AIGC、Experience、Scaling Law
+- 標籤：ChatGPT、AI、AIGC、經驗分享、Scaling Law
 - 摘要：這標題超不適合用來宣傳新書，但卻是我在改版後的真實感受。
 
 這標題超不適合用來宣傳新書，但卻是我在改版後的真實感受。

@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202207/keep-writing-while-working/
 - 發布：2022-07-10
 - 主題：職涯成長
-- 標籤：Publishing、Engineer、Self Improvement、Self Learning、Friendship
+- 標籤：Publishing、工程師、自我成長、Self Learning、Friendship
 - 摘要：選擇比努力重要，而環境就像個導師，不斷影響著我們的選擇。
 
 選擇比努力重要，而環境就像個導師，不斷影響著我們的選擇。

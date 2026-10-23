@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202404/demo-failure-story/
 - 發布：2024-04-19
 - 主題：職涯成長
-- 標籤：Experience、Failure Stories、Failure To Success、Presentations、Demo
+- 標籤：經驗分享、Failure Stories、Failure To Success、簡報、Demo
 - 摘要：原本我以為，在演講前夕簡報壞掉已經夠倒霉了。 但沒想到，我居然會在 AI 工作坊現場 Demo 產品時，遇到突發性故障。 當下有幾百個人等著看我接下來的操作步驟，那場面說多尷尬就有多尷尬。 但我不怕失敗，只怕自己沒有從失敗中學到教訓。
 
 原本我以為，[在演講前夕簡報壞掉](https://deanlin.net/blog/202404/presentation-disaster-prevention/)已經夠倒霉了。

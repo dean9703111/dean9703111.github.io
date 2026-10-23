@@ -5,7 +5,7 @@
 - 發布：2024-05-17
 - 主題：職涯成長
 - 系列：工程師下班有約
-- 標籤：面試、Interview、Issues、Critical Issue、Production Issue
+- 標籤：面試、Issues、Critical Issue、Production Issue
 - 摘要：最近跟一位擔任技術主管的朋友聊天，我問他：「面試過程中，你最看重求職者哪些經驗與特質？」 他說：「如果面試 Senior 以上的職位，我更看重他過去是否有處理正式環境 Critical issue 的經驗；因為技術可以靠後天學習，但有能力處理正式環境 issue 的人並不多。」
 
 最近跟一位擔任技術主管的朋友聊天，我問他：「面試過程中，你最看重求職者哪些經驗與特質？」

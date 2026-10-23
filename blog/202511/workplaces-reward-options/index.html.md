@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202511/workplaces-reward-options/
 - 發布：2025-11-07
 - 主題：職涯成長
-- 標籤：加薪、職涯、Careers、Salary Negotiations、Interview
+- 標籤：加薪、職涯、Salary Negotiations、面試
 - 摘要：人生不是遊戲，就算滿足一切條件，也未必能前往下個關卡。
 
 今天想跟大家聊聊，具備哪些條件，**能讓你談加薪時立於不敗之地，並獲得自己期待的薪水。**

@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202411/notebooklm-workplace-uses/
 - 發布：2024-11-28
 - 主題：AI 實戰
-- 標籤：NotebookLM、AI、Gemini、Google、Work
+- 標籤：NotebookLM、AI、Gemini、Google、職場
 - 摘要：NotebookLM 是搭配 AI（Gemini 1.5 Pro）為助手，專門為使用者處理龐大資訊的工具（文件、音訊、影片）。 不僅可以快速生成摘要，還能透過提問的方式快速找到重點資訊。如果你的日常工作需要大量閱讀、整合資訊、回憶考古，那 NotebookLM…
 
 NotebookLM 是搭配 AI（Gemini 1.5 Pro）為助手，專門為使用者處理龐大資訊的工具（文件、音訊、影片）。

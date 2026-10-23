@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202604/beyond-ai-hype/
 - 發布：2026-04-23
 - 主題：AI 實戰
-- 標籤：AI、Vibe Coding、Integration、實戰、Prompt Engineering
+- 標籤：AI、Vibe Coding、Integration、實戰、提示工程
 - 摘要：我在 YouTube 已經拍了十幾支用 AI 寫程式的教學影片。
 
 其實這是 ChatGPT 生成的圖片

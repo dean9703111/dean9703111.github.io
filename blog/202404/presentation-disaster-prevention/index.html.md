@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202404/presentation-disaster-prevention/
 - 發布：2024-04-12
 - 主題：職涯成長
-- 標籤：簡報、Presentation、Crash、Problem Solving、Problem Solving Skills
+- 標籤：簡報、Presentation、Crash、解決問題、Problem Solving Skills
 - 摘要：今天，我有一場 2 小時的企業內訓，預計會有數百名學員。 結果昨晚打開線上簡報準備練習時，螢幕上顯示兩個大大的字：「喔！不。」看到這個結果後我狂冒冷汗，因為這幾乎代表簡報已經沒救了…
 
 今天，我有一場 2 小時的企業內訓，預計會有數百名學員。

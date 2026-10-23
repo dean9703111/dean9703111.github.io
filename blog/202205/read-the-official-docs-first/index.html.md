@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202205/read-the-official-docs-first/
 - 發布：2022-05-23
 - 主題：職涯成長
-- 標籤：Documentation、Official Document、Life Lessons、生活案例、Framework
+- 標籤：Documentation、Official Document、自我成長、生活案例、Framework
 - 摘要：有時我們覺得某個框架、套件很難用，常常寫到一半就卡住；除了可能是它本身設計的問題外，很多時候是因為沒仔細看官方文檔，導致我們拋棄好用的現成方案，選擇了一條孤獨難走的道路。
 
 有時我們覺得某個框架、套件很難用，常常寫到一半就卡住；除了可能是它本身設計的問題外，很多時候是因為沒仔細看官方文檔，導致我們拋棄好用的現成方案，選擇了一條孤獨難走的道路。

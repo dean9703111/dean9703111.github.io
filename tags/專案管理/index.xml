@@ -8,8 +8,109 @@
     <generator>Hugo</generator>
     <language>zh-tw</language>
     <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
-    <lastBuildDate>Sun, 11 Feb 2024 14:36:09 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 11 May 2024 10:32:39 +0800</lastBuildDate>
     <atom:link href="https://deanlin.net/tags/%E5%B0%88%E6%A1%88%E7%AE%A1%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[Gitlab] 建立 Merge Request Templates，讓團隊合作更加順利！</title>
+      <link>https://deanlin.net/blog/202405/gitlab-merge-request-templates/</link>
+      <pubDate>Sat, 11 May 2024 10:32:39 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202405/gitlab-merge-request-templates/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。 但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」 這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上。</description>
+      <media:content url="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-og_hu_265c693e5fe82dc5.jpg" medium="image" type="image/jpeg" width="1200" height="630" />
+      <content:encoded><![CDATA[<p>在多人協作的開發過程中，我們通常會需要透過 Merge Request 來進行 Code Review。</p>
+<p>但這時會遇到一個問題：「每個人對專案的認知有差異，且文字表達能力不同。」</p>
+<p>這會導致 Code Review 的人需要花更多的時間來理解程式，甚至浪費寶貴的時間在溝通上；有些交代不清楚的 Merge Request 如果被合併了，也容易在未來發現 Bug 時難以釐清問題。</p>
+<p>而解決上面問題的方式也很簡單：「建立 Template（模板）」</p>
+<p>如果大家都按照模板撰寫，就能保證每個 MR 都有一定的品質。</p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-01.webp" width="1147" height="645" alt="\[Gitlab\] 建立 Merge Request Templates，讓團隊合作更加順利！（圖 1）" fetchpriority="high" decoding="async"></p>
+<h2 id="merge-request-要有哪些資訊">Merge Request 要有哪些資訊？<a class="h-anchor" href="#merge-request-%e8%a6%81%e6%9c%89%e5%93%aa%e4%ba%9b%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
+<p>筆者個人建議一個好的 Merge Request 要包含以下元素：</p>
+<ol>
+<li><strong>概要 &amp; 背景</strong>：簡短描述這次 Merge Request 的目的，讓 Code Review 的人可以快速理解前因後果。</li>
+<li><strong>相關資訊</strong>：放上專案需求規格連結、關聯的 Project/branch、會議紀錄等資訊。</li>
+<li><strong>變更內容</strong>：說明新增/修改/移除了什麼內容，如果邏輯複雜可以簡述演算法。</li>
+<li><strong>測試步驟</strong>：描述如何驗證這次的變更，包括需要運行的測試和預期結果。</li>
+</ol>
+<p>大家可以參考我的 Merge Request Template 格式（Markdown 語法）：</p>
+<pre tabindex="0"><code># 概要 &amp; 背景
+
+# 相關資訊
+
+- 需求規格: 
+- 關聯的 Project/branch: 
+- 任務 Ticket/會議紀錄: 
+
+# 變更內容
+
+- [新增] xxx
+- [修改] yyy
+- [移除] zzz
+
+# 測試步驟
+
+### 測試項目 1
+
+- STEP 1: 
+- STEP 2: 
+- STEP 3: 
+
+預期結果:
+</code></pre><p>英文版：</p>
+<pre tabindex="0"><code># Summary &amp; Background
+
+# Relevant Information
+
+- Requirement Specifications: 
+- Associated Project/Branch: 
+- Task Ticket/Meeting Notes: 
+
+# Changes
+
+- [Added] xxx
+- [Modified] yyy
+- [Removed] zzz
+
+# Testing Steps
+
+### Test Case 1
+
+- STEP 1: 
+- STEP 2: 
+- STEP 3: 
+
+Expected Result:
+</code></pre><hr>
+<h2 id="在-gitlab-建立-merge-request-templates-的步驟">在 Gitlab 建立 Merge Request Templates 的步驟<a class="h-anchor" href="#%e5%9c%a8-gitlab-%e5%bb%ba%e7%ab%8b-merge-request-templates-%e7%9a%84%e6%ad%a5%e9%a9%9f" aria-label="這個段落的連結"></a></h2>
+<h3 id="step-1-選擇-project-default-branch建立存放-templates-的資料夾">STEP 1: 選擇 Project default branch，建立存放 Templates 的資料夾<a class="h-anchor" href="#step-1-%e9%81%b8%e6%93%87-project-default-branch%e5%bb%ba%e7%ab%8b%e5%ad%98%e6%94%be-templates-%e7%9a%84%e8%b3%87%e6%96%99%e5%a4%be" aria-label="這個段落的連結"></a></h3>
+<p>我們要先在根目錄下建立 <code>.gitlab/merge_request_templates/</code> 的資料夾。</p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-02.webp" width="1400" height="407" alt="STEP 1: 選擇 Project default branch，建立存放 Templates 的資料夾（圖 2）" loading="lazy" decoding="async"></p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-03.webp" width="1400" height="137" alt="STEP 1: 選擇 Project default branch，建立存放 Templates 的資料夾（圖 3）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><strong>小提醒</strong>：一定要在「default branch（ex: main、develop）」下建立，否則是沒有效的。</p>
+</blockquote>
+<h3 id="step-2-在資料夾下建立md的-templates">STEP 2: 在資料夾下建立「.md」的 Templates<a class="h-anchor" href="#step-2-%e5%9c%a8%e8%b3%87%e6%96%99%e5%a4%be%e4%b8%8b%e5%bb%ba%e7%ab%8bmd%e7%9a%84-templates" aria-label="這個段落的連結"></a></h3>
+<p>你可以直接複製筆者在前面提供的 Markdown Template，這邊我將檔案命名為「merge.md」。</p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-04.webp" width="1400" height="915" alt="STEP 2: 在資料夾下建立「.md」的 Templates（圖 4）" loading="lazy" decoding="async"></p>
+<p>這邊我開一個測試的 branch 來做 Merge request，大家可以看到在 Description 旁邊有一個下拉選單，裡面的 merge 就是我們剛剛新增的模板。</p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-05.webp" width="1400" height="669" alt="STEP 2: 在資料夾下建立「.md」的 Templates（圖 5）" loading="lazy" decoding="async"></p>
+<p>選擇後就能看到剛剛建立的 Merge request Template：</p>
+<p><img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-06.webp" width="1400" height="747" alt="STEP 2: 在資料夾下建立「.md」的 Templates（圖 6）" loading="lazy" decoding="async"></p>
+<p>相信一個好的 Merge request Template 能提高專案的品質，並加速團隊的協作流程，減少不必要的溝通成本。</p>
+<a class="linkcard" href="https://dean-lin.medium.com/list/7f3c9b6e2442" target="_blank" rel="noopener">
+  <span class="lc-body">
+    <span class="lc-title">軟體工程</span>
+    <span class="lc-desc">Edit description</span>
+    <span class="lc-site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>dean-lin.medium.com</span>
+  </span>
+  <span class="lc-thumb">
+    <img src="https://deanlin.net/blog/202405/gitlab-merge-request-templates/images/gitlab-merge-request-templates-card-01_hu_8de84ea4754d7f76.webp" width="320" height="320" alt="" loading="lazy" decoding="async">
+  </span>
+</a>
+
+]]></content:encoded>
+    </item>
     <item>
       <title>為什麼接案就像踩地雷？苦主幫你來掃雷 ── 設計管理系列文</title>
       <link>https://deanlin.net/blog/202402/freelance-pitfalls/</link>
@@ -444,6 +545,360 @@
 <p><a href="https://deanlin.net/blog/202208/engineers-stop-speaking-up-2/">下一篇文章中</a>，筆者會分析為什麼有些主管選擇忽視成員心聲，甚至把問題放著不管。</p>
 <p>這些明眼人都知道會對團隊帶來負面影響的問題，為什麼他們還是做了？真的是因為昏庸無能嗎？</p>
 ]]></content:encoded>
+    </item>
+    <item>
+      <title>你知道對專案來說，README.md 有多麼重要嗎？ ── 工程師血淚史</title>
+      <link>https://deanlin.net/blog/202208/why-readme-matters/</link>
+      <pubDate>Fri, 05 Aug 2022 11:33:37 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202208/why-readme-matters/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>如果公司的專案很多，README.md 又沒有寫好，那後續接手的人會非常痛苦；如果公司專案的規模很大，README.md 又缺乏維護，那這個專案已經半隻腳踏進棺材。</description>
+      <media:content url="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-og_hu_d3d612329038eb97.jpg" medium="image" type="image/jpeg" width="1200" height="630" />
+      <content:encoded><![CDATA[<p>如果公司的專案很多，README.md 又沒有寫好，那後續接手的人會非常痛苦；如果公司專案的規模很大，README.md 又缺乏維護，那這個專案已經半隻腳踏進棺材。</p>
+<p>身為工程師，我理解大部分的人都想把精力放在寫出更好的程式，但專案能否長期發展，其實是取決於「文件」；如果文件亂七八糟，或者甚至根本沒有制式文件，那這個專案的未來發展性堪憂。</p>
+<p>從管理的角度來說，我們要去思考：「如果負責專案的工程師明天就不在了，這個專案能否進行下去？」</p>
+<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-01.webp" width="1400" height="733" alt="你知道對專案來說，README.md 有多麼重要嗎？ ── 工程師血淚史（圖 1）" fetchpriority="high" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+一、為什麼 README.md 很重要？
+二、有哪些是 README.md 一定要提供的資訊？
+ ➤ 專案介紹 — Description
+ ➤ 運行環境需求 — Requirement
+ ➤ 環境檔（.env）有哪些欄位要自己填寫 — .env Setting
+ ➤ 在 Local 端的安裝＆運行步驟 — Build Setup(Local)
+ ➤ 在 Server 端的安裝＆驗證步驟- Build Setup(Server)
+ ➤ 可提供支援的同仁 ── Support
+ ➤ 注意事項 — Warning
+三、如果 README.md 有這些資訊，會讓日後維運更加順利
+ ➤ 系統架構圖 — System architecture
+ ➤ 使用者操作手冊 — User Manual
+ ➤ Demo 影片 — Demo Video
+ ➤ UI/UX 設計稿 — UI/UX Design
+ ➤ Function map
+ ➤ 單元測試、整合測試 — Unit Testing、Integration Testing
+</code></pre><h2 id="一為什麼-readmemd-很重要">一、為什麼 README.md 很重要？<a class="h-anchor" href="#%e4%b8%80%e7%82%ba%e4%bb%80%e9%ba%bc-readmemd-%e5%be%88%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
+<p>因為開發人員第一次接觸專案時，就是透過 README.md 來了解的。</p>
+<p>它就像是一張專案的地圖，如果破損、缺乏維護，那踏上旅途的人勢必會遇上迷航、陷阱。</p>
+<p>在沒有律定 README.md 該有什麼內容時，每個人都是自由發揮；除了內容可能有短缺外，每份專案的撰寫風格也不盡相同，因此想透過這篇文章律定基礎架構。</p>
+<blockquote>
+<p>這邊提醒讀者，本篇文章所建議的 README.md 內容是提供給「內部開發人員」看的；如果你的專案是對外開放，部分內容請自行斟酌。</p>
+</blockquote>
+<hr>
+<h2 id="二有哪些是-readmemd-一定要提供的資訊">二、有哪些是 README.md 一定要提供的資訊？<a class="h-anchor" href="#%e4%ba%8c%e6%9c%89%e5%93%aa%e4%ba%9b%e6%98%af-readmemd-%e4%b8%80%e5%ae%9a%e8%a6%81%e6%8f%90%e4%be%9b%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h2>
+<p>下面列出的項目，是筆者認為對第一次接觸專案、準備維護專案的人有幫助的資訊。</p>
+<h3 id="-專案介紹--description">專案介紹 ── Description<a class="h-anchor" href="#-%e5%b0%88%e6%a1%88%e4%bb%8b%e7%b4%b9--description" aria-label="這個段落的連結"></a></h3>
+<p>簡述專案目標，讓第一次接觸的人也能在短時間初步了解專案（如果使用到少見的專有名詞，請附加說明）。</p>
+<blockquote>
+<p>如果是前後端分離的專案，請附上前端/後端的專案連結。</p>
+</blockquote>
+<h3 id="-運行環境需求--requirement">運行環境需求 ── Requirement<a class="h-anchor" href="#-%e9%81%8b%e8%a1%8c%e7%92%b0%e5%a2%83%e9%9c%80%e6%b1%82--requirement" aria-label="這個段落的連結"></a></h3>
+<p>描述這個專案運行所需要的環境，比如說：</p>
+<ul>
+<li><strong>前端（Frontend）</strong>：NVM、Yarn、Node.js</li>
+<li><strong>後端（Backend）</strong>：PHP、Composer、Laravel、MySQL</li>
+</ul>
+<blockquote>
+<p>隨著技術進步，各項工具的版本不斷更迭；因此建議要附上能讓專案順利運行的「版本」，因為許多工具並沒有向下相容。</p>
+</blockquote>
+<h3 id="-環境檔env有哪些欄位要自己填寫--env-setting">環境檔（.env）有哪些欄位要自己填寫 ── .env Setting<a class="h-anchor" href="#-%e7%92%b0%e5%a2%83%e6%aa%94env%e6%9c%89%e5%93%aa%e4%ba%9b%e6%ac%84%e4%bd%8d%e8%a6%81%e8%87%aa%e5%b7%b1%e5%a1%ab%e5%af%ab--env-setting" aria-label="這個段落的連結"></a></h3>
+<p>以後端來說，涉及機密、隱私、個人化的參數會需要自己填寫，比如：</p>
+<ol>
+<li>DB 帳號密碼、IP、Port</li>
+<li>JWT 有效期限</li>
+<li>Mail 相關參數</li>
+<li>Storage 路徑</li>
+</ol>
+<h3 id="-在-local-端的安裝運行步驟--build-setup-local">在 Local 端的安裝＆運行步驟 ── Build Setup (Local)<a class="h-anchor" href="#-%e5%9c%a8-local-%e7%ab%af%e7%9a%84%e5%ae%89%e8%a3%9d%e9%81%8b%e8%a1%8c%e6%ad%a5%e9%a9%9f--build-setup-local" aria-label="這個段落的連結"></a></h3>
+<p>是那種「複製貼上」就能夠順利安裝的步驟，可以放一些參考連結，但不要讓使用者需要去閱讀官方文檔才知道怎麼安裝。</p>
+<p>以後端舉例，指令需至少包含如下內容：</p>
+<ol>
+<li>專案安裝步驟</li>
+<li>DB Migration</li>
+<li>DB Seeder</li>
+<li>運行專案</li>
+</ol>
+<blockquote>
+<p>如果採前後端分離，可以附上 POSTMAN 的 collection 方便前端驗證。</p>
+</blockquote>
+<h3 id="-在-server-端的安裝驗證步驟--build-setup-server">在 Server 端的安裝＆驗證步驟 ── Build Setup (Server)<a class="h-anchor" href="#-%e5%9c%a8-server-%e7%ab%af%e7%9a%84%e5%ae%89%e8%a3%9d%e9%a9%97%e8%ad%89%e6%ad%a5%e9%a9%9f--build-setup-server" aria-label="這個段落的連結"></a></h3>
+<p>如果不是採取自動部署的策略，那筆者建議紀錄如下內容：</p>
+<ol>
+<li>專案運行所需套件，及其對應的指令</li>
+<li>伺服器端參數（ex：API 最長可執行時間、可上傳檔案容量限制、單個 IP 每分鐘存取次數）</li>
+<li>不同環境對應的 Server ip</li>
+<li>相關參數調整後，重啟使其生效的指令</li>
+<li>部署完成後，可以透過什麼方式（工具）驗證功能皆如預期運行</li>
+</ol>
+<h3 id="-可提供支援的同仁--support">可提供支援的同仁 ── Support<a class="h-anchor" href="#-%e5%8f%af%e6%8f%90%e4%be%9b%e6%94%af%e6%8f%b4%e7%9a%84%e5%90%8c%e4%bb%81--support" aria-label="這個段落的連結"></a></h3>
+<p>讓初次接觸專案的人知道遇到問題可以找誰詢問，建議在這個部分放上開發人員的聯絡方式（ex：座位、email）。</p>
+<p>有時問題可能有其歷史背景，所以可以用附註形式，放上了解這份專案歷史的同仁（ex：主管、負責的 PM）。</p>
+<h3 id="-注意事項--warning">注意事項 ── Warning<a class="h-anchor" href="#-%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85--warning" aria-label="這個段落的連結"></a></h3>
+<p>每個專案或多或少都會有一些特別的設計，時間拉長難免遺忘，建議把他們記錄下來，比如：</p>
+<ol>
+<li>如果 API 文檔是用指令產生的，請記得記錄下來</li>
+<li>如果有設計排程（Schedule），把觸發的時間點列出</li>
+<li>前端在不同環境的建立指令（Script）</li>
+<li>如果用到特別的套件，建議簡單說明在什麼時機應用，並放上官方文檔連結</li>
+<li>專案的授權條款（License）</li>
+</ol>
+<hr>
+<h2 id="三如果-readmemd-有這些資訊會讓日後維運更加順利">三、如果 README.md 有這些資訊，會讓日後維運更加順利<a class="h-anchor" href="#%e4%b8%89%e5%a6%82%e6%9e%9c-readmemd-%e6%9c%89%e9%80%99%e4%ba%9b%e8%b3%87%e8%a8%8a%e6%9c%83%e8%ae%93%e6%97%a5%e5%be%8c%e7%b6%ad%e9%81%8b%e6%9b%b4%e5%8a%a0%e9%a0%86%e5%88%a9" aria-label="這個段落的連結"></a></h2>
+<h3 id="-系統架構圖--system-architecture">系統架構圖 ── System architecture<a class="h-anchor" href="#-%e7%b3%bb%e7%b5%b1%e6%9e%b6%e6%a7%8b%e5%9c%96--system-architecture" aria-label="這個段落的連結"></a></h3>
+<p>如果專案結構複雜，或是需要串接多個系統，那建議放上系統架構圖，否則接手的工程師會需要花很多時間去研究他們之間的關聯性。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-02.webp" width="1044" height="904" alt="IMG from：https://commons.wikimedia.org/" loading="lazy" decoding="async">
+  <figcaption>IMG from：<a href="https://commons.wikimedia.org/">https://commons.wikimedia.org/</a></figcaption>
+</figure>
+
+<h3 id="-使用者操作手冊--user-manual">使用者操作手冊 ── User Manual<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8%e8%80%85%e6%93%8d%e4%bd%9c%e6%89%8b%e5%86%8a--user-manual" aria-label="這個段落的連結"></a></h3>
+<p>每份專案都一定要製作使用者操作手冊，否則 PM、工程師會不停被重複的問題打擾；有了這份手冊後，之後負責維運的工程師也能更快上手。</p>
+<blockquote>
+<p>形式可以是 Wiki、Word…等等，讓使用者方便閱讀為第一優先。</p>
+</blockquote>
+<h3 id="-demo-影片-demo-video">Demo 影片── Demo Video<a class="h-anchor" href="#-demo-%e5%bd%b1%e7%89%87-demo-video" aria-label="這個段落的連結"></a></h3>
+<p>如果可以，建議在專案完成後錄製「簡單」的 Demo 影片；主要目的是讓工程師知曉專案「正常」的狀況下應該長什麼樣子。</p>
+<blockquote>
+<p><em>有時專案看似順利啟動了，但實際上部分功能是不完整的（ex：前端順利啟動了，但 WebSocket 異常）。</em></p>
+</blockquote>
+<h3 id="-uiux-設計稿--uiux-design">UI/UX 設計稿 ── UI/UX Design<a class="h-anchor" href="#-uiux-%e8%a8%ad%e8%a8%88%e7%a8%bf--uiux-design" aria-label="這個段落的連結"></a></h3>
+<p>放上 Wireframe、Mockup、Prototype 等設計稿連結（如果有的話）</p>
+<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-03.webp" width="1000" height="667" alt="UI/UX 設計稿 ── UI/UX Design（圖 3）" loading="lazy" decoding="async"></p>
+<h3 id="-function-map">Function map<a class="h-anchor" href="#-function-map" aria-label="這個段落的連結"></a></h3>
+<p>通常會以心智圖來呈現，PM 可以透過它讓工程師快速了解、評估初期的功能。</p>
+<p>在遇到需求要新增或變更時，有這張圖工程師能也更快回憶，並掌握重點。</p>
+<p><img src="https://deanlin.net/blog/202208/why-readme-matters/images/why-readme-matters-04.webp" width="1400" height="1566" alt="Function map（圖 4）" loading="lazy" decoding="async"></p>
+<blockquote>
+<p><a href="https://gitmind.com/">GitMind</a> 是個不錯的工具，推薦大家使用看看。</p>
+</blockquote>
+<h3 id="-單元測試整合測試--unit-testingintegration-testing">單元測試、整合測試 ── Unit Testing、Integration Testing<a class="h-anchor" href="#-%e5%96%ae%e5%85%83%e6%b8%ac%e8%a9%a6%e6%95%b4%e5%90%88%e6%b8%ac%e8%a9%a6--unit-testingintegration-testing" aria-label="這個段落的連結"></a></h3>
+<p>專案的穩定，是建立在有寫測試程式的前提下；否則系統很容易因為需求的新增、變更，而導致過去的功能毀損。</p>
+<p>在測試方面，除了「整體」的測試外，有時我們只需要測試「特定功能」；可以把常用的測試指令紀錄在這裡（ex：邏輯複雜、關聯廣泛的測試）。</p>
+<blockquote class="pullquote"><p>以上內容是筆者過去專案經驗的彙整，若有未盡之處，歡迎留言補充。</p>
+</blockquote>
+<hr>
+<pre tabindex="0"><code>工程師血淚史
+▋ 團隊在系統開發上遇到了哪些問題
+▋ 需求不斷變更，到底哪個環節出錯了
+▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
+▋ 如果沒有明確的開發流程，團隊將會無所適從
+▋ 你知道對專案來說，README.md 有多麼重要嗎？(本篇)
+</code></pre>]]></content:encoded>
+    </item>
+    <item>
+      <title>如果沒有明確的工作流程，團隊將會無所適從 — 工程師血淚史</title>
+      <link>https://deanlin.net/blog/202207/clear-workflow-for-teams/</link>
+      <pubDate>Fri, 29 Jul 2022 09:27:07 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202207/clear-workflow-for-teams/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>在流程不明確的狀態下，團隊成員只能憑藉自己的直覺做事；如果彼此對一件事的認知不同就容易造成誤會，甚至爆發不必要的衝突。</description>
+      <media:content url="https://deanlin.net/blog/202207/clear-workflow-for-teams/images/clear-workflow-for-teams-og_hu_8e619e0d6ea24d8.jpg" medium="image" type="image/jpeg" width="1200" height="630" />
+      <content:encoded><![CDATA[<p>在流程不明確的狀態下，團隊成員只能憑藉自己的直覺做事；如果彼此對一件事的認知不同就容易造成誤會，甚至爆發不必要的衝突。</p>
+<p>由於過去許多工作流程都是口頭制定，沒有明確的文字敘述，因此想透過這篇文章來整理流程，並在日後的實踐中不斷優化與完善。</p>
+<p><img src="https://deanlin.net/blog/202207/clear-workflow-for-teams/images/clear-workflow-for-teams-01.webp" width="1400" height="730" alt="如果沒有明確的工作流程，團隊將會無所適從 — 工程師血淚史（圖 1）" fetchpriority="high" decoding="async"></p>
+<pre tabindex="0"><code>大綱
+ㄧ、專案初始
+二、初始任務
+ ➤ 評估每個階段的時程
+ ➤ 撰寫 Ticket 的需求規格
+ ➤ 估計每個 Ticket 的時數
+ ➤ 確認 Ticket 的總時數是否在專案的截止日期內
+ ➤ Ticket 分配
+ ➤ 專案初始環境建置
+ ➤ Server 建置
+三、專案進行中
+ ➤ 進度回報
+ ➤ 工程師之間的合作
+ ➤ 工程師與 PM 的合作
+ ➤ 了解為什麼都要由 PM 來開 Ticket
+</code></pre><h2 id="ㄧ專案初始">ㄧ、專案初始<a class="h-anchor" href="#%e3%84%a7%e5%b0%88%e6%a1%88%e5%88%9d%e5%a7%8b" aria-label="這個段落的連結"></a></h2>
+<p>STEP 1：由 PM 與客戶討論具體需求。</p>
+<p>STEP 2：請 UI/UX 設計師依造需求初步完成 Wireframe。</p>
+<p>STEP 3：PM、UI/UX、Tech Lead 一起確認流程、功能的可行性，判斷是否有需要調整的部分。</p>
+<p>STEP 4：待客戶認可 Wireframe 後，請 UI/UX 設計師將其升級成 Mockup。</p>
+<p>STEP 5：由 Tech Lead 確認 Mockup 上需要注意的細節（ex：哪些欄位適合拿來搜尋、不同權限看到的畫面、有哪些元件可以設計為共用模組）。</p>
+<p>STEP 6：在 UI/UX 設計師調整為 Prototype 後，由 PM（或 UI/UX 設計師）向團隊成員說明系統的功能與流程，確保大家理解這個專案要完成的目標。</p>
+<p>STEP 7：由 Tech Lead 向工程師團隊說明各功能在設計上要注意的細節（ex：哪些欄位要設計 Auto-Complete、是否有特別的 Validation Rules、某些功能需要提前 Survey 避免卡關）。</p>
+<blockquote>
+<p>良心建議：專案初始的設計盡量從 Wireframe 開始，就算專案規模較小也不要直接畫 Mockup；因為客戶的需求在前期會時常變動，就算突然加大投資，小專案突然變成大專案也是很常見的，若使用 Mockup 會要花更多的時間在調整上面。</p>
+</blockquote>
+<hr>
+<h2 id="二初始任務">二、初始任務<a class="h-anchor" href="#%e4%ba%8c%e5%88%9d%e5%a7%8b%e4%bb%bb%e5%8b%99" aria-label="這個段落的連結"></a></h2>
+<h3 id="-評估每個階段的時程">評估每個階段的時程<a class="h-anchor" href="#-%e8%a9%95%e4%bc%b0%e6%af%8f%e5%80%8b%e9%9a%8e%e6%ae%b5%e7%9a%84%e6%99%82%e7%a8%8b" aria-label="這個段落的連結"></a></h3>
+<p>由 PM 將專案的需求拆分成不同的 Phase，這樣工程師比較能集中注意力在特定事物上，每個 Phase 都需要把如下的任務納入考量：</p>
+<ol>
+<li>要完成的功能（ex：前端、後端）</li>
+<li>撰寫測試程式的時程（ex：單元測試、壓力測試）</li>
+<li>QA 團隊測試的時程</li>
+<li>測試、正式環境部署的時程</li>
+</ol>
+<blockquote>
+<p>規劃時要保留「緩衝時間」，因為測試一次就過基本上是不可能發生的事情，往往需要預留 15~30% 的時間來修 Bug。</p>
+</blockquote>
+<h3 id="-撰寫-ticket-的需求規格">撰寫 Ticket 的需求規格<a class="h-anchor" href="#-%e6%92%b0%e5%af%ab-ticket-%e7%9a%84%e9%9c%80%e6%b1%82%e8%a6%8f%e6%a0%bc" aria-label="這個段落的連結"></a></h3>
+<p>由 PM 在專案管理系統上為每項任務建立 Ticket，建議需求規格的內容要包含：</p>
+<ol>
+<li>Prototype 截圖：讓工程師明白功能具體的位置在哪。</li>
+<li>需求描述：說明這個功能是用來做什麼的，它跟哪些功能有相依性。</li>
+<li>相關計算規則：以計算商品總價來說，就會有「產品搭配、折價卷、信用卡優惠…」等多種排列組合。</li>
+<li>使用的邏輯：搜尋欄位可以查詢的欄位有哪些？搜尋的邏輯是 And 還是 Or？</li>
+<li>關聯需求：像是後端做完 API 後交付給前端，就需要將兩個 Ticket 關聯。</li>
+</ol>
+<h3 id="-估計每個-ticket-的時數">估計每個 Ticket 的時數<a class="h-anchor" href="#-%e4%bc%b0%e8%a8%88%e6%af%8f%e5%80%8b-ticket-%e7%9a%84%e6%99%82%e6%95%b8" aria-label="這個段落的連結"></a></h3>
+<p>不同 Ticket 的難易度不同，這邊會由 Tech Lead 分別向 Frontend、Backend 工程師確認 Ticket 的估時。</p>
+<p>此時工程師千萬不要勉強自己，估出一個很難完成的時數，不然在卡關時，會影響到後續一系列的時程規劃。（但也不要估出不合理的時數）</p>
+<blockquote>
+<p>如果某個 Task 預估的時程超過 6 小時，建議要再做細分，否則很難衡量每天實作的進度。</p>
+</blockquote>
+<h3 id="-確認-ticket-的總時數是否在專案的截止日期內">確認 Ticket 的總時數是否在專案的截止日期內<a class="h-anchor" href="#-%e7%a2%ba%e8%aa%8d-ticket-%e7%9a%84%e7%b8%bd%e6%99%82%e6%95%b8%e6%98%af%e5%90%a6%e5%9c%a8%e5%b0%88%e6%a1%88%e7%9a%84%e6%88%aa%e6%ad%a2%e6%97%a5%e6%9c%9f%e5%85%a7" aria-label="這個段落的連結"></a></h3>
+<p>只要是專案就一定有截止日期，如果將每個預估的時數加總後，發現已經超過了專案的截止日期，那勢必要做一些調整，比如：</p>
+<ol>
+<li>簡化部分功能（ex：原本要用 Auto-Complete，現在改用一般的搜尋）。</li>
+<li>規劃 MVP 先交出去讓客戶使用（ex：原本要經過一系列複雜的流程才能建立的資料，先用 Seeder 代替，以此大幅減少工程師的開發時程）。</li>
+</ol>
+<blockquote>
+<p>這邊不建議堅持原計劃完成所有功能，因為快速開發所累積的技術債，於未來要花更多的時間處理。</p>
+</blockquote>
+<h3 id="-ticket-分配">Ticket 分配<a class="h-anchor" href="#-ticket-%e5%88%86%e9%85%8d" aria-label="這個段落的連結"></a></h3>
+<p>由 PM 規劃在這個 Sprint 中要完成的 Ticket，然後在 Sprint Planning 時進行細節分工；假設一個 Sprint 為 2 週，建議每個人身上掛的 Task 時數不要超過 60 小時，因為：</p>
+<ol>
+<li>時常會有臨時的會議、需求、Bug…等意外事件，需要保留緩衝時間。</li>
+<li>在專案的初始階段，我們無法保證是否由遺漏的規劃、邏輯的錯誤，若把時間塞滿就很難有轉圜的餘地。</li>
+<li>舊的維護專案，有時會有緊急的狀況需要優先處理，這也會吃掉不少時間。</li>
+</ol>
+<h3 id="-專案初始環境建置">專案初始環境建置<a class="h-anchor" href="#-%e5%b0%88%e6%a1%88%e5%88%9d%e5%a7%8b%e7%92%b0%e5%a2%83%e5%bb%ba%e7%bd%ae" aria-label="這個段落的連結"></a></h3>
+<p>由 Tech Lead 或是 Senior Engineer 負責專案初始環境建置，初始化的專案需要在 README.md 中有以下說明：</p>
+<ol>
+<li>環境需求：Node.js 版本、PHP 版本、MySQL 版本…</li>
+<li>如何在 Local 端建立：安裝流程、環境變數…</li>
+</ol>
+<h3 id="-server-建置">Server 建置<a class="h-anchor" href="#-server-%e5%bb%ba%e7%bd%ae" aria-label="這個段落的連結"></a></h3>
+<p>由 Tech Lead 開出專案系統所需的硬體配置（正式機、測試機）、DNS、要安裝的軟體/套件（ex：Ubuntu Server、MySQL、Node.js、PHP…各自的版本），並請 PM 填寫需求單讓 MIS 依照此規格進行建置。</p>
+<hr>
+<h2 id="三專案進行中">三、專案進行中<a class="h-anchor" href="#%e4%b8%89%e5%b0%88%e6%a1%88%e9%80%b2%e8%a1%8c%e4%b8%ad" aria-label="這個段落的連結"></a></h2>
+<h3 id="-進度回報">進度回報<a class="h-anchor" href="#-%e9%80%b2%e5%ba%a6%e5%9b%9e%e5%a0%b1" aria-label="這個段落的連結"></a></h3>
+<p>如果團隊有使用專案管理系統，為了日後方便追朔與釐清狀況，建議填寫的內容如下：</p>
+<ol>
+<li>如果實作的方向是討論出來的，請紀錄「與會人員」與「決議結果」。</li>
+<li>如果使用到特別的演算法、技術、套件，請特別附註。</li>
+<li>如果該 Ticket 完成後要由其他人接手處理（ex：後端完成 API 後交付給前端），請說明要執行哪些指令（ex：DB Migration、Seeder…），並提供相關的 API 文件。</li>
+<li>如果發現該 Ticket 完成所花時間與當初的估計有所不同，請與 PM 討論並調整。</li>
+</ol>
+<h3 id="-工程師之間的合作">工程師之間的合作<a class="h-anchor" href="#-%e5%b7%a5%e7%a8%8b%e5%b8%ab%e4%b9%8b%e9%96%93%e7%9a%84%e5%90%88%e4%bd%9c" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>Ticket 執行順序：一個 Sprint 中，每個工程師都會有很多的 Ticket，但有些 Ticket 會有所謂的「前置條件」，建議在開始作業前要先彼此商議，避免出現等待的空窗期。</li>
+<li>回報 API Bug：請說明是在「哪個系統」、「哪隻 API」、「什麼參數下」會發生。</li>
+<li>回報 Web Bug：請說明是在「哪個系統」、「哪個畫面（截圖）」、「什麼操作下」會發生。</li>
+<li>遇到自己無法解決的問題：請說明是在「哪個系統」、「哪個 Ticket」、「你做過哪些嘗試」、「你認為可能的解決方案」。</li>
+</ol>
+<h3 id="-工程師與-pm-的合作">工程師與 PM 的合作<a class="h-anchor" href="#-%e5%b7%a5%e7%a8%8b%e5%b8%ab%e8%88%87-pm-%e7%9a%84%e5%90%88%e4%bd%9c" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>PM 請工程師完成 Sprint 以外的需求時，請說明「任務優先度」、「為什麼會有這個需求」、「可以先將哪個 Ticket 排後面一點」。</li>
+<li>如果工程師在開發過程中收到其他團隊的需求，請將對話窗口轉移到 PM。</li>
+<li>如果工程師要請 PM 協助開 Ticket，需描述：「哪個系統」、「要處理的任務/Bug」、「預計要做的事項」、「預計完成所需時間」。</li>
+<li>若身上的 Ticket 數量爆炸多、任務分配不均，請及時反應。</li>
+</ol>
+<blockquote>
+<p>如果是同一個專案，我們可以輕鬆的排出任務的優先順序；但如果多個專案同時發起優先度高的任務，工程師在這種狀況下會不知所措，需要由 PM 協助排出優先順序。</p>
+</blockquote>
+<h3 id="-了解為什麼都要由-pm-來開-ticket">了解為什麼都要由 PM 來開 Ticket<a class="h-anchor" href="#-%e4%ba%86%e8%a7%a3%e7%82%ba%e4%bb%80%e9%ba%bc%e9%83%bd%e8%a6%81%e7%94%b1-pm-%e4%be%86%e9%96%8b-ticket" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li>如果大家都自己開 Ticket，PM 會無法掌握每個人實際在做的任務，即使有 Tag 到 PM，PM 也未必有辦法看到每一則訊息。</li>
+<li>工程師心中的任務優先順序可能與 PM 不同，這會造成最後在核對完成的任務時，因為彼此的認知落差產生爭執。</li>
+<li>每個任務完成所需的時間成本不同，可能有些任務是可以不必做，又或者是能交給其他人去做的，讓 PM 從整體的角度去看較不會出現勞逸不均的狀況。</li>
+</ol>
+<hr>
+<blockquote class="pullquote"><p>制定大家願意共同遵守的工作流程，在了解彼此的權利＆義務後，相信團隊的運作會更為順利；文章的流程未必適用於每個團隊，僅為筆者過去經驗的彙整。</p>
+</blockquote>
+<hr>
+<pre tabindex="0"><code>工程師血淚史
+▋ 團隊在系統開發上遇到了哪些問題
+▋ 需求不斷變更，到底哪個環節出錯了
+▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？
+▋ 如果沒有明確的開發流程，團隊將會無所適從(本篇)
+▋ 你知道對專案來說，README.md 有多麼重要嗎？
+</code></pre>]]></content:encoded>
+    </item>
+    <item>
+      <title>當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？ — 工程師血淚史</title>
+      <link>https://deanlin.net/blog/202207/scrum-master-vs-pm/</link>
+      <pubDate>Tue, 12 Jul 2022 21:16:40 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202207/scrum-master-vs-pm/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>團隊合作</category>
+      <description>在過去的文章中有提到，為了提高團隊成員在 Scrum 的參與度，我們改成輪流擔任 Scrum Master 的機制，但這樣真的有效果嗎？而且 Scrum Master 跟 PM 的工作高度重疊，要如何區分兩者的權力與責任呢？</description>
+      <media:content url="https://deanlin.net/blog/202207/scrum-master-vs-pm/images/scrum-master-vs-pm-og_hu_1e625b4d7672d99a.jpg" medium="image" type="image/jpeg" width="1200" height="630" />
+      <content:encoded><![CDATA[<p>在<a href="https://deanlin.net/blog/202205/team-development-problems/">過去的文章</a>中有提到，為了提高團隊成員在 Scrum 的參與度，我們改成輪流擔任 Scrum Master 的機制，但這樣真的有效果嗎？而且 Scrum Master 跟 PM 的工作高度重疊，要如何區分兩者的權力與責任呢？</p>
+<p>這篇文章將與您分享我們是如何調整，以及調整後發生哪些改變。</p>
+<p><img src="https://deanlin.net/blog/202207/scrum-master-vs-pm/images/scrum-master-vs-pm-01.webp" width="1400" height="730" alt="當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？ — 工程師血淚史（圖 1）" fetchpriority="high" decoding="async"></p>
+<blockquote>
+<p>本文提及之專案、人物、事件純屬虛構，如有雷同，實屬巧合，請勿對號入座。</p>
+</blockquote>
+<pre tabindex="0"><code>大綱
+ㄧ、調整的目的是什麼？
+二、定義 Scrum Master 跟 PM 的權限
+  ➤ Scrum Master
+  ➤ PM
+三、調整後發生哪些改變
+  ➤ 成員對專案、團隊有更深刻的認知
+  ➤ Scrum 參與度提升
+  ➤ 回顧時發表更踴躍
+四、總結
+</code></pre><h2 id="ㄧ調整的目的是什麼">ㄧ、調整的目的是什麼？<a class="h-anchor" href="#%e3%84%a7%e8%aa%bf%e6%95%b4%e7%9a%84%e7%9b%ae%e7%9a%84%e6%98%af%e4%bb%80%e9%ba%bc" aria-label="這個段落的連結"></a></h2>
+<p>明明跑的是 Scrum，卻沒有團隊合作的感覺。</p>
+<p>每間公司跑 Scrum 的方式與目的不同，有些 Scrum 跑起來更像是傳統的工作匯報；即使在身處在同一個會議中，卻只有主管跟 PM 關心每個人的工作內容。</p>
+<p>如果團隊成員不關心彼此的工作內容，單獨匯報或是用紙本報告其實更加省時；開 Scrum 的目的是希望大家了解彼此的任務，確認是否有需要調整的地方，避免任務的先後順序、優先度搞錯，導致專案進度延宕。</p>
+<p>但如果只是口頭上說希望大家積極參與，實際效果就跟老師要學生好好聽課一樣，因此想透過流程來進行改善。</p>
+<p>而我們選擇的方案是 — 讓團隊成員輪流擔任 Scrum Master。</p>
+<hr>
+<h2 id="二定義-scrum-master-跟-pm-的權限">二、定義 Scrum Master 跟 PM 的權限<a class="h-anchor" href="#%e4%ba%8c%e5%ae%9a%e7%be%a9-scrum-master-%e8%b7%9f-pm-%e7%9a%84%e6%ac%8a%e9%99%90" aria-label="這個段落的連結"></a></h2>
+<p><strong>我們希望在提升成員參與度的同時，盡可能不要增加負擔。</strong></p>
+<p>因為 Scrum Master 的工作內容與 PM 高度重疊，如果沒區分好彼此的界線，勢必會導致其他成員的困惑，比如：</p>
+<ol>
+<li>開單要找誰？</li>
+<li>Sprint Planning 的規劃由誰負責？</li>
+<li>需求規格由誰來寫？</li>
+</ol>
+<p>所以我們做了如下區分：</p>
+<h3 id="-scrum-master">Scrum Master<a class="h-anchor" href="#-scrum-master" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><strong>主持 Daily Scrum Meeting</strong>：了解每個人工作的進度、預計要做的事、以及遇到的問題。</li>
+<li><strong>主持 Sprint Review、Retrospective 會議</strong>：讓大家報告在這個 Sprint 中做了什麼，有哪些好的可以繼續保持，有哪些壞的要進行調整。</li>
+<li><strong>參與 Sprint Planning 會議</strong>：了解下個 Sprint 要完成的事項。</li>
+</ol>
+<h3 id="-pm">PM<a class="h-anchor" href="#-pm" aria-label="這個段落的連結"></a></h3>
+<ol>
+<li><strong>專案管理</strong>：追蹤成員的進度、討論需求、協調資源…原則上工作內容不變，只是部分工作交由 Scrum Master 主持。</li>
+<li><strong>輔助 Scrum Master</strong>：儘管已經簡化許多 Scrum Master 的工作，但因為部分成員並沒有接觸過敏捷開發，因此需要幫忙拾漏補遺。</li>
+<li><strong>規劃 Sprint Planning</strong>：無論是規劃要完成的工作，還是與每位工程師確認工時，都是需要花費不少心力的任務，因此主要還是由 PM 專職處理。</li>
+</ol>
+<blockquote>
+<p>之所以這樣設計，是希望成員在擔任 Scrum Master 的同時，儘可能不影響到他的本職工作，我們期待這樣的流程可以讓每位成員更融入專案，而不是取代 PM 的工作。</p>
+</blockquote>
+<hr>
+<h2 id="三調整後發生哪些改變">三、調整後發生哪些改變<a class="h-anchor" href="#%e4%b8%89%e8%aa%bf%e6%95%b4%e5%be%8c%e7%99%bc%e7%94%9f%e5%93%aa%e4%ba%9b%e6%94%b9%e8%ae%8a" aria-label="這個段落的連結"></a></h2>
+<p>目前實行了 3 個 Sprint，成員的接受度還算高（希望不是敢怒不敢言 😅）。</p>
+<h3 id="-成員對專案團隊有更深刻的認知">成員對專案、團隊有更深刻的認知<a class="h-anchor" href="#-%e6%88%90%e5%93%a1%e5%b0%8d%e5%b0%88%e6%a1%88%e5%9c%98%e9%9a%8a%e6%9c%89%e6%9b%b4%e6%b7%b1%e5%88%bb%e7%9a%84%e8%aa%8d%e7%9f%a5" aria-label="這個段落的連結"></a></h3>
+<p>不管是否願意，主持 Daily Scrum 時一定要了解每個人具體的狀況；原本專注在自己任務的人，也會因為主持 Sprint Review、Retrospective 而強迫了解整個專案，並更加認識團隊。</p>
+<h3 id="-scrum-參與度提升">Scrum 參與度提升<a class="h-anchor" href="#-scrum-%e5%8f%83%e8%88%87%e5%ba%a6%e6%8f%90%e5%8d%87" aria-label="這個段落的連結"></a></h3>
+<p>因為 Scrum Master 是輪流的，如果我今天不給你面子好好聆聽跟報告，下次換我當 Scrum Master 時可能大家會不理我；同儕間的心理因素會讓參與度變得更高（但這個情形未必適用在每個團隊身上）。</p>
+<h3 id="-回顧時發表更踴躍">回顧時發表更踴躍<a class="h-anchor" href="#-%e5%9b%9e%e9%a1%a7%e6%99%82%e7%99%bc%e8%a1%a8%e6%9b%b4%e8%b8%b4%e8%ba%8d" aria-label="這個段落的連結"></a></h3>
+<p>由成員來做 Sprint Retrospective 時，大家相對來說更敢發表意見；這就跟同學分組討論時比較熱絡，但當老師問同學有沒有問題時，台下直接靜音的道理一樣。</p>
+<hr>
+<h2 id="四總結">四、總結<a class="h-anchor" href="#%e5%9b%9b%e7%b8%bd%e7%b5%90" aria-label="這個段落的連結"></a></h2>
+<p><strong>花的時間越多，就會越認真投入。</strong></p>
+<p>其實並不是每位成員在剛開始的時候都願意跑 Scrum 的，因為他們覺得這是在浪費時間、單純走一個形式、對專案沒有幫助…</p>
+<p>因此初期更像是每天集合匯報工作，直到要輪流當 Scrum Master 時，因為無法拒絕，所以每位成員都一定要有所了解，而這個過程促使團隊往好的方向發展（應該 🤔）。</p>
+<p>當然還要更多時間來驗證，相信每次的 Sprint Retrospective 都能讓原本的流程更加完善。</p>
+<blockquote class="pullquote"><p>如果讀者有敏捷開發的經驗，歡迎留言分享，你的留言或許可以幫助到其他人。</p>
+</blockquote>
+<hr>
+<pre tabindex="0"><code>工程師血淚史
+▋ 團隊在系統開發上遇到了哪些問題
+▋ 需求不斷變更，到底哪個環節出錯了
+▋ 當 Scrum Master 跟 PM 同時存在，權力與責任該如何區分？(本篇)
+▋ 如果沒有明確的開發流程，團隊將會無所適從
+▋ 你知道對專案來說，README.md 有多麼重要嗎？
+</code></pre>]]></content:encoded>
     </item>
     <item>
       <title>需求不斷變更，到底哪個環節出錯了 ── 工程師血淚史</title>
@@ -1947,89 +2402,6 @@
 👍 Redmine 教育訓練 — 依角色權限說明
 </code></pre><hr>
 <h3 class="h-nomark" id="-讀完這篇文章後">🙂 讀完這篇文章後<a class="h-anchor" href="#-%e8%ae%80%e5%ae%8c%e9%80%99%e7%af%87%e6%96%87%e7%ab%a0%e5%be%8c" aria-label="這個段落的連結"></a></h3>
-]]></content:encoded>
-    </item>
-    <item>
-      <title>用 Microsofts Lists 做專案管理，任務分配到功能測試都一條龍搞定</title>
-      <link>https://deanlin.net/blog/202101/project-management-with-microsoft-lists/</link>
-      <pubDate>Tue, 12 Jan 2021 14:22:32 +0800</pubDate>
-      <guid>https://deanlin.net/blog/202101/project-management-with-microsoft-lists/</guid>
-      <dc:creator>林鼎淵</dc:creator>
-      <category>團隊合作</category>
-      <description>其實 Jira、Notion 是更好的專案管理工具(個人使用後的觀感)，但因為許多公司都有購買 Office 365 來使用 office、excel… 等工具，所以如果專案管理也能用 Office 365 來解決不但能節省一筆經費，更可以讓團隊把注意力集中操作同一個軟體。</description>
-      <media:content url="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/images/project-management-with-microsoft-lists-og_hu_7336170dd74ac51d.jpg" medium="image" type="image/jpeg" width="1200" height="630" />
-      <content:encoded><![CDATA[<pre tabindex="0"><code>這篇文章會談到以下事情：
-前言：專案管理工具的抉擇
-一、建立符合專案管理需求的 Lists
-二、模擬專案實際情境
-三、操作上的小訣竅
-結語：讓工具連結發揮更大功用
-</code></pre><figure class="figure"><img src="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/images/project-management-with-microsoft-lists-01.webp" width="800" height="400" alt="因為公司要用你，所以只好認命研究惹" fetchpriority="high" decoding="async">
-  <figcaption>因為公司要用你，所以只好認命研究惹</figcaption>
-</figure>
-
-<h2 id="前言專案管理工具的抉擇">前言：專案管理工具的抉擇<a class="h-anchor" href="#%e5%89%8d%e8%a8%80%e5%b0%88%e6%a1%88%e7%ae%a1%e7%90%86%e5%b7%a5%e5%85%b7%e7%9a%84%e6%8a%89%e6%93%87" aria-label="這個段落的連結"></a></h2>
-<p>其實 Jira、Notion 是更好的專案管理工具(個人使用後的觀感)，但因為許多公司都有購買 Office 365 來使用 office、excel… 等工具，所以如果專案管理也能用 Office 365 來解決不但能節省一筆經費，更可以<strong>讓團隊把注意力集中操作同一個軟體，而不是做一件事都需要更換一個軟體</strong>。</p>
-<p>Office 365 裡比較適合拿來做專案管理的有 Microsoft Planner 、 Microsoft Lists 這兩個，如果有興趣了解兩者的不同可以<a href="https://deanlin.net/blog/202010/microsoft-planner-vs-lists/"><em>參考這篇文章</em></a>，但經過考量後 Microsoft Lists 更為適合多個單位之間的合作，下面會詳細介紹我是如何使用的。</p>
-<h2 id="一建立符合專案管理需求的-lists">一、建立符合專案管理需求的 Lists<a class="h-anchor" href="#%e4%b8%80%e5%bb%ba%e7%ab%8b%e7%ac%a6%e5%90%88%e5%b0%88%e6%a1%88%e7%ae%a1%e7%90%86%e9%9c%80%e6%b1%82%e7%9a%84-lists" aria-label="這個段落的連結"></a></h2>
-<h3 id="setp-1-建立空白清單">SETP 1: 建立空白清單<a class="h-anchor" href="#setp-1-%e5%bb%ba%e7%ab%8b%e7%a9%ba%e7%99%bd%e6%b8%85%e5%96%ae" aria-label="這個段落的連結"></a></h3>
-<figure class="figure"><img src="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/images/project-management-with-microsoft-lists-02.webp" width="1400" height="770" alt="這裡你可以選擇建立符合自己需求的空白清單" loading="lazy" decoding="async">
-  <figcaption>這裡你可以選擇建立符合自己需求的空白清單</figcaption>
-</figure>
-
-<figure class="figure"><img src="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/images/project-management-with-microsoft-lists-03.webp" width="1400" height="1034" alt="依據專案的需求自行填寫" loading="lazy" decoding="async">
-  <figcaption>依據專案的需求自行填寫</figcaption>
-</figure>
-
-<h3 id="setp-2--依照需求新增欄位">SETP 2 : 依照需求新增欄位<a class="h-anchor" href="#setp-2--%e4%be%9d%e7%85%a7%e9%9c%80%e6%b1%82%e6%96%b0%e5%a2%9e%e6%ac%84%e4%bd%8d" aria-label="這個段落的連結"></a></h3>
-<p><img src="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/images/project-management-with-microsoft-lists-04.webp" width="1400" height="401" alt="SETP 2 : 依照需求新增欄位（圖 4）" loading="lazy" decoding="async"></p>
-<p>➤ 下面說明每個欄位的作用，可依自己的需求再做調整：</p>
-<ol>
-<li><strong>任務名稱</strong>：簡單明瞭讓被指派的人員初步了解任務</li>
-<li><strong>描述</strong>：詳細說明任務內容，如果有子任務建議使用條列式呈現</li>
-<li><strong>進度</strong>：顯示該任務完成進度，<em>此欄位會因為任務類型的不同而有不同的文字呈現</em></li>
-<li><strong>優先度</strong>：分成 緊急&gt;普通&gt;不重要 3 種</li>
-<li><strong>負責人員</strong>：PM 指派的任務對象，此欄位可選擇群組或是由多個人負責</li>
-<li><strong>相關人員</strong>：除了負責人員外，需要追蹤該任務的人員，就像是信件的副本概念</li>
-<li><strong>負責 PM</strong>：通常就是建立該任務的 PM 本人</li>
-<li><strong>任務類型</strong>：分成 文件、設計、程式、測試 4種，方便透過此欄過濾出想要的資訊</li>
-<li><strong>相關連結</strong>：可能是要測試的網址、給設計的參考範本、完成的文件連結…</li>
-<li><strong>開始日期</strong>：被指派的人員開始作業時的時間</li>
-<li><strong>到期日</strong>：完成該任務的時間</li>
-</ol>
-<h2 id="二模擬專案實際情境">二、模擬專案實際情境<a class="h-anchor" href="#%e4%ba%8c%e6%a8%a1%e6%93%ac%e5%b0%88%e6%a1%88%e5%af%a6%e9%9a%9b%e6%83%85%e5%a2%83" aria-label="這個段落的連結"></a></h2>
-<blockquote>
-<p>需求：今天有一個網站需要新增一個商品清單頁面，並且在這個頁面可以對商品進行新增、修改、刪除、查詢的動作</p>
-</blockquote>
-<h3 id="-前期">前期<a class="h-anchor" href="#-%e5%89%8d%e6%9c%9f" aria-label="這個段落的連結"></a></h3>
-<p>指派設計完成 wireframe，同時 PM 分析這個頁面的細部需求規格</p>
-<p><img src="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/images/project-management-with-microsoft-lists-05.webp" width="1400" height="203" alt="前期（圖 5）" loading="lazy" decoding="async"></p>
-<h3 id="-中期">中期<a class="h-anchor" href="#-%e4%b8%ad%e6%9c%9f" aria-label="這個段落的連結"></a></h3>
-<p>在設計的 wireframe 與 PM 的需求規格完成後，後端工程師可以依據需求規格開始撰寫 api ，前端工程師也能依照 wireframe 先完成畫面等 api 完成後串接</p>
-<p><img src="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/images/project-management-with-microsoft-lists-06.webp" width="1400" height="520" alt="中期（圖 6）" loading="lazy" decoding="async"></p>
-<h3 id="-後期">後期<a class="h-anchor" href="#-%e5%be%8c%e6%9c%9f" aria-label="這個段落的連結"></a></h3>
-<p>在前端工程師依照 wireframe 完成 UI 並串接好後端 api 後就可以請測試部門做功能上的確認，測試的功能項會建議由工程師做簡易的文件撰寫。</p>
-<p><img src="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/images/project-management-with-microsoft-lists-07.webp" width="1400" height="596" alt="後期（圖 7）" loading="lazy" decoding="async"></p>
-<p>測試後依據測試結果將進度轉為 <strong>測試成功、測試失敗 ，</strong>如果測試失敗要說明原因並重新指派給當初負責的人員處理。</p>
-<h2 id="三操作上的小訣竅">三、操作上的小訣竅<a class="h-anchor" href="#%e4%b8%89%e6%93%8d%e4%bd%9c%e4%b8%8a%e7%9a%84%e5%b0%8f%e8%a8%a3%e7%ab%85" aria-label="這個段落的連結"></a></h2>
-<h3 id="-善用篩選功能找出需要的資訊">善用篩選功能找出需要的資訊<a class="h-anchor" href="#-%e5%96%84%e7%94%a8%e7%af%a9%e9%81%b8%e5%8a%9f%e8%83%bd%e6%89%be%e5%87%ba%e9%9c%80%e8%a6%81%e7%9a%84%e8%b3%87%e8%a8%8a" aria-label="這個段落的連結"></a></h3>
-<p>因為列表上的資訊非常多，所以我們可以依據實際的情境來做調整：</p>
-<ol>
-<li>將 <strong>優先度度為緊急 </strong>的篩選出來確認進度</li>
-<li>測試人員只需要瀏覽 <strong>任務類型為測試</strong> 的就好</li>
-<li>可以 <strong>用關鍵字搜尋任務名稱</strong></li>
-</ol>
-<p><img src="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/images/project-management-with-microsoft-lists-08.webp" width="1400" height="816" alt="善用篩選功能找出需要的資訊（圖 8）" loading="lazy" decoding="async"></p>
-<h3 id="-使用交談功能討論任務進度">使用交談功能討論任務進度<a class="h-anchor" href="#-%e4%bd%bf%e7%94%a8%e4%ba%a4%e8%ab%87%e5%8a%9f%e8%83%bd%e8%a8%8e%e8%ab%96%e4%bb%bb%e5%8b%99%e9%80%b2%e5%ba%a6" aria-label="這個段落的連結"></a></h3>
-<p>使用過本產品的人我想最大的詬病之一就是文字圖片無法複製貼上，目前看到可以複製貼上的區域只有 <strong>任務裡面的交談</strong>，如果你們有很多詳細的內容是寫在交談裡面的請記得在描述中說一下，不然大家都不知道交談裡面有更多內容。</p>
-<p><img src="https://deanlin.net/blog/202101/project-management-with-microsoft-lists/images/project-management-with-microsoft-lists-09.webp" width="1400" height="816" alt="使用交談功能討論任務進度（圖 9）" loading="lazy" decoding="async"></p>
-<h2 id="結語讓工具連結發揮更大功用">結語：讓工具連結發揮更大功用<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e8%ae%93%e5%b7%a5%e5%85%b7%e9%80%a3%e7%b5%90%e7%99%bc%e6%8f%ae%e6%9b%b4%e5%a4%a7%e5%8a%9f%e7%94%a8" aria-label="這個段落的連結"></a></h2>
-<p>如果只操作 Lists 你會感覺到有些部分綁手綁腳的，但 Office 365 的工具我想當初設計的想法就是要使用者把裡面的工具互相串聯吧？所以每項工具只做出基礎的功能，如果要更深入的功能需要再與其他工具結合：</p>
-<ol>
-<li>如果你要 subtask 的功能要與 Microsoft Planner 結合</li>
-<li>想要撰寫更詳細的文件內容就直接超連結到 Microsoft Office</li>
-</ol>
-<p>他不是一款完美的工具，但使用者可以透過其他方法讓他更好用。</p>
 ]]></content:encoded>
     </item>
   </channel>

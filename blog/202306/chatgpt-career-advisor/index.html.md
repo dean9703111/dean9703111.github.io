@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202306/chatgpt-career-advisor/
 - 發布：2023-06-29
 - 主題：職涯成長
-- 標籤：ChatGPT、Careers、Career Advice、Career Change、Consulting
+- 標籤：ChatGPT、職涯、Career Change、Consulting
 - 摘要：社會新鮮人與有轉職需求的人常常對未來的職涯感到迷茫，甚至有些人會因為頭銜好看而選擇一個自己並不了解的產業、職位。 過去想了解這些訊息需要請教身旁有經驗的人，或是上網爬文求助；但現在有了 ChatGPT，我們可以請他擔任我們的職涯顧問。
 
 社會新鮮人與有轉職需求的人常常對未來的職涯感到迷茫，甚至有些人會因為頭銜好看而選擇一個自己並不了解的產業、職位。

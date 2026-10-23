@@ -5,7 +5,7 @@
 - 發布：2026-09-17
 - 主題：AI 實戰
 - 系列：Claude Code 實戰
-- 標籤：Claude Code、Spec Kit、GitHub Spec Kit、Full Stack、Hostinger
+- 標籤：Claude Code、Spec Kit、GitHub Spec Kit、全端工程師、Hostinger
 - 摘要：上一集以 YouTube 留言彙整工具為案例，讓大家了解在 AI 時代只要有需求，就算工具不常使用，甚至只有自己一個使用者，那也值得開發。
 
 [https://youtu.be/16IIi5uNx_M](https://youtu.be/16IIi5uNx_M)

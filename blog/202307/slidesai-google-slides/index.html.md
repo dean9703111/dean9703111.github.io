@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202307/slidesai-google-slides/
 - 發布：2023-07-17
 - 主題：AI 實戰
-- 標籤：SlidesAI、Google Slides、AI、ChatGPT、Presentations
+- 標籤：SlidesAI、Google Slides、AI、ChatGPT、簡報
 - 摘要：儘管 GAMMA 在生成簡報上已經非常強大，但許多朋友還是習慣使用 Google Slides；所以今天想跟大家分享一款只要輸入「主題 or 長文」就可以自動生成簡報的 Google AI 外掛，讓你工作效率倍增！
 
 儘管 [GAMMA](https://deanlin.net/blog/202306/gamma-ai-presentations/) 在生成簡報上已經非常強大，但許多朋友還是習慣使用 Google Slides；所以今天想跟大家分享一款只要輸入「主題 or 長文」就可以自動生成簡報的 Google AI 外掛，讓你工作效率倍增！

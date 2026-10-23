@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202307/5am-project/
 - 發布：2023-07-05（更新：2023-10-19）
 - 主題：職涯成長
-- 標籤：5AM Club、Self Improvement、Self-awareness、Growth、Growth Hacking
+- 標籤：5AM Club、自我成長、Self-awareness、Growth、Growth Hacking
 - 摘要：可能演算法覺得筆者最近過得太安逸了，所以最近常推播「The 5 AM Club」相關的資訊給我。 相信「早睡早起身體好」之類的話讀者已經聽膩了，所以這篇文章我想從「現實利益」的角度，帶讀者重新思考早起的意義，以及對人生的幫助。
 
 可能演算法覺得筆者最近過得太安逸了，所以最近常推播「The 5 AM Club」相關的資訊給我。

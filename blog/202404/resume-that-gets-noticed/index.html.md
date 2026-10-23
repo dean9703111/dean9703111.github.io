@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202404/resume-that-gets-noticed/
 - 發布：2024-04-25
 - 主題：職涯成長
-- 標籤：履歷、面試、Interview、Resume、Careers
+- 標籤：履歷、面試、職涯
 - 摘要：給我 30 分鐘，帶你打造吸引面試官的亮眼履歷
 
 在人才市場上，「人」就是商品，包裝精美的容易溢價，賣相較差的容易折價。

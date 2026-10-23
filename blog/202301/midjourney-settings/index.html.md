@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202301/midjourney-settings/
 - 發布：2023-01-21
 - 主題：AI 實戰
-- 標籤：Midjourney、Settings、Midjourney Settings、AI、AI Painting
+- 標籤：Midjourney、Settings、Midjourney Settings、AI、AI 繪圖
 - 摘要：這篇文章筆者將會舉出實際案例，讓你知道 Midjourney 的 Settings 裡面有哪些參數，以及他們會對產出的圖造成什麼影響。
 
 這篇文章筆者將會舉出實際案例，讓你知道 Midjourney 的 Settings 裡面有哪些參數，以及他們會對產出的圖造成什麼影響。

@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202512/courage-to-keep-trying/
 - 發布：2025-12-27
 - 主題：職涯成長
-- 標籤：YouTube、Self Improvement、Failure、挫折、挑戰
+- 標籤：YouTube、自我成長、Failure、挫折、挑戰
 - 摘要：在訂閱破萬這天，我想分享一個讓我開始經營 YouTube 的動機；不是熱血、無關夢想，而是差點社死的經驗 😳
 
 在[訂閱破萬這天](https://www.youtube.com/@dlcorner)，我想分享一個讓我開始[經營 YouTube 的動機](https://www.youtube.com/@dlcorner)；不是熱血、無關夢想，而是差點社死的經驗 😳

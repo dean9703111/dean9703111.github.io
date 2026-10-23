@@ -5,7 +5,7 @@
 - 發布：2025-12-08
 - 主題：AI 實戰
 - 系列：Google Antigravity
-- 標籤：Antigravity、Google Antigravity、Vibe Coding、AI、Engineering
+- 標籤：Antigravity、Google Antigravity、Vibe Coding、AI、工程師
 - 摘要：如果市場上找不到工具，那就自己動手實現！
 
 今天要跟大家分享 Google 最新推出的 Antigravity 這款 AI 程式碼編輯器。

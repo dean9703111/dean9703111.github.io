@@ -5,7 +5,7 @@
 - 發布：2020-10-05
 - 主題：技術教學
 - 系列：FB & IG 爬蟲專案從零開始
-- 標籤：iT 邦幫忙鐵人賽、Google Sheets、Node.js、爬蟲、Google Sheet API
+- 標籤：iT 邦幫忙鐵人賽、Google Sheets、Node.js、網頁爬蟲、Google Sheet API
 - 摘要：1.1 分析 Google Sheets 上要呈現的資料、寫入時可能遇到的問題1.2 組合回傳的資訊：以 crawlerFB 為範例
 
 > 爬蟲是一個技術，他將網頁的數據收集下來

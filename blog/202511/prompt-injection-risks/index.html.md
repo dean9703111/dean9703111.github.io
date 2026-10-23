@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202511/prompt-injection-risks/
 - 發布：2025-11-21
 - 主題：AI 實戰
-- 標籤：Prompt Injection、提示注入、AI、教學、Security
+- 標籤：Prompt Injection、提示注入、AI、教學、資安
 - 摘要：實測人類看不見的隱藏指令（Prompt Injection）
 
 這幾年我受邀到許多學校，分享生成式 AI 在教學領域的應用。

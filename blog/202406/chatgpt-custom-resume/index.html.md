@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202406/chatgpt-custom-resume/
 - 發布：2024-06-07
 - 主題：職涯成長
-- 標籤：履歷、Resume、Resume Writing、AI、ChatGPT
+- 標籤：履歷、Resume Writing、AI、ChatGPT
 - 摘要：這篇文章我除了分享面試官會在意哪些點，以及如何優化履歷外。也分享了靠「複製貼上」就能在 ChatGPT 生成一份客製化履歷的 Prompt。讓大家可以縮短履歷製作的時間，並透過 AI 優化現有履歷。
 
 PDF 連結：[https://goo.gl/adRLaZ](https://goo.gl/adRLaZ?fbclid=IwZXh0bgNhZW0CMTAAAR0oJcj6ydqE_tHBXU-OvwyvB1mwXj_I9VJAuFLwPX0RdyitjXqU2kwDYiw_aem_AbLOTz6Y8_pAcXS3JaIfzagoNf95NORbatR9JEqS4m4YSqZ4gYUXyAsXcuiWrGPqiNeoORY7rT_eg-qlwzYHKJYo)（ 職涯創新致勝力這期）

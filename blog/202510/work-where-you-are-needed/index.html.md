@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202510/work-where-you-are-needed/
 - 發布：2025-10-31
 - 主題：職涯成長
-- 標籤：Salary、Salary Negotiations、Careers、Engineering、Work
+- 標籤：Salary、Salary Negotiations、職涯、工程師、職場
 - 摘要：只做份內的事沒有錯，但如果想快速成長，勢必要做一些跟別人不一樣的事。
 
 今天想跟大家聊兩個職涯議題～

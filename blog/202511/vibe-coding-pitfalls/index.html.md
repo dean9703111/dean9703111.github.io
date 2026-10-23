@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202511/vibe-coding-pitfalls/
 - 發布：2025-11-30
 - 主題：AI 實戰
-- 標籤：Vibe Coding、Security、AI、Web Development、Generative AI Use Cases
+- 標籤：Vibe Coding、資安、AI、Web Development、Generative AI Use Cases
 - 摘要：看起來能動的系統，才是最危險的！
 
 如果你正在 Vibe Coding，那這篇文章一定要看完！

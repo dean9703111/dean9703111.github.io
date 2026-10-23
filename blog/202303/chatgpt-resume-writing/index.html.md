@@ -4,7 +4,7 @@
 - 網址：https://deanlin.net/blog/202303/chatgpt-resume-writing/
 - 發布：2023-03-14
 - 主題：職涯成長
-- 標籤：ChatGPT、Resume、履歷、職涯、Prompt
+- 標籤：ChatGPT、履歷、職涯、提示工程
 - 摘要：ChatGPT 能做到哪些事取決於你的想像力，而他回答的品質則是取決於你的提問方式（Prompt）。今天我們以「履歷」為例，帶大家透過 ChatGPT 創造一份優質履歷，讓自己在職場中獲得更多的優勢！
 
 ChatGPT 能做到哪些事取決於你的想像力，而他回答的品質則是取決於你的提問方式（Prompt）。今天我們以「履歷」為例，帶大家透過 ChatGPT 創造一份優質履歷，讓自己在職場中獲得更多的優勢！
