@@ -78,6 +78,8 @@
 
 不要妄想靠一點小技巧就能翻轉人生，日積月累的實力才是你的靠山；因為機會永遠都有，但前提是你配得上它，技巧只是在關鍵時刻推你一把的臨門一腳。
 
+想知道這本書最後寫了哪些故事、適合誰讀，可以看[《工程師下班有約》的書籍與節目介紹](https://deanlin.net/series/after-office/)，同名 YouTube 節目與這個系列的文章也都整理在那一頁。
+
 > 《工程師下班有約》網路書店： 🐲[天瓏書局](https://www.tenlong.com.tw/products/9786264142083)
 
 > 我是林鼎淵，如果覺得這邊文章對你有幫助，歡迎追蹤筆者的 [Facebook](https://www.facebook.com/deanlinbao) 與 [YouTube](https://www.youtube.com/@dlcorner)，我會持續分享實用的新知識 💡

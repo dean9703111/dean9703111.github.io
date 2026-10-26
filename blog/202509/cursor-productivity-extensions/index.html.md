@@ -1,4 +1,4 @@
-# Cursor 教學：安裝 3 款讓 Vibe Coding 效率翻倍的工具！用「個人形象網站」實戰演練
+# Cursor 必裝工具：Python、Node.js、Git 讓 Vibe Coding 效率翻倍！用「個人形象網站」實戰演練
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202509/cursor-productivity-extensions/
@@ -15,6 +15,8 @@
 因為其實有很多的需求，根本不需要寫程式，直接使用別人完成的套件就好。
 
 你也不用煩惱該使用哪個套件，以及套件該如何使用；因為安裝好這些工具後，AI Agent 會根據你提出的需求，自行判斷這些工具使用的時機點。
+
+這篇是 Cursor 教學系列的第 2 篇，接在入門設定之後，幫 AI Agent 裝上更多工具；整個系列的學習地圖，請看 [Cursor 教學系列](https://deanlin.net/series/cursor/)。
 
 > 建議搭配影片觀看實際的操作步驟。
 

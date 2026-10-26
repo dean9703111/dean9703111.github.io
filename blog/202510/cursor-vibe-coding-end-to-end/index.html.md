@@ -1,4 +1,4 @@
-# Cursor 教學：Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程
+# Cursor Vibe Coding 實戰：從釐清需求到部署上線，一次搞懂完整開發流程
 
 - 作者：林鼎淵（Dean Lin）
 - 網址：https://deanlin.net/blog/202510/cursor-vibe-coding-end-to-end/
@@ -18,6 +18,8 @@
 
 在最後會分析整個專案架構，帶大家了解 **AI Agent 到底幫我們做了哪些事；**並透過 **GitHub Pages 發布專案**，讓你完成的網頁可以直接分享給朋友。
 
+這篇是 Cursor 教學系列的第 3 篇，把前兩篇學到的東西串成一個完整專案；整個系列的學習地圖，請看 [Cursor 教學系列](https://deanlin.net/series/cursor/)。
+
 > 建議搭配影片觀看實際的操作步驟。
 
 [YouTube 影片：【Cursor 教學】Vibe Coding 實戰！從釐清需求到部署上線，一次搞懂完整開發流程 #spec #git #nodejs #deploy #ai #sdd](https://www.youtube.com/watch?v=wOnjdSDt-8A)
@@ -25,8 +27,8 @@
   [https://youtu.be/wOnjdSDt-8A](https://youtu.be/wOnjdSDt-8A)
 
 > 第一次接觸 Cursor 與 Vibe Coding 的朋友，可以先參考下面的文章：
-> ➤ [Cursor 教學：入門到實戰，用 AI Agent 自動化你的工作流！](https://deanlin.net/blog/202509/cursor-getting-started/)
-> ➤ [Cursor 教學：安裝 3 款讓 Vibe Coding 效率翻倍的工具！用「個人形象網站」實戰演練](https://deanlin.net/blog/202509/cursor-productivity-extensions/)
+> ➤ [Cursor 入門教學：安裝、模型選擇、Rules 設定，用 AI Agent 自動化你的工作流！](https://deanlin.net/blog/202509/cursor-getting-started/)
+> ➤ [Cursor 必裝工具：Python、Node.js、Git 讓 Vibe Coding 效率翻倍！用「個人形象網站」實戰演練](https://deanlin.net/blog/202509/cursor-productivity-extensions/)
 
 ## ① 釐清需求，生成專案規格
 
