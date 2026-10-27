@@ -8,8 +8,236 @@
     <generator>Hugo</generator>
     <language>zh-tw</language>
     <copyright>© 2020–2026 林鼎淵 Dean Lin</copyright>
-    <lastBuildDate>Thu, 15 Oct 2026 18:09:14 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 27 Oct 2026 12:45:00 +0800</lastBuildDate>
     <atom:link href="https://deanlin.net/categories/ai/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【AI 做產品 EP1】自己的痛點自己解：用 Vibe Coding 做出電腦一鍵遙控多支手機同步錄影的工具</title>
+      <link>https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/</link>
+      <pubDate>Tue, 27 Oct 2026 12:45:00 +0800</pubDate>
+      <guid>https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/</guid>
+      <dc:creator>林鼎淵</dc:creator>
+      <category>AI 實戰</category>
+      <description>如果你拍 YouTube、Podcast、線上課程或訪談節目，又跟我一樣使用固定的機位錄影，這篇分享我用 Vibe Coding 花一小時做出的免費開源多機錄影工具：在電腦一鍵遙控多支手機同步錄影，錄完馬上就能在電腦上看。</description>
+      <media:content url="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/multicam-recorder-vibe-coding-og_hu_25e64acbf7e1b544.jpg" medium="image" type="image/jpeg" width="1200" height="630" />
+      <content:encoded><![CDATA[<figure class="figure"><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/multicam-recorder-vibe-coding-cover.webp" width="1400" height="788" alt="AI 實戰完成產品原型：網頁＋手機 App 的多機錄影工具，免費開源、即時監看、直橫一次錄、錄完馬上看" fetchpriority="high" decoding="async">
+  <figcaption><a href="https://youtu.be/fHN0WMLYOL8">https://youtu.be/fHN0WMLYOL8</a></figcaption>
+</figure>
+
+<p>如果你打算拍 YouTube、Podcast、線上課程，或訪談節目，並且跟我一樣使用固定的機位錄影，我強烈建議你收藏這篇文章。</p>
+<p>因為接下來要分享一個節省我超多時間的免費工具。</p>
+<h3 id="-痛點錄完要檢查檔案還要傳來傳去">痛點：錄完要檢查，檔案還要傳來傳去<a class="h-anchor" href="#-%e7%97%9b%e9%bb%9e%e9%8c%84%e5%ae%8c%e8%a6%81%e6%aa%a2%e6%9f%a5%e6%aa%94%e6%a1%88%e9%82%84%e8%a6%81%e5%82%b3%e4%be%86%e5%82%b3%e5%8e%bb" aria-label="這個段落的連結"></a></h3>
+<p>過去正式開拍前，我都要先試錄一小段，確認畫面、聲音符合自己的需求；而正式開拍後，每錄完一段，我都要跑到手機旁邊播放影片，以此確認動作與聲音足夠流暢。</p>
+<p><strong>但畢竟手機畫面較小，很多小毛病是把影片放到電腦上才會發現的</strong>，像腳架不穩造成畫面輕微晃動，或自己穿的衣服太薄有激凸問題。</p>
+<p>而我過去的拍片流程，是先把影片上傳到雲端備份，再下載到電腦。</p>
+<blockquote class="pullquote"><p>很多小問題是在自己以為可以收工的時候才發現，非常崩潰。</p>
+</blockquote>
+<h3 id="-痛點多支手機無法同時開始與停止">痛點：多支手機，無法同時開始與停止<a class="h-anchor" href="#-%e7%97%9b%e9%bb%9e%e5%a4%9a%e6%94%af%e6%89%8b%e6%a9%9f%e7%84%a1%e6%b3%95%e5%90%8c%e6%99%82%e9%96%8b%e5%a7%8b%e8%88%87%e5%81%9c%e6%ad%a2" aria-label="這個段落的連結"></a></h3>
+<p>另外，有些時候我們會需要用到多機拍攝。</p>
+<p>以這次的影片來說，一支從正面拍，另一支從側面拍，這樣當我卡詞動作不連貫的時候，剪輯能直接替換成另一個素材而不會有中斷感。</p>
+<p>或是想一次拍好長影片跟短影音，就能一支橫著錄長影片，另一支直的錄短影音；甚至是訪談節目，主持人跟來賓各用一支手機拍，這樣對話時就能切到正在講話的人。</p>
+<p>但我們馬上就會遇到一個問題，如果只用一支手機錄影，可以用手勢控制開始跟結束；<strong>但如果要用兩支以上的手機同時錄影，就很難讓它們同時啟動。</strong></p>
+<p>一旦開始的時間不同步，後續剪輯影片、校正聲音的過程就會讓人崩潰。</p>
+<p>而停止錄影驗收成果的時候也一樣，我需要在兩支手機間走來走去，個別確認畫面跟聲音；當要拍攝的段落很多時，這些走動其實很耗體力。</p>
+<h3 id="-自己設計的多機錄影工具">自己設計的多機錄影工具<a class="h-anchor" href="#-%e8%87%aa%e5%b7%b1%e8%a8%ad%e8%a8%88%e7%9a%84%e5%a4%9a%e6%a9%9f%e9%8c%84%e5%bd%b1%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h3>
+<p>為了解決以上問題，我上網搜尋了許多電腦控制手機，以及多機錄影的工具，但用起來都不順手，所以我乾脆根據自己實際的工作流設計了一套。</p>
+<p>現在當手機掃碼連上電腦後，就能即時顯示拍攝畫面，讓我確認畫面的角度、光暗。</p>
+<p><strong>在電腦上按下開始時，多支手機就能同步開始錄影；按下結束後除了停止錄影外，影片還會直接回傳到電腦，讓我馬上播放檢查。</strong></p>
+<blockquote class="pullquote"><p>而這個工具從萌生想法到完成產品原型，前後只花了一個小時。</p>
+</blockquote>
+<blockquote>
+<p>完整的 Demo，可以觀看 YT 喔 👉</p>
+<p>對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。</p>
+</blockquote>
+<div class="yt" data-yt="fHN0WMLYOL8" data-title="【AI 做產品 EP1】自己的痛點自己解：用 Vibe Coding 做出電腦一鍵遙控多支手機同步錄影的工具">
+  <a class="yt-link" href="https://www.youtube.com/watch?v=fHN0WMLYOL8" target="_blank" rel="noopener" aria-label="播放影片：【AI 做產品 EP1】自己的痛點自己解：用 Vibe Coding 做出電腦一鍵遙控多支手機同步錄影的工具">
+    <img src="https://i.ytimg.com/vi/fHN0WMLYOL8/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
+    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
+    <span class="yt-title">【AI 做產品 EP1】自己的痛點自己解：用 Vibe Coding 做出電腦一鍵遙控多支手機同步錄影的工具</span>
+  </a>
+</div>
+
+<p>這篇文章我會分成三個部分：</p>
+<p>1. 先帶大家實際操作這個工具，包含新增專案、下載 App、配對手機、調整解析度等細節</p>
+<p>2. 接著說明如何安裝工具，以及網路設定要注意的事項</p>
+<p>3. 最後分享我如何用 AI Coding 在短時間完成產品原型，以及在實際應用中一次次迭代的心得</p>
+<hr>
+<h2 class="h-nomark" id="-多機錄影工具實戰">① 多機錄影工具實戰<a class="h-anchor" href="#-%e5%a4%9a%e6%a9%9f%e9%8c%84%e5%bd%b1%e5%b7%a5%e5%85%b7%e5%af%a6%e6%88%b0" aria-label="這個段落的連結"></a></h2>
+<p>這套工具是用電腦的瀏覽器，來控制多支手機錄影，macOS 跟 Windows 都能使用；目前手機支援 Android 系統，下載 APK 即可安裝體驗。</p>
+<p><strong>考量到資訊安全跟傳輸速度，影片不會經過雲端，而是透過家裡的 Wi-Fi 直接傳回電腦。</strong></p>
+<p>而且錄影是在手機上進行的，Wi-Fi 只負責控制跟傳檔，所以畫質不會受到網路影響。</p>
+<p>安裝的步驟我放在後面，這邊先帶大家看這套工具能做到哪些事。</p>
+<h3 id="-step-1設定錄影資料夾新增專案">STEP 1｜設定錄影資料夾、新增專案<a class="h-anchor" href="#-step-1%e8%a8%ad%e5%ae%9a%e9%8c%84%e5%bd%b1%e8%b3%87%e6%96%99%e5%a4%be%e6%96%b0%e5%a2%9e%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
+<p>在瀏覽器打開控制台後，先選擇錄影要存放的資料夾。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step1-01-console-home.webp" width="1400" height="818" alt="控制台首頁的「開始使用」三步驟" loading="lazy" decoding="async"></p>
+<p>因為 30 分鐘的 4K 影片大約就有 9 GB 的大小，所以<strong>建議存到外接硬碟</strong>。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step1-02-settings.webp" width="1400" height="818" alt="「設定」視窗，點「選擇資料夾…」挑錄影資料夾" loading="lazy" decoding="async"></p>
+<p>這邊提醒一下大家，<strong>外接硬碟最好用 exFAT 格式；不要用 FAT32</strong>，因為它的單一檔案不能超過 4 GB。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step1-03-exfat.webp" width="1400" height="818" alt="改成外接硬碟 /Volumes/video，格式顯示 exFAT" loading="lazy" decoding="async"></p>
+<p>另外，我們可能會拍很多不同的主題，如果全部塞在同一個資料夾，未來要找影片會很麻煩。</p>
+<p>所以接著要點擊「新增專案」，輸入這次拍攝的主題，比如「multicam-recorder」。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step1-04-new-project.webp" width="1400" height="818" alt="「新增專案」視窗輸入 multicam-recorder" loading="lazy" decoding="async"></p>
+<p>之後錄好的影片，就會自動存進這個主題的資料夾。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step1-05-project-created.webp" width="1400" height="818" alt="建立專案後「新增專案」打勾，上方顯示目前的專案" loading="lazy" decoding="async"></p>
+<h3 id="-step-2下載-app配對手機">STEP 2｜下載 App、配對手機<a class="h-anchor" href="#-step-2%e4%b8%8b%e8%bc%89-app%e9%85%8d%e5%b0%8d%e6%89%8b%e6%a9%9f" aria-label="這個段落的連結"></a></h3>
+<p>完成後點擊「配對手機」，用手機相機掃畫面上的 QR Code。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step2-01-pair-qr.webp" width="1400" height="818" alt="電腦上的「配對手機」QR Code" loading="lazy" decoding="async"></p>
+<p>還沒裝 App 的話，打開頁面上的下載連結會得到一個 APK 檔；裝好之後按「打開 App 並配對」，就完成了。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step2-02-scan-qr.webp" width="720" height="1607" alt="用手機相機掃 QR Code，點出現的連結" fetchpriority="high" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step2-03-pair-page.webp" width="720" height="1607" alt="手機上的配對頁：「打開 App 並配對」與「直接下載 APK」" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<p>每支手機在成功配對後，<strong>之後打開 App 就會自動連線</strong>；另外手機如果有外接麥克風，在介面上也會顯示。</p>
+<div class="gallery-row cols-2">
+
+<figure class="figure"><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step2-04-paired.webp" width="720" height="1607" alt="App 顯示「配對完成：Pixel11Pro」" fetchpriority="high" decoding="async">
+</figure>
+
+<figure class="figure"><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step2-05-usb-mic.webp" width="720" height="1607" alt="App 右上角顯示「收音：外接 USB」" loading="lazy" decoding="async">
+</figure>
+
+
+</div>
+
+<p>配對成功後，電腦上就會出現每支手機現在的即時畫面。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step2-06-live-preview.webp" width="1400" height="818" alt="電腦上同時顯示兩支手機的即時畫面" loading="lazy" decoding="async"></p>
+<p>以前架好手機之後，我得走到每支手機前面，一支一支確認角度跟位置；<strong>現在坐在電腦前，就能同時看到每支手機拍到的畫面。</strong></p>
+<p>如果發現角度有歪、人在畫面的位置不對，或光線不夠亮，都能在拍攝前及時調整。</p>
+<p>至於腳架晃動這類比較細的問題，等一下錄完後，馬上就能在電腦上播放檢查。</p>
+<h3 id="-step-3調整錄影規格與人像設定">STEP 3｜調整錄影規格與人像設定<a class="h-anchor" href="#-step-3%e8%aa%bf%e6%95%b4%e9%8c%84%e5%bd%b1%e8%a6%8f%e6%a0%bc%e8%88%87%e4%ba%ba%e5%83%8f%e8%a8%ad%e5%ae%9a" aria-label="這個段落的連結"></a></h3>
+<p>完成前置作業後，在正式拍攝前可以先設定影片的畫質，以及人臉的拍攝效果。</p>
+<p>在「錄影規格」的部分可以選擇解析度，從 4K 到 720p 都有，<strong>所有手機會套用同一個解析度</strong>。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step3-01-spec.webp" width="1400" height="818" alt="「錄影規格」：解析度、臉部優先、鎖定曝光與白平衡" loading="lazy" decoding="async"></p>
+<p>而人像設定預設開啟「臉部優先」，這樣<strong>對焦、曝光都會以人臉為準</strong>，就算背景是白天窗戶，臉也比較不會黑掉。</p>
+<p>另外，還能在錄影時鎖定曝光跟白平衡，讓畫面的亮度跟顏色不會錄到一半變掉；這些都是交給手機的相機處理，所以畫質不會改變。</p>
+<h3 id="-step-4即時畫面變焦直拿橫拿一次錄好">STEP 4｜即時畫面、變焦，直拿橫拿一次錄好<a class="h-anchor" href="#-step-4%e5%8d%b3%e6%99%82%e7%95%ab%e9%9d%a2%e8%ae%8a%e7%84%a6%e7%9b%b4%e6%8b%bf%e6%a9%ab%e6%8b%bf%e4%b8%80%e6%ac%a1%e9%8c%84%e5%a5%bd" aria-label="這個段落的連結"></a></h3>
+<p>設定好之後，還能一邊看即時畫面，一邊各自調整每支手機的變焦。</p>
+<p>而且手機怎麼放，就會錄怎麼樣的影片；比如一支橫放錄長影片，另一支直放錄短影音，<strong>一次錄影就能把兩種版本錄好</strong>。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step4-01-zoom.webp" width="1400" height="818" alt="各自調整變焦，直式 9:16 與橫式 16:9 同時預覽" loading="lazy" decoding="async"></p>
+<h3 id="-step-5一鍵同步錄影錄完馬上看">STEP 5｜一鍵同步錄影，錄完馬上看<a class="h-anchor" href="#-step-5%e4%b8%80%e9%8d%b5%e5%90%8c%e6%ad%a5%e9%8c%84%e5%bd%b1%e9%8c%84%e5%ae%8c%e9%a6%ac%e4%b8%8a%e7%9c%8b" aria-label="這個段落的連結"></a></h3>
+<p>都準備好之後，直接按畫面上的「開始錄影」，<strong>所有手機就會同時開始，按「停止」就會同時停止</strong>；如果習慣用鍵盤的話，也能使用快捷鍵，按 R 開始、按 S 停止。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step5-01-recording.webp" width="1400" height="818" alt="按下「開始錄影」後兩支手機同步錄影，邊錄邊傳" loading="lazy" decoding="async"></p>
+<p>錄完之後，你會發現同一段影片的檔名，<strong>前綴都是一樣的錄影時間，後綴則是對應的手機名稱</strong>；這樣在剪輯的時候，就能快速找到同一段的每支手機影片。</p>
+<blockquote class="pullquote"><p>而我最滿意的設計，是錄完馬上就能看。</p>
+</blockquote>
+<p>手機在錄影的同時，就會把影片陸續傳回電腦；停止之後，<strong>短影片稍等幾秒就能播放</strong>，而長影片只要 Wi-Fi 跟得上，也能在 1 分鐘後觀看。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step5-02-playable.webp" width="1400" height="818" alt="停止後幾秒，兩支影片都變成「可播放」" loading="lazy" decoding="async"></p>
+<p>稍等一下，影片就傳輸完成了，我們可以切成全螢幕來觀看。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step5-03-fullscreen.webp" width="1400" height="818" alt="切成全螢幕檢查畫面" loading="lazy" decoding="async"></p>
+<p>畫面跟聲音都有，這樣就不用再特地跑到手機旁確認內容有沒有符合預期；另外<strong>就算錄到一半 Wi-Fi 斷線，手機也會照常錄影，連回來再自動續傳</strong>。</p>
+<p>同時提醒一下大家，<strong>錄影時 App 要一直開在畫面上</strong>，因為 Android 不允許 App 在背景使用相機，所以我另外設計了「調暗螢幕」的功能。</p>
+<figure class="figure phone"><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step5-04-dim.webp" width="720" height="1632" alt="手機 App 下方的「調暗螢幕」" loading="lazy" decoding="async">
+</figure>
+
+<p>實際錄影時，其實不需要螢幕那麼亮；而且把螢幕調暗後，手機比較省電，能錄得更久，也比較不會發燙。</p>
+<h3 id="-step-6標記裁剪與清理影片">STEP 6｜標記、裁剪與清理影片<a class="h-anchor" href="#-step-6%e6%a8%99%e8%a8%98%e8%a3%81%e5%89%aa%e8%88%87%e6%b8%85%e7%90%86%e5%bd%b1%e7%89%87" aria-label="這個段落的連結"></a></h3>
+<p>另外在錄影時，有時一段內容會重錄好幾次，所以這邊有設計標記功能，滿意的那一段可以按星星，至於 NG 的就按垃圾桶刪除。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step6-01-star.webp" width="1400" height="818" alt="按星星標記，同一段的兩支影片一起標記" loading="lazy" decoding="async"></p>
+<p>而且標記跟刪除時，<strong>同一段的每支手機會一起處理</strong>；即使刪錯了，也能從電腦的垃圾桶救回來。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step6-02-trash.webp" width="1400" height="818" alt="刪除時一次移除同一段的 2 支影片，之後可從垃圾桶救回" loading="lazy" decoding="async"></p>
+<p>還有一個很實用的小功能，就是「裁剪」。</p>
+<p>錄影時通常都會有開頭的準備動作，以及結尾按停止的片段；這些都可以直接剪掉，<strong>操作時每支手機會一起裁，不用每支影片各剪一次</strong>。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step6-03-trim.webp" width="1400" height="818" alt="拖動左右把手設定裁剪範圍" loading="lazy" decoding="async"></p>
+<p><strong>裁完會另存成新檔，不會動到原本的影片。</strong></p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step6-04-trimmed.webp" width="1400" height="818" alt="裁好後另存成檔名加 _1 的新檔" loading="lazy" decoding="async"></p>
+<p>至於手機這邊，可以一鍵「清除已傳完的影片」，<strong>它只會刪掉已經傳到電腦的影片</strong>，節省手機空間的容量。</p>
+<figure class="figure phone"><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/step6-05-phone-clear.webp" width="720" height="1632" alt="手機上「清除已傳完」只刪已傳到電腦的影片" loading="lazy" decoding="async">
+</figure>
+
+<hr>
+<h2 class="h-nomark" id="-安裝工具與注意事項">② 安裝工具與注意事項<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d%e5%b7%a5%e5%85%b7%e8%88%87%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85" aria-label="這個段落的連結"></a></h2>
+<p>介紹完工具的功能之後，接下來帶大家安裝這款工具。</p>
+<h3 id="-安裝-nodejs">安裝 Node.js<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-nodejs" aria-label="這個段落的連結"></a></h3>
+<p>因為電腦端負責控制手機、接收影片的程式，需要 Node.js 才能執行，所以我們要先打開終端機，接著輸入「node -v」確認電腦是否有完成安裝。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/install-01-node-v.webp" width="700" height="170" alt="node -v 確認版本" loading="lazy" decoding="async"></p>
+<p><strong>這套工具需要 Node.js 24 以上的版本</strong>，如果版號太舊，或是出現沒有指令的錯誤訊息，就需要先安裝 Node.js。</p>
+<p>在安裝 Node.js 這塊，我建議大家透過 NVM 來安裝，因為它可以幫你快速在不同版本間切換、更新。</p>
+<p>如果你跟我一樣使用 Mac，執行下面的指令就可以安裝了：</p>
+<pre tabindex="0"><code>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.8/install.sh | bash
+</code></pre><p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/install-02-nvm-curl.webp" width="1400" height="746" alt="Mac 用 curl 安裝 NVM" loading="lazy" decoding="async"></p>
+<p>但如果你是 Windows，就需要下載 exe 檔來安裝：<a href="https://github.com/nvm-windows/nvm/releases">https://github.com/nvm-windows/nvm/releases</a></p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/install-03-nvm-windows.webp" width="1400" height="709" alt="Windows 到 nvm-windows 的 Releases 下載 x64-setup.exe" loading="lazy" decoding="async"></p>
+<p>nvm 安裝完成後，<strong>要重新開一個終端機</strong>，輸入 <code>nvm install --lts</code> 來安裝最新的 LTS 版本；安裝完畢後，再輸入一次 <code>node -v</code>，看到 24 以上的版號就沒問題了。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/install-04-nvm-lts.webp" width="860" height="344" alt="重開終端機後 nvm install –lts，再用 node -v 確認" loading="lazy" decoding="async"></p>
+<h3 id="-安裝-git">安裝 Git<a class="h-anchor" href="#-%e5%ae%89%e8%a3%9d-git" aria-label="這個段落的連結"></a></h3>
+<p>接下來是 Git，它是工程師用來管理程式碼的工具，等等我們會用它，把這套工具從 GitHub 下載到電腦。</p>
+<p>輸入 <code>git --version</code>，就能確認電腦有沒有安裝 Git。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/install-05-git-version.webp" width="860" height="432" alt="git –version 確認已安裝 Git" loading="lazy" decoding="async"></p>
+<p>如果你是 Mac，還沒安裝的話會跳出安裝「命令列開發者工具」的視窗，按下「安裝」就好；而 Windows，就要到 Git 官網下載安裝檔：<a href="https://git-scm.com/downloads/win">https://git-scm.com/downloads/win</a></p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/install-06-git-windows.webp" width="1400" height="711" alt="Windows 到 Git 官網下載安裝檔" loading="lazy" decoding="async"></p>
+<h3 id="-下載專案啟動工具">下載專案、啟動工具<a class="h-anchor" href="#-%e4%b8%8b%e8%bc%89%e5%b0%88%e6%a1%88%e5%95%9f%e5%8b%95%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h3>
+<p>都準備好之後，依序輸入下面的指令，就能下載專案、進入資料夾、安裝套件，並啟動工具：</p>
+<pre tabindex="0"><code>git clone https://github.com/dean9703111/multicam-recorder.git
+cd multicam-recorder
+npm install
+npm start
+</code></pre><p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/install-07-npm-start.webp" width="1400" height="814" alt="npm start 後出現「控制台：http://localhost:8787」" loading="lazy" decoding="async"></p>
+<p><strong>看到有「控制台：http://localhost:8787」的訊息出現就代表成功了</strong>，接著用瀏覽器打開網址就能看到控制台。</p>
+<p><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/install-08-console.webp" width="1400" height="818" alt="用瀏覽器打開 localhost:8787 看到控制台" loading="lazy" decoding="async"></p>
+<h3 id="-三個注意事項">三個注意事項<a class="h-anchor" href="#-%e4%b8%89%e5%80%8b%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85" aria-label="這個段落的連結"></a></h3>
+<p>裝好之後，再提醒大家三個細節：</p>
+<p><strong>第一，手機跟電腦要連家裡同一個 Wi-Fi。</strong>因為公共 Wi-Fi 跟訪客網路，會讓裝置看不到彼此，這會導致手機無法與電腦建立連線。</p>
+<p><strong>第二，如果影片打算使用裁剪功能，電腦還需要安裝 ffmpeg。</strong>如果沒安裝，點擊裁剪時也會有彈窗提醒你操作步驟。</p>
+<p><strong>第三，影片在手機上是存在 App 自己的資料夾。</strong>如果把 App 解除安裝，手機裡的影片也會一起被刪掉。</p>
+<hr>
+<h2 class="h-nomark" id="-在實戰中迭代打造最符合需求的工具">③ 在實戰中迭代，打造最符合需求的工具<a class="h-anchor" href="#-%e5%9c%a8%e5%af%a6%e6%88%b0%e4%b8%ad%e8%bf%ad%e4%bb%a3%e6%89%93%e9%80%a0%e6%9c%80%e7%ac%a6%e5%90%88%e9%9c%80%e6%b1%82%e7%9a%84%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h2>
+<p>接下來想跟大家分享這套同時有網頁跟手機 App 的工具，是怎麼做出來的。</p>
+<p>說真的，我上次寫 App 已經是七、八年前的事了，早就忘記怎麼寫；但在 AI 的協助下，<strong>從遇到痛點萌生想法，到擬出方案完成實作，前後只花了一個多小時</strong>。</p>
+<blockquote class="pullquote"><p>我覺得這就是 Vibe Coding 的魅力。</p>
+</blockquote>
+<blockquote>
+<p>如果你想讓這個工具也支援 iPhone，或加上其他自己需要的功能，卻不知道怎麼用 AI 寫程式，可以參考我整理的 <a href="https://deanlin.net/tags/vibe-coding/">Vibe Coding 教學總整理</a>。</p>
+</blockquote>
+<h3 id="-第一版只是開始">第一版，只是開始<a class="h-anchor" href="#-%e7%ac%ac%e4%b8%80%e7%89%88%e5%8f%aa%e6%98%af%e9%96%8b%e5%a7%8b" aria-label="這個段落的連結"></a></h3>
+<p>不過一個多小時做出來的，只是產品原型，<strong>真正拿來用之後，問題才一個個浮現</strong>。</p>
+<p>像是第一次配對時，手機掃 QR Code 出現的是一串看不懂的文字（JSON 格式），根本打不開；後來請 AI 改成網址，掃完就會直接打開配對頁面，也方便還沒安裝 App 的使用者能直接下載 APK 安裝。</p>
+<p>還有發現電腦資料夾刪掉的影片，網頁上卻還留著紀錄，因此加上「專案」功能，讓網頁上的清單會與資料夾同步更新。</p>
+<p>到了實際錄影，又發現手機直放時，App 的畫面不會跟著轉，所以在 App 加入偵測轉向的設計，讓直放、橫放都能錄。</p>
+<p>另外在開拍時，我發現電腦螢幕一片黑，看不到手機正在拍的畫面；所以我特別設計了即時畫面，錄影前坐在電腦前，就能直接確認角度、光線和位置是否有需要調整的地方。</p>
+<blockquote class="pullquote"><p>這些都是實際跑過才發現的，所以 AI 寫完之後，一定要親自測一遍。</p>
+</blockquote>
+<h3 id="-實測心得傳輸速度很吃家裡的-wi-fi">實測心得：傳輸速度，很吃家裡的 Wi-Fi<a class="h-anchor" href="#-%e5%af%a6%e6%b8%ac%e5%bf%83%e5%be%97%e5%82%b3%e8%bc%b8%e9%80%9f%e5%ba%a6%e5%be%88%e5%90%83%e5%ae%b6%e8%a3%a1%e7%9a%84-wi-fi" aria-label="這個段落的連結"></a></h3>
+<p>而我印象最深刻的，是在雙機錄影的時候，突然發現有一支手機的影片傳到一半就卡住了。</p>
+<p>一查才發現，問題出在手機跟電腦連的是同一個頻段；影片要先從手機傳到路由器，再從路由器傳到電腦，<strong>同一個頻段要傳兩次，網路就塞住了</strong>。</p>
+<p><strong>後來我把兩支手機改連 2.4 GHz，電腦連 5 GHz，上傳跟下載各走一個頻段，就沒有再卡住了。</strong>如果你的電腦可以插網路線，效果會更好。</p>
+<p>這些特殊情境只有實際跑過，才會發現原來還有這麼多細節需要注意。</p>
+<h3 id="-不是每個想法都要做">不是每個想法都要做<a class="h-anchor" href="#-%e4%b8%8d%e6%98%af%e6%af%8f%e5%80%8b%e6%83%b3%e6%b3%95%e9%83%bd%e8%a6%81%e5%81%9a" aria-label="這個段落的連結"></a></h3>
+<p>另外，<strong>迭代並不代表要一直加功能。</strong></p>
+<p>像我原本想加入濾鏡，但跟 AI 討論之後，決定不做；因為濾鏡一旦套上去，拍完就改不回來了。</p>
+<p>而且如果你用不同品牌的手機，就算套同一個濾鏡，顏色還是會不一樣，剪輯時反而更難調成一致。</p>
+<blockquote class="pullquote"><p>所以 App 只負責錄出乾淨的原始畫面，調色留給剪輯軟體一次處理。</p>
+</blockquote>
+<p>雖然最後沒有做濾鏡，但在討論的過程中，<strong>AI 提了一個我沒想到的功能，就是錄影時鎖定曝光跟白平衡</strong>；這樣就算錄到一半光線變了，每支手機的亮度跟顏色，也不會跟著跑掉。</p>
+<h3 id="-從需求出發分享出去">從需求出發，分享出去<a class="h-anchor" href="#-%e5%be%9e%e9%9c%80%e6%b1%82%e5%87%ba%e7%99%bc%e5%88%86%e4%ba%ab%e5%87%ba%e5%8e%bb" aria-label="這個段落的連結"></a></h3>
+<p>講到這邊，大家應該會發現，<strong>這套工具的每個功能，都是為了解決我錄影時遇到的問題</strong>。</p>
+<p>其實像這樣為了自己的需求做工具，也不是第一次了；過去為了錄影，我寫過<a href="https://deanlin.net/blog/202507/afteroffice8-vibe-coding/">網頁版的提詞器</a>，為了在企業內訓時提醒大家資安，我做了<a href="https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/">去識別化工具</a>，來避免隱私資訊外洩。</p>
+<p>這些工具都是從自己的需求出發，因為真的有在使用，所以會持續迭代。</p>
+<p>而我選擇把這些工具免費分享到網路，也是<strong>希望能形成一個正向循環</strong>，因為大家用了之後給的回饋，常常是我自己沒想到的；可能是更好的做法，或是我沒想過的用途。</p>
+<blockquote class="pullquote"><p>這就是「我不知道我不知道」</p>
+</blockquote>
+<p>像去識別化工具分享出去之後，我才知道，原來它對校園老師處理學生資料也有很大的幫助；而這些回饋，又會讓我把工具改得更好，幫到更多人。</p>
+<hr>
+<h2 id="結語好工具是在實戰中一次次改出來的">結語：好工具，是在實戰中一次次改出來的<a class="h-anchor" href="#%e7%b5%90%e8%aa%9e%e5%a5%bd%e5%b7%a5%e5%85%b7%e6%98%af%e5%9c%a8%e5%af%a6%e6%88%b0%e4%b8%ad%e4%b8%80%e6%ac%a1%e6%ac%a1%e6%94%b9%e5%87%ba%e4%be%86%e7%9a%84" aria-label="這個段落的連結"></a></h2>
+<p>過去很多人有想法，卻因為沒有技術，因此只能等待別人開發；<strong>但現在只要需求足夠明確，就能在 AI 的輔助下，自己完成工具</strong>。</p>
+<blockquote class="pullquote"><p>只是我們不要妄想一次就做到最好，而是在實戰中，一次次看到缺陷並改善，讓它變成最符合自己需求的工具。</p>
+</blockquote>
+<p>今天分享的多機錄影工具，我有把它免費開源：</p>
+<p>GitHub 連結：<a href="https://github.com/dean9703111/multicam-recorder">https://github.com/dean9703111/multicam-recorder</a></p>
+<p>產品網站：<a href="https://deanlin.net/multicam-recorder/">https://deanlin.net/multicam-recorder/</a></p>
+<p>假如有想新增或客製化的功能，歡迎 Fork 修改成自己的版本；如果這個專案對你有幫助，可以路過按個 Star 讓我知道。</p>
+<p>好的，今天的分享就到這邊，如果這篇文章有給你啟發與幫助；別忘了按讚、訂閱，並把文章分享給需要的朋友。</p>
+<figure class="figure"><img src="https://deanlin.net/blog/202610/multicam-recorder-vibe-coding/images/multicam-recorder-vibe-coding-book.webp" width="1400" height="914" alt="林鼎淵著作《工程師下班有約：企業內訓講師帶你認清職涯真相！》" loading="lazy" decoding="async">
+  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
+</figure>
+
+]]></content:encoded>
+    </item>
     <item>
       <title>【AI 陷阱 EP3】資料別直接丟 AI！Word、Excel、PDF、TXT 一鍵去識別化</title>
       <link>https://deanlin.net/blog/202610/ai-traps-ep3-data-anonymization/</link>
@@ -4443,310 +4671,6 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 <p><strong>跟大家分享後端與資料庫的設計，帶大家把這些模擬的 API 都變成真實可用的。</strong></p>
 <p>如果這篇文章對你有幫助，可以順手按個讚，把文章分享給正在 Vibe Coding 的朋友們。</p>
 <figure class="figure"><img src="https://deanlin.net/blog/202601/antigravity-workflow-testing/images/antigravity-workflow-testing-56.webp" width="1400" height="914" alt="林鼎淵著作《工程師下班有約：企業內訓講師帶你認清職涯真相！》" loading="lazy" decoding="async">
-  <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
-</figure>
-
-]]></content:encoded>
-    </item>
-    <item>
-      <title>【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</title>
-      <link>https://deanlin.net/blog/202512/vibe-coding-learning-map/</link>
-      <pubDate>Fri, 19 Dec 2025 17:06:01 +0800</pubDate>
-      <guid>https://deanlin.net/blog/202512/vibe-coding-learning-map/</guid>
-      <dc:creator>林鼎淵</dc:creator>
-      <category>AI 實戰</category>
-      <description>掌握 AI 工具應用場景，Vibe Coding 不迷路</description>
-      <media:content url="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-og_hu_e1c0e397746948a2.jpg" medium="image" type="image/jpeg" width="1200" height="630" />
-      <content:encoded><![CDATA[<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-01.webp" width="1400" height="788" alt="【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境（圖 1）" fetchpriority="high" decoding="async"></p>
-<p>如果你剛開始接觸 Vibe Coding，可能會有一種感覺：</p>
-<p>❝工具很多、教學很多，但不知道該怎麼開始，才不會走冤枉路。❞</p>
-<p>因此這篇文章，我會用「實戰 Demo」的方式，帶你有系統的建立使用觀念。</p>
-<p>讓你知道不同階段，該選擇什麼樣的 AI 工具比較合適。</p>
-<p>我們會從入門的 Gemini，到進階的 Google AI Studio，再到偏專業應用的 Antigravity。</p>
-<p>實際示範它們各自的特點。</p>
-<blockquote>
-<p>完整的 Demo，可以觀看 YT 喔 👉</p>
-<p>對 AI 應用感興趣的朋友，歡迎按下訂閱按鈕，未來我計畫分享一系列 AI 工具的應用教學。</p>
-</blockquote>
-<div class="yt" data-yt="2hbYCe_E5aU" data-title="【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境">
-  <a class="yt-link" href="https://www.youtube.com/watch?v=2hbYCe_E5aU" target="_blank" rel="noopener" aria-label="播放影片：【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境">
-    <img src="https://i.ytimg.com/vi/2hbYCe_E5aU/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
-    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
-    <span class="yt-title">【Vibe Coding 學習地圖】用實戰帶你搞懂 Gemini、Google AI Studio、Antigravity 的使用情境</span>
-  </a>
-</div>
-
-<hr>
-<h2 id="-一geminivibe-coding-起手式">一、Gemini：Vibe Coding 起手式<a class="h-anchor" href="#-%e4%b8%80geminivibe-coding-%e8%b5%b7%e6%89%8b%e5%bc%8f" aria-label="這個段落的連結"></a></h2>
-<p>現在應該很多人使用 <a href="https://gemini.google.com/app">Gemini</a> 處理自己的日常工作事宜。</p>
-<p>不管是文書應用、圖片生成，還是簡報草稿，他都能給我們驚艷的表現。</p>
-<p>同時，他也是最適合新手入門 Vibe Coding 的工具。</p>
-<p>因為他只要打開瀏覽器就能操作，用簡單的對話就能生成漂亮的網頁，完成後還可以把成果分享給朋友。</p>
-<p>下面我直接示範給大家看：</p>
-<h3 id="-優化提示詞">優化提示詞<a class="h-anchor" href="#-%e5%84%aa%e5%8c%96%e6%8f%90%e7%a4%ba%e8%a9%9e" aria-label="這個段落的連結"></a></h3>
-<p>像我本身是一個作家，如果想製作一個宣傳自己書籍的 Landing Page（著陸頁）。</p>
-<p>就可以請 AI 來協助設計，但第一步，我會先提出自己的基礎需求，請他優化成更完善的提示詞：</p>
-<pre tabindex="0"><code>我想要提供[書籍簡介]讓 AI 生成網頁
-
-下面的 Prompt 如何優化才能得到更好的結果？
-
-```
-根據下方內容，判斷合適的風格後，設計出吸引人的互動網頁
-```
-</code></pre><ul>
-<li><strong>需求</strong>：一開始我先說明自己的需求是提供書籍簡介，讓 AI 生成網頁</li>
-<li><strong>目標</strong>：然後請 AI 優化我提供的初始提示詞</li>
-<li><strong>初始 Prompt</strong>：最後提供初步的 Prompt 請 AI 延伸</li>
-</ul>
-<p>相信有些人會覺得要學那麼多提示詞架構好累，到底 AI 是在幫我還是在搞我？</p>
-<p>下次你有這樣的想法時，不妨學我先描述自己腦中的想法，然後請 AI 協助優化成更加完善的提示詞。</p>
-<p>像這邊 AI 就幫我們撰寫了一個更完善的提示詞。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-02.webp" width="1400" height="813" alt="優化提示詞（圖 2）" loading="lazy" decoding="async"></p>
-<p>把它複製下來後，我建議大家開啟一個新的對話貼上去，這麼做是為了避免上下文的干擾。</p>
-<h3 id="-用-canvas-生成網頁">用 Canvas 生成網頁<a class="h-anchor" href="#-%e7%94%a8-canvas-%e7%94%9f%e6%88%90%e7%b6%b2%e9%a0%81" aria-label="這個段落的連結"></a></h3>
-<p>點開工具，選擇 Canvas，這樣才能生成網頁。</p>
-<p>另外最下面要放上給 AI 參考的書籍資訊，這邊我就使用今年剛出版的<a href="https://www.tenlong.com.tw/products/9786264142083">工程師下班有約</a>當作範例。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-03.webp" width="1400" height="813" alt="用 Canvas 生成網頁（圖 3）" loading="lazy" decoding="async"></p>
-<p>把書籍大綱貼上後，就可以點擊送出，稍等一段時間，網頁就生成完畢了！</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-04.webp" width="1400" height="813" alt="用 Canvas 生成網頁（圖 4）" loading="lazy" decoding="async"></p>
-<blockquote class="pullquote"><p>但這邊要提醒一下大家，有結果不代表內容正確。</p>
-</blockquote>
-<h3 id="-優化網頁細節">優化網頁細節<a class="h-anchor" href="#-%e5%84%aa%e5%8c%96%e7%b6%b2%e9%a0%81%e7%b4%b0%e7%af%80" aria-label="這個段落的連結"></a></h3>
-<p>比如你點擊購買書籍，會發現這個按鈕根本是假的，按下去毫無回應，另外網站沒有作者頭像，也沒有書籍封面。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-05.webp" width="1400" height="813" alt="優化網頁細節（圖 5）" loading="lazy" decoding="async"></p>
-<p>如果要增加這些資訊，你可以直接跟他說：</p>
-<pre tabindex="0"><code>根據下面需求調整
-1. 書籍的購買連結為: https://www.tenlong.com.tw/products/9786264142083
-2. 作者頭像連結：https://duk.tw/DVw5tb.jpg
-3. 書籍封面連結：https://duk.tw/0poc5o.jpg
-</code></pre><p>特別提醒一下，在 Gemini 想加入圖片，需要把圖片上傳到圖床網站上，然後貼上圖片網址才會有效。</p>
-<p><strong>你直接複製圖片貼上是沒有用的喔！</strong></p>
-<p>調整完畢後，就可以看到作者頭像跟書籍封面了，購買連結也可以順利跳轉到我們指定的網頁了。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-06.webp" width="1400" height="813" alt="優化網頁細節（圖 6）" loading="lazy" decoding="async"></p>
-<h3 id="-新增-gemini-功能">新增 Gemini 功能<a class="h-anchor" href="#-%e6%96%b0%e5%a2%9e-gemini-%e5%8a%9f%e8%83%bd" aria-label="這個段落的連結"></a></h3>
-<p>這邊再介紹一個 Gemini 有趣的功能</p>
-<p>如果你點擊右下角「新增 Gemini 功能」，AI 會根據網站主題來自動增加對應的功能</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-07.webp" width="1400" height="813" alt="新增 Gemini 功能（圖 7）" loading="lazy" decoding="async"></p>
-<p>AI 新增了 Dean AI 職涯導航的功能：</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-08.webp" width="1400" height="813" alt="新增 Gemini 功能（圖 8）" loading="lazy" decoding="async"></p>
-<h3 id="-分享網頁">分享網頁<a class="h-anchor" href="#-%e5%88%86%e4%ba%ab%e7%b6%b2%e9%a0%81" aria-label="這個段落的連結"></a></h3>
-<p>確認網頁都調整的差不多後，你可以點擊分享向大家展示成果</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-09.webp" width="1400" height="813" alt="分享網頁（圖 9）" loading="lazy" decoding="async"></p>
-<p>但是上下面都有 Gemini 的浮水印標誌，我覺得有點礙眼</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-10.webp" width="1400" height="813" alt="分享網頁（圖 10）" loading="lazy" decoding="async"></p>
-<h3 id="-用-google-site-建立網站">用 Google Site 建立網站<a class="h-anchor" href="#-%e7%94%a8-google-site-%e5%bb%ba%e7%ab%8b%e7%b6%b2%e7%ab%99" aria-label="這個段落的連結"></a></h3>
-<p>這邊要跟大家分享一個移除標誌的小技巧，那就是使用 <a href="https://sites.google.com/">Google Sites </a>來免費建立網站。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-11.webp" width="1400" height="813" alt="用 Google Site 建立網站（圖 11）" loading="lazy" decoding="async"></p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-12.webp" width="1400" height="813" alt="用 Google Site 建立網站（圖 12）" loading="lazy" decoding="async"></p>
-<p>記得把剛剛建立的頁面拉到最上方，然後對原本的首頁點擊右鍵，選擇刪除，就可以發布網頁了！</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-13.webp" width="1400" height="813" alt="用 Google Site 建立網站（圖 13）" loading="lazy" decoding="async"></p>
-<p>用 Google Site 發布網頁後，原本在最上方跟最下方的 Gemini 標籤消失了。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-14.webp" width="1400" height="813" alt="用 Google Site 建立網站（圖 14）" loading="lazy" decoding="async"></p>
-<p>但如果你去使用 AI 功能，就會發現無法順利使用，這是因為假如你要使用 AI 功能，會需要搭配 Gemini 的 API Key。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-15.webp" width="1400" height="813" alt="用 Google Site 建立網站（圖 15）" loading="lazy" decoding="async"></p>
-<h3 id="-api-key-警告">API Key 警告<a class="h-anchor" href="#-api-key-%e8%ad%a6%e5%91%8a" aria-label="這個段落的連結"></a></h3>
-<p>把視角轉換到 Gemini，在程式碼的地方搜尋 apikey，如果沒有填寫的話，你是無法使用 Gemini AI 功能的。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-16.webp" width="1400" height="813" alt="API Key 警告（圖 16）" loading="lazy" decoding="async"></p>
-<p>至於這個 Key 如何取得，我會在下一節 Google AI Studio 的介紹中說明；但並不建議大家使用，因為免費的 API Key 額度很少。</p>
-<p>如果想要正式使用，勢必要綁定帳單，但假使額度沒有設計好，你的信用卡可能會被刷爆。</p>
-<p>另外使用 Gemini 建立的網頁是純前端網頁，如果你真的把 API Key 貼上去，別人按下 F12，搜尋 apikey 就能取得你的設定，然後刷爆你的卡。</p>
-<blockquote class="pullquote"><p>希望大家不要跟自己的錢包過不去！</p>
-</blockquote>
-<h3 id="-純-html-網站可以直接複製">純 HTML 網站可以直接複製<a class="h-anchor" href="#-%e7%b4%94-html-%e7%b6%b2%e7%ab%99%e5%8f%af%e4%bb%a5%e7%9b%b4%e6%8e%a5%e8%a4%87%e8%a3%bd" aria-label="這個段落的連結"></a></h3>
-<p>這邊再給大家建立一個基礎觀念，Gemini 建立的 App 基本上都是純前端網頁（可搭配 Firebase 存取資料庫資源）。</p>
-<p>所有的業務邏輯都是公開的，也就是說如果有人想要抄你的網站，只要檢查網頁元素，把 HTML 的部分複製起來，就可以整包帶走。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-17.webp" width="1400" height="813" alt="純 HTML 網站可以直接複製（圖 17）" loading="lazy" decoding="async"></p>
-<p>儘管 Gemini 可以用簡單的指令建立網站，<strong>但透過他建立的應用，別人可以毫無難度的直接抄襲。</strong></p>
-<p>但我依然建議大家先使用 Gemini 作為 Vibe Coding 入門的工具，因為成就感是一切的起點。</p>
-<hr>
-<h2 id="-二google-ai-studio掌握進階技巧">二、Google AI Studio：掌握進階技巧<a class="h-anchor" href="#-%e4%ba%8cgoogle-ai-studio%e6%8e%8c%e6%8f%a1%e9%80%b2%e9%9a%8e%e6%8a%80%e5%b7%a7" aria-label="這個段落的連結"></a></h2>
-<p>用 Gemini Vibe Coding 會得到一個 HTML 檔案，結構相對簡單，而接下來分享的 Google AI Studio 則是以「前端專案」的角度呈現。</p>
-<h3 id="-生成第一個-ai-app">生成第一個 AI App<a class="h-anchor" href="#-%e7%94%9f%e6%88%90%e7%ac%ac%e4%b8%80%e5%80%8b-ai-app" aria-label="這個段落的連結"></a></h3>
-<p>這邊我們先選擇 Vibe code GenAI Apps 來建立第一個 AI App。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-18.webp" width="1400" height="813" alt="生成第一個 AI App（圖 18）" loading="lazy" decoding="async"></p>
-<p>在官網中，你可以看到他有許多可以選擇的 AI 應用，圖片生成、語音辨識、影片生成等應有盡有，這邊我先以最近爆火的 Nano banana 為範例，帶大家完成一個有 AI 功能的網頁。</p>
-<p>這邊我跟他說：</p>
-<pre tabindex="0"><code>使用者只要上傳照片，就可以轉換成自己想要的風格
-介面先列出 5 個常見風格，也允許使用者自己輸入
-</code></pre><p>接著點擊「Build」後就可以開始看 Gemini 表演了，稍等一段時間後，這個 AI APP 就完成惹。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-19.webp" width="1400" height="813" alt="生成第一個 AI App（圖 19）" loading="lazy" decoding="async"></p>
-<p>這邊我先上傳自己的照片，選擇一個風格後，點擊開始轉換就能得到結果嚕～</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-20.webp" width="1400" height="813" alt="生成第一個 AI App（圖 20）" loading="lazy" decoding="async"></p>
-<h3 id="-分享-app">分享 App<a class="h-anchor" href="#-%e5%88%86%e4%ba%ab-app" aria-label="這個段落的連結"></a></h3>
-<p>在確認結果符合需求後，我們就可以分享成果。</p>
-<p>把 Publish your app 打開，這樣別人才能看到；而 Default to fullscreen 打開，才能預設顯示全螢幕，否則會是跟 Google AI Studio 對話的視窗。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-21.webp" width="1400" height="813" alt="分享 App（圖 21）" loading="lazy" decoding="async"></p>
-<p>用這種方式分享 App，一樣是要登入 Google 帳號後才可以使用。</p>
-<p>但用這種方式分享，App 的上下都有預設的文字，我個人很不喜歡。</p>
-<p>另外點擊右上角的 Leave fullscreen，你專案的程式碼都是直接公開給對方看的。</p>
-<p>甚至可以根據這個 App 為基礎去做二次創作，所以大家分享前要先注意到這些細節。</p>
-<h3 id="-deploy-app-注意事項">Deploy app 注意事項<a class="h-anchor" href="#-deploy-app-%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85" aria-label="這個段落的連結"></a></h3>
-<p>另外我並不建議大家使用 Deploy app on Google Cloud 這個功能。</p>
-<p>因為他要綁定付費的專案才能使用，當別人使用這個 App 時，帳單是算在你頭上的。</p>
-<p><strong>除非你很清楚自己在做什麼，否則我不建議透過這個方式分享 App。</strong></p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-22.webp" width="1400" height="813" alt="Deploy app 注意事項（圖 22）" loading="lazy" decoding="async"></p>
-<h3 id="-api-key">API Key<a class="h-anchor" href="#-api-key" aria-label="這個段落的連結"></a></h3>
-<p>Google AI Studio 首頁，左下角有一個 Get API Key</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-23.webp" width="1400" height="813" alt="API Key（圖 23）" loading="lazy" decoding="async"></p>
-<p>點進去後，點擊右上角的「Create API Key」就可以取得自己 API Key 了。</p>
-<p>但使用上，會分成免費版與付費版兩種：</p>
-<ul>
-<li>以免費版來說，你只能使用一些比較舊款的模型，像最新推出的 gemini-3-pro 這類模型都是不可用的。</li>
-<li>但如果你的專案有綁定信用卡，各種最新的模型都可以使用，但使用前你要搞清楚自己在做什麼，因為用多少算多少！</li>
-</ul>
-<h3 id="-建立前端專案">建立前端專案<a class="h-anchor" href="#-%e5%bb%ba%e7%ab%8b%e5%89%8d%e7%ab%af%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
-<p>其實 Google AI Studio 除了能建立有 AI 功能的 App 外，也可以建立一般的前端專案，這邊我就以「抽籤、分組」的 App 為例。</p>
-<p>並在建立完成後，分享如何將成果保存到 GitHub 做版本控管，並透過 Antigravity 補齊專案細節，在 GitHub Pages 上免費部署。</p>
-<p>剛好最近接近尾牙時間，許多公司都會有抽獎的需求，這時不妨自己 Vibe Coding 一個！</p>
-<p>我的提示詞是這樣設計的：</p>
-<pre tabindex="0"><code>我是一個 HR，想製作一個網站
-可以上傳 CSV 或貼上姓名作為名單來源
-有兩個功能，一個是獎品抽籤，會有動畫隨機抽取，這邊可以設定要重複抽取，或是不重複
-另一個是自動分組，可以設定要幾人分組，分組後的結果會視覺化顯示
-</code></pre><p>等 AI 完成後，我們來驗證一下功能是否符合需求，先貼上姓名，然後去抽籤，接著分組：</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-24.webp" width="1400" height="813" alt="建立前端專案（圖 24）" loading="lazy" decoding="async"></p>
-<h3 id="-優化專案">優化專案<a class="h-anchor" href="#-%e5%84%aa%e5%8c%96%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
-<p>儘管功能都符合需求，但操作過程中發現幾個可以改進的地方：</p>
-<ul>
-<li>首先是名單，站在想快速理解與測試功能的角度上，如果有模擬名單的功能，那會更實用。</li>
-<li>另外匯入名單時，目前沒有考慮到重複名單的問題，這塊也可以請 AI 在預覽名單處標記出來，並提供一個按鈕讓使用者一次性移除重複的姓名。</li>
-<li>最後則是自動分組的地方，希望可以下載成 CSV 紀錄，畢竟這只是一個前端網頁，下次進來後紀錄就不在了。</li>
-</ul>
-<pre tabindex="0"><code>我希望增加以下功能
-1. 名單這塊，我覺得可以有模擬名單的選項，讓大家可以理解如何使用
-2. 匯入 CSV 或貼上名單時，若發現有重複的學生姓名，則在預覽名單處標記出來，並提供一個按鈕讓使用者一次性移除重複的姓名
-3. 自動分組後，希望可以下載成 CSV 紀錄
-</code></pre><p>等 AI 調整完畢後，記得測試一下他增加的功能是否符合需求！</p>
-<h3 id="-保存到-github">保存到 GitHub<a class="h-anchor" href="#-%e4%bf%9d%e5%ad%98%e5%88%b0-github" aria-label="這個段落的連結"></a></h3>
-<p>在測試確認功能都符合需求後，我們可以將它保存到 <a href="https://github.com/">GitHub</a> 上面。</p>
-<p>如果你是第一次接觸 GitHub，可以先到他們的官方網站，用 Gmail 就可以註冊了，他可以幫你的專案做版本控制。</p>
-<p>這邊我們點擊「Save to GitHub」</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-25.webp" width="1400" height="813" alt="保存到 GitHub（圖 25）" loading="lazy" decoding="async"></p>
-<p>首先你要輸入 App 的 name，建議使用英文，這邊我輸入 hr-helper。</p>
-<p>至於 description 則可以中文白話描述，我就寫「上傳名單後可以抽籤、分組」。</p>
-<p>因為後續我們想要用 GitHub Pages 發布，所以這邊選擇 Public。</p>
-<p>然後點擊「Create Git repo」就建立這個儲存庫嚕！</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-26.webp" width="1400" height="813" alt="保存到 GitHub（圖 26）" loading="lazy" decoding="async"></p>
-<p>接著 AI 會根據專案生成這次更新的 commit 訊息，你也可以自行編輯成自己看得懂的版本。</p>
-<p>沒問題後點擊「Stage and commit all changes」就會上傳資料。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-27.webp" width="1400" height="813" alt="保存到 GitHub（圖 27）" loading="lazy" decoding="async"></p>
-<p>這邊我們把視角切換到 GitHub，看一下自己帳號的 GitHub Repository，就會發現剛剛我們透過 Google AI Studio 建立的 App 就出現了！</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-28.webp" width="1400" height="813" alt="保存到 GitHub（圖 28）" loading="lazy" decoding="async"></p>
-<h3 id="-gemini-與-google-ai-studio-差異">Gemini 與 Google AI Studio 差異<a class="h-anchor" href="#-gemini-%e8%88%87-google-ai-studio-%e5%b7%ae%e7%95%b0" aria-label="這個段落的連結"></a></h3>
-<p>大家還記得一開始分享 Gemini 生成網頁時，是只有一個 html 檔案的嗎？</p>
-<p>而現在我們使用 Google AI Studio 製作出來的網站，就不是一個單純的 HTML 檔案了。</p>
-<p>他是用 React 這個框架設計的前端專案，你會發現他的結構複雜很多。</p>
-<p>而且這些檔案是要經過編譯後才能使用的，所以無法透過先前 Google Site 的方式來分享網頁。</p>
-<p>所以接下來，我要跟大家分享，如何使用 Google 推出的另一款產品 Antigravity 的補充專案細節，並部署到線上環境。</p>
-<hr>
-<h2 id="-三antigravity認識專業工具">三、Antigravity：認識專業工具<a class="h-anchor" href="#-%e4%b8%89antigravity%e8%aa%8d%e8%ad%98%e5%b0%88%e6%a5%ad%e5%b7%a5%e5%85%b7" aria-label="這個段落的連結"></a></h2>
-<p><a href="https://antigravity.google/">Antigravity</a> 是一款程式碼編輯器。</p>
-<p>不管你電腦的作業系統是 Windows、Mac、Linux，都可以安裝體驗，目前 Antigravity 只要登入 Google 帳號就可以免費使用。</p>
-<p>但如果付費升級到 Pro，你的使用體驗會好很多。</p>
-<h3 id="-設定-rules讓-ai-更懂你">設定 Rules，讓 AI 更懂你<a class="h-anchor" href="#-%e8%a8%ad%e5%ae%9a-rules%e8%ae%93-ai-%e6%9b%b4%e6%87%82%e4%bd%a0" aria-label="這個段落的連結"></a></h3>
-<p>建議大家可以選擇「Customizations」來設定一下自己的使用偏好。</p>
-<p>在 Rules 這個地方，我選擇 Global，這邊我複製貼上一個 Cursor 內部員工的 Rules 範例，其實提示詞都是通用的：</p>
-<p><a href="https://x.com/kayladotdev/status/1853272891023872450">https://x.com/kayladotdev/status/1853272891023872450</a></p>
-<pre tabindex="0"><code>DO NOT GIVE ME HIGH LEVEL SHIT, IF I ASK FOR FIX OR EXPLANATION, I WANT ACTUAL CODE OR EXPLANATION!!! I DON&#39;T WANT &#34;Here&#39;s how you can blablabla&#34;
-
-- Be casual unless otherwise specified
-- Be terse
-- Suggest solutions that I didn&#39;t think about—anticipate my needs
-- Treat me as an expert
-- Be accurate and thorough
-- Give the answer immediately. Provide detailed explanations and restate my query in your own words if necessary after giving the answer
-- Value good arguments over authorities, the source is irrelevant
-- Consider new technologies and contrarian ideas, not just the conventional wisdom
-- You may use high levels of speculation or prediction, just flag it for me
-- No moral lectures
-- Discuss safety only when it&#39;s crucial and non-obvious
-- If your content policy is an issue, provide the closest acceptable response and explain the content policy issue afterward
-- Cite sources whenever possible at the end, not inline
-- No need to mention your knowledge cutoff
-- No need to disclose you&#39;re an AI
-- Please respect my prettier preferences when you provide code.
-- Split into multiple responses if one response isn&#39;t enough to answer the question.
-
-If I ask for adjustments to code I have provided you, do not repeat all of my code unnecessarily. Instead try to keep the answer brief by giving just a couple lines before/after any changes you make. Multiple code blocks are ok.
-</code></pre><p>貼上後，這個規則就會在所有的專案中生效。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-29.webp" width="1400" height="813" alt="設定 Rules，讓 AI 更懂你（圖 29）" loading="lazy" decoding="async"></p>
-<p>另外如果你想給目前的專案設定特定的 Rules，比如程式碼規則這類的，也可以點擊 Workspace 來設定喔。</p>
-<p>而點擊上方的齒輪符號，你可以點擊「Open Antigravity User Settings」</p>
-<p>在 Agent 的分頁中，如果把 Secure Mode 打開，那 AI 執行的過程會安全許多；但缺點就是大部分的任務執行都會詢問使用者。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-30.webp" width="1400" height="813" alt="設定 Rules，讓 AI 更懂你（圖 30）" loading="lazy" decoding="async"></p>
-<h3 id="下載-github-專案">下載 GitHub 專案<a class="h-anchor" href="#%e4%b8%8b%e8%bc%89-github-%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
-<p>了解基礎設定後，接下來我們要透過 Clone Repository 來下載剛剛 Google AI Studio 完成的專案。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-31.webp" width="1400" height="813" alt="下載 GitHub 專案（圖 31）" loading="lazy" decoding="async"></p>
-<p>下載完成後，左側是專案資料夾區塊，裡面會有各種程式與設定檔；而右側則是 AI Agent 工作區，你可以直接輸入自己的需求。</p>
-<p>在模型方面，Google 除了自家的 Gemini 外，還提供了 Claude 與 GPT 的模型讓大家使用。</p>
-<p>在對話上，有分成 Planning 跟 Fast 兩種；如果要處理的是複雜任務，就建議選擇 Planning，而簡單的問答用 Fast 就足夠了。</p>
-<h3 id="-完善專案">完善專案<a class="h-anchor" href="#-%e5%ae%8c%e5%96%84%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
-<p>因為我們要請他補齊專案缺少的資訊，所以我這邊選擇的是 Planning。</p>
-<p>然後輸入下面的 Prompt:</p>
-<pre tabindex="0"><code>請擔任資深的 React 工程師，幫專案完成以下任務：
-1. 設定 package.json，並安裝對應套件，完成後啟動確定是否可以運行
-2. 設計 GitHub Action，讓我可以直接部署上線
-3. 設計 .gitignore，避免上傳不必要的資料夾、暫存檔、隱私檔
-4. 將相關操作記錄到 README.md
-</code></pre><p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-32.webp" width="1400" height="813" alt="完善專案（圖 32）" loading="lazy" decoding="async"></p>
-<p>如果執行過程遇到不確定的指令，請務必確認</p>
-<pre tabindex="0"><code>請問執行這個指令有危害嗎？
-[貼上指令]
-</code></pre><p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-33.webp" width="1400" height="813" alt="完善專案（圖 33）" loading="lazy" decoding="async"></p>
-<p>可以請 AI 執行專案，確認功能符合需求。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-34.webp" width="1400" height="813" alt="完善專案（圖 34）" loading="lazy" decoding="async"></p>
-<p>確認功能都符合需求後，就可以將變更部署到線上環境。</p>
-<p>但在檔案上傳前，我建議大家先到 .gitignore 的這個檔案，確認一下設計是否完善。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-35.webp" width="1400" height="813" alt="完善專案（圖 35）" loading="lazy" decoding="async"></p>
-<h3 id="-部署專案">部署專案<a class="h-anchor" href="#-%e9%83%a8%e7%bd%b2%e5%b0%88%e6%a1%88" aria-label="這個段落的連結"></a></h3>
-<p>點擊左側的 Source Control，點擊 Generate，AI 就會辨識我們更新的內容，來產生 commit 訊息。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-36.webp" width="1400" height="813" alt="部署專案（圖 36）" loading="lazy" decoding="async"></p>
-<p>確認文字描述符合自己的預期後，點擊 commit，就會在自己的電腦記錄這個變更；但如果想更新到雲端，你需要點擊 Sync Changes才會正式上傳喔！</p>
-<p>完成這些操作後，我們先來 README.md 看看專案的 GitHub Action 如何設計。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-37.webp" width="1400" height="813" alt="部署專案（圖 37）" loading="lazy" decoding="async"></p>
-<p>我們把視角切換到 GitHub 網頁，前往 Settings 的頁面，選擇左側的 Pages，然後將部署的來源選擇為「GitHub Actions」</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-38.webp" width="1400" height="813" alt="部署專案（圖 38）" loading="lazy" decoding="async"></p>
-<p>完成這些操作後，我們回到 GitHub 點擊「Actions」的分頁，查看部署的狀況。</p>
-<p>成功的話會有綠色勾勾，失敗則是紅色叉叉，會需要點進去釐清具體的錯誤原因。</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-39.webp" width="1400" height="813" alt="部署專案（圖 39）" loading="lazy" decoding="async"></p>
-<p>這邊我們看到部署失敗，所以點進去把錯誤訊息複製起來，直接貼到與 AI 的對話視窗中，讓他幫忙解決</p>
-<pre tabindex="0"><code>我遇到如下錯誤，請告訴我如何解決
-[貼上錯誤訊息]
-</code></pre><p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-40.webp" width="1400" height="813" alt="部署專案（圖 40）" loading="lazy" decoding="async"></p>
-<p>這邊可以看到錯誤原因是因為剛剛 GitHub Action 還沒開啟，所以我們點擊 Re-run all jobs 讓這個 Job 重新執行看看。</p>
-<p>OK，這次執行得很順利，我們點擊一下網址，畫面有成功出來～</p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-41.webp" width="1400" height="813" alt="部署專案（圖 41）" loading="lazy" decoding="async"></p>
-<p><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-42.webp" width="1400" height="813" alt="部署專案（圖 42）" loading="lazy" decoding="async"></p>
-<p>以上就是把 Google AI Studio 的 App 透過 Antigravity 放到程式編輯器開發與線上部署的流程。</p>
-<p>當然 Antigravity 的功能不只這些，我過去有拍一隻影片專門介紹，如果你做更近一步的功能設計，可以參考下面影片：</p>
-<div class="yt" data-yt="-FW5DgQEV0M" data-title="【Google Antigravity 教學】把想法化為現實！用 Vibe Coding 完成輕量級全端專案">
-  <a class="yt-link" href="https://www.youtube.com/watch?v=-FW5DgQEV0M" target="_blank" rel="noopener" aria-label="播放影片：【Google Antigravity 教學】把想法化為現實！用 Vibe Coding 完成輕量級全端專案">
-    <img src="https://i.ytimg.com/vi/-FW5DgQEV0M/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">
-    <span class="yt-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6L19 12z"/></svg></span>
-    <span class="yt-title">【Google Antigravity 教學】把想法化為現實！用 Vibe Coding 完成輕量級全端專案</span>
-  </a>
-</div>
-
-<hr>
-<h2 id="-結語心態比聰明更重要">結語：心態比聰明更重要<a class="h-anchor" href="#-%e7%b5%90%e8%aa%9e%e5%bf%83%e6%85%8b%e6%af%94%e8%81%b0%e6%98%8e%e6%9b%b4%e9%87%8d%e8%a6%81" aria-label="這個段落的連結"></a></h2>
-<p>到企業做 Vibe Coding 內訓時，我會先問大家一個問題：「你們覺得，Vibe Coding 最需要的是什麼？」</p>
-<p>有人說需要有程式的背景，也有人說，與 AI 對話的經驗很重要。</p>
-<p>我覺得這些答案都沒錯，但根據我的教學經驗，能把 Vibe Coding 學好，並且實際應用在日常工作中的人，<strong>通常都是過去被某個痛點困擾很久的朋友</strong>。</p>
-<p>也正因為這樣，<strong>當 AI 給錯答案、改壞功能，甚至整個流程卡住時；他們不會第一時間放棄，而是願意多試一步、多問一句。</strong></p>
-<p>我想提醒大家一件事：</p>
-<blockquote class="pullquote"><p>Vibe Coding 並不是「一次就成功」的工具</p>
-</blockquote>
-<p>就像今天這麼簡單的前端網頁，我們都能看到 AI 犯錯了；但遇到錯誤不要害怕，因為只有直面錯誤，才有機會一步一步把問題解開。</p>
-<p>另外隨著你越來越深入使用 Vibe Coding，面對更複雜的邏輯與資料結構時，你可能會發現：</p>
-<blockquote class="pullquote"><p>為了完成 A 功能，AI 可能把原本正常的 B 功能一起改壞</p>
-</blockquote>
-<p>但這些問題單純靠「更明確的指令、給予輸入輸出範例、限制操作範圍」等技巧未必能解決。</p>
-<p>所以在接下來的 Vibe Coding 系列影片中，我會分享如何用 AI 撰寫「測試程式」。</p>
-<p>當專案有測試案例後，即使規模變大、功能增加，也能讓系統維持在相對穩定的狀態！</p>
-<blockquote class="pullquote"><p>Vibe Coding 最大的優勢；就是你可以在短時間快速迭代，驗證想法可行性</p>
-</blockquote>
-<p>如果這篇文章對你有幫助，可以順手按個讚，把文章分享給正在 Vibe Coding 的朋友們。</p>
-<figure class="figure"><img src="https://deanlin.net/blog/202512/vibe-coding-learning-map/images/vibe-coding-learning-map-43.webp" width="1400" height="914" alt="林鼎淵著作《工程師下班有約：企業內訓講師帶你認清職涯真相！》" loading="lazy" decoding="async">
   <figcaption><a href="https://www.tenlong.com.tw/products/9786264142083">https://www.tenlong.com.tw/products/9786264142083</a></figcaption>
 </figure>
 
