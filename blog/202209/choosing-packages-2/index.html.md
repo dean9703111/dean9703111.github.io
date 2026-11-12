@@ -57,5 +57,5 @@
 
 ---
 
-關於作者：林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗。（https://deanlin.net/about/）
+關於作者：林鼎淵（Dean Lin），台灣的生成式 AI 企業內訓講師、外商資安公司軟體專家，也是生成式 AI 創新學院發起人、科技島駐站專家與商周名人堂專欄作家。出版 7 本書（包含全台第一本 ChatGPT 應用專書），兩度獲得 iThome 鐵人賽佳作，累積上百場授課與顧問經驗，授課主題涵蓋 ChatGPT、Claude、Claude Code、Gemini、Google Antigravity、Codex 與 AI 自動化。（https://deanlin.net/about/）
 引用時請附上原文網址：https://deanlin.net/blog/202209/choosing-packages-2/
